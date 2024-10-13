@@ -1,0 +1,17 @@
+POST http://127.0.0.1:8000/api/rejectedDate/register
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE2NTk3MDk4NjMsIm5iZiI6MTY1OTcwOTg2MywianRpIjoiMEUxTmlLSWxVdnJ4dnhCZiIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.P-nWopyqzjEuK04G8f6Drx9SBgcmI_OxG_-kCmG0xwo
+content-type: application/json
+
+{	
+    "rejected_date":"20225-08-14",	
+    "description":"holiday f"	
+}
+###
+POST http://127.0.0.1:8000/api/equbType/register
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE2NTk3MDk4NjMsIm5iZiI6MTY1OTcwOTg2MywianRpIjoiMEUxTmlLSWxVdnJ4dnhCZiIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.P-nWopyqzjEuK04G8f6Drx9SBgcmI_OxG_-kCmG0xwo
+content-type: application/json
+
+{	
+    "name":"sdgsdf",	
+    "round":"2"	
+}

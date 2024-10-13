@@ -1,0 +1,15 @@
+post http://127.0.0.1:8000/api/auth/login
+content-type: application/json
+
+{	
+      "email":"tamiratekub@tamiratekub.com",
+      "password":"tame@ekub"
+}	
+###
+post http://127.0.0.1:8000/api/auth/login
+content-type: application/json
+
+{	
+      "email":"Abdulmejidarebo@tamiratekub.com",
+      "password":"12345678"
+}

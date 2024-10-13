@@ -1,0 +1,14 @@
+POST http://127.0.0.1:8000/api/payment/register
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE2NTgzMTcwMTUsImV4cCI6MTY1ODMyMDYxNSwibmJmIjoxNjU4MzE3MDE1LCJqdGkiOiIwcXFjU2hENHBtT3Q4c1NrIiwic3ViIjoiMSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.mnORufz5NN20dgFoomRIKbG75JU2NRtcgfO0fbrfyTQ
+content-type: application/json
+
+{
+    "member_id":"3",	
+    "equb_id":"1",	
+    "payment_type":"cash",	
+    "amount":"4444",	
+    "creadit":"44",	
+    "balance":"0",	
+    "collecter":"1",	
+    "status":"paid"
+}

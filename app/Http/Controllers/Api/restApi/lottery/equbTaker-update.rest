@@ -1,0 +1,12 @@
+PUT http://127.0.0.1:8000/api/equbTaker/updateLottery/6/12/9
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE2NTgzMjQzODcsImV4cCI6MTY1ODMyNzk4NywibmJmIjoxNjU4MzI0Mzg3LCJqdGkiOiJCd21reFBjRVhyZmw4TDc1Iiwic3ViIjoiMSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.kxE1acaNJxG_NXrhXILHR_m-6zyTr_ZdyGY-fbLetR8
+content-type: application/json
+
+{   	
+   "update_lottery_payment_type": "bank transfer",
+    "update_lottery_amount": "10660000",
+    "update_lottery_status": "paid",
+    "update_lottery_cheque_amount": "600",
+    "update_lottery_cheque_bank_name": "Oromia cooperation bank",
+    "update_lottery_cheque_description": "First cheque"
+}

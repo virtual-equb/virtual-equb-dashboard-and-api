@@ -1,0 +1,10 @@
+
+PUT http://127.0.0.1:8000/api/payment/updatePayment/3/1/788
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE2NTgzMjA2OTMsImV4cCI6MTY1ODMyNDI5MywibmJmIjoxNjU4MzIwNjkzLCJqdGkiOiJKSXlidnl2NHFOUXZ5dkxBIiwic3ViIjoiMSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.FYEatw2V4I6oegMjlYeDVTyrl7rspmB40DfRjv_rJwc
+content-type: application/json
+
+{   	
+    "update_payment_type":"1",	
+    "update_amount":"3333",	
+    "update_creadit":"44"		
+}

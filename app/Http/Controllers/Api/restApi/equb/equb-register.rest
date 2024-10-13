@@ -1,0 +1,14 @@
+POST http://127.0.0.1:8000/api/equb/equb-register
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE2NTk2MjIwMzksImV4cCI6MTY1OTYyNTYzOSwibmJmIjoxNjU5NjIyMDM5LCJqdGkiOiJ5QkVoVHo3YzBhM0xLY2JYIiwic3ViIjoiMSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.5rgIGRweyhV02ES8YLx4ElIYVVOP_awNPf1Z7HZeyMw
+content-type: application/json
+
+{	
+    "member_id":"4",	
+    "equb_type_id":"3",	
+    "amount":"7766",	
+    "total_amount":"230000",	
+    "start_date":"2022-05-09 00:00:00",	
+    "end_date":"2022-09-09 00:00:00",	
+    "lottery_date":"2022-05-09",	
+    "status":"Active"
+}

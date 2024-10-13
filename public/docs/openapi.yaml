@@ -1,0 +1,3644 @@
+openapi: 3.0.3
+info:
+  title: Laravel
+  description: ''
+  version: 1.0.0
+servers:
+  -
+    url: 'http://localhost'
+paths:
+  /api/dashboard:
+    get:
+      summary: 'Get all dashboard info'
+      operationId: getAllDashboardInfo
+      description: 'This api returns all dashboard info.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Dashboard
+      security: []
+  /api/auth/login:
+    post:
+      summary: 'Get a JWT via given credentials.'
+      operationId: getAJWTViaGivenCredentials
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  /api/auth/logout:
+    post:
+      summary: 'Log the user out (Invalidate the token).'
+      operationId: logTheUserOutInvalidateTheToken
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  /api/auth/refresh:
+    post:
+      summary: 'Refresh a token.'
+      operationId: refreshAToken
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  /api/auth/profile:
+    get:
+      summary: 'Get the authenticated User.'
+      operationId: getTheAuthenticatedUser
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+  /api/chapa/initialize:
+    post:
+      summary: ''
+      operationId: postApiChapaInitialize
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  '/api/chapa/callback/{userId}/{equbId}/{amount}/{reference}':
+    get:
+      summary: ''
+      operationId: getApiChapaCallbackUserIdEqubIdAmountReference
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: 400
+                  message: 'Unknown Error Occurred, Please try again!'
+                properties:
+                  code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: 'Unknown Error Occurred, Please try again!'
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: userId
+        description: ''
+        example: beatae
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: equbId
+        description: ''
+        example: veniam
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: amount
+        description: ''
+        example: aliquid
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: reference
+        description: ''
+        example: et
+        required: true
+        schema:
+          type: string
+  /api/fallback:
+    get:
+      summary: ''
+      operationId: getApiFallback
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  code: 401
+                  message: Unauthorized!
+                properties:
+                  code:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: Unauthorized!
+      tags:
+        - Endpoints
+      security: []
+  /api/activityLog:
+    get:
+      summary: ''
+      operationId: getApiActivityLog
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+  '/api/activityLog/logDetail/{type}':
+    get:
+      summary: ''
+      operationId: getApiActivityLogLogDetailType
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: type
+        description: ''
+        example: eum
+        required: true
+        schema:
+          type: string
+  '/api/activityLog/logDetailPaginate/{type}/{offsetVal}/{pageNumberVal}':
+    get:
+      summary: ''
+      operationId: getApiActivityLogLogDetailPaginateTypeOffsetValPageNumberVal
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: type
+        description: ''
+        example: ut
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: offsetVal
+        description: ''
+        example: enim
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: pageNumberVal
+        description: ''
+        example: quibusdam
+        required: true
+        schema:
+          type: string
+  '/api/getRemainingLotteryAmount/{id}':
+    get:
+      summary: 'Get remaining lottery amount'
+      operationId: getRemainingLotteryAmount
+      description: 'This api returns remmaining lottery amount of an equb.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'Equb Takers'
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the getRemainingLotteryAmount.'
+        example: exercitationem
+        required: true
+        schema:
+          type: string
+  /api/equbTaker:
+    get:
+      summary: 'Get All Equb Takers'
+      operationId: getAllEqubTakers
+      description: 'This api returns all Equb Takers.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'Equb Takers'
+      security: []
+  /api/equbTaker/equbTaker-register:
+    post:
+      summary: 'Create equb taker'
+      operationId: createEqubTaker
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - 'Equb Takers'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                payment_type:
+                  type: string
+                  description: 'The type of payment.'
+                  example: '2'
+                amount:
+                  type: integer
+                  description: 'The amount to be paid.'
+                  example: 1000
+                status:
+                  type: string
+                  description: 'The status of the payment.'
+                  example: '10000'
+                lottey_member_id:
+                  type: integer
+                  description: 'The member id of the lottery receiver.'
+                  example: 1
+                lottery_equb_id:
+                  type: integer
+                  description: 'The id of the lottery equb.'
+                  example: 1
+                cheque_amount:
+                  type: integer
+                  description: 'The amount the member has written a check for.'
+                  example: 10000
+                cheque_bank_name:
+                  type: string
+                  description: 'The bank of the check.'
+                  example: CBE
+                cheque_description:
+                  type: string
+                  description: 'The description of the check.'
+                  example: 'From Member'
+              required:
+                - payment_type
+                - amount
+                - status
+                - lottey_member_id
+                - lottery_equb_id
+                - cheque_amount
+                - cheque_bank_name
+                - cheque_description
+      security: []
+  '/api/equbTaker/updateLottery/{member_id}/{equb_id}/{id}':
+    put:
+      summary: 'Update lottery'
+      operationId: updateLottery
+      description: 'This api updates lottery.'
+      parameters: []
+      responses: {  }
+      tags:
+        - 'Equb Takers'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                update_lottery_payment_type:
+                  type: string
+                  description: 'The type of payment.'
+                  example: '2'
+                update_lottery_amount:
+                  type: integer
+                  description: 'The amount to be paid.'
+                  example: 1000
+                update_lottery_status:
+                  type: string
+                  description: 'The status of the payment.'
+                  example: '10000'
+                update_lottery_cheque_amount:
+                  type: integer
+                  description: 'The amount the member has written a check for.'
+                  example: 10000
+                update_lottery_cheque_bank_name:
+                  type: string
+                  description: 'The bank of the check.'
+                  example: CBE
+                update_lottery_cheque_description:
+                  type: string
+                  description: 'The description of the check.'
+                  example: 'From Member'
+              required:
+                - update_lottery_payment_type
+                - update_lottery_amount
+                - update_lottery_status
+                - update_lottery_cheque_amount
+                - update_lottery_cheque_bank_name
+                - update_lottery_cheque_description
+      security: []
+    parameters:
+      -
+        in: path
+        name: member_id
+        description: 'The ID of the member.'
+        example: quia
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: equb_id
+        description: 'The ID of the equb.'
+        example: sequi
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: id
+        description: 'The ID of the {equb id}.'
+        example: neque
+        required: true
+        schema:
+          type: string
+  '/api/equbTaker/equbTaker-delete/{id}':
+    delete:
+      summary: 'Delete lottery'
+      operationId: deleteLottery
+      description: 'This api deletes a lottery.'
+      parameters: []
+      responses: {  }
+      tags:
+        - 'Equb Takers'
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the equbTaker delete.'
+        example: placeat
+        required: true
+        schema:
+          type: string
+  /api/nameCheck:
+    post:
+      summary: 'Get All Equb types with name and round'
+      operationId: getAllEqubTypesWithNameAndRound
+      description: 'This api returns all Equbs types with name and round.'
+      parameters: []
+      responses: {  }
+      tags:
+        - 'Equb Types'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'The name of the equb type.'
+                  example: 'Weekly equb'
+                round:
+                  type: integer
+                  description: 'The round of the equb type.'
+                  example: 1
+              required:
+                - name
+                - round
+      security: []
+  /api/nameCheckForUpdate:
+    post:
+      summary: 'Get All Equb types with name and round for update'
+      operationId: getAllEqubTypesWithNameAndRoundForUpdate
+      description: 'This api returns all Equbs types with name and round.'
+      parameters: []
+      responses: {  }
+      tags:
+        - 'Equb Types'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: 'The id of the equb type.'
+                  example: 3
+                name:
+                  type: string
+                  description: 'The name of the equb type.'
+                  example: 'Weekly equb'
+                round:
+                  type: integer
+                  description: 'The round of the equb type.'
+                  example: 1
+              required:
+                - id
+                - name
+                - round
+      security: []
+  /api/dateCheckForUpdate:
+    post:
+      summary: 'Equb type end date check for update'
+      operationId: equbTypeEndDateCheckForUpdate
+      description: 'This api returns boolean after hecking if end date has passed.'
+      parameters: []
+      responses: {  }
+      tags:
+        - 'Equb Types'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                update_end_date:
+                  type: date
+                  description: 'The end date of the equb type.'
+                  example: 01/01/2023
+              required:
+                - update_end_date
+      security: []
+  /api/dateCheck:
+    post:
+      summary: 'Equb type end date check'
+      operationId: equbTypeEndDateCheck
+      description: 'This api returns boolean after hecking if end date has passed.'
+      parameters: []
+      responses: {  }
+      tags:
+        - 'Equb Types'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                end_date:
+                  type: date
+                  description: 'The end date of the equb type.'
+                  example: 01/01/2023
+              required:
+                - end_date
+      security: []
+  /api/equbType:
+    get:
+      summary: 'Get All Equb types'
+      operationId: getAllEqubTypes
+      description: 'This api returns all Equbs types.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'Equb Types'
+      security: []
+  /api/equbType/register:
+    post:
+      summary: 'Store equb type'
+      operationId: storeEqubType
+      description: 'This api stores and creates equb type.'
+      parameters: []
+      responses: {  }
+      tags:
+        - 'Equb Types'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'The name of the equb type.'
+                  example: 'Weekly equb'
+                round:
+                  type: integer
+                  description: 'The round of the equb type.'
+                  example: 1
+                rote:
+                  type: integer
+                  description: 'The rote of the equb type.'
+                  example: 0
+                type:
+                  type: integer
+                  description: 'The type of the equb type.'
+                  example: 0
+                lottery_date:
+                  type: integer
+                  description: 'The lottery date of the equb type.'
+                  example: 1
+              required:
+                - name
+                - round
+                - rote
+                - type
+                - lottery_date
+      security: []
+  '/api/equbType/update/{id}':
+    post:
+      summary: 'Update of equb type'
+      operationId: updateOfEqubType
+      description: 'This api updates the equb type.'
+      parameters: []
+      responses: {  }
+      tags:
+        - 'Equb Types'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'The name of the equb type.'
+                  example: 'Weekly equb'
+                round:
+                  type: integer
+                  description: 'The round of the equb type.'
+                  example: 0
+              required:
+                - name
+                - round
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the update.'
+        example: consequatur
+        required: true
+        schema:
+          type: string
+  '/api/equbType/delete/{id}':
+    delete:
+      summary: 'Delete equb type'
+      operationId: deleteEqubType
+      description: 'This api deletes the equb type.'
+      parameters: []
+      responses: {  }
+      tags:
+        - 'Equb Types'
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the delete.'
+        example: voluptatem
+        required: true
+        schema:
+          type: string
+  '/api/equbType/updateStatus/{id}':
+    put:
+      summary: 'Update status of equb type'
+      operationId: updateStatusOfEqubType
+      description: 'This api updates the status of the equb type.'
+      parameters: []
+      responses: {  }
+      tags:
+        - 'Equb Types'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: 'The id of the equb type.'
+                  example: 0
+              required:
+                - id
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the updateStatus.'
+        example: quis
+        required: true
+        schema:
+          type: string
+  '/api/equbType/get-winner/{id}':
+    get:
+      summary: 'Get winner of equb type'
+      operationId: getWinnerOfEqubType
+      description: 'This api returns the winner of the draw'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'Equb Types'
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the get winner.'
+        example: repellendus
+        required: true
+        schema:
+          type: string
+  /api/equbTypeCheck:
+    post:
+      summary: 'Check if user has an equb'
+      operationId: checkIfUserHasAnEqub
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Equbs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                equb_type_id:
+                  type: integer
+                  description: 'The id of the equb type.'
+                  example: 9
+                member_id:
+                  type: integer
+                  description: 'The id of the member.'
+                  example: 9
+              required:
+                - equb_type_id
+                - member_id
+      security: []
+  /api/equbTypeCheckForUpdate:
+    post:
+      summary: 'Check if user has an equb'
+      operationId: checkIfUserHasAnEqub
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Equbs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                equb_type_id:
+                  type: integer
+                  description: 'The id of the equb type.'
+                  example: 9
+                member_id:
+                  type: integer
+                  description: 'The id of the member.'
+                  example: 9
+                equb_id:
+                  type: integer
+                  description: 'The id of the equb.'
+                  example: 9
+              required:
+                - equb_type_id
+                - member_id
+                - equb_id
+      security: []
+  /api/dateEqubCheck:
+    post:
+      summary: 'Check if equb date has passed'
+      operationId: checkIfEqubDateHasPassed
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Equbs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                equb_type_id:
+                  type: integer
+                  description: 'The id of the equb type.'
+                  example: 9
+                end_date:
+                  type: Date
+                  description: 'The date to be checked.'
+                  example: 01/01/1996
+              required:
+                - equb_type_id
+                - end_date
+      security: []
+  /api/startDateCheck:
+    post:
+      summary: 'Check if equb has started'
+      operationId: checkIfEqubHasStarted
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Equbs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                equb_type_id:
+                  type: integer
+                  description: 'The id of the equb type.'
+                  example: 9
+                start_date:
+                  type: Date
+                  description: 'The date to be checked.'
+                  example: 01/01/1996
+              required:
+                - equb_type_id
+                - start_date
+      security: []
+  /api/dateEqubLotteryCheck:
+    post:
+      summary: 'Check if lottery date has passed'
+      operationId: checkIfLotteryDateHasPassed
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Equbs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                lottery_date:
+                  type: Date
+                  description: 'The date to be checked.'
+                  example: 01/01/1996
+              required:
+                - lottery_date
+      security: []
+  /api/lotteryDateCheck:
+    post:
+      summary: ''
+      operationId: postApiLotteryDateCheck
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Equbs
+      security: []
+  /api/lotteryDateCheckForUpdate:
+    post:
+      summary: ''
+      operationId: postApiLotteryDateCheckForUpdate
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Equbs
+      security: []
+  /api/dateInterval:
+    post:
+      summary: ''
+      operationId: postApiDateInterval
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Equbs
+      security: []
+  '/api/getDailyPaidAmount/{equb_id}':
+    get:
+      summary: 'Get Daily Paid Amount'
+      operationId: getDailyPaidAmount
+      description: 'This api gets daily paid amount for each equb.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Equbs
+      security: []
+    parameters:
+      -
+        in: path
+        name: equb_id
+        description: 'The ID of the equb.'
+        example: reprehenderit
+        required: true
+        schema:
+          type: string
+  /api/equb:
+    get:
+      summary: 'Get All Equbs'
+      operationId: getAllEqubs
+      description: 'This api returns all Equbs.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Equbs
+      security: []
+  '/api/equb/equb-lottery-detail/{lottery_date}':
+    get:
+      summary: ''
+      operationId: getApiEqubEqubLotteryDetailLottery_date
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Equbs
+      security: []
+    parameters:
+      -
+        in: path
+        name: lottery_date
+        description: ''
+        example: enim
+        required: true
+        schema:
+          type: string
+  /api/equb/equb-register:
+    get:
+      summary: ''
+      operationId: getApiEqubEqubRegister
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Equbs
+      security: []
+    post:
+      summary: 'Create equb'
+      operationId: createEqub
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Equbs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                equb_type_id:
+                  type: integer
+                  description: 'The id of the equb type.'
+                  example: 2
+                amount:
+                  type: integer
+                  description: 'The amount to be paid frequently.'
+                  example: 1000
+                total_amount:
+                  type: integer
+                  description: 'The amount to be paid in total.'
+                  example: 10000
+                start_date:
+                  type: Date
+                  description: 'The start date of the equb.'
+                  example: 01/01/1996
+                end_date:
+                  type: Date
+                  description: 'The end date of the equb.'
+                  example: 01/01/1996
+                lottery_date:
+                  type: Date
+                  description: 'The lottery date of the equb.'
+                  example: 01/01/1996
+              required:
+                - equb_type_id
+                - amount
+                - total_amount
+                - start_date
+                - end_date
+                - lottery_date
+      security: []
+  '/api/equb/show-equb/{id}':
+    get:
+      summary: 'Show equbs'
+      operationId: showEqubs
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Equbs
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the show equb.'
+        example: quo
+        required: true
+        schema:
+          type: string
+  '/api/equb/equb-update/{id}':
+    post:
+      summary: 'Update equb'
+      operationId: updateEqub
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Equbs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                equb_type_id:
+                  type: integer
+                  description: 'The id of the equb type.'
+                  example: 2
+                amount:
+                  type: integer
+                  description: 'The amount to be paid frequently.'
+                  example: 1000
+                total_amount:
+                  type: integer
+                  description: 'The amount to be paid in total.'
+                  example: 10000
+                start_date:
+                  type: Date
+                  description: 'The start date of the equb.'
+                  example: 01/01/1996
+                end_date:
+                  type: Date
+                  description: 'The end date of the equb.'
+                  example: 01/01/1996
+                lottery_date:
+                  type: Date
+                  description: 'The lottery date of the equb.'
+                  example: 01/01/1996
+              required:
+                - equb_type_id
+                - amount
+                - total_amount
+                - start_date
+                - end_date
+                - lottery_date
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the equb update.'
+        example: aut
+        required: true
+        schema:
+          type: string
+  '/api/equb/equbStatus-update/{id}':
+    put:
+      summary: 'Update status'
+      operationId: updateStatus
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Equbs
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the equbStatus update.'
+        example: veritatis
+        required: true
+        schema:
+          type: string
+  '/api/equb/equb-delete/{id}':
+    delete:
+      summary: 'Delete Equb'
+      operationId: deleteEqub
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Equbs
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the equb delete.'
+        example: molestiae
+        required: true
+        schema:
+          type: string
+  /api/member/registerMember:
+    post:
+      summary: 'Register member'
+      operationId: registerMember
+      description: 'This api regsters members.'
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "{\n    \"message\": \"Member registered successfully.\"\n     \"user\": {\n        \"id\": 1,\n        \"full_name\": \"Eyob\",\n        \"phone\": \"0911212121\",\n        \"gender\": \"Male\",\n        \"city\": \"Addis Ababa\",\n        \"woreda\": 1,\n        \"housenumber\": 1111,\n        \"location\": \"Bole\"\n    }\n}"
+        400:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'Unknown error occurred, Please try again!.'
+                properties:
+                  message:
+                    type: string
+                    example: 'Unknown error occurred, Please try again!.'
+      tags:
+        - Members
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                full_name:
+                  type: string
+                  description: 'The name of the member.'
+                  example: eyob
+                phone:
+                  type: string
+                  description: 'The phone of the member.'
+                  example: '0911212121'
+                gender:
+                  type: string
+                  description: 'The gender of the member.'
+                  example: male
+                city:
+                  type: string
+                  description: 'The city of the member.'
+                  example: 'Addis Ababa'
+                woreda:
+                  type: integer
+                  description: 'The woreda of the member.'
+                  example: 1
+                housenumber:
+                  type: integer
+                  description: 'The house number of the member.'
+                  example: 1111
+                location:
+                  type: string
+                  description: 'The location of the member.'
+                  example: bole
+                password:
+                  type: string
+                  description: 'The password of the member.'
+                  example: P@ssw0rd
+              required:
+                - full_name
+                - phone
+                - gender
+                - city
+                - woreda
+                - housenumber
+                - location
+                - password
+      security: []
+  '/api/member/updateProfile/{id}':
+    post:
+      summary: 'Update profile'
+      operationId: updateProfile
+      description: 'This api updates members profiles.'
+      parameters: []
+      responses: {  }
+      tags:
+        - Members
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                full_name:
+                  type: string
+                  description: 'The ame of the member.'
+                  example: eyob
+                phone:
+                  type: integer
+                  description: 'The phone of the member.'
+                  example: 911252525
+                gender:
+                  type: string
+                  description: 'The gender of the member.'
+                  example: male
+                email:
+                  type: string
+                  description: 'The email of the member.'
+                  example: eyob@gmail.com
+                city:
+                  type: string
+                  description: 'The city of the member.'
+                  example: 'Addis Ababa'
+                subcity:
+                  type: string
+                  description: 'The subcity of the member.'
+                  example: Bole
+                woreda:
+                  type: string
+                  description: 'The woreda of the member.'
+                  example: '05'
+                housenumber:
+                  type: string
+                  description: 'The housenumber of the member.'
+                  example: '1414'
+                location:
+                  type: string
+                  description: 'The location of the member.'
+                  example: Bole
+              required:
+                - full_name
+                - phone
+                - gender
+                - email
+                - city
+                - subcity
+                - woreda
+                - housenumber
+                - location
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the updateProfile.'
+        example: quis
+        required: true
+        schema:
+          type: string
+  /api/checkMemberPhoneExist:
+    post:
+      summary: 'Check if phone exists'
+      operationId: checkIfPhoneExists
+      description: 'This api checks if phone exists.'
+      parameters: []
+      responses: {  }
+      tags:
+        - Members
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phone:
+                  type: integer
+                  description: 'The phone number of the member.'
+                  example: 911111111
+              required:
+                - phone
+      security: []
+  /api/getMembersByEqubType:
+    get:
+      summary: 'Get all users with equb type'
+      operationId: getAllUsersWithEqubType
+      description: 'This api returns all users with pagination.'
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  totalUsers: []
+                properties:
+                  totalUsers:
+                    type: array
+                    example: []
+      tags:
+        - Members
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                equbType:
+                  type: string
+                  description: 'The equb type to filter.'
+                  example: Manual
+              required:
+                - equbType
+      security: []
+  /api/phoneCheck:
+    post:
+      summary: 'Check if phone exists'
+      operationId: checkIfPhoneExists
+      description: 'This api checks if phone exists.'
+      parameters: []
+      responses: {  }
+      tags:
+        - Members
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                m_id:
+                  type: integer
+                  description: 'The id of the member.'
+                  example: 1
+                phone:
+                  type: integer
+                  description: 'The phone number of the member.'
+                  example: 911111111
+              required:
+                - m_id
+                - phone
+      security: []
+  /api/member:
+    get:
+      summary: 'Get all members'
+      operationId: getAllMembers
+      description: 'This api returns all members.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Members
+      security: []
+  '/api/member/getMemberById/{id}':
+    get:
+      summary: 'Get member by id'
+      operationId: getMemberById
+      description: 'This api returns member using an id.'
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  member: null
+                properties:
+                  member:
+                    type: string
+                    example: null
+      tags:
+        - Members
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the getMemberById.'
+        example: autem
+        required: true
+        schema:
+          type: string
+  /api/member/clearSearchEntry:
+    get:
+      summary: 'Clear search entry'
+      operationId: clearSearchEntry
+      description: 'This api clear search entry.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Members
+      security: []
+  '/api/member/loadMoreMember/{offsetVal}/{pageNumberVal}':
+    get:
+      summary: 'Load more members'
+      operationId: loadMoreMembers
+      description: 'This api returns more members.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Members
+      security: []
+    parameters:
+      -
+        in: path
+        name: offsetVal
+        description: ''
+        example: velit
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: pageNumberVal
+        description: ''
+        example: eos
+        required: true
+        schema:
+          type: string
+  '/api/member/get-equbs/{id}':
+    get:
+      summary: 'Show members equbs'
+      operationId: showMembersEqubs
+      description: 'This api shows members equbs.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Members
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the get equb.'
+        example: harum
+        required: true
+        schema:
+          type: string
+  '/api/member/search-member/{searchInput}/{offset}/{pageNumber}':
+    get:
+      summary: 'Search members'
+      operationId: searchMembers
+      description: 'This api searches members.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Members
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                searchInput:
+                  type: string
+                  description: 'The search input.'
+                  example: eyob/0911212121
+              required:
+                - searchInput
+      security: []
+    parameters:
+      -
+        in: path
+        name: searchInput
+        description: ''
+        example: ut
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: offset
+        description: ''
+        example: voluptatem
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: pageNumber
+        description: 'Optional parameter.'
+        required: true
+        schema:
+          type: string
+        examples:
+          omitted:
+            summary: 'When the value is omitted'
+            value: ''
+          present:
+            summary: 'When the value is present'
+            value: earum
+  /api/member/get-allEqubs:
+    get:
+      summary: 'Get All Equbs'
+      operationId: getAllEqubs
+      description: 'This api returns all equbs.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Members
+      security: []
+  /api/member/create-member:
+    get:
+      summary: ''
+      operationId: getApiMemberCreateMember
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Members
+      security: []
+  /api/member/register:
+    post:
+      summary: 'Create member'
+      operationId: createMember
+      description: 'This api created equbs.'
+      parameters: []
+      responses: {  }
+      tags:
+        - Members
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                full_name:
+                  type: string
+                  description: 'The name of the member.'
+                  example: eyob
+                phone:
+                  type: string
+                  description: 'The phone of the member.'
+                  example: '0911212121'
+                gender:
+                  type: string
+                  description: 'The gender of the member.'
+                  example: male
+                city:
+                  type: string
+                  description: 'The city of the member.'
+                  example: 'Addis Ababa'
+                woreda:
+                  type: integer
+                  description: 'The woreda of the member.'
+                  example: 1
+                housenumber:
+                  type: integer
+                  description: 'The house number of the member.'
+                  example: 1111
+                location:
+                  type: string
+                  description: 'The location of the member.'
+                  example: bole
+              required:
+                - full_name
+                - phone
+                - gender
+                - city
+                - woreda
+                - housenumber
+                - location
+      security: []
+  '/api/member/update/{id}':
+    put:
+      summary: 'Update member'
+      operationId: updateMember
+      description: 'This api updates member status.'
+      parameters: []
+      responses: {  }
+      tags:
+        - Members
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                full_name:
+                  type: string
+                  description: 'The ame of the member.'
+                  example: eyob
+                phone:
+                  type: integer
+                  description: 'The phone of the member.'
+                  example: 911252525
+                gender:
+                  type: string
+                  description: 'The gender of the member.'
+                  example: male
+                email:
+                  type: string
+                  description: 'The email of the member.'
+                  example: eyob@gmail.com
+                city:
+                  type: string
+                  description: 'The city of the member.'
+                  example: 'Addis Ababa'
+                subcity:
+                  type: string
+                  description: 'The subcity of the member.'
+                  example: Bole
+                woreda:
+                  type: string
+                  description: 'The woreda of the member.'
+                  example: '05'
+                housenumber:
+                  type: string
+                  description: 'The housenumber of the member.'
+                  example: '1414'
+                location:
+                  type: string
+                  description: 'The location of the member.'
+                  example: Bole
+              required:
+                - full_name
+                - phone
+                - gender
+                - email
+                - city
+                - subcity
+                - woreda
+                - housenumber
+                - location
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the update.'
+        example: deleniti
+        required: true
+        schema:
+          type: string
+  '/api/member/updateStatus/{id}':
+    put:
+      summary: 'Update member status'
+      operationId: updateMemberStatus
+      description: 'This api updates member status.'
+      parameters: []
+      responses: {  }
+      tags:
+        - Members
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the updateStatus.'
+        example: omnis
+        required: true
+        schema:
+          type: string
+  '/api/member/delete/{id}':
+    delete:
+      summary: 'Delete Member'
+      operationId: deleteMember
+      description: 'This api deletes member.'
+      parameters: []
+      responses: {  }
+      tags:
+        - Members
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the delete.'
+        example: vitae
+        required: true
+        schema:
+          type: string
+  '/api/getPaymentsByReference/{reference}':
+    get:
+      summary: ''
+      operationId: getApiGetPaymentsByReferenceReference
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  payments: []
+                properties:
+                  payments:
+                    type: array
+                    example: []
+      tags:
+        - Payments
+      security: []
+    parameters:
+      -
+        in: path
+        name: reference
+        description: ''
+        example: maiores
+        required: true
+        schema:
+          type: string
+  '/api/payment/{member_id}/{equb_id}':
+    get:
+      summary: 'Get all payments of members'
+      operationId: getAllPaymentsOfMembers
+      description: 'This api returns all payments members.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Payments
+      security: []
+    parameters:
+      -
+        in: path
+        name: member_id
+        description: 'The ID of the member.'
+        example: 1
+        required: true
+        schema:
+          type: integer
+      -
+        in: path
+        name: equb_id
+        description: 'The ID of the equb.'
+        example: dolorem
+        required: true
+        schema:
+          type: string
+  '/api/payment/show-payment/{member_id}/{equb_id}/{offsetVal}/{pageNumberVal}':
+    get:
+      summary: 'Get Paginated Payment'
+      operationId: getPaginatedPayment
+      description: 'This api gets paginated payments.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Payments
+      security: []
+    parameters:
+      -
+        in: path
+        name: member_id
+        description: 'The ID of the member.'
+        example: dolorem
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: equb_id
+        description: 'The ID of the equb.'
+        example: tenetur
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: offsetVal
+        description: ''
+        example: expedita
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: pageNumberVal
+        description: ''
+        example: repudiandae
+        required: true
+        schema:
+          type: string
+  /api/payment/register:
+    post:
+      summary: 'Create Payment'
+      operationId: createPayment
+      description: 'This api creates payments.'
+      parameters: []
+      responses: {  }
+      tags:
+        - Payments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                payment_type:
+                  type: string
+                  description: 'The payment type.'
+                  example: Bank
+                amount:
+                  type: integer
+                  description: 'The amount to be paid.'
+                  example: 1000
+                creadit:
+                  type: integer
+                  description: 'The credit.'
+                  example: 1000
+              required:
+                - payment_type
+                - amount
+                - creadit
+      security: []
+  '/api/payment/updatePayment/{member_id}/{equb_id}/{id}':
+    put:
+      summary: 'Update Payment'
+      operationId: updatePayment
+      description: 'This api update payments.'
+      parameters: []
+      responses: {  }
+      tags:
+        - Payments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                payment_type:
+                  type: string
+                  description: 'The type of payment.'
+                  example: Bank
+                amount:
+                  type: integer
+                  description: 'The amount to be paid.'
+                  example: 1000
+              required:
+                - payment_type
+                - amount
+      security: []
+    parameters:
+      -
+        in: path
+        name: member_id
+        description: 'The ID of the member.'
+        example: dolor
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: equb_id
+        description: 'The ID of the equb.'
+        example: ipsam
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: id
+        description: 'The ID of the {equb id}.'
+        example: provident
+        required: true
+        schema:
+          type: string
+  '/api/payment/deleteAll/{member_id}/{equb_id}':
+    delete:
+      summary: 'Delete all Payment'
+      operationId: deleteAllPayment
+      description: 'This api delete all payments of the member to an equb.'
+      parameters: []
+      responses: {  }
+      tags:
+        - Payments
+      security: []
+    parameters:
+      -
+        in: path
+        name: member_id
+        description: 'The ID of the member.'
+        example: praesentium
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: equb_id
+        description: 'The ID of the equb.'
+        example: animi
+        required: true
+        schema:
+          type: string
+  '/api/payment/delete/{id}':
+    delete:
+      summary: 'Delete Payment'
+      operationId: deletePayment
+      description: 'This api delete payment.'
+      parameters: []
+      responses: {  }
+      tags:
+        - Payments
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the delete.'
+        example: expedita
+        required: true
+        schema:
+          type: string
+  /api/offDateCheck:
+    post:
+      summary: 'Check rejected date'
+      operationId: checkRejectedDate
+      description: 'This api checks if rejected date exists.'
+      parameters: []
+      responses: {  }
+      tags:
+        - 'Rejected Dates'
+      security: []
+  /api/updateoffDateCheck:
+    post:
+      summary: 'Check rejected date'
+      operationId: checkRejectedDate
+      description: 'This api checks if rejected date exists.'
+      parameters: []
+      responses: {  }
+      tags:
+        - 'Rejected Dates'
+      security: []
+  /api/rejectedDate:
+    get:
+      summary: 'Get all rejected dates'
+      operationId: getAllRejectedDates
+      description: 'This api returns all rejected dates.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'Rejected Dates'
+      security: []
+  /api/rejectedDate/register:
+    post:
+      summary: 'Create rejected dates'
+      operationId: createRejectedDates
+      description: 'This api created rejected dates.'
+      parameters: []
+      responses: {  }
+      tags:
+        - 'Rejected Dates'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rejected_date:
+                  type: date
+                  description: 'The date to be rejected.'
+                  example: 01/01/2012
+              required:
+                - rejected_date
+      security: []
+  '/api/rejectedDate/update/{id}':
+    put:
+      summary: 'Update rejected date'
+      operationId: updateRejectedDate
+      description: 'This api updates rejected date.'
+      parameters: []
+      responses: {  }
+      tags:
+        - 'Rejected Dates'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rejected_date:
+                  type: date
+                  description: 'The date to be rejected.'
+                  example: 01/01/2012
+                description:
+                  type: string
+                  description: 'The description of the rejected date.'
+                  example: 'this is the rejected date'
+              required:
+                - rejected_date
+                - description
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the update.'
+        example: ut
+        required: true
+        schema:
+          type: string
+  '/api/rejectedDate/delete/{id}':
+    delete:
+      summary: 'Delete rejected date'
+      operationId: deleteRejectedDate
+      description: 'This api deletes a rejected date.'
+      parameters: []
+      responses: {  }
+      tags:
+        - 'Rejected Dates'
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the delete.'
+        example: ut
+        required: true
+        schema:
+          type: string
+  /api/reports/memberFilter:
+    get:
+      summary: ''
+      operationId: getApiReportsMemberFilter
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Reports
+      security: []
+  '/api/reports/members/{dateFrom}/{dateTo}':
+    get:
+      summary: 'Get Members between dates'
+      operationId: getMembersBetweenDates
+      description: 'This api gets members based on date filters.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Reports
+      security: []
+    parameters:
+      -
+        in: path
+        name: dateFrom
+        description: ''
+        example: 1
+        required: true
+        schema:
+          type: integer
+      -
+        in: path
+        name: dateTo
+        description: ''
+        example: quia
+        required: true
+        schema:
+          type: string
+  '/api/reports/paginateMembers/{dateFrom}/{dateTo}/{offsetVal}/{pageNumberVal}':
+    get:
+      summary: 'Get Members between dates for pagination'
+      operationId: getMembersBetweenDatesForPagination
+      description: 'This api gets members based on date filters for pagination.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Reports
+      security: []
+    parameters:
+      -
+        in: path
+        name: dateFrom
+        description: ''
+        example: nobis
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: dateTo
+        description: ''
+        example: ipsa
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: offsetVal
+        description: ''
+        example: laboriosam
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: pageNumberVal
+        description: ''
+        example: qui
+        required: true
+        schema:
+          type: string
+  /api/reports/equbTypeFilter:
+    get:
+      summary: ''
+      operationId: getApiReportsEqubTypeFilter
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Reports
+      security: []
+  '/api/reports/equbTypes/{dateFrom}/{dateTo}':
+    get:
+      summary: 'Get equb types by date'
+      operationId: getEqubTypesByDate
+      description: 'This api gets equb types based on date filters .'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Reports
+      security: []
+    parameters:
+      -
+        in: path
+        name: dateFrom
+        description: ''
+        example: 1
+        required: true
+        schema:
+          type: integer
+      -
+        in: path
+        name: dateTo
+        description: ''
+        example: iure
+        required: true
+        schema:
+          type: string
+  /api/reports/equbFilter:
+    get:
+      summary: 'Get all members'
+      operationId: getAllMembers
+      description: 'This api gets all members.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Reports
+      security: []
+  '/api/reports/equbs/{dateFrom}/{dateTo}':
+    get:
+      summary: 'Get equbs between dates'
+      operationId: getEqubsBetweenDates
+      description: 'This api gets equbs based on date filters.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Reports
+      security: []
+    parameters:
+      -
+        in: path
+        name: dateFrom
+        description: ''
+        example: 1
+        required: true
+        schema:
+          type: integer
+      -
+        in: path
+        name: dateTo
+        description: ''
+        example: beatae
+        required: true
+        schema:
+          type: string
+  '/api/reports/paginateEqubs/{dateFrom}/{dateTo}/{offsetVal}/{pageNumberVal}':
+    get:
+      summary: 'Get equbs between dates for pagination'
+      operationId: getEqubsBetweenDatesForPagination
+      description: 'This api gets equbs based on date filters for pagination.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Reports
+      security: []
+    parameters:
+      -
+        in: path
+        name: dateFrom
+        description: ''
+        example: repudiandae
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: dateTo
+        description: ''
+        example: sed
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: offsetVal
+        description: ''
+        example: non
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: pageNumberVal
+        description: ''
+        example: velit
+        required: true
+        schema:
+          type: string
+  /api/reports/lotteryFilter:
+    get:
+      summary: 'Get all lotteries'
+      operationId: getAllLotteries
+      description: 'This api gets all lotteries.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Reports
+      security: []
+  '/api/reports/lotterys/{dateFrom}/{dateTo}/{member_id}/{equb_type_id}':
+    get:
+      summary: 'Get equbs between dates'
+      operationId: getEqubsBetweenDates
+      description: 'This api gets equbs based on date filters.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Reports
+      security: []
+    parameters:
+      -
+        in: path
+        name: dateFrom
+        description: ''
+        example: dolorem
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: dateTo
+        description: ''
+        example: molestiae
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: member_id
+        description: 'The ID of the member.'
+        example: voluptates
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: equb_type_id
+        description: 'The ID of the equb type.'
+        example: sequi
+        required: true
+        schema:
+          type: string
+  '/api/reports/paginateLotterys/{dateFrom}/{dateTo}/{member_id}/{equb_type_id}/{offsetVal}/{pageNumberVal}':
+    get:
+      summary: 'Get equbs between dates for pagination'
+      operationId: getEqubsBetweenDatesForPagination
+      description: 'This api gets equbs based on date filters for pagination.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Reports
+      security: []
+    parameters:
+      -
+        in: path
+        name: dateFrom
+        description: ''
+        example: corrupti
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: dateTo
+        description: ''
+        example: occaecati
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: member_id
+        description: 'The ID of the member.'
+        example: eius
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: equb_type_id
+        description: 'The ID of the equb type.'
+        example: in
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: offsetVal
+        description: ''
+        example: ad
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: pageNumberVal
+        description: ''
+        example: voluptas
+        required: true
+        schema:
+          type: string
+  /api/reports/unPaidLotteryFilter:
+    get:
+      summary: 'Get all unpaid lotteries'
+      operationId: getAllUnpaidLotteries
+      description: 'This api gets all unpaid lotteries.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Reports
+      security: []
+  /api/reports/unPaidLotterys:
+    get:
+      summary: 'Get all unpaid lotteries of a member'
+      operationId: getAllUnpaidLotteriesOfAMember
+      description: 'This api gets all unpaid lotteries of a member.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Reports
+      security: []
+  '/api/reports/paginateUnPaidLotterys/{offsetVal}/{pageNumberVal}':
+    get:
+      summary: 'Get all unpaid lotteries'
+      operationId: getAllUnpaidLotteries
+      description: 'This api gets all unpaid lotteries.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Reports
+      security: []
+    parameters:
+      -
+        in: path
+        name: offsetVal
+        description: ''
+        example: deserunt
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: pageNumberVal
+        description: ''
+        example: iusto
+        required: true
+        schema:
+          type: string
+  '/api/reports/paginatePayments/{dateFrom}/{dateTo}/{member_id}/{equb_id}/{offsetVal}/{pageNumberVal}':
+    get:
+      summary: 'Get payments between dates for pagnation'
+      operationId: getPaymentsBetweenDatesForPagnation
+      description: 'This api gets payments based on date filters and member id and equb id for pagnation.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Reports
+      security: []
+    parameters:
+      -
+        in: path
+        name: dateFrom
+        description: ''
+        example: corporis
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: dateTo
+        description: ''
+        example: error
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: member_id
+        description: 'The ID of the member.'
+        example: sit
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: equb_id
+        description: 'The ID of the equb.'
+        example: illo
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: offsetVal
+        description: ''
+        example: non
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: pageNumberVal
+        description: ''
+        example: ad
+        required: true
+        schema:
+          type: string
+  /api/reports/paymentFilter:
+    get:
+      summary: 'Get all payments'
+      operationId: getAllPayments
+      description: 'This api gets all payments.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Reports
+      security: []
+  '/api/reports/payments/{dateFrom}/{dateTo}/{member_id}/{equb_id}':
+    get:
+      summary: 'Get payments between dates'
+      operationId: getPaymentsBetweenDates
+      description: 'This api gets payments based on date filters and member id and equb id.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Reports
+      security: []
+    parameters:
+      -
+        in: path
+        name: dateFrom
+        description: ''
+        example: 1
+        required: true
+        schema:
+          type: integer
+      -
+        in: path
+        name: dateTo
+        description: ''
+        example: et
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: member_id
+        description: 'The ID of the member.'
+        example: animi
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: equb_id
+        description: 'The ID of the equb.'
+        example: provident
+        required: true
+        schema:
+          type: string
+  '/api/reports/paginateCllectedBys/{dateFrom}/{dateTo}/{collecter}/{offsetVal}/{pageNumberVal}':
+    get:
+      summary: 'Get payments between dates and with collector'
+      operationId: getPaymentsBetweenDatesAndWithCollector
+      description: 'This api gets payments based on date filters and member id and equb id and with collector.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Reports
+      security: []
+    parameters:
+      -
+        in: path
+        name: dateFrom
+        description: ''
+        example: sunt
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: dateTo
+        description: ''
+        example: optio
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: collecter
+        description: ''
+        example: porro
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: offsetVal
+        description: ''
+        example: aspernatur
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: pageNumberVal
+        description: ''
+        example: ut
+        required: true
+        schema:
+          type: string
+  /api/reports/collectedByFilter:
+    get:
+      summary: 'Get equb collectors'
+      operationId: getEqubCollectors
+      description: 'This api gets all equbcollectors.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Reports
+      security: []
+  '/api/reports/collectedBys/{dateFrom}/{dateTo}/{collecter}':
+    get:
+      summary: 'Get payments between dates and with collector'
+      operationId: getPaymentsBetweenDatesAndWithCollector
+      description: 'This api gets payments based on date filters and member id and equb id and with collector.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Reports
+      security: []
+    parameters:
+      -
+        in: path
+        name: dateFrom
+        description: ''
+        example: a
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: dateTo
+        description: ''
+        example: quis
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: collecter
+        description: ''
+        example: eligendi
+        required: true
+        schema:
+          type: string
+  /api/checkUserPhoneExist:
+    post:
+      summary: 'Check if phone exists'
+      operationId: checkIfPhoneExists
+      description: 'This api checks if phone exists.'
+      parameters: []
+      responses: {  }
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phone:
+                  type: string
+                  description: 'The phone number of the user.'
+                  example: '0911222222'
+              required:
+                - phone
+      security: []
+  /api/resetPassword:
+    post:
+      summary: 'Reset Password From App'
+      operationId: resetPasswordFromApp
+      description: 'This api resets users passwords.'
+      parameters: []
+      responses: {  }
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                u_id:
+                  type: string
+                  description: 'The id of the user.'
+                  example: '1'
+                reset_password:
+                  type: string
+                  description: 'The password to be reset.'
+                  example: P@ssw0rd
+              required:
+                - u_id
+                - reset_password
+      security: []
+  '/api/sendOtp/{phone}':
+    get:
+      summary: 'Sent OTP'
+      operationId: sentOTP
+      description: 'This api sends OTP.'
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  acknowledge: error
+                  response:
+                    errors:
+                      - 'Recipient phone number is invalid .'
+                    relatedObject: '/api/challenge?from=e80ad9d8-adf3-463f-80f4-7c4b39f7f164&sender=Vintage&to=porro&pr=Your%20OTP%20is&sb=1&sa=0&ttl=300&len=6&t=0'
+                properties:
+                  acknowledge:
+                    type: string
+                    example: error
+                  response:
+                    type: object
+                    properties:
+                      errors:
+                        type: array
+                        example:
+                          - 'Recipient phone number is invalid .'
+                        items:
+                          type: string
+                      relatedObject:
+                        type: string
+                        example: '/api/challenge?from=e80ad9d8-adf3-463f-80f4-7c4b39f7f164&sender=Vintage&to=porro&pr=Your%20OTP%20is&sb=1&sa=0&ttl=300&len=6&t=0'
+      tags:
+        - Users
+      security: []
+    parameters:
+      -
+        in: path
+        name: phone
+        description: ''
+        example: porro
+        required: true
+        schema:
+          type: string
+  '/api/verifyOtp/{code}/{phone}':
+    get:
+      summary: 'Verify OTP'
+      operationId: verifyOTP
+      description: 'This api verifies OTP.'
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  acknowledge: error
+                  response:
+                    errors:
+                      - 'Seems like we dont have this code in our database for this phone or verification id. Please try again...'
+                    relatedObject: '/api/verify?&to=reprehenderit&code=at'
+                properties:
+                  acknowledge:
+                    type: string
+                    example: error
+                  response:
+                    type: object
+                    properties:
+                      errors:
+                        type: array
+                        example:
+                          - 'Seems like we dont have this code in our database for this phone or verification id. Please try again...'
+                        items:
+                          type: string
+                      relatedObject:
+                        type: string
+                        example: '/api/verify?&to=reprehenderit&code=at'
+      tags:
+        - Users
+      security: []
+    parameters:
+      -
+        in: path
+        name: code
+        description: ''
+        example: at
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: phone
+        description: ''
+        example: reprehenderit
+        required: true
+        schema:
+          type: string
+  /api/user:
+    get:
+      summary: 'Get all users'
+      operationId: getAllUsers
+      description: 'This api returns all users.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Users
+      security: []
+  /api/userPhoneCheck:
+    post:
+      summary: 'Check if phone exists'
+      operationId: checkIfPhoneExists
+      description: 'This api checks if phone exists.'
+      parameters: []
+      responses: {  }
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: 'The id of the user.'
+                  example: '1'
+                phone:
+                  type: string
+                  description: 'The phone number of the user.'
+                  example: '0911222222'
+              required:
+                - id
+                - phone
+      security: []
+  /api/emailCheck:
+    post:
+      summary: 'Check if email exists'
+      operationId: checkIfEmailExists
+      description: 'This api checks if email exists.'
+      parameters: []
+      responses: {  }
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                u_id:
+                  type: string
+                  description: 'The id of the user.'
+                  example: '1'
+                email:
+                  type: string
+                  description: 'The email of the user.'
+                  example: eyob@gmail.com
+              required:
+                - u_id
+                - email
+      security: []
+  '/api/changePassword/{id}':
+    post:
+      summary: 'Change Password'
+      operationId: changePassword
+      description: 'This api changes passwords.'
+      parameters: []
+      responses: {  }
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                old_password:
+                  type: string
+                  description: 'The old password to be reset.'
+                  example: P@ssw0rd
+                new_password:
+                  type: string
+                  description: 'The new password to be reset.'
+                  example: P@ssw0rd
+              required:
+                - old_password
+                - new_password
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the changePassword.'
+        example: necessitatibus
+        required: true
+        schema:
+          type: string
+  '/api/user/user/{offsetVal}/{pageNumberVal}':
+    get:
+      summary: 'Get all users with pagination'
+      operationId: getAllUsersWithPagination
+      description: 'This api returns all users with pagination.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Users
+      security: []
+    parameters:
+      -
+        in: path
+        name: offsetVal
+        description: ''
+        example: 1
+        required: true
+        schema:
+          type: integer
+      -
+        in: path
+        name: pageNumberVal
+        description: ''
+        example: architecto
+        required: true
+        schema:
+          type: string
+  '/api/user/deactiveUser/{offsetVal}/{pageNumberVal}':
+    get:
+      summary: 'Get deactivated users with pagination'
+      operationId: getDeactivatedUsersWithPagination
+      description: 'This api returns deactivated users with pagination.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Users
+      security: []
+    parameters:
+      -
+        in: path
+        name: offsetVal
+        description: ''
+        example: vel
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: pageNumberVal
+        description: ''
+        example: fugiat
+        required: true
+        schema:
+          type: string
+  /api/user/store-user:
+    post:
+      summary: 'Create user'
+      operationId: createUser
+      description: 'This api creates a user.'
+      parameters: []
+      responses: {  }
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'The name of the user.'
+                  example: eyob
+                email:
+                  type: string
+                  description: 'The email of the user.'
+                  example: eyob@gmail.com
+                phone_number:
+                  type: string
+                  description: 'The phone of the user.'
+                  example: '0911111111'
+                gender:
+                  type: string
+                  description: 'The gender of the user.'
+                  example: male
+                role:
+                  type: string
+                  description: 'The role of the user.'
+                  example: admin
+              required:
+                - name
+                - email
+                - phone_number
+                - gender
+                - role
+      security: []
+  '/api/user/edit/{id}':
+    get:
+      summary: ''
+      operationId: getApiUserEditId
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Users
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the edit.'
+        example: qui
+        required: true
+        schema:
+          type: string
+  '/api/user/update/{id}':
+    put:
+      summary: 'Update user'
+      operationId: updateUser
+      description: 'This api updates a user.'
+      parameters: []
+      responses: {  }
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'The name of the user.'
+                  example: eyob
+                email:
+                  type: string
+                  description: 'The email of the user.'
+                  example: eyob@gmail.com
+                phone_number:
+                  type: string
+                  description: 'The phone of the user.'
+                  example: '0911111111'
+                gender:
+                  type: string
+                  description: 'The gender of the user.'
+                  example: male
+                role:
+                  type: string
+                  description: 'The role of the user.'
+                  example: admin
+              required:
+                - name
+                - email
+                - phone_number
+                - gender
+                - role
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the update.'
+        example: deleniti
+        required: true
+        schema:
+          type: string
+  '/api/user/deactivateUser/{id}':
+    put:
+      summary: 'Deactivate user'
+      operationId: deactivateUser
+      description: 'This api deactivates a user.'
+      parameters: []
+      responses: {  }
+      tags:
+        - Users
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the deactivateUser.'
+        example: voluptatem
+        required: true
+        schema:
+          type: string
+  '/api/user/activateUser/{id}':
+    put:
+      summary: 'Activate user'
+      operationId: activateUser
+      description: 'This api activates a user.'
+      parameters: []
+      responses: {  }
+      tags:
+        - Users
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the activateUser.'
+        example: velit
+        required: true
+        schema:
+          type: string
+  '/api/user/delete/{id}':
+    delete:
+      summary: 'Delete user'
+      operationId: deleteUser
+      description: 'This api deletes a user.'
+      parameters: []
+      responses: {  }
+      tags:
+        - Users
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the delete.'
+        example: in
+        required: true
+        schema:
+          type: string
+  /api/user/resetPassword:
+    post:
+      summary: 'Reset Password'
+      operationId: resetPassword
+      description: 'This api resets users passwords.'
+      parameters: []
+      responses: {  }
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                u_id:
+                  type: string
+                  description: 'The id of the user.'
+                  example: '1'
+                password:
+                  type: string
+                  description: 'The password to be reset.'
+                  example: P@ssw0rd
+              required:
+                - u_id
+                - password
+      security: []
+tags:
+  -
+    name: Dashboard
+    description: ''
+  -
+    name: Endpoints
+    description: ''
+  -
+    name: 'Equb Takers'
+    description: ''
+  -
+    name: 'Equb Types'
+    description: ''
+  -
+    name: Equbs
+    description: ''
+  -
+    name: Members
+    description: ''
+  -
+    name: Payments
+    description: ''
+  -
+    name: 'Rejected Dates'
+    description: ''
+  -
+    name: Reports
+    description: ''
+  -
+    name: Users
+    description: ''

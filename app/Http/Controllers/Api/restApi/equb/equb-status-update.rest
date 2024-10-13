@@ -1,0 +1,8 @@
+
+PUT http://127.0.0.1:8000/api/equb/equbStatus-update/64
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE2NTgzMDk2MTgsImV4cCI6MTY1ODMxMzIxOCwibmJmIjoxNjU4MzA5NjE4LCJqdGkiOiI2cmtjMXVvY2ZBRDZWczdaIiwic3ViIjoiMSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.KJ1IHlbLHykZe8E9fRQMAx2swF32dgWCA21yYv8z7Uk
+content-type: application/json
+
+{   
+   "status":"'  Deactive"
+}

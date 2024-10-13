@@ -1,0 +1,14 @@
+POST http://127.0.0.1:8000/api/equbTaker/equbTaker-register
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE2NTgzMjQzODcsImV4cCI6MTY1ODMyNzk4NywibmJmIjoxNjU4MzI0Mzg3LCJqdGkiOiJCd21reFBjRVhyZmw4TDc1Iiwic3ViIjoiMSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.kxE1acaNJxG_NXrhXILHR_m-6zyTr_ZdyGY-fbLetR8
+content-type: application/json
+
+{	
+      "lottey_member_id": "6",
+      "lottery_equb_id": "12",
+      "payment_type": "bank transfer",
+      "amount": "10550000",
+      "status": "paid",
+      "cheque_amount": "600",
+      "cheque_bank_name": "Oromia cooperation bank",
+      "cheque_description": "First cheque"
+}
