@@ -10,6 +10,8 @@
                               <th>City</th>
                               <th>Sub City</th>
                               <th>Location</th>
+                              <th>Woreda  </th>
+                              <th>House Number  </th>
                               <th>Status</th>
                               <th>Rating</th>
                               <th>Registered At </th>
@@ -31,6 +33,8 @@
                                   <td>{{ $item->city }}</td>
                                   <td>{{ $item->subcity }}</td>
                                   <td>{{ $item->specific_location }}</td>
+                                  <td>{{ $item->woreda}} </td>
+                                  <td>{{ $item->house_number}} </td>
                                   <td>{{ $item->status }}</td>
                                   <td>{{ $item->rating }}</td>
                                   <td>

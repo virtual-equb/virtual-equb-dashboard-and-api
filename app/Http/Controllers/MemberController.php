@@ -103,6 +103,7 @@ class MemberController extends Controller
                 $equbs = $this->equbRepository->getAll();
                 $payments = $this->paymentRepository->getAllPayment();
                 $title = $this->title;
+                
                 return view('admin/member.memberList', compact('title', 'equbTypes', 'members', 'equbs', 'payments'));
             } elseif ($userData && ($userData['role'] == "equb_collector")) {
                 $totalMember = $this->memberRepository->getMember();

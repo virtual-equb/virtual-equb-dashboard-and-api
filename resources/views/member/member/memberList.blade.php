@@ -111,7 +111,7 @@
                     <th>No</th>
                     <th>Full Name</th>
                     <th>Phone</th>
-                    <th>Gender</th>
+                    <th>Gender </th>
                     <th>Status</th>
                     <th>Registered At </th>
                   </tr>
