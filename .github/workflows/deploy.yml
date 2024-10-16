@@ -19,7 +19,7 @@ jobs:
         with:
           server: ftp.virtualekubdash.com
           username: test@test.virtualekubdash.com
-          password: (7^xbOazFA=D
+          password: '(7^xbOazFA=D'
           protocol: ftps
           port: 21 
           local-dir: './'
