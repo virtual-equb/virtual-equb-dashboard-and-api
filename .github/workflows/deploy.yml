@@ -2,7 +2,7 @@ name: Deploye
 on:
   push:
     branches:
-main
+     -main
 jobs:
   deploy:
     name:  Deploy website every commit
