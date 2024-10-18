@@ -157,7 +157,7 @@
                                                 @include('admin/equb.addEqub')
                                                 @include('admin/member.addMember')
                                                 <div class="float-left checkLotteryandAddMember" id="member_table_filter">
-                                                    @if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant' && Auth::user()->role != 'finance')
+                                                    @if (Auth::user()->role != 'assistant' && Auth::user()->role != 'finance')
                                                         <button type="button" class=" btn btn-primary checkLottery"
                                                             id="lotteryDatec" data-toggle="modal"
                                                             data-target="#lotteryDateCheckModal"

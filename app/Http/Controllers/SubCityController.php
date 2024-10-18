@@ -33,4 +33,5 @@ class SubCityController extends Controller
             return response()->json(['error' => 'Failed to retrieve sub-cities.'], 500);
         }
     }
+    
 }
