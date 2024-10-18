@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
-use Exception;
-use App\Models\Country;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\City\StoreCityRequest;
+use App\Http\Requests\City\UpdateCityRequest;
+use App\Models\Cities;
+use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\Country\StoreCountryRequest;
 
-use function PHPSTORM_META\map;
-
-class CountryController extends Controller
+class CityController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -23,11 +22,12 @@ class CountryController extends Controller
         $userData = Auth::user();
         try {
             if ($userData && ($userData['role'] == "admin" || $userData['role'] == "member" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
-                $countries = Country::with('countryCode')->get();
-    
+
+                $cities = Cities::with('cityCountry', 'subCity')->get();
+
                 return response()->json([
-                    'data' => $countries,
-                    'code' => 200
+                    'code' => 200,
+                    'data' => $cities
                 ]);
             } else {
                 return response()->json([
@@ -38,11 +38,9 @@ class CountryController extends Controller
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 400,
-                'error' => $ex->getMessage()
+                'message' => $ex->getMessage()
             ]);
         }
-        
-        
     }
 
     /**
@@ -61,18 +59,19 @@ class CountryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreCountryRequest $request)
+    public function store(StoreCityRequest $request)
     {
         $userData = Auth::user();
+
         try {
             if ($userData && ($userData['role'] == "admin" || $userData['role'] == "member" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
+
                 $data = $request->validated();
-                $country = Country::create($data);
+                $city = Cities::create($data);
 
                 return response()->json([
                     'code' => 200,
-                    'message' => 'Successfully Created Country',
-                    'data' => $country
+                    'data' => $city
                 ]);
             } else {
                 return response()->json([
@@ -86,7 +85,6 @@ class CountryController extends Controller
                 'error' => $ex->getMessage()
             ]);
         }
-        
     }
 
     /**
@@ -98,13 +96,14 @@ class CountryController extends Controller
     public function show($id)
     {
         $userData = Auth::user();
+
         try {
             if ($userData && ($userData['role'] == "admin" || $userData['role'] == "member" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
-                $country = Country::where('id', $id)->with('countryCode')->first();
+                $city = Cities::where('id', $id)->with('cityCountry', 'subCity')->first();
 
                 return response()->json([
-                    'data' => $country,
-                    'code' => 200
+                    'code' => 200,
+                    'data' => $city
                 ]);
             } else {
                 return response()->json([
@@ -114,11 +113,10 @@ class CountryController extends Controller
             }
         } catch (Exception $ex) {
             return response()->json([
-                'code' => 500,
-                'message' => 'Something went wrong: ' . $ex->getMessage()
+                'code' => 400,
+                'error' => $ex->getMessage()
             ]);
         }
-        
     }
 
     /**
@@ -139,48 +137,33 @@ class CountryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateCityRequest $request, $id)
     {
         $userData = Auth::user();
+
         try {
+            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "member" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
+                $city = Cities::where('id', $id)->with('cityCountry', 'subCity')->first();
 
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
-                $country = Country::where('id', $id)->with('countryCode')->first();
+                $data = $request->validated();
+                $city->update($data);
 
-                $request->validate([
-                    'name' => 'required',
-                    'code' => 'required',
-                    'active' => 'nullable',
-                    'remark' => 'nullable',
-                    'created_by' => 'required',
-                    'status' => 'nullable'
-                ]);
-
-                $update = [
-                    'name' => $request->input('name'),
-                    'code' => $request->input('code'),
-                    'remark' => $request->input('remark'),
-                    'created_by' => $request->input('created_by'),
-                    'status' => $request->input('status'),
-                    'active' => $request->input('active')
-                ];
-
-                $country->update($update);
                 return response()->json([
                     'code' => 200,
-                    'data' => $country,
-                    'message' => 'The Country was successfully updated'
+                    'data' => $city
                 ]);
+
             } else {
                 return response()->json([
                     'code' => 403,
                     'message' => 'You can\'t perform this action!'
                 ]);
             }
+
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
-                'message' => $ex->getMessage()
+                'message' => 'Something went wrong: ' . $ex->getMessage()
             ]);
         }
     }

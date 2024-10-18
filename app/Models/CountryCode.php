@@ -11,7 +11,12 @@ class CountryCode extends Model
 
     protected $fillable = [
         'name',
-        'country_code',
+        'created_by',
+        'icon',
         'active'
     ];
+
+    public function country() {
+        return $this->belongsTo(Country::class, 'id');
+    }
 }

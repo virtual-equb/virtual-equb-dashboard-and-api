@@ -17,4 +17,9 @@ class Country extends Model
         'created_by',
         'status'
     ];
+
+    public function countryCode() 
+    {
+        return $this->belongsTo(CountryCode::class, 'code');
+    }
 }

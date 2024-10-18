@@ -3,15 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use Exception;
-use App\Models\Country;
+use Validator;
+use App\Models\CountryCode;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\Country\StoreCountryRequest;
+use App\Http\Requests\Code\StoreCodeRequest;
 
-use function PHPSTORM_META\map;
-
-class CountryController extends Controller
+class CountryCodeController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -23,11 +22,11 @@ class CountryController extends Controller
         $userData = Auth::user();
         try {
             if ($userData && ($userData['role'] == "admin" || $userData['role'] == "member" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
-                $countries = Country::with('countryCode')->get();
+                $codes = CountryCode::with('country')->get();
     
                 return response()->json([
-                    'data' => $countries,
-                    'code' => 200
+                    'data' => $codes,
+                    'code' => 200,
                 ]);
             } else {
                 return response()->json([
@@ -37,11 +36,12 @@ class CountryController extends Controller
             }
         } catch (Exception $ex) {
             return response()->json([
-                'code' => 400,
-                'error' => $ex->getMessage()
+                'code' => 500,
+                'message' => $ex->getMessage()
             ]);
         }
         
+         
         
     }
 
@@ -61,18 +61,30 @@ class CountryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreCountryRequest $request)
+    public function store(StoreCodeRequest $request)
     {
         $userData = Auth::user();
         try {
             if ($userData && ($userData['role'] == "admin" || $userData['role'] == "member" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
                 $data = $request->validated();
-                $country = Country::create($data);
+                if ($request->hasFile('icon')) {
+                    // Get the uploaded icon file
+                    $icon = $request->file('icon');
+            
+                    // Create a unique file name for the icon
+                    $imageName = time() . '.' . $icon->getClientOriginalExtension();
+            
+                    // Store the icon in the 'public/code' directory
+                    $icon->storeAs('public/code', $imageName);
+            
+                    // Add the icon path to the $data array
+                    $data['icon'] = 'code/' . $imageName;
+                }
+                $code = CountryCode::create($data);
 
                 return response()->json([
                     'code' => 200,
-                    'message' => 'Successfully Created Country',
-                    'data' => $country
+                    'data' => $code
                 ]);
             } else {
                 return response()->json([
@@ -80,13 +92,13 @@ class CountryController extends Controller
                     'message' => 'You can\'t perform this action!'
                 ]);
             }
+
         } catch (Exception $ex) {
             return response()->json([
-                'code' => 400,
-                'error' => $ex->getMessage()
+                'code' => 500,
+                'message' => $ex->getMessage()
             ]);
         }
-        
     }
 
     /**
@@ -98,12 +110,13 @@ class CountryController extends Controller
     public function show($id)
     {
         $userData = Auth::user();
+
         try {
             if ($userData && ($userData['role'] == "admin" || $userData['role'] == "member" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
-                $country = Country::where('id', $id)->with('countryCode')->first();
+                $code = CountryCode::where('id', $id)->with('country')->first();
 
                 return response()->json([
-                    'data' => $country,
+                    'data' => $code,
                     'code' => 200
                 ]);
             } else {
@@ -112,13 +125,13 @@ class CountryController extends Controller
                     'message' => 'You can\'t perform this action!'
                 ]);
             }
+
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Something went wrong: ' . $ex->getMessage()
             ]);
         }
-        
     }
 
     /**
@@ -143,34 +156,41 @@ class CountryController extends Controller
     {
         $userData = Auth::user();
         try {
-
             if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
-                $country = Country::where('id', $id)->with('countryCode')->first();
+
+                $code = CountryCode::where('id', $id)->with('country')->first();
 
                 $request->validate([
                     'name' => 'required',
-                    'code' => 'required',
-                    'active' => 'nullable',
-                    'remark' => 'nullable',
                     'created_by' => 'required',
-                    'status' => 'nullable'
+                    'active' => 'nullable'
                 ]);
 
                 $update = [
                     'name' => $request->input('name'),
-                    'code' => $request->input('code'),
-                    'remark' => $request->input('remark'),
                     'created_by' => $request->input('created_by'),
-                    'status' => $request->input('status'),
                     'active' => $request->input('active')
                 ];
+                if ($request->hasFile('icon')) {
+                    // Get the uploaded icon file
+                    $icon = $request->file('icon');
+            
+                    // Create a unique file name for the icon
+                    $imageName = time() . '.' . $icon->getClientOriginalExtension();
+            
+                    // Store the icon in the 'public/code' directory
+                    $icon->storeAs('public/code', $imageName);
+            
+                    // Add the icon path to the $data array
+                    $update['icon'] = 'code/' . $imageName;
+                }
 
-                $country->update($update);
+                $code->update($update);
                 return response()->json([
                     'code' => 200,
-                    'data' => $country,
-                    'message' => 'The Country was successfully updated'
+                    'data' => $code
                 ]);
+
             } else {
                 return response()->json([
                     'code' => 403,
@@ -184,6 +204,7 @@ class CountryController extends Controller
             ]);
         }
     }
+    
 
     /**
      * Remove the specified resource from storage.

@@ -95,7 +95,7 @@ class MainEqubController extends Controller
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 400,
-                'message' => 'Something happened!',
+                'message' => 'Something went wrong!',
                 "error" => $ex->getMessage()
             ]);
         }
@@ -164,12 +164,12 @@ class MainEqubController extends Controller
                     'code' => 200,
                     'message' => 'The Equb was successfully updated'
                 ]);
+            } else {
+                return response()->json([
+                    'code' => 403,
+                    'message' => 'Unauthorized to update this Equb'
+                ]);
             }
-
-            return response()->json([
-                'code' => 403,
-                'message' => 'Unauthorized to update this Equb'
-            ]);
 
         } catch (Exception $ex) {
             return response()->json([

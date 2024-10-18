@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreignIdFor(User::class, 'created_by');
             $table->string('name');
             $table->string('icon');
-            $table->boolean('active')->default(false);
+            $table->string('active')->default(false);
             $table->timestamps();
         });
     }
