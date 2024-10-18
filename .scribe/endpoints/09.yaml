@@ -1,0 +1,1135 @@
+name: Reports
+description: ''
+endpoints:
+  -
+    httpMethods:
+      - GET
+    uri: api/reports/memberFilter
+    metadata:
+      groupName: Reports
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: 'api/reports/members/{dateFrom}/{dateTo}'
+    metadata:
+      groupName: Reports
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get Members between dates'
+      description: 'This api gets members based on date filters.'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      dateFrom:
+        name: dateFrom
+        description: ''
+        required: true
+        example: 1
+        type: integer
+        custom: []
+      dateTo:
+        name: dateTo
+        description: ''
+        required: true
+        example: quia
+        type: string
+        custom: []
+    cleanUrlParameters:
+      dateFrom: 1
+      dateTo: quia
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: 'api/reports/paginateMembers/{dateFrom}/{dateTo}/{offsetVal}/{pageNumberVal}'
+    metadata:
+      groupName: Reports
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get Members between dates for pagination'
+      description: 'This api gets members based on date filters for pagination.'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      dateFrom:
+        name: dateFrom
+        description: ''
+        required: true
+        example: nobis
+        type: string
+        custom: []
+      dateTo:
+        name: dateTo
+        description: ''
+        required: true
+        example: ipsa
+        type: string
+        custom: []
+      offsetVal:
+        name: offsetVal
+        description: ''
+        required: true
+        example: laboriosam
+        type: string
+        custom: []
+      pageNumberVal:
+        name: pageNumberVal
+        description: ''
+        required: true
+        example: qui
+        type: string
+        custom: []
+    cleanUrlParameters:
+      dateFrom: nobis
+      dateTo: ipsa
+      offsetVal: laboriosam
+      pageNumberVal: qui
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: api/reports/equbTypeFilter
+    metadata:
+      groupName: Reports
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: 'api/reports/equbTypes/{dateFrom}/{dateTo}'
+    metadata:
+      groupName: Reports
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get equb types by date'
+      description: 'This api gets equb types based on date filters .'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      dateFrom:
+        name: dateFrom
+        description: ''
+        required: true
+        example: 1
+        type: integer
+        custom: []
+      dateTo:
+        name: dateTo
+        description: ''
+        required: true
+        example: iure
+        type: string
+        custom: []
+    cleanUrlParameters:
+      dateFrom: 1
+      dateTo: iure
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: api/reports/equbFilter
+    metadata:
+      groupName: Reports
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get all members'
+      description: 'This api gets all members.'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: 'api/reports/equbs/{dateFrom}/{dateTo}'
+    metadata:
+      groupName: Reports
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get equbs between dates'
+      description: 'This api gets equbs based on date filters.'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      dateFrom:
+        name: dateFrom
+        description: ''
+        required: true
+        example: 1
+        type: integer
+        custom: []
+      dateTo:
+        name: dateTo
+        description: ''
+        required: true
+        example: beatae
+        type: string
+        custom: []
+    cleanUrlParameters:
+      dateFrom: 1
+      dateTo: beatae
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: 'api/reports/paginateEqubs/{dateFrom}/{dateTo}/{offsetVal}/{pageNumberVal}'
+    metadata:
+      groupName: Reports
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get equbs between dates for pagination'
+      description: 'This api gets equbs based on date filters for pagination.'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      dateFrom:
+        name: dateFrom
+        description: ''
+        required: true
+        example: repudiandae
+        type: string
+        custom: []
+      dateTo:
+        name: dateTo
+        description: ''
+        required: true
+        example: sed
+        type: string
+        custom: []
+      offsetVal:
+        name: offsetVal
+        description: ''
+        required: true
+        example: non
+        type: string
+        custom: []
+      pageNumberVal:
+        name: pageNumberVal
+        description: ''
+        required: true
+        example: velit
+        type: string
+        custom: []
+    cleanUrlParameters:
+      dateFrom: repudiandae
+      dateTo: sed
+      offsetVal: non
+      pageNumberVal: velit
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: api/reports/lotteryFilter
+    metadata:
+      groupName: Reports
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get all lotteries'
+      description: 'This api gets all lotteries.'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: 'api/reports/lotterys/{dateFrom}/{dateTo}/{member_id}/{equb_type_id}'
+    metadata:
+      groupName: Reports
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get equbs between dates'
+      description: 'This api gets equbs based on date filters.'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      dateFrom:
+        name: dateFrom
+        description: ''
+        required: true
+        example: dolorem
+        type: string
+        custom: []
+      dateTo:
+        name: dateTo
+        description: ''
+        required: true
+        example: molestiae
+        type: string
+        custom: []
+      member_id:
+        name: member_id
+        description: 'The ID of the member.'
+        required: true
+        example: voluptates
+        type: string
+        custom: []
+      equb_type_id:
+        name: equb_type_id
+        description: 'The ID of the equb type.'
+        required: true
+        example: sequi
+        type: string
+        custom: []
+    cleanUrlParameters:
+      dateFrom: dolorem
+      dateTo: molestiae
+      member_id: voluptates
+      equb_type_id: sequi
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: 'api/reports/paginateLotterys/{dateFrom}/{dateTo}/{member_id}/{equb_type_id}/{offsetVal}/{pageNumberVal}'
+    metadata:
+      groupName: Reports
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get equbs between dates for pagination'
+      description: 'This api gets equbs based on date filters for pagination.'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      dateFrom:
+        name: dateFrom
+        description: ''
+        required: true
+        example: corrupti
+        type: string
+        custom: []
+      dateTo:
+        name: dateTo
+        description: ''
+        required: true
+        example: occaecati
+        type: string
+        custom: []
+      member_id:
+        name: member_id
+        description: 'The ID of the member.'
+        required: true
+        example: eius
+        type: string
+        custom: []
+      equb_type_id:
+        name: equb_type_id
+        description: 'The ID of the equb type.'
+        required: true
+        example: in
+        type: string
+        custom: []
+      offsetVal:
+        name: offsetVal
+        description: ''
+        required: true
+        example: ad
+        type: string
+        custom: []
+      pageNumberVal:
+        name: pageNumberVal
+        description: ''
+        required: true
+        example: voluptas
+        type: string
+        custom: []
+    cleanUrlParameters:
+      dateFrom: corrupti
+      dateTo: occaecati
+      member_id: eius
+      equb_type_id: in
+      offsetVal: ad
+      pageNumberVal: voluptas
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: api/reports/unPaidLotteryFilter
+    metadata:
+      groupName: Reports
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get all unpaid lotteries'
+      description: 'This api gets all unpaid lotteries.'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: api/reports/unPaidLotterys
+    metadata:
+      groupName: Reports
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get all unpaid lotteries of a member'
+      description: 'This api gets all unpaid lotteries of a member.'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: 'api/reports/paginateUnPaidLotterys/{offsetVal}/{pageNumberVal}'
+    metadata:
+      groupName: Reports
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get all unpaid lotteries'
+      description: 'This api gets all unpaid lotteries.'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      offsetVal:
+        name: offsetVal
+        description: ''
+        required: true
+        example: deserunt
+        type: string
+        custom: []
+      pageNumberVal:
+        name: pageNumberVal
+        description: ''
+        required: true
+        example: iusto
+        type: string
+        custom: []
+    cleanUrlParameters:
+      offsetVal: deserunt
+      pageNumberVal: iusto
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: 'api/reports/paginatePayments/{dateFrom}/{dateTo}/{member_id}/{equb_id}/{offsetVal}/{pageNumberVal}'
+    metadata:
+      groupName: Reports
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get payments between dates for pagnation'
+      description: 'This api gets payments based on date filters and member id and equb id for pagnation.'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      dateFrom:
+        name: dateFrom
+        description: ''
+        required: true
+        example: corporis
+        type: string
+        custom: []
+      dateTo:
+        name: dateTo
+        description: ''
+        required: true
+        example: error
+        type: string
+        custom: []
+      member_id:
+        name: member_id
+        description: 'The ID of the member.'
+        required: true
+        example: sit
+        type: string
+        custom: []
+      equb_id:
+        name: equb_id
+        description: 'The ID of the equb.'
+        required: true
+        example: illo
+        type: string
+        custom: []
+      offsetVal:
+        name: offsetVal
+        description: ''
+        required: true
+        example: non
+        type: string
+        custom: []
+      pageNumberVal:
+        name: pageNumberVal
+        description: ''
+        required: true
+        example: ad
+        type: string
+        custom: []
+    cleanUrlParameters:
+      dateFrom: corporis
+      dateTo: error
+      member_id: sit
+      equb_id: illo
+      offsetVal: non
+      pageNumberVal: ad
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: api/reports/paymentFilter
+    metadata:
+      groupName: Reports
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get all payments'
+      description: 'This api gets all payments.'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: 'api/reports/payments/{dateFrom}/{dateTo}/{member_id}/{equb_id}'
+    metadata:
+      groupName: Reports
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get payments between dates'
+      description: 'This api gets payments based on date filters and member id and equb id.'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      dateFrom:
+        name: dateFrom
+        description: ''
+        required: true
+        example: 1
+        type: integer
+        custom: []
+      dateTo:
+        name: dateTo
+        description: ''
+        required: true
+        example: et
+        type: string
+        custom: []
+      member_id:
+        name: member_id
+        description: 'The ID of the member.'
+        required: true
+        example: animi
+        type: string
+        custom: []
+      equb_id:
+        name: equb_id
+        description: 'The ID of the equb.'
+        required: true
+        example: provident
+        type: string
+        custom: []
+    cleanUrlParameters:
+      dateFrom: 1
+      dateTo: et
+      member_id: animi
+      equb_id: provident
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: 'api/reports/paginateCllectedBys/{dateFrom}/{dateTo}/{collecter}/{offsetVal}/{pageNumberVal}'
+    metadata:
+      groupName: Reports
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get payments between dates and with collector'
+      description: 'This api gets payments based on date filters and member id and equb id and with collector.'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      dateFrom:
+        name: dateFrom
+        description: ''
+        required: true
+        example: sunt
+        type: string
+        custom: []
+      dateTo:
+        name: dateTo
+        description: ''
+        required: true
+        example: optio
+        type: string
+        custom: []
+      collecter:
+        name: collecter
+        description: ''
+        required: true
+        example: porro
+        type: string
+        custom: []
+      offsetVal:
+        name: offsetVal
+        description: ''
+        required: true
+        example: aspernatur
+        type: string
+        custom: []
+      pageNumberVal:
+        name: pageNumberVal
+        description: ''
+        required: true
+        example: ut
+        type: string
+        custom: []
+    cleanUrlParameters:
+      dateFrom: sunt
+      dateTo: optio
+      collecter: porro
+      offsetVal: aspernatur
+      pageNumberVal: ut
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: api/reports/collectedByFilter
+    metadata:
+      groupName: Reports
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get equb collectors'
+      description: 'This api gets all equbcollectors.'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: 'api/reports/collectedBys/{dateFrom}/{dateTo}/{collecter}'
+    metadata:
+      groupName: Reports
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get payments between dates and with collector'
+      description: 'This api gets payments based on date filters and member id and equb id and with collector.'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      dateFrom:
+        name: dateFrom
+        description: ''
+        required: true
+        example: a
+        type: string
+        custom: []
+      dateTo:
+        name: dateTo
+        description: ''
+        required: true
+        example: quis
+        type: string
+        custom: []
+      collecter:
+        name: collecter
+        description: ''
+        required: true
+        example: eligendi
+        type: string
+        custom: []
+    cleanUrlParameters:
+      dateFrom: a
+      dateTo: quis
+      collecter: eligendi
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []

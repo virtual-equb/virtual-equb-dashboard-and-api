@@ -1,0 +1,36 @@
+.btn-primary{
+    background-color: #357ca5 !important;
+}
+
+.btn-warning{
+    background-color: #f39c12 !important;
+}
+
+.divPrimary{
+    background-color: #357ca5 !important;
+}
+
+.error {
+    color: #dc3545;
+}
+
+.whiteColor {
+    color: white;
+}
+
+a {
+    text-decoration:none !important;
+}
+.btn{
+    text-decoration:none !important;
+}
+.btn-link{
+    padding:1px !important;
+    text-decoration:none !important;
+}
+
+.btn-link:hover{
+    color: darkgrey !important;
+}
+
+

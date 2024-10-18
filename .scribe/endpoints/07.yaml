@@ -1,0 +1,473 @@
+name: 'Equb Types'
+description: ''
+endpoints:
+  -
+    httpMethods:
+      - POST
+    uri: api/nameCheck
+    metadata:
+      groupName: 'Equb Types'
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get All Equb types with name and round'
+      description: 'This api returns all Equbs types with name and round.'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      name:
+        name: name
+        description: 'The name of the equb type.'
+        required: true
+        example: 'Weekly equb'
+        type: string
+        custom: []
+      round:
+        name: round
+        description: 'The round of the equb type.'
+        required: true
+        example: 1
+        type: integer
+        custom: []
+    cleanBodyParameters:
+      name: 'Weekly equb'
+      round: 1
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - POST
+    uri: api/nameCheckForUpdate
+    metadata:
+      groupName: 'Equb Types'
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get All Equb types with name and round for update'
+      description: 'This api returns all Equbs types with name and round.'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      id:
+        name: id
+        description: 'The id of the equb type.'
+        required: true
+        example: 3
+        type: integer
+        custom: []
+      name:
+        name: name
+        description: 'The name of the equb type.'
+        required: true
+        example: 'Weekly equb'
+        type: string
+        custom: []
+      round:
+        name: round
+        description: 'The round of the equb type.'
+        required: true
+        example: 1
+        type: integer
+        custom: []
+    cleanBodyParameters:
+      id: 3
+      name: 'Weekly equb'
+      round: 1
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - POST
+    uri: api/dateCheckForUpdate
+    metadata:
+      groupName: 'Equb Types'
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Equb type end date check for update'
+      description: 'This api returns boolean after hecking if end date has passed.'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      update_end_date:
+        name: update_end_date
+        description: 'The end date of the equb type.'
+        required: true
+        example: 01/01/2023
+        type: date
+        custom: []
+    cleanBodyParameters:
+      update_end_date: 01/01/2023
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - POST
+    uri: api/dateCheck
+    metadata:
+      groupName: 'Equb Types'
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Equb type end date check'
+      description: 'This api returns boolean after hecking if end date has passed.'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      end_date:
+        name: end_date
+        description: 'The end date of the equb type.'
+        required: true
+        example: 01/01/2023
+        type: date
+        custom: []
+    cleanBodyParameters:
+      end_date: 01/01/2023
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: api/equbType
+    metadata:
+      groupName: 'Equb Types'
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get All Equb types'
+      description: 'This api returns all Equbs types.'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - POST
+    uri: api/equbType/register
+    metadata:
+      groupName: 'Equb Types'
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Store equb type'
+      description: 'This api stores and creates equb type.'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      name:
+        name: name
+        description: 'The name of the equb type.'
+        required: true
+        example: 'Weekly equb'
+        type: string
+        custom: []
+      round:
+        name: round
+        description: 'The round of the equb type.'
+        required: true
+        example: 1
+        type: integer
+        custom: []
+      rote:
+        name: rote
+        description: 'The rote of the equb type.'
+        required: true
+        example: 0
+        type: integer
+        custom: []
+      type:
+        name: type
+        description: 'The type of the equb type.'
+        required: true
+        example: 0
+        type: integer
+        custom: []
+      lottery_date:
+        name: lottery_date
+        description: 'The lottery date of the equb type.'
+        required: true
+        example: 1
+        type: integer
+        custom: []
+    cleanBodyParameters:
+      name: 'Weekly equb'
+      round: 1
+      rote: 0
+      type: 0
+      lottery_date: 1
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - POST
+    uri: 'api/equbType/update/{id}'
+    metadata:
+      groupName: 'Equb Types'
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Update of equb type'
+      description: 'This api updates the equb type.'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        name: id
+        description: 'The ID of the update.'
+        required: true
+        example: consequatur
+        type: string
+        custom: []
+    cleanUrlParameters:
+      id: consequatur
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      name:
+        name: name
+        description: 'The name of the equb type.'
+        required: true
+        example: 'Weekly equb'
+        type: string
+        custom: []
+      round:
+        name: round
+        description: 'The round of the equb type.'
+        required: true
+        example: 0
+        type: integer
+        custom: []
+    cleanBodyParameters:
+      name: 'Weekly equb'
+      round: 0
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - DELETE
+    uri: 'api/equbType/delete/{id}'
+    metadata:
+      groupName: 'Equb Types'
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Delete equb type'
+      description: 'This api deletes the equb type.'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        name: id
+        description: 'The ID of the delete.'
+        required: true
+        example: voluptatem
+        type: string
+        custom: []
+    cleanUrlParameters:
+      id: voluptatem
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - PUT
+    uri: 'api/equbType/updateStatus/{id}'
+    metadata:
+      groupName: 'Equb Types'
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Update status of equb type'
+      description: 'This api updates the status of the equb type.'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        name: id
+        description: 'The ID of the updateStatus.'
+        required: true
+        example: quis
+        type: string
+        custom: []
+    cleanUrlParameters:
+      id: quis
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      id:
+        name: id
+        description: 'The id of the equb type.'
+        required: true
+        example: 0
+        type: integer
+        custom: []
+    cleanBodyParameters:
+      id: 0
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: 'api/equbType/get-winner/{id}'
+    metadata:
+      groupName: 'Equb Types'
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get winner of equb type'
+      description: 'This api returns the winner of the draw'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        name: id
+        description: 'The ID of the get winner.'
+        required: true
+        example: repellendus
+        type: string
+        custom: []
+    cleanUrlParameters:
+      id: repellendus
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
