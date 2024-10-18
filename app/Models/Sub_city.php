@@ -17,4 +17,13 @@ class Sub_city extends Model
         'active',
         'remark'
     ];
+
+    public function city() {
+        return $this->belongsTo(Cities::class, 'city_id');
+    }
+
+    public function subCreater()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
 }

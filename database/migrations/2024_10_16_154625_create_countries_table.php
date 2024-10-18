@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\CountryCode;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -17,8 +18,8 @@ return new class extends Migration
         Schema::create('countries', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('code');
-            $table->boolean('active')->default(false);
+            $table->foreignIdFor(CountryCode::class, 'code');
+            $table->string('active')->default(false);
             $table->longText('remark');
             $table->foreignIdFor(User::class, 'created_by');
             $table->enum('status', ['Approved', 'Deactive',])->default('Approved');

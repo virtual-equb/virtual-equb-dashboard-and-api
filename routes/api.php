@@ -16,6 +16,8 @@ use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\EqubTypeController;
 use App\Http\Controllers\Api\EqubTakerController;
 use App\Http\Controllers\Api\ActivityLogController;
+use App\Http\Controllers\Api\CityController;
+use App\Http\Controllers\Api\CountryCodeController;
 use App\Http\Controllers\Api\CountryController;
 use App\Http\Controllers\Api\MainEqubController;
 use App\Http\Controllers\Api\PaymentTypeController;
@@ -23,6 +25,7 @@ use App\Http\Controllers\Api\RejectedDateController;
 use App\Http\Controllers\Api\PaymentGatewayController;
 use App\Http\Controllers\Api\PaymentTesterController;
 use App\Http\Controllers\CodeController;
+use App\Http\Controllers\SubcityController;
 
 /*
 |--------------------------------------------------------------------------
@@ -94,9 +97,14 @@ Route::post('/transaction-status', [PaymentGatewayController::class, 'transactio
 // Route::post('/check-transaction-status', [PaymentGatewayController::class, 'checkTransactionStatus']);
 
 // Main Equb
-Route::resource('/mainequb', MainEqubController::class);
-Route::resource('/countries', CountryController::class);
-Route::resource('/countrycode', CodeController::class);
+Route::middleware(['auth:api'])->group(function () {
+    Route::resource('/mainequb', MainEqubController::class);
+    Route::resource('/countries', CountryController::class);
+    Route::resource('/countrycode', CountryCodeController::class);
+    Route::resource('/city', CityController::class);
+    Route::resource('/subcity', SubcityController::class);
+});
+
 // Route::get('/testequb', [MainEqubController::class, 'getTypes']);
 
 Route::prefix('chapa')->group(function () {
@@ -104,6 +112,7 @@ Route::prefix('chapa')->group(function () {
     // Route::post('return', [ChapaController::class, 'return'])->name('return');
     Route::get('callback/{userId}/{equbId}/{amount}/{reference}', [ChapaController::class, 'callback'])->name('callback');
 });
+
 Route::prefix('equbType')->group(function () {
     Route::get('/', [EqubTypeController::class, 'index'])->name('showEqubType');
     Route::post('/register', [EqubTypeController::class, 'store'])->name('registerEqubType');

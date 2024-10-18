@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Code;
+namespace App\Http\Requests\City;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreCodeRequest extends FormRequest
+class StoreCityRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -16,13 +16,6 @@ class StoreCodeRequest extends FormRequest
         return true;
     }
 
-    // protected function prepareForValidation()
-    // {
-    //     $this->merge([
-    //         'created_by' => $this->user()->id
-    //     ]);
-    // }
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -32,9 +25,11 @@ class StoreCodeRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'created_by' => 'required',
-            'icon' => 'nullable',
-            'active' => 'nullable'
+            'created_by' => 'required|exists:users,id',
+            'active' => 'nullable',
+            'remark' => 'nullable',
+            'status' => 'nullable',
+            'country_id' => 'required|exists:countries,id'
         ];
     }
 }

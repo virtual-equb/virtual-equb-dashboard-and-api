@@ -24,10 +24,30 @@ class MainEqubController extends Controller
     }
 
     public function index() {
-        $mainEqubs = MainEqub::with('subEqub')->get();
-        return response()->json([
-            'data' => $mainEqubs
-        ]);
+        try {
+            $userData = Auth::user();
+            if ($userData && ($userData['role'] == 'admin' || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
+                $mainEqubs = MainEqub::with('subEqub')->get();
+                return response()->json([
+                    'data' => $mainEqubs,
+                    'code' => 200,
+                ]);
+            } else {
+                return response()->json([
+                    'code' => 403,
+                    'message' => 'You can\'t perform this action!'
+                ]);
+            }
+            
+            
+        } catch (Exception $ex) {
+            return response()->json([
+                'code' => 500,
+                'message' => 'Unable to process your request, Please try again!',
+                "error" => $ex
+            ]);
+        }
+        
     }
 
 
@@ -35,39 +55,47 @@ class MainEqubController extends Controller
         // dd($request->input('created_by'), Auth::user());
         try {
             $userData = Auth::user();
-            $this->validate($request, [
-                'name' => 'required',
-                'created_by' => 'required',
-                // 'image' => 'required',
-                'remark' => 'nullable'
-            ]);
-            $name = $request->input('name');
-            $created_by = $request->input('created_by');
-            $image = $request->file('image');
-            $remark = $request->input('remark');
-
-            $mainEqub = [
-                'name' => $name,
-                'created_by' => $created_by,
-                'remark' => $remark,
-            ];
-            if ($request->file('image')) {
+            if ($userData && ($userData['role'] == 'admin' || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
+                $this->validate($request, [
+                    'name' => 'required',
+                    'created_by' => 'required',
+                    // 'image' => 'required',
+                    'remark' => 'nullable'
+                ]);
+                $name = $request->input('name');
+                $created_by = $request->input('created_by');
                 $image = $request->file('image');
-                $imageName = time() . '.' . $image->getClientOriginalExtension();
-                $image->storeAs('public/mainEqub', $imageName);
-                $mainEqub['image'] = 'mainEqub/' . $imageName;
+                $remark = $request->input('remark');
+    
+                $mainEqub = [
+                    'name' => $name,
+                    'created_by' => $created_by,
+                    'remark' => $remark,
+                ];
+                if ($request->file('image')) {
+                    $image = $request->file('image');
+                    $imageName = time() . '.' . $image->getClientOriginalExtension();
+                    $image->storeAs('public/mainEqub', $imageName);
+                    $mainEqub['image'] = 'mainEqub/' . $imageName;
+                }
+                $create = MainEqub::create($mainEqub);
+                
+                return response()->json([
+                    'code' => 200,
+                    'message' => 'Successfully Created Main Equb',
+                    'data' => $create
+                ]);
+            } else {
+                return response()->json([
+                    'code' => 403,
+                    'message' => 'You can\'t perform this action!'
+                ]);
             }
-            $create = MainEqub::create($mainEqub);
             
-            return response()->json([
-                'code' => 200,
-                'message' => 'Successfully Created Main Equb',
-                'data' => $create
-            ]);
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 400,
-                'message' => 'Something happened!',
+                'message' => 'Something went wrong!',
                 "error" => $ex->getMessage()
             ]);
         }
@@ -75,11 +103,18 @@ class MainEqubController extends Controller
     }
 
     public function show($id) {
-        $mainEqub = MainEqub::where('id', $id)->first();
-
-        return response()->json([
-            'data' => $mainEqub
-        ]);
+        $userData = Auth::user();
+        if ($userData && ($userData['role'] == "admin" || $userData['role'] == "member" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
+            $mainEqub = MainEqub::where('id', $id)->with('subEqub')->first();
+            return response()->json([
+                'data' => $mainEqub
+            ]);
+        } else {
+            return response()->json([
+                'code' => 403,
+                'message' => 'You can\'t perform this action!'
+            ]);
+        }
     }
 
     public function update($id, Request $request)
@@ -91,7 +126,7 @@ class MainEqubController extends Controller
             if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
 
                 // Fetch the MainEqub by ID
-                $mainEqub = MainEqub::where('id', $id)->first();
+                $mainEqub = MainEqub::where('id', $id)->with('subEqub')->first();
 
                 // Validate the incoming request
                 $request->validate([
@@ -129,12 +164,12 @@ class MainEqubController extends Controller
                     'code' => 200,
                     'message' => 'The Equb was successfully updated'
                 ]);
+            } else {
+                return response()->json([
+                    'code' => 403,
+                    'message' => 'Unauthorized to update this Equb'
+                ]);
             }
-
-            return response()->json([
-                'code' => 403,
-                'message' => 'Unauthorized to update this Equb'
-            ]);
 
         } catch (Exception $ex) {
             return response()->json([

@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('image');
             $table->longText('remark');
             $table->enum('status', ['Approved', 'Deactive',])->default('Approved');
-            $table->boolean('active')->default(false);
+            $table->string('active')->default(false);
             $table->timestamps();
         });
     }

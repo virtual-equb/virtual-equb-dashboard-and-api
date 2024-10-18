@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreignIdFor(User::class, 'created_by');
             $table->foreignIdFor(Cities::class, 'city_id');
             $table->string('name', 255);
-            $table->boolean('active')->default(false);
+            $table->string('active')->default(false);
             $table->longText('remark');
             $table->timestamps();
         });

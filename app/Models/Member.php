@@ -26,6 +26,7 @@ class Member extends Model
         'approved_date',
         'remark',
         'rating',
+        'age'
     ];
 
     public function equbs()

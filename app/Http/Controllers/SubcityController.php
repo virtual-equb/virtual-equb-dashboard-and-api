@@ -1,17 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
+use App\Http\Requests\SubCity\StoreSubcityRequest;
+use App\Http\Requests\SubCity\UpdateSubcityController;
+use App\Models\Sub_city;
 use Exception;
-use App\Models\Country;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\Country\StoreCountryRequest;
 
-use function PHPSTORM_META\map;
-
-class CountryController extends Controller
+class SubcityController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -23,11 +21,11 @@ class CountryController extends Controller
         $userData = Auth::user();
         try {
             if ($userData && ($userData['role'] == "admin" || $userData['role'] == "member" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
-                $countries = Country::with('countryCode')->get();
-    
+                $subcities = Sub_city::with('city')->get();
+
                 return response()->json([
-                    'data' => $countries,
-                    'code' => 200
+                    'code' => 200,
+                    'data' => $subcities
                 ]);
             } else {
                 return response()->json([
@@ -41,8 +39,6 @@ class CountryController extends Controller
                 'error' => $ex->getMessage()
             ]);
         }
-        
-        
     }
 
     /**
@@ -61,18 +57,17 @@ class CountryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreCountryRequest $request)
+    public function store(StoreSubcityRequest $request)
     {
         $userData = Auth::user();
         try {
             if ($userData && ($userData['role'] == "admin" || $userData['role'] == "member" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
                 $data = $request->validated();
-                $country = Country::create($data);
+                $subcity = Sub_city::create($data);
 
                 return response()->json([
                     'code' => 200,
-                    'message' => 'Successfully Created Country',
-                    'data' => $country
+                    'data' => $subcity
                 ]);
             } else {
                 return response()->json([
@@ -86,7 +81,6 @@ class CountryController extends Controller
                 'error' => $ex->getMessage()
             ]);
         }
-        
     }
 
     /**
@@ -98,13 +92,15 @@ class CountryController extends Controller
     public function show($id)
     {
         $userData = Auth::user();
+
         try {
             if ($userData && ($userData['role'] == "admin" || $userData['role'] == "member" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
-                $country = Country::where('id', $id)->with('countryCode')->first();
+
+                $subcity = Sub_city::where('id', $id)->with('city')->get();
 
                 return response()->json([
-                    'data' => $country,
-                    'code' => 200
+                    'code' => 200,
+                    'data' => $subcity 
                 ]);
             } else {
                 return response()->json([
@@ -112,13 +108,13 @@ class CountryController extends Controller
                     'message' => 'You can\'t perform this action!'
                 ]);
             }
+
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Something went wrong: ' . $ex->getMessage()
             ]);
         }
-        
     }
 
     /**
@@ -139,44 +135,30 @@ class CountryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateSubcityController $request, $id)
     {
         $userData = Auth::user();
+
         try {
-
             if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
-                $country = Country::where('id', $id)->with('countryCode')->first();
 
-                $request->validate([
-                    'name' => 'required',
-                    'code' => 'required',
-                    'active' => 'nullable',
-                    'remark' => 'nullable',
-                    'created_by' => 'required',
-                    'status' => 'nullable'
-                ]);
+                $subcity = Sub_city::where('id', $id)->with('city')->first();
+                $data = $request->validated();
 
-                $update = [
-                    'name' => $request->input('name'),
-                    'code' => $request->input('code'),
-                    'remark' => $request->input('remark'),
-                    'created_by' => $request->input('created_by'),
-                    'status' => $request->input('status'),
-                    'active' => $request->input('active')
-                ];
+                $subcity->update($data);
 
-                $country->update($update);
                 return response()->json([
                     'code' => 200,
-                    'data' => $country,
-                    'message' => 'The Country was successfully updated'
+                    'data' => $subcity
                 ]);
+
             } else {
                 return response()->json([
                     'code' => 403,
                     'message' => 'You can\'t perform this action!'
                 ]);
             }
+
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,

@@ -1032,18 +1032,20 @@ class MemberController extends Controller
      */
     public function register(Request $request)
     {
-        // dd($request);
         try {
+            // Validation rules
             $this->validate(
                 $request,
                 [
                     'full_name' => 'required',
                     'phone' => 'required',
                     'gender' => 'required',
+                    'age' => 'required|integer|min:18', // Age must be an integer and at least 18
                     'password' => 'required'
                 ]
             );
-            // dd($request);
+
+            // Handle the input data
             $fullName = $request->input('full_name');
             $phone = $request->input('phone');
             $gender = $request->input('gender');
@@ -1054,33 +1056,31 @@ class MemberController extends Controller
             $location = $request->input('location');
             $email = $request->input('email');
             $password = $request->input('password');
-            // $formated_name = str_replace(' ', '', $fullName);
-            // $email = $formated_name . "@virtualequb.com";
+            $age = $request->input('age');
+
+            // Check if the phone number already exists
             if (!empty($phone)) {
                 $member_count = Member::where('phone', $phone)->count();
                 if ($member_count > 0) {
                     return response()->json([
                         'code' => 403,
-                        'message' => 'Phone already exist',
+                        'message' => 'Phone already exists',
                     ]);
                 }
             }
+
+            // Check if the email already exists
             if (!empty($email)) {
                 $member_count = Member::where('email', $email)->count();
                 if ($member_count > 0) {
                     return response()->json([
                         'code' => 403,
-                        'message' => 'Email already exist',
+                        'message' => 'Email already exists',
                     ]);
                 }
             }
-            // $address = [
-            //     'City' => $city,
-            //     'SubCity' => $subcity,
-            //     'Woreda' => $woreda,
-            //     'House_Number' => $housenumber,
-            //     'Specific_Location' => $location
-            // ];
+
+            // Prepare the member data
             $memberData = [
                 'full_name' => $fullName,
                 'phone' => $phone,
@@ -1091,18 +1091,20 @@ class MemberController extends Controller
                 'woreda' => $woreda,
                 'house_number' => $housenumber,
                 'specific_location' => $location,
-                'status' => "Pending"
-                // 'address' => json_encode($address),
+                'status' => "Pending",
+                'age' => $age
             ];
-            // dd($request->file('profile_picture'));
+
+            // Handle the profile picture upload
             if ($request->file('profile_picture')) {
                 $image = $request->file('profile_picture');
                 $imageName = time() . '.' . $image->getClientOriginalExtension();
                 $image->storeAs('public/profile_pictures', $imageName);
                 $memberData['profile_photo_path'] = 'profile_pictures/' . $imageName;
             }
+
+            // Create member and user
             $create = $this->memberRepository->create($memberData);
-            // dd($memberData);
             $user = [
                 'name' => $fullName,
                 'email' => $email,
@@ -1110,10 +1112,9 @@ class MemberController extends Controller
                 'phone_number' => $phone,
                 'gender' => $gender,
                 'role' => "member",
-                // 'enabled' => 0
             ];
             $user = $this->userRepository->createUser($user);
-            // dd("hello");
+
             if ($create && $user) {
                 return response()->json([
                     'code' => 200,
@@ -1128,11 +1129,10 @@ class MemberController extends Controller
                 ]);
             }
         } catch (Exception $ex) {
-            // dd($ex);
             return response()->json([
                 'code' => 400,
                 'message' => 'Unknown error occurred, Please try again!',
-                "error" => "Unknown error occurred, Please try again!"
+                "error" => $ex->getMessage()
             ]);
         }
     }

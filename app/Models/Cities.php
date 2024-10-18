@@ -18,4 +18,19 @@ class Cities extends Model
         'remark',
         'status'
     ];
+
+    public function cityCountry()
+    {
+        return $this->belongsTo(Country::class, 'country_id');
+    }
+
+    public function creater()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function subCity() 
+    {
+        return $this->belongsTo(Sub_city::class, 'id');
+    }
 }
