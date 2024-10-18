@@ -94,9 +94,12 @@ Route::post('/transaction-status', [PaymentGatewayController::class, 'transactio
 // Route::post('/check-transaction-status', [PaymentGatewayController::class, 'checkTransactionStatus']);
 
 // Main Equb
-Route::resource('/mainequb', MainEqubController::class);
-Route::resource('/countries', CountryController::class);
-Route::resource('/countrycode', CodeController::class);
+Route::middleware(['auth:api'])->group(function () {
+    Route::resource('/mainequb', MainEqubController::class);
+    Route::resource('/countries', CountryController::class);
+    Route::resource('/countrycode', CodeController::class);
+});
+
 // Route::get('/testequb', [MainEqubController::class, 'getTypes']);
 
 Route::prefix('chapa')->group(function () {
@@ -104,6 +107,7 @@ Route::prefix('chapa')->group(function () {
     // Route::post('return', [ChapaController::class, 'return'])->name('return');
     Route::get('callback/{userId}/{equbId}/{amount}/{reference}', [ChapaController::class, 'callback'])->name('callback');
 });
+
 Route::prefix('equbType')->group(function () {
     Route::get('/', [EqubTypeController::class, 'index'])->name('showEqubType');
     Route::post('/register', [EqubTypeController::class, 'store'])->name('registerEqubType');
