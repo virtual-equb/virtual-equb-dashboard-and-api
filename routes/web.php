@@ -290,6 +290,7 @@ Route::middleware([
         // Get types of equbs
         Route::get('/types', [MainEqubController::class, 'getTypes'])->name('mainEqubs.types');
     
+        Route::get('/types', [MainEqubController::class, 'getTypes'])->name('mainEqubs.types');
         // Create a new main equb
         Route::post('/', [MainEqubController::class, 'store'])->name('mainEqubs.store');
     
