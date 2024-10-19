@@ -19,7 +19,7 @@
                                 <div class="col-sm-12">
                                     <div class="form-group required">
                                         <label class="control-label">Equb</label>
-                                        <select class="custom-select form-control" id="main_equb" name="main_equb">
+                                        <select class="custom-select form-control" id="main_equb_id" name="main_equb_id">
                                             <option selected value="">Choose Equb</option>
                                             @if(isset($mainEqubs) && count($mainEqubs) > 0)
                                                 @foreach($mainEqubs as $equb)

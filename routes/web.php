@@ -83,6 +83,7 @@ Route::middleware([
     });
     Route::group(['prefix' => 'mainEqub'], function () {
         Route::get('/mainequbs', [FrontMainEqubController::class, 'index'])->name('mainequbIndex');
+        Route::get('/viewmainequb/{id}', [FrontMainEqubController::class, 'show'])->name('viewMainEqub');
     });
 
     Route::group(['prefix' => 'member'], function () {

@@ -34,12 +34,12 @@
                         <ul class="nav nav-treeview ml-2">
                             <li class="nav-item">
                                 <a href="{{ route('dashboard') }}" class="nav-link" id="mainDash">
-                                    <i class="far fa-circle nav-icon"></i>
+                                    <i class="far fa-circle nav-icon ml-2"></i>
                                     <p>Main Dashboard</p>
                                 </a>
                             </li>
                         </ul>
-                        <ul class="nav nav-treeview ml-2">
+                        {{-- <ul class="nav nav-treeview ml-2">
                             @foreach (App\Models\EqubType::all() as $equbType)
                                 <li class="nav-item">
                                     <a href="{{ url('equbTypeDashboard/' . $equbType->id) }}" class="nav-link"
@@ -49,18 +49,18 @@
                                     </a>
                                 </li>
                             @endforeach
-                        </ul>
-                        {{-- <ul class="nav nav-treeview ml-2">
+                        </ul> --}}
+                        <ul class="nav nav-treeview ml-2">
                             @foreach ($mainEqubs as $equbType)
                                 <li class="nav-item">
-                                    <a href="{{ url('equbTypeDashboard/' . $equbType->id) }}" class="nav-link"
+                                    <a href="{{ route('viewMainEqub', $equbType->id) }}" class="nav-link"
                                         id="{{ $equbType->id }}">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>{{ $equbType->name }}</p>
                                     </a>
                                 </li>
                             @endforeach
-                        </ul> --}}
+                        </ul>
                     </li>
                 @endif
                 @if (Auth::user()->role == 'admin' ||
