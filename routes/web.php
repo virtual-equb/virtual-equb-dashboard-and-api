@@ -11,6 +11,7 @@ use App\Http\Controllers\RejectedDateController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\FrontMainEqubController;
 use App\Http\Controllers\NotificationController;
 
 /*
@@ -80,9 +81,9 @@ Route::middleware([
         Route::put('/updateStatus/{id}', [EqubTypeController::class, 'updateStatus'])->name('updateStatus');
         Route::put('/updatePendingStatus/{id}/{status}', [EqubTypeController::class, 'updatePendingStatus'])->name('updatePendingStatus');
     });
-    // Route::group(['prefix' => 'mainEqub'], function () {
-    //     Route::get('/', []);
-    // });
+    Route::group(['prefix' => 'mainEqub'], function () {
+        Route::get('/mainequbs', [FrontMainEqubController::class, 'index'])->name('mainequbIndex');
+    });
 
     Route::group(['prefix' => 'member'], function () {
         Route::get('/', [MemberController::class, 'index'])->name('showMember');

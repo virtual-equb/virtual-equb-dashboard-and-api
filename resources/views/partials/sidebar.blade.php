@@ -136,8 +136,9 @@
                         Auth::user()->role == 'assistant' ||
                         Auth::user()->role == 'it')
                     <li class="nav-item" id="nav-ety">
-                        <a href="{{ route('showEqubType') }}" class="nav-link " id="et">
-                            <i class="nav-icon fa fa-network-wired"></i>
+                        <a href="{{ route('mainequbIndex') }}" class="nav-link " id="et">
+                            {{-- <i class="nav-icon fa fa-network-wired"></i> --}}
+                            <i class="fa-regular fa fa-server"></i>
                             <p>
                                 Main Equbs
                             </p>
