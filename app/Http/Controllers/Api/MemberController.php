@@ -1040,8 +1040,11 @@ class MemberController extends Controller
                     'full_name' => 'required',
                     'phone' => 'required',
                     'gender' => 'required',
-                    'age' => 'required|integer|min:18', // Age must be an integer and at least 18
+                    'date_of_birth' => 'required|date|before:' . now()->subYears(18)->format('Y-m-d'), // Must be before 18 years ago
                     'password' => 'required'
+                ],
+                [
+                    'date_of_birth.before' => 'You must be at least 18 years old to register.'
                 ]
             );
 
@@ -1056,7 +1059,7 @@ class MemberController extends Controller
             $location = $request->input('location');
             $email = $request->input('email');
             $password = $request->input('password');
-            $age = $request->input('age');
+            $dateofBirth = $request->input('date_of_birth');
 
             // Check if the phone number already exists
             if (!empty($phone)) {
@@ -1092,7 +1095,7 @@ class MemberController extends Controller
                 'house_number' => $housenumber,
                 'specific_location' => $location,
                 'status' => "Pending",
-                'age' => $age
+                'date_of_birth' => $dateofBirth
             ];
 
             // Handle the profile picture upload
