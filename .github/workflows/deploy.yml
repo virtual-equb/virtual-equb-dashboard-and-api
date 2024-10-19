@@ -18,5 +18,5 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}          # FTP server address
           username: ${{ secrets.FTP_USERNAME }}      # FTP username
           password: ${{ secrets.FTP_PASSWORD }}      # FTP password
-          local-dir: ./                               # Local directory to deploy
+          local-dir: './'                               # Local directory to deploy
           server-dir: /home/virtualekubdash.com/test/ # Remote directory on the server
