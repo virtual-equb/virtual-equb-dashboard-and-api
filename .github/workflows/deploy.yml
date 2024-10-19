@@ -12,15 +12,12 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
       
-      - name: Display Environment Variables
-        run: env
-
       - name: FTP Deploy
         uses: SamKirkland/FTP-Deploy-Action@4.1.0
         with:
           server: ${{ secrets.FTP_SERVER }}          # FTP server address
           username: ${{ secrets.FTP_USERNAME }}      # FTP username
           password: ${{ secrets.FTP_PASSWORD }}      # FTP password
-          protocol: ftp
-          local-dir: './'                             # Local directory to deploy
+          local-dir: './'                               # Local directory to deploy
           server-dir: /home/virtualekubdash.com/test/ # Remote directory on the server
+          
