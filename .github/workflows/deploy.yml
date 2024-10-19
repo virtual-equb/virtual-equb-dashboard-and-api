@@ -18,5 +18,5 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./path/to/your/files  # Change to your local directory
-          server-dir: /path/on/server  # Change to your server directory
+          local-dir: ./dist/
+          server-dir: /home/virtualekubdash.com/test/
