@@ -283,4 +283,24 @@ Route::middleware([
         Route::get('city/{cityId}', [SubCityController::class, 'getSubCitiesByCityId'])->name('subcities.byCityId');
         
     });
+    Route::prefix('main-equbs')->group(function () {
+        // Get all main equbs
+        Route::get('/', [MainEqubController::class, 'index'])->name('mainEqubs.index');
+    
+        // Get types of equbs
+        Route::get('/types', [MainEqubController::class, 'getTypes'])->name('mainEqubs.types');
+    
+        Route::get('/types', [MainEqubController::class, 'getTypes'])->name('mainEqubs.types');
+        // Create a new main equb
+        Route::post('/', [MainEqubController::class, 'store'])->name('mainEqubs.store');
+    
+        // Get a main equb by ID
+        Route::get('{id}', [MainEqubController::class, 'show'])->name('mainEqubs.show');
+    
+        // Update an existing main equb
+        Route::put('{id}', [MainEqubController::class, 'update'])->name('mainEqubs.update');
+    
+        // Delete a main equb
+        Route::delete('{id}', [MainEqubController::class, 'delete'])->name('mainEqubs.destroy');
+    });
 });
