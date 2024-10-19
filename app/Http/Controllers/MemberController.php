@@ -14,6 +14,11 @@ use App\Repositories\Payment\IPaymentRepository;
 use App\Repositories\EqubType\IEqubTypeRepository;
 use App\Repositories\Equb\IEqubRepository;
 use App\Repositories\ActivityLog\IActivityLogRepository;
+use App\Repositories\City\ICityRepository;
+use App\Repositories\ISubCityRepository;
+use App\Repositories\SubCity\ISubCityRepository as SubCityISubCityRepository;
+use App\Repositories\SubCity\SubCityRepository;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
@@ -27,13 +32,17 @@ class MemberController extends Controller
     private $equbRepository;
     private $userRepository;
     private $title;
+    private $cityRepository;
+    private $subCityRepository;
     public function __construct(
         IMemberRepository $memberRepository,
         IPaymentRepository $paymentRepository,
         IEqubTypeRepository $equbTypeRepository,
         IUserRepository $userRepository,
         IEqubRepository $equbRepository,
-        IActivityLogRepository $activityLogRepository
+        IActivityLogRepository $activityLogRepository,
+        ICityRepository $cityRepository,
+        SubCityISubCityRepository $subCityRepository
     ) {
         $this->activityLogRepository = $activityLogRepository;
         $this->memberRepository = $memberRepository;
@@ -41,6 +50,8 @@ class MemberController extends Controller
         $this->equbTypeRepository = $equbTypeRepository;
         $this->equbRepository = $equbRepository;
         $this->userRepository = $userRepository;
+        $this->cityRepository = $cityRepository;
+        $this->subCityRepository = $subCityRepository;
         $this->title = "Virtual Equb - Member";
     }
     public function clearSearchEntry()
@@ -103,7 +114,8 @@ class MemberController extends Controller
                 $equbs = $this->equbRepository->getAll();
                 $payments = $this->paymentRepository->getAllPayment();
                 $title = $this->title;
-                return view('admin/member.memberList', compact('title', 'equbTypes', 'members', 'equbs', 'payments'));
+                $cities = $this->cityRepository->getAll();
+                return view('admin/member.memberList', compact('title', 'equbTypes', 'members', 'equbs', 'payments','cities'));
             } elseif ($userData && ($userData['role'] == "equb_collector")) {
                 $totalMember = $this->memberRepository->getMember();
                 $members = $this->memberRepository->getAllByPaginate($offset);
@@ -111,14 +123,16 @@ class MemberController extends Controller
                 $equbs = $this->equbRepository->getAll();
                 $payments = $this->paymentRepository->getAllPayment();
                 $title = $this->title;
-                return view('equbCollecter/member.memberList', compact('title', 'equbTypes', 'equbs', 'payments'));
+                $cities = $this->cityRepository->getAll();
+                return view('equbCollecter/member.memberList', compact('title', 'equbTypes', 'equbs', 'payments','cities'));
             } elseif ($userData && ($userData['role'] == "member")) {
                 $members = $this->memberRepository->getByPhone($userData['phone_number']);
                 $equbTypes = $this->equbTypeRepository->getActive();
                 $equbs = $this->equbRepository->getAll();
                 $payments = $this->paymentRepository->getAllPayment();
-                $title = $this->title;
-                return view('member/member.memberList', compact('title', 'members', 'equbTypes', 'equbs', 'payments'));
+                $members = $this->memberRepository->getByPhone($userData['phone_number']);
+                $cities = $this->cityRepository->getAll();
+                return view('member/member.memberList', compact('title', 'members', 'equbTypes', 'equbs', 'payments','cities'));
             } else {
                 return view('auth/login');
             }
