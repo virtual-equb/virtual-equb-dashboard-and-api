@@ -3,7 +3,7 @@ name: Deploy
 on:
   push:
     branches:
-      - main  # or the branch you want to trigger the workflow on
+      - main  # Change to your target branch
 
 jobs:
   deploy:
@@ -12,5 +12,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       
-      - name: Run deployment script
-        run: echo "Deploying..."
+      - name: FTP Deploy
+        uses: SamKirkland/FTP-Deploy-Action@4.1.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./path/to/your/files  # Change to your local directory
+          server-dir: /path/on/server  # Change to your server directory
