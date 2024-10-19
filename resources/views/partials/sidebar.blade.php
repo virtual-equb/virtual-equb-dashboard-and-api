@@ -50,8 +50,8 @@
                                 </li>
                             @endforeach
                         </ul> --}}
-                        {{-- <ul class="nav nav-treeview ml-2">
-                            @foreach ($mainEqubs as $equbType)
+                        <ul class="nav nav-treeview ml-2">
+                            @foreach (App\Models\MainEqub::all() as $equbType)
                                 <li class="nav-item">
                                     <a href="{{ route('viewMainEqub', $equbType->id) }}" class="nav-link"
                                         id="{{ $equbType->id }}">
@@ -60,7 +60,7 @@
                                     </a>
                                 </li>
                             @endforeach
-                        </ul> --}}
+                        </ul>
                     </li>
                 @endif
                 @if (Auth::user()->role == 'admin' ||

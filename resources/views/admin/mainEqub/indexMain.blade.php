@@ -39,9 +39,9 @@ Auth::user()->role == 'it')
                                     <h5 class="card-title">{{ $equb->name }}</h5>
                                     <p class="card-text">{{ $equb->remark }}.</p>
                                     <p class="card-text"><small class="text-sm text-white">Created Date {{ $equb->created_at }}</small></p>
-                                    <a href="{{ route('viewMainEqub', $equb->id) }}" class="small-box-footer text-white mt-5">
+                                    {{-- <a href="{{ route('viewMainEqub', $equb->id) }}" class="small-box-footer text-white mt-5">
                                         More info <i class="fas fa-arrow-circle-right"></i>
-                                    </a>
+                                    </a> --}}
                                 </div>
                                 <div class="icon">
                                     <i class="ion ion-bag"></i>
