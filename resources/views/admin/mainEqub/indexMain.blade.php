@@ -34,7 +34,7 @@ Auth::user()->role == 'it')
                     <div class="col-md-4">
                         <div class="">
                             <div class="card bg-info">
-                                <img class="card-img-top" src="{{ asset('storage/' . $equb->image) }}" alt="Card image cap">
+                                {{-- <img class="card-img-top" src="{{ asset('storage/' . $equb->image) }}" alt="Card image cap"> --}}
                                 <div class="card-body">
                                     <h5 class="card-title">{{ $equb->name }}</h5>
                                     <p class="card-text">{{ $equb->remark }}.</p>

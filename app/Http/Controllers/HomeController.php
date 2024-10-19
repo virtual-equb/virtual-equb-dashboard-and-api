@@ -47,7 +47,7 @@ class HomeController extends Controller
                 $totalEqubAmount = $this->equbRepository->getExpectedTotal();
                 $totalEqubPayment = $this->paymentRepository->getTotalPayment();
                 $activeMember = $this->memberRepository->getActiveMember();
-                $mainEqubs = $this->mainEqubRepository->all();
+                // $mainEqubs = $this->mainEqubRepository->all();
                 $fullPaidAmount = Payment::selectRaw('sum(payments.amount) as paidAmount')
                     ->join('equbs', 'payments.equb_id', '=', 'equbs.id')
                     ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
@@ -257,7 +257,7 @@ class HomeController extends Controller
                         ]);
                     }
                 }
-                return view('admin/home', compact('automaticMembersArray', 'title', 'lables', 'fullPaidAmount', 'fullUnPaidAmount', 'Expected', 'daylyPaidAmount', 'daylyUnpaidAmount', 'daylyExpected', 'weeklyPaidAmount', 'weeklyUnpaidAmount', 'weeklyExpected', 'monthlyPaidAmount', 'monthlyUnpaidAmount', 'monthlyExpected', 'yearlyPaidAmount', 'yearlyUnpaidAmount', 'yearlyExpected', 'totalMember', 'tudayPaidMember', 'activeMember', 'totalUser', 'totalEqubPayment', 'mainEqubs'));
+                return view('admin/home', compact('automaticMembersArray', 'title', 'lables', 'fullPaidAmount', 'fullUnPaidAmount', 'Expected', 'daylyPaidAmount', 'daylyUnpaidAmount', 'daylyExpected', 'weeklyPaidAmount', 'weeklyUnpaidAmount', 'weeklyExpected', 'monthlyPaidAmount', 'monthlyUnpaidAmount', 'monthlyExpected', 'yearlyPaidAmount', 'yearlyUnpaidAmount', 'yearlyExpected', 'totalMember', 'tudayPaidMember', 'activeMember', 'totalUser', 'totalEqubPayment'));
             } elseif ($userData && ($userData['role'] == "equb_collector")) {
                 return redirect('/member/');
             } elseif ($userData && ($userData['role'] == "member")) {
