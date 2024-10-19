@@ -50,6 +50,17 @@
                                 </li>
                             @endforeach
                         </ul>
+                        {{-- <ul class="nav nav-treeview ml-2">
+                            @foreach ($mainEqubs as $equbType)
+                                <li class="nav-item">
+                                    <a href="{{ url('equbTypeDashboard/' . $equbType->id) }}" class="nav-link"
+                                        id="{{ $equbType->id }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>{{ $equbType->name }}</p>
+                                    </a>
+                                </li>
+                            @endforeach
+                        </ul> --}}
                     </li>
                 @endif
                 @if (Auth::user()->role == 'admin' ||
@@ -116,6 +127,21 @@
                                 </a>
                             </li>
                         </ul>
+                    </li>
+                @endif
+                @if (Auth::user()->role == 'admin' ||
+                        Auth::user()->role == 'general_manager' ||
+                        Auth::user()->role == 'operation_manager' ||
+                        Auth::user()->role == 'customer_service' ||
+                        Auth::user()->role == 'assistant' ||
+                        Auth::user()->role == 'it')
+                    <li class="nav-item" id="nav-ety">
+                        <a href="{{ route('showEqubType') }}" class="nav-link " id="et">
+                            <i class="nav-icon fa fa-network-wired"></i>
+                            <p>
+                                Main Equbs
+                            </p>
+                        </a>
                     </li>
                 @endif
                 @if (Auth::user()->role == 'admin' ||

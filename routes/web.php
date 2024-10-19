@@ -80,6 +80,10 @@ Route::middleware([
         Route::put('/updateStatus/{id}', [EqubTypeController::class, 'updateStatus'])->name('updateStatus');
         Route::put('/updatePendingStatus/{id}/{status}', [EqubTypeController::class, 'updatePendingStatus'])->name('updatePendingStatus');
     });
+    // Route::group(['prefix' => 'mainEqub'], function () {
+    //     Route::get('/', []);
+    // });
+
     Route::group(['prefix' => 'member'], function () {
         Route::get('/', [MemberController::class, 'index'])->name('showMember');
         Route::get('/showPendingMembers', [MemberController::class, 'indexPending'])->name('showPendingMembers');

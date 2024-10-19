@@ -13,6 +13,7 @@ use App\Repositories\Member\IMemberRepository;
 use App\Repositories\User\IUserRepository;
 use Illuminate\Support\Arr;
 use App\Models\Payment;
+use App\Repositories\MainEqub\MainEqubRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Exception;
@@ -25,13 +26,15 @@ class HomeController extends Controller
     private $memberRepository;
     private $userRepository;
     private $title;
-    public function __construct(IPaymentRepository $paymentRepository, IEqubRepository $equbRepository, IEqubTypeRepository $equbTypeRepository, IMemberRepository $memberRepository, IUserRepository $userRepository)
+    private $mainEqubRepository;
+    public function __construct(IPaymentRepository $paymentRepository, IEqubRepository $equbRepository, IEqubTypeRepository $equbTypeRepository, IMemberRepository $memberRepository, IUserRepository $userRepository, MainEqubRepositoryInterface $mainEqubRepository)
     {
         $this->paymentRepository = $paymentRepository;
         $this->equbRepository = $equbRepository;
         $this->memberRepository = $memberRepository;
         $this->userRepository = $userRepository;
         $this->title = "Virtual Equb - Dashboard";
+        $this->mainEqubRepository = $mainEqubRepository;
     }
     //Projection chart updated here
     public function index()
@@ -44,6 +47,7 @@ class HomeController extends Controller
                 $totalEqubAmount = $this->equbRepository->getExpectedTotal();
                 $totalEqubPayment = $this->paymentRepository->getTotalPayment();
                 $activeMember = $this->memberRepository->getActiveMember();
+                $mainEqubs = $this->mainEqubRepository->all();
                 $fullPaidAmount = Payment::selectRaw('sum(payments.amount) as paidAmount')
                     ->join('equbs', 'payments.equb_id', '=', 'equbs.id')
                     ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
@@ -253,7 +257,7 @@ class HomeController extends Controller
                         ]);
                     }
                 }
-                return view('admin/home', compact('automaticMembersArray', 'title', 'lables', 'fullPaidAmount', 'fullUnPaidAmount', 'Expected', 'daylyPaidAmount', 'daylyUnpaidAmount', 'daylyExpected', 'weeklyPaidAmount', 'weeklyUnpaidAmount', 'weeklyExpected', 'monthlyPaidAmount', 'monthlyUnpaidAmount', 'monthlyExpected', 'yearlyPaidAmount', 'yearlyUnpaidAmount', 'yearlyExpected', 'totalMember', 'tudayPaidMember', 'activeMember', 'totalUser', 'totalEqubPayment'));
+                return view('admin/home', compact('automaticMembersArray', 'title', 'lables', 'fullPaidAmount', 'fullUnPaidAmount', 'Expected', 'daylyPaidAmount', 'daylyUnpaidAmount', 'daylyExpected', 'weeklyPaidAmount', 'weeklyUnpaidAmount', 'weeklyExpected', 'monthlyPaidAmount', 'monthlyUnpaidAmount', 'monthlyExpected', 'yearlyPaidAmount', 'yearlyUnpaidAmount', 'yearlyExpected', 'totalMember', 'tudayPaidMember', 'activeMember', 'totalUser', 'totalEqubPayment', 'mainEqubs'));
             } elseif ($userData && ($userData['role'] == "equb_collector")) {
                 return redirect('/member/');
             } elseif ($userData && ($userData['role'] == "member")) {

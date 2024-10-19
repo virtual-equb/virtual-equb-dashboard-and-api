@@ -15,7 +15,7 @@ class MainEqub extends Model
 
     public function subEqub() 
     {
-        return $this->hasMany(EqubType::class, 'main_equb');
+        return $this->hasMany(EqubType::class, 'main_equb_id');
     }
 
 }
