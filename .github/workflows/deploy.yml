@@ -1,22 +1,16 @@
-name: Deploye
+name: Deploy
+
 on:
   push:
     branches:
-     -main
+      - main  # or the branch you want to trigger the workflow on
+
 jobs:
   deploy:
-    name:  Deploy website every commit
     runs-on: ubuntu-latest
     steps:
-      - name: Get latest code
+      - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: FTP-Deploy-Action
-        uses: SamKirkland/FTP-Deploy-Action@4.1.0  # Ensure to include the action to use
-        with:
-          server: ftp.virtualekubdash.com
-          username: test@test.virtualekubdash.com
-          password: '(7^xbOazFA=D'
-          protocol: ftps
-          port: 21 
-          local-dir: './'
+      
+      - name: Run deployment script
+        run: echo "Deploying..."
