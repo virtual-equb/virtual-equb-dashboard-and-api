@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('name');
             // $table->dateTime('start_date');
             // $table->dateTime('end_date');
-            $table->foreignIdFor(MainEqub::class, 'main_equb');
+            $table->foreignIdFor(MainEqub::class, 'main_equb_id');
             $table->string('image');
             $table->integer('round');
             $table->enum('status', ['Active', 'Deactive',])->default('Active');

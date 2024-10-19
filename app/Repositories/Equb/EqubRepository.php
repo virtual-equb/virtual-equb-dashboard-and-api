@@ -526,12 +526,12 @@ class EqubRepository implements IEqubRepository
     }
     public function getByIdNested($id)
     {
-        return $this->model->where('status', 'Active')->with(['equbType.mainEqub', 'payments'])->find($id);
+        return $this->model->where('status', 'Active')->with('equbType.mainEqub', 'payments')->find($id);
     }
 
     public function getByIdNestedForLottery($id)
     {
-        return $this->model->with('equbType', 'payments')->find($id);
+        return $this->model->with('equbType.mainEqub', 'payments')->find($id);
     }
     public function geteEubById($id)
     {
