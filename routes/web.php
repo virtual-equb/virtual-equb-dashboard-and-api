@@ -12,6 +12,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\CityController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -242,5 +244,43 @@ Route::middleware([
         Route::get('/logDetailPaginate/{type}/{offsetVal}/{pageNumberVal}', [ActivityLogController::class, 'logDetailPaginate'])->name('logDetailPaginate');
         Route::get('/search-activity/{type}/{searchInput}/{offset}/{pageNumber?}', [ActivityLogController::class, 'searchActivity'])->name('searchActivity');
         Route::get('/clearSearchEntry', [ActivityLogController::class, 'clearSearchEntry'])->name('clearSearchEntry');
+    });
+    Route::prefix('cities')->group(function () {
+        // Get all cities
+        Route::get('/', [CityController::class, 'index'])->name('cities.index');
+            // Create a new city
+            Route::get('/create', [CityController::class, 'create'])->name('admin.city.addCity');
+            Route::post('/', [CityController::class, 'store'])->name('cities.store');
+        // Get a city by ID
+        Route::get('{id}', [CityController::class, 'show'])->name('cities.show');
+    
+        // Create a new city
+        Route::post('/', [CityController::class, 'store'])->name('cities.store');
+    
+        // Update an existing city
+        Route::put('{id}', [CityController::class, 'update'])->name('cities.update');
+    
+        // Delete a city
+        Route::delete('{id}', [CityController::class, 'destroy'])->name('cities.destroy');
+    });
+    Route::prefix('subcities')->group(function () {
+        // Get all sub-cities
+        Route::get('/', [SubCityController::class, 'index'])->name('subcities.index');
+    
+        // Get a sub-city by ID
+        Route::get('{id}', [SubCityController::class, 'show'])->name('subcities.show');
+    
+        // Create a new sub-city
+        Route::post('/', [SubCityController::class, 'store'])->name('subcities.store');
+    
+        // Update an existing sub-city
+        Route::put('{id}', [SubCityController::class, 'update'])->name('subcities.update');
+    
+        // Delete a sub-city
+        Route::delete('{id}', [SubCityController::class, 'destroy'])->name('subcities.destroy');
+    
+        // Get sub-cities by city ID
+        Route::get('city/{cityId}', [SubCityController::class, 'getSubCitiesByCityId'])->name('subcities.byCityId');
+        
     });
 });
