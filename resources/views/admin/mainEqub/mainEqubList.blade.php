@@ -6,20 +6,16 @@
         background: url("{{ url('images/plus20.webp') }}") no-repeat center center;
         cursor: pointer;
     }
-
     tr.shown .details-control {
         background: url("{{ url('images/minus20.webp') }}") no-repeat center center;
     }
-
     .form-group.required .control-label:after {
         content: "*";
         color: red;
     }
-
     .table-responsive {
         overflow-x: auto;
     }
-
     @media (max-width: 768px) {
         .responsive-input {
             width: 100%;
@@ -47,7 +43,7 @@
                                 </ul>
                                 <div class="float-right">
                                     @if (!in_array(Auth::user()->role, ['assistant', 'finance']))
-                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addEqubModal" style="margin-right: 30px;">
+                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addMainEqubModal" style="margin-right: 30px;">
                                             <span class="fa fa-plus-circle"></span> Add Main Equb
                                         </button>
                                     @endif
@@ -88,7 +84,7 @@
                                                                             </button>
                                                                         </li>
                                                                         <li>
-                                                                            <button class="text-secondary btn btn-flat" onclick="openDeleteModal({{ $equb->id }})">
+                                                                            <button class="text-secondary btn btn-flat delete-equb" data-id="{{ $equb->id }}">
                                                                                 <i class="fas fa-trash-alt"></i> Delete
                                                                             </button>
                                                                         </li>
@@ -110,6 +106,10 @@
         </section>
     </div>
 </div>
+
+<!-- Include the Add Main Equb Modal -->
+@include('admin.mainEqub.addMainEqub')
+@include('admin.mainEqub.editMainEqub') 
 @endsection
 
 @section('scripts')
@@ -122,6 +122,9 @@
                 type: 'DELETE',
                 success: function(result) {
                     location.reload(); // Refresh the equb table
+                },
+                error: function(xhr) {
+                    alert('Error deleting equb: ' + xhr.responseText);
                 }
             });
         }
@@ -131,5 +134,23 @@
         $('#equbSearchText').val('');
         // Optionally refresh the table or apply a filter reset
     });
+
+    function openEditModal(equbId) {
+        $.ajax({
+            url: '/equbs/' + equbId + '/edit',  // Ensure this route exists
+            type: 'GET',
+            success: function(data) {
+                console.log(data); // Debugging line to check the response
+                $('#edit_equb_id').val(data.id);
+                $('#edit_name').val(data.name);
+                $('#edit_created_by').val(data.created_by);
+                $('#edit_remark').val(data.remark);
+                $('#editMainEqubModal').modal('show'); // Open the modal
+            },
+            error: function(xhr) {
+                console.error('Error fetching data:', xhr);
+            }
+        });
+    }
 </script>
 @endsection
