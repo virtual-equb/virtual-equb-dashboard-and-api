@@ -167,7 +167,7 @@
                         Auth::user()->role == 'assistant' ||
                         Auth::user()->role == 'it')
                     <li class="nav-item" id="nav-ety">
-                        <a href="{{ route('cities.index') }}" class="nav-link " id="city">
+                        <a href="{{ route('mainEqubs.index') }}" class="nav-link " id="city">
                             <i class="nav-icon fas fa-calendar-minus"></i>
                             <p>
                                 Main Equb
