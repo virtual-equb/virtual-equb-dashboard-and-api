@@ -51,14 +51,14 @@
                                             <a class="nav-link active" id="custom-tabs-two-member-tab"
                                                data-toggle="pill" href="#custom-tabs-two-member" role="tab"
                                                aria-controls="custom-tabs-two-member" aria-selected="true">
-                                                <span class="fa fa-list"></span> City
+                                                <span class="fa fa-list"></span> Sub Cities
                                             </a>
                                         </li>
                                     </ul>
                                     <div class="float-right">
                                         @if (Auth::user()->role != 'assistant' && Auth::user()->role != 'finance')
-                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addCityModal" style="margin-right: 30px;">
-                                                <span class="fa fa-plus-circle"></span> Add City
+                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addSubCityModal" style="margin-right: 30px;">
+                                                <span class="fa fa-plus-circle"></span> Add Sub City
                                             </button>
                                         @endif
                                     </div>
@@ -69,26 +69,26 @@
                                             <i class="fa fa-check-square"></i> Sub City
                                         </a>
                                         <div class="col-md-4">
-                                            <input class="form-control responsive-input" type="text" id="citySearchText" placeholder="Search City">
+                                            <input class="form-control responsive-input" type="text" id="subCitySearchText" placeholder="Search Sub City">
                                         </div>
                                         <div class="col-md-4">
                                             <button class="btn btn-default" id="clearSearch">Clear</button>
                                         </div>
                                     </div>
-                                    <div id="city_table_data" class="table-responsive">
-                                        <table class="table table-bordered" id="cityTable">
+                                    <div id="sub_city_table_data" class="table-responsive">
+                                        <table class="table table-bordered" id="subCityTable">
                                             <thead>
                                                 <tr>
                                                     <th>#</th>
-                                                    <th>City Name</th>
+                                                    <th>Sub City Name</th>
                                                     <th>Actions</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ($cities as $key => $city)
+                                                @foreach ($subCities as $key => $subCity)
                                                     <tr>
                                                         <td>{{ $key + 1 }}</td>
-                                                        <td>{{ $city->name }}</td>
+                                                        <td>{{ $subCity->name }}</td>
                                                         @if (Auth::user()->role != 'assistant')
                                                             <td>
                                                                 <div class='dropdown'>
@@ -96,12 +96,12 @@
                                                                     <ul class='dropdown-menu p-4'>
                                                                         @if (Auth::user()->role != 'finance')
                                                                             <li>
-                                                                                <button class="text-secondary btn btn-flat" onclick="openEditModal({{ $city->id }})">
+                                                                                <button class="text-secondary btn btn-flat" onclick="openEditModal({{ $subCity->id }})">
                                                                                     <span class="fa fa-edit"></span> Edit
                                                                                 </button>
                                                                             </li>
                                                                             <li>
-                                                                                <button class="text-secondary btn btn-flat delete-city" data-id="{{ $city->id }}">
+                                                                                <button class="text-secondary btn btn-flat delete-sub-city" data-id="{{ $subCity->id }}">
                                                                                     <i class="fas fa-trash-alt"></i> Delete
                                                                                 </button>
                                                                             </li>
@@ -124,28 +124,28 @@
         </div>
     </div>
 
-    <!-- Include the Add City Modal -->
-    @include('admin.city.addCity')
+    <!-- Include the Add Sub City Modal -->
+    @include('admin.subCity.addSubCity')
 
 @endsection
 
 @section('scripts')
     <script>
-        $(document).on('click', '.delete-city', function() {
-            const cityId = $(this).data('id');
-            if (confirm('Are you sure you want to remove this city?')) {
+        $(document).on('click', '.delete-sub-city', function() {
+            const subCityId = $(this).data('id');
+            if (confirm('Are you sure you want to remove this sub city?')) {
                 $.ajax({
-                    url: '/cities/' + cityId,
+                    url: '/subcities/' + subCityId,
                     type: 'DELETE',
                     success: function(result) {
-                        location.reload(); // Refresh the city table
+                        location.reload(); // Refresh the sub city table
                     }
                 });
             }
         });
 
         $('#clearSearch').click(function() {
-            $('#citySearchText').val('');
+            $('#subCitySearchText').val('');
             // Optionally refresh the table or apply a filter reset
         });
     </script>
