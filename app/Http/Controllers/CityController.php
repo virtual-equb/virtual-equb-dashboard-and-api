@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\City\ICityRepository;
 use Illuminate\Support\Facades\Response;
-
+use App\Models\City;
 class CityController extends Controller
 {
     private $cityRepository;
@@ -40,8 +40,22 @@ class CityController extends Controller
         } catch (\Exception $e) {
             return Response::json(['error' => 'Failed to retrieve cities.'], 500);
         }
-    }
+    }    
+    public function store(Request $request)
+    {
+        // Validate the request
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
 
+        // Create a new city
+        City::create([
+            'name' => $request->name,
+        ]);
+
+        // Redirect back with a success message
+        return redirect()->back()->with('success', 'City added successfully!');
+    }
     /**
      * Check if the user has the required role to access the cities.
      *

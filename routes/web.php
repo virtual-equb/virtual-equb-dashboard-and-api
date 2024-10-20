@@ -13,6 +13,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\CityController;
+use App\Http\Controllers\SubCityController;
 use App\Http\Controllers\MainEqubController;
 
 
