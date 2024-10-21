@@ -182,7 +182,9 @@ class MemberController extends Controller
                 $payments = $this->paymentRepository->getAllPayment();
                 $title = $this->title;
                 // dd($members);
-                return view('admin/member.pendingMemberList', compact('title', 'equbTypes', 'members', 'equbs', 'payments'));
+                $title = $this->title;
+                $cities = $this->cityRepository->getAll();
+                return view('admin/member.pendingMemberList', compact('title', 'equbTypes', 'members', 'equbs', 'payments','cities'));
             } elseif ($userData && ($userData['role'] == "equb_collector")) {
                 $totalMember = $this->memberRepository->getPendingMembers();
                 $members = $this->memberRepository->getAllPendingByPaginate($offset);

@@ -135,10 +135,9 @@
                         Auth::user()->role == 'customer_service' ||
                         Auth::user()->role == 'assistant' ||
                         Auth::user()->role == 'it')
-                    <li class="nav-item" id="nav-ety">
-                        <a href="{{ route('mainequbIndex') }}" class="nav-link " id="et">
-                            {{-- <i class="nav-icon fa fa-network-wired"></i> --}}
-                            <i class="fa-regular fa fa-server"></i>
+                        <li class="nav-item" id="nav-ety">
+                        <a href="{{ route('mainEqubs.index') }}" class="nav-link " id="city">
+                            <i class="nav-icon fa fa-server"></i>
                             <p>
                                 Main Equbs
                             </p>
@@ -184,6 +183,21 @@
                             <i class="nav-icon fa fa-bell"></i>
                             <p>
                                 Notification
+                            </p>
+                        </a>
+                    </li>
+                @endif
+           
+                @if (Auth::user()->role == 'admin' ||
+                        Auth::user()->role == 'general_manager' ||
+                        Auth::user()->role == 'operation_manager' ||
+                        Auth::user()->role == 'assistant' ||
+                        Auth::user()->role == 'it')
+                    <li class="nav-item" id="nav-ety">
+                        <a href="{{ route('cities.index') }}" class="nav-link " id="city">
+                            <i class="nav-icon fas fa-calendar-minus"></i>
+                            <p>
+                                City
                             </p>
                         </a>
                     </li>
