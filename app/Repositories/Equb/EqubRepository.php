@@ -222,7 +222,7 @@ class EqubRepository implements IEqubRepository
 
     public function getAll()
     {
-        return $this->model->with('equbType', 'payments')->get();
+        return $this->model->with('equbType.mainEqub', 'payments')->get();
         
         // return EqubType::with('mainEqub')->get();
     }

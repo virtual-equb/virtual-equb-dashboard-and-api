@@ -52,9 +52,9 @@ class MainEqubController extends Controller
 
 
     public function store(Request $request) {
-        // dd($request->input('created_by'), Auth::user());
+        $userData = Auth::user();
+        
         try {
-            $userData = Auth::user();
             if ($userData && ($userData['role'] == 'admin' || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
                 $this->validate($request, [
                     'name' => 'required',

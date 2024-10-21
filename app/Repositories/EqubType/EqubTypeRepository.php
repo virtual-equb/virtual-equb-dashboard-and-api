@@ -55,7 +55,7 @@ class EqubTypeRepository implements IEqubTypeRepository
 
     public function getById($id)
     {
-        return $this->model->find($id);
+        return $this->model->with('mainEqub')->find($id);
     }
 
     public function getStatusById($id)
