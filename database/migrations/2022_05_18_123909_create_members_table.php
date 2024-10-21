@@ -17,20 +17,22 @@ return new class extends Migration
     public function up()
     {
         Schema::create('members', function (Blueprint $table) {
+            // if (!Schema::hasColumn('members', 'city')) {
+            //     $table->string('city', 191)->nullable();
+            // }
+            // if (!Schema::hasColumn('members', 'subcity')) {
+            //     $table->string('subcity', 191)->nullable();
+            // }
+            // if (!Schema::hasColumn('members', 'approved_by')) {
+            //     $table->string('approved_by', 191)->nullable();
+            // }
             $table->id();
             $table->string('full_name');
             $table->string('phone');
             $table->string('gender');
-            $table->foreignIdFor(Cities::class, 'city');
-            $table->foreignIdFor(Sub_city::class, 'subcity');
-            $table->foreignIdFor(User::class, 'approved_by');
-            $table->string('specific_location');
-            $table->date('approved_date');
-            $table->integer('rating');
-            $table->string('woreda');
-            $table->string('house_number');
-            $table->string('email');
-            $table->string('profile_photo_path');
+            // $table->foreignIdFor(Cities::class, 'city');
+            // $table->foreignIdFor(Sub_city::class, 'subcity');
+            // $table->foreignIdFor(User::class, 'approved_by');
             $table->enum('status', ['Active', 'Pending', 'Deactive',])->default('Active');
             $table->date('date_of_birth');
             $table->softDeletes();

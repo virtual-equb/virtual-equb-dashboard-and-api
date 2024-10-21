@@ -26,7 +26,7 @@ class MainEqubController extends Controller
     public function index() {
         try {
             $userData = Auth::user();
-            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it"])) {
+            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it", 'member'])) {
                 $mainEqubs = MainEqub::with('subEqub')->get();
                 return response()->json([
                     'data' => $mainEqubs,
@@ -55,7 +55,7 @@ class MainEqubController extends Controller
         $userData = Auth::user();
         
         try {
-            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it"])) {
+            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it", "member"])) {
                 $this->validate($request, [
                     'name' => 'required',
                     'created_by' => 'required',
@@ -104,7 +104,7 @@ class MainEqubController extends Controller
 
     public function show($id) {
         $userData = Auth::user();
-        if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it"])) {
+        if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it", "member"])) {
             $mainEqub = MainEqub::where('id', $id)->with('subEqub')->first();
             return response()->json([
                 'data' => $mainEqub
