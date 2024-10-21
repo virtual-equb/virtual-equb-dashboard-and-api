@@ -20,6 +20,8 @@ return new class extends Migration
             // $table->dateTime('end_date');
             $table->integer('round');
             $table->enum('status', ['Active', 'Deactive',])->default('Active');
+            $table->foreignIdFor(MainEqub::class, 'main_equb_id'); // Keeping foreign key
+            $table->string('image'); // Keeping image field
             $table->softDeletes();
             $table->timestamps();
         });
