@@ -26,7 +26,7 @@ class MainEqubController extends Controller
     public function index() {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == 'admin' || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
+            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it"])) {
                 $mainEqubs = MainEqub::with('subEqub')->get();
                 return response()->json([
                     'data' => $mainEqubs,
@@ -55,7 +55,7 @@ class MainEqubController extends Controller
         $userData = Auth::user();
         
         try {
-            if ($userData && ($userData['role'] == 'admin' || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
+            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it"])) {
                 $this->validate($request, [
                     'name' => 'required',
                     'created_by' => 'required',
@@ -104,7 +104,7 @@ class MainEqubController extends Controller
 
     public function show($id) {
         $userData = Auth::user();
-        if ($userData && ($userData['role'] == "admin" || $userData['role'] == "member" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
+        if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it"])) {
             $mainEqub = MainEqub::where('id', $id)->with('subEqub')->first();
             return response()->json([
                 'data' => $mainEqub
@@ -123,7 +123,7 @@ class MainEqubController extends Controller
             // dd($request->all());
             $userData = Auth::user();
             
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
+            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it"])) {
 
                 // Fetch the MainEqub by ID
                 $mainEqub = MainEqub::where('id', $id)->with('subEqub')->first();

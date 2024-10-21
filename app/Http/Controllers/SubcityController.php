@@ -20,7 +20,7 @@ class SubcityController extends Controller
     {
         $userData = Auth::user();
         try {
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "member" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
+            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it"])) {
                 $subcities = Sub_city::with('city')->get();
 
                 return response()->json([
@@ -94,7 +94,7 @@ class SubcityController extends Controller
         $userData = Auth::user();
 
         try {
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "member" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
+            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it"])) {
 
                 $subcity = Sub_city::where('id', $id)->with('city')->get();
 
