@@ -14,25 +14,36 @@ use App\Repositories\Equb\IEqubRepository;
 
 use App\Repositories\User\IUserRepository;
 use App\Repositories\Member\MemberRepository;
-
 use App\Repositories\Member\IMemberRepository;
+
 use App\Repositories\Payment\PaymentRepository;
-
 use App\Repositories\Payment\IPaymentRepository;
-use App\Repositories\EqubType\EqubTypeRepository;
 
+use App\Repositories\EqubType\EqubTypeRepository;
 use App\Repositories\EqubType\IEqubTypeRepository;
+
 use App\Repositories\EqubTaker\EqubTakerRepository;
 use App\Repositories\EqubTaker\IEqubTakerRepository;
+
 use App\Repositories\ActivityLog\ActivityLogRepository;
 use App\Repositories\ActivityLog\IActivityLogRepository;
+
 use App\Repositories\MainEqub\MainEqubRepositoryInterface;
 use App\Repositories\MainEqub\MainEqubRepository;
+
+use App\Repositories\City\ICityRepository;
+use App\Repositories\City\CityRepository;
+
+use App\Repositories\SubCity\ISubCityRepository;
+use App\Repositories\SubCity\SubCityRepository;
+
 use App\Repositories\Notification\NotificationRepository;
 use App\Repositories\RejectedDate\RejectedDateRepository;
 
 use App\Repositories\Notification\INotificationRepository;
 use App\Repositories\RejectedDate\IRejectedDateRepository;
+
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -53,6 +64,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(IUserRepository::class, UserRepository::class);
         $this->app->bind(INotificationRepository::class, NotificationRepository::class);
         $this->app->bind(MainEqubRepositoryInterface::class, MainEqubRepository::class);
+        $this->app->bind(ICityRepository::class, CityRepository::class);
+        $this->app->bind(ISubCityRepository::class, SubCityRepository::class);
     }
 
     /**

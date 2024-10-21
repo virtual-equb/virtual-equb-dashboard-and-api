@@ -34,10 +34,13 @@ return new class extends Migration
         DB::table('users')->insert(
             array(
                 'id' => '1',
-                'name' => 'Tamirat',
-                'email' => 'tamiratekub@virtualequb.com',
-                'password' => Hash::make('tame@ekub'),
-                'phone_number' => '+251910898626',
+                'name' => 'Hirpha Fayisa',
+                // 'email' => 'tamiratekub@virtualequb.com',
+                // 'password' => Hash::make('tame@ekub'),
+                // 'phone_number' => '+251910898626',
+                'email' => 'hirphafayisa88@gmail.com',
+                'password' => Hash::make('hirpha@1'),
+                'phone_number' => '+251930605974',
                 'gender' => 'male',
                 'role' => 'admin',
                 'enabled' => '1',

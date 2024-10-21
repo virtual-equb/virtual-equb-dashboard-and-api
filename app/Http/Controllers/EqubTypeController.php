@@ -62,6 +62,7 @@ class EqubTypeController extends Controller
                 $data['activeEqubType']  = $this->equbTypeRepository->getActive();
                 $data['title']  = $this->title;
                 $data['mainEqubs'] = $this->mainEqubRepository->all();
+               //dd( $data['equbTypes'] );
                 return view('admin/equbType.equbTypeList', $data);
             } else {
                 return view('auth/login');

@@ -13,6 +13,11 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\FrontMainEqubController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\CityController;
+use App\Http\Controllers\SubCityController;
+use App\Http\Controllers\MainEqubController;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -250,4 +255,61 @@ Route::middleware([
         Route::get('/search-activity/{type}/{searchInput}/{offset}/{pageNumber?}', [ActivityLogController::class, 'searchActivity'])->name('searchActivity');
         Route::get('/clearSearchEntry', [ActivityLogController::class, 'clearSearchEntry'])->name('clearSearchEntry');
     });
+    Route::prefix('cities')->group(function () {
+        // Get all cities
+        Route::get('/', [CityController::class, 'index'])->name('cities.index');
+            // Create a new city
+            Route::get('/create', [CityController::class, 'create'])->name('admin.city.addCity');
+            Route::post('/', [CityController::class, 'store'])->name('cities.store');
+        // Get a city by ID
+        Route::get('{id}', [CityController::class, 'show'])->name('cities.show');
+    
+        // Create a new city
+        Route::post('/', [CityController::class, 'store'])->name('cities.store');
+    
+        // Update an existing city
+        Route::put('{id}', [CityController::class, 'update'])->name('cities.update');
+    
+        // Delete a city
+        Route::delete('{id}', [CityController::class, 'destroy'])->name('cities.destroy');
+    });
+    Route::prefix('subcities')->group(function () {
+        // Get all sub-cities
+        Route::get('/', [SubCityController::class, 'index'])->name('subcities.index');
+    
+        // Get a sub-city by ID
+        Route::get('{id}', [SubCityController::class, 'show'])->name('subcities.show');
+    
+        // Create a new sub-city
+        Route::post('/', [SubCityController::class, 'store'])->name('subcities.store');
+    
+        // Update an existing sub-city
+        Route::put('{id}', [SubCityController::class, 'update'])->name('subcities.update');
+    
+        // Delete a sub-city
+        Route::delete('{id}', [SubCityController::class, 'destroy'])->name('subcities.destroy');
+    
+        // Get sub-cities by city ID
+        Route::get('city/{cityId}', [SubCityController::class, 'getSubCitiesByCityId'])->name('subcities.byCityId');
+        
+    });
+    Route::prefix('main-equbs')->group(function () {
+        // Get all cities
+          Route::get('/', [MainEqubController::class, 'index'])->name('mainEqubs.index');
+          // Get types of equbs
+          Route::get('/types', [MainEqubController::class, 'getTypes'])->name('mainEqubs.types');
+    
+          // Create a new main equb
+          Route::post('/', [MainEqubController::class, 'store'])->name('mainEqubs.store');
+      
+          // Get a main equb by ID
+          Route::get('{id}', [MainEqubController::class, 'show'])->name('mainEqubs.show');
+      
+          // Update an existing main equb
+          Route::put('{id}', [MainEqubController::class, 'update'])->name('mainEqubs.update');
+      
+          // Delete a main equb
+          Route::delete('{id}', [MainEqubController::class, 'delete'])->name('mainEqubs.destroy');
+    });
+  
 });
