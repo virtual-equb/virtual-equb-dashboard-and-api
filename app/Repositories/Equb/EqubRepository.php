@@ -222,8 +222,9 @@ class EqubRepository implements IEqubRepository
 
     public function getAll()
     {
-        // return $this->model->with('equbType', 'payments')->get();
-        return EqubType::with('mainEqub')->get();
+        return $this->model->with('equbType', 'payments')->get();
+        
+        // return EqubType::with('mainEqub')->get();
     }
 
     public function getByDate($dateFrom, $dateTo, $equbType, $offset)
@@ -525,12 +526,18 @@ class EqubRepository implements IEqubRepository
     }
     public function getByIdNested($id)
     {
-        return $this->model->where('status', 'Active')->with('equbType', 'payments')->find($id);
+        // $equb = $this->model
+        //     ->where('status', 'Active')
+        //     ->with('equbType.mainEqub', 'payments')
+        //     ->find($id);
+
+        // dd($equb);
+        return $this->model->where('status', 'Active')->with('equbType.mainEqub', 'payments')->find($id);
     }
 
     public function getByIdNestedForLottery($id)
     {
-        return $this->model->with('equbType', 'payments')->find($id);
+        return $this->model->with('equbType.mainEqub', 'payments')->find($id);
     }
     public function geteEubById($id)
     {

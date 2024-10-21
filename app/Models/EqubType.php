@@ -13,7 +13,7 @@ class EqubType extends Model
 
     protected $fillable = [
         'name', 'round', 'status', 'remark', 'lottery_date',
-        'rote', 'type', 'terms', 'quota', 'start_date', 'end_date', 'remaining_quota', 'image', 'main_equb'
+        'rote', 'type', 'terms', 'quota', 'start_date', 'end_date', 'remaining_quota', 'image', 'main_equb_id'
     ];
 
     public function equbs()
@@ -31,7 +31,7 @@ class EqubType extends Model
 
     public function mainEqub()
     {
-        return $this->belongsTo(MainEqub::class, 'main_equb');
+        return $this->belongsTo(MainEqub::class, 'main_equb_id');
     }
     //   public function equbType(){
     //     return $this->belongsTo(Member::class);

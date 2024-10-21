@@ -34,15 +34,26 @@
                         <ul class="nav nav-treeview ml-2">
                             <li class="nav-item">
                                 <a href="{{ route('dashboard') }}" class="nav-link" id="mainDash">
-                                    <i class="far fa-circle nav-icon"></i>
+                                    <i class="far fa-circle nav-icon ml-2"></i>
                                     <p>Main Dashboard</p>
                                 </a>
                             </li>
                         </ul>
-                        <ul class="nav nav-treeview ml-2">
+                        {{-- <ul class="nav nav-treeview ml-2">
                             @foreach (App\Models\EqubType::all() as $equbType)
                                 <li class="nav-item">
                                     <a href="{{ url('equbTypeDashboard/' . $equbType->id) }}" class="nav-link"
+                                        id="{{ $equbType->id }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>{{ $equbType->name }}</p>
+                                    </a>
+                                </li>
+                            @endforeach
+                        </ul> --}}
+                        <ul class="nav nav-treeview ml-2">
+                            @foreach (App\Models\MainEqub::all() as $equbType)
+                                <li class="nav-item">
+                                    <a href="{{ route('viewMainEqub', $equbType->id) }}" class="nav-link"
                                         id="{{ $equbType->id }}">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>{{ $equbType->name }}</p>
@@ -116,6 +127,22 @@
                                 </a>
                             </li>
                         </ul>
+                    </li>
+                @endif
+                @if (Auth::user()->role == 'admin' ||
+                        Auth::user()->role == 'general_manager' ||
+                        Auth::user()->role == 'operation_manager' ||
+                        Auth::user()->role == 'customer_service' ||
+                        Auth::user()->role == 'assistant' ||
+                        Auth::user()->role == 'it')
+                    <li class="nav-item" id="nav-ety">
+                        <a href="{{ route('mainequbIndex') }}" class="nav-link " id="et">
+                            {{-- <i class="nav-icon fa fa-network-wired"></i> --}}
+                            <i class="fa-regular fa fa-server"></i>
+                            <p>
+                                Main Equbs
+                            </p>
+                        </a>
                     </li>
                 @endif
                 @if (Auth::user()->role == 'admin' ||
