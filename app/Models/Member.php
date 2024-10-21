@@ -26,7 +26,7 @@ class Member extends Model
         'approved_date',
         'remark',
         'rating',
-        'age'
+        'date_of_birth'
     ];
 
     public function equbs()
@@ -41,7 +41,16 @@ class Member extends Model
     {
         return $this->hasMany(EqubTaker::class);
     }
-    //   public function equbType(){
-    //     return $this->hasMany(EqubType::class);
-    // }
+    public function memberCity() 
+    {
+        return $this->belongsTo(Cities::class, 'city');
+    }
+    public function memberSubcity()
+    {
+        return $this->belongsTo(Sub_city::class, 'subcity');
+    }
+    public function memberApproval()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }
 }

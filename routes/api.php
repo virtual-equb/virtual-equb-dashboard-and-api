@@ -115,6 +115,7 @@ Route::prefix('chapa')->group(function () {
 
 Route::prefix('equbType')->group(function () {
     Route::get('/', [EqubTypeController::class, 'index'])->name('showEqubType');
+    Route::get('/showequbtype/{id}', [EqubTypeController::class, 'show'])->name('viewEqubType');
     Route::post('/register', [EqubTypeController::class, 'store'])->name('registerEqubType');
     Route::post('/update/{id}', [EqubTypeController::class, 'update'])->name('updateEqubType');
     Route::delete('/delete/{id}', [EqubTypeController::class, 'destroy'])->name('deleteEqubType');
