@@ -74,7 +74,7 @@ class EqubTypeController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector") || ($userData['role'] == "member")) {
+            if ($userData && in_array($userData['role'], ['admin', 'member', 'equb_collector'])) {
                 $data['equbTypes'] = $this->equbTypeRepository->getAll();
                 $data['deactiveEqubType']  = $this->equbTypeRepository->getDeactive();
                 $data['activeEqubType']  = $this->equbTypeRepository->getActive();
@@ -253,7 +253,7 @@ class EqubTypeController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
+            if ($userData && in_array($userData['role'], ["admin", "general_manager", "operation_manager", "it"])) {
                 $data['title'] = $this->title;
                 return response()->json($data);
             } else {
@@ -288,8 +288,9 @@ class EqubTypeController extends Controller
         // dd($request);
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
+            if ($userData && in_array($userData['role'], ["admin", "general_manager", "operation_manager", "it"])) {
                 $this->validate($request, [
+                    'main_equb_id' => 'required',
                     'name' => 'required',
                     'round' => 'required',
                     'rote' => 'required',
@@ -299,6 +300,7 @@ class EqubTypeController extends Controller
                     // 'end_date' => 'required',
                 ]);
                 $name = $request->input('name');
+                $main_equb_id = $request->input('main_equb_id');
                 $round = $request->input('round');
                 $rote = $request->input('rote');
                 $type = $request->input('type');
@@ -317,6 +319,7 @@ class EqubTypeController extends Controller
                     'start_date' => $start_date,
                     'end_date' => $end_date,
                     'quota' => $quota,
+                    'main_equb_id' => $main_equb_id
                 ];
                 $name_count = EqubType::where('name', $name)->where('round', $round)->where('rote', $rote)->where('type', $type)->count();
                 if ($name_count > 0) {
@@ -362,12 +365,14 @@ class EqubTypeController extends Controller
             ]);
         }
     }
-    public function show(EqubType $equbType)
+    public function show($id)
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
-                $data['equb'] = $this->equbTypeRepository->getById($equbType);
+            if ($userData && in_array($userData['role'], ["admin", "general_manager", "operation_manager", "it"])) {
+                // $data['equb'] = $this->equbTypeRepository->getById($equbType);
+                $data = EqubType::where('id', $id)->with('mainEqub')->first();
+                // dd($data);
                 return response()->json($data);
             } else {
                 return response()->json([
@@ -387,7 +392,7 @@ class EqubTypeController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
+            if ($userData && in_array($userData['role'], ["admin", "general_manager", "operation_manager", "it"])) {
                 $data['equbType'] = $this->equbTypeRepository->getById($equbType);
                 return response()->json($data);
             } else {
@@ -417,7 +422,7 @@ class EqubTypeController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
+            if ($userData && in_array($userData['role'], ["admin", "general_manager", "operation_manager", "it"])) {
                 $status = $this->equbTypeRepository->getStatusById($id)->status;
                 if ($status == "Deactive") {
                     $status = "Active";
@@ -567,7 +572,7 @@ class EqubTypeController extends Controller
         // dd($request);
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
+            if ($userData && in_array($userData['role'],  ["admin", "general_manager", "operation_manager", "it"])) {
                 $validated = $this->validate($request, []);
                 $name = $request->input('update_name');
                 $round = $request->input('update_round');
@@ -639,7 +644,7 @@ class EqubTypeController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
+            if ($userData && in_array($userData['role'], ["admin", "general_manager", "operation_manager", "it"])) {
                 $equb = $this->equbRepository->getEqubType($id);
                 if (!$equb->isEmpty()) {
                     return response()->json([

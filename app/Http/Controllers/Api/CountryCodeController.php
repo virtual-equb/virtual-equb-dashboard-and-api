@@ -21,7 +21,7 @@ class CountryCodeController extends Controller
     {
         $userData = Auth::user();
         try {
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "member" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
+            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it"])) {
                 $codes = CountryCode::with('country')->get();
     
                 return response()->json([
@@ -112,7 +112,7 @@ class CountryCodeController extends Controller
         $userData = Auth::user();
 
         try {
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "member" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
+            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it"])) {
                 $code = CountryCode::where('id', $id)->with('country')->first();
 
                 return response()->json([

@@ -56,7 +56,7 @@ class EqubTypeController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "member" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
+            if ($userData && in_array($userData['role'], ["admin", "member", "general_manager", "operation_manager", "it", "customer_service", "assistant"])) {
                 $data['equbTypes'] = $this->equbTypeRepository->getAll();
                 $data['deactiveEqubType']  = $this->equbTypeRepository->getDeactive();
                 $data['activeEqubType']  = $this->equbTypeRepository->getActive();
