@@ -150,8 +150,8 @@
                         Auth::user()->role == 'customer_service' ||
                         Auth::user()->role == 'assistant' ||
                         Auth::user()->role == 'it')
-                    <li class="nav-item" id="nav-ety">
-                        <a href="{{ route('showEqubType') }}" class="nav-link " id="et">
+                <li class="nav-item" id="nav-ety">
+                <a href="{{ route('showEqubType') }}" class="nav-link " id="city">
                             <i class="nav-icon fa fa-network-wired"></i>
                             <p>
                                 Equb Type

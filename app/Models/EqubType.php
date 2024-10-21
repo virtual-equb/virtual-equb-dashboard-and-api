@@ -33,6 +33,7 @@ class EqubType extends Model
     {
         return $this->belongsTo(MainEqub::class, 'main_equb_id');
     }
+    
     //   public function equbType(){
     //     return $this->belongsTo(Member::class);
     // }
