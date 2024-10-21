@@ -1,7 +1,16 @@
+@if(Auth::user()->role == 'admin' ||
+Auth::user()->role == 'general_manager' ||
+Auth::user()->role == 'operation_manager' ||
+Auth::user()->role == 'finance' ||
+Auth::user()->role == 'assistant' ||
+Auth::user()->role == 'it')
+
+
+
 <div class="modal fade" id="addMainEqubModal" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form role="form" method="post" action="{{ route('mainEqubs.store') }}" enctype="multipart/form-data" id="addMainEqub" name="addMainEqub">
+            <form role="form" method="post" action="{{ route('storeMainEqub') }}" enctype="multipart/form-data" id="addMainEqub" name="addMainEqub">
                 {{ csrf_field() }}
                 <div class="modal-header">
                     <h4 class="modal-title">Add Main Equb</h4>
@@ -32,3 +41,5 @@
         </div>
     </div>
 </div>
+
+@endif
