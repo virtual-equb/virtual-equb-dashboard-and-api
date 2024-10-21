@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('phone');
             $table->string('gender');
             $table->enum('status', ['Active', 'Pending', 'Deactive',])->default('Active');
+            $table->date('date_of_birth');
             $table->softDeletes();
             $table->timestamps();
         });
