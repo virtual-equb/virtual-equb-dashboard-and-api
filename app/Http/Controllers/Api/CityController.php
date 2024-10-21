@@ -21,7 +21,7 @@ class CityController extends Controller
     {
         $userData = Auth::user();
         try {
-            if ($userData && in_array($userData['role'], ['admin', 'member', 'general_manager', 'operation_manager', 'it', 'customer_service', 'assistant'])) {
+            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it"])) {
 
                 $cities = Cities::with('cityCountry', 'subCity')->get();
 
