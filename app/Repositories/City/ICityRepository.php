@@ -7,6 +7,8 @@ interface ICityRepository
     public function getAll();
     
     public function getCity();
+    
+    public function getActiveCity();
 
     public function getById($id);
 

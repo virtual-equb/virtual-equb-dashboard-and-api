@@ -24,7 +24,11 @@ class CityRepository implements ICityRepository
     {
         return $this->model->all(); // Retrieve all cities
     }
-
+    
+    public function getActiveCity()
+    {
+        return $this->model->where('name', 'Addis Ababa')->get(); // Retrieve the active city
+    }
     /**
      * Get an active city by ID.
      *

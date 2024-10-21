@@ -22,7 +22,8 @@ class SubCityRepository implements ISubCityRepository
     {
         return $this->model->all(); // Retrieve all sub-cities
     }
-
+  
+   
     /**
      * Get an active sub-city by ID.
      *
