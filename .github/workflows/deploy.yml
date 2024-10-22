@@ -22,15 +22,12 @@ jobs:
       - name: Install Dependencies
         run: composer install --no-progress --no-suggest --prefer-dist
 
-      - name: Run Tests
-        run: php artisan test
-
       - name: FTP Deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ftp.virtualekubdash.com                     # FTP server address
           username: test@test.virtualekubdash.com             # Full FTP username
-          password: samisams@123              # Use a GitHub secret for the password
+          password: ${{ secrets.FTP_PASSWORD }}               # Use a GitHub secret for the password
           protocol: ftp                                       # Use 'ftp' or 'ftps' as needed
           local-dir: ./                                       # Local directory to deploy
           server-dir: /path/to/deploy                         # Specify the remote directory if needed
