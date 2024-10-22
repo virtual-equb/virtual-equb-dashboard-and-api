@@ -30,6 +30,64 @@ Auth::user()->role == 'it')
             margin-bottom: 20px;
         }
     }
+    td.details-control_equb {
+                background: url("{{ url('images/plus20.webp') }}") no-repeat center center;
+                cursor: pointer;
+            }
+
+            tr.shown td.details-control_equb {
+                background: url("{{ url('images/minus20.webp') }}") no-repeat center center;
+            }
+
+            td.details-control_payment {
+                background: url("{{ url('images/plus20.webp') }}") no-repeat center center;
+                cursor: pointer;
+
+            }
+
+            tr.shown td.details-control_payment {
+                background: url("{{ url('images/minus20.webp') }}") no-repeat center center;
+            }
+
+            div.dataTables_wrapper div.dataTables_info {
+                padding-top: 0.85em;
+                display: none;
+            }
+
+            .form-group.required .control-label:after {
+                content: "*";
+                color: red;
+            }
+
+            .modaloff6 {
+                visibility: hidden;
+            }
+
+            @media (max-width: 575.98px) {
+                #equbType-list-table {
+                    display: block;
+                    width: 100%;
+                    overflow-x: auto;
+                    -webkit-overflow-scrolling: touch;
+                }
+
+                .table-responsive-sm>.table-bordered {
+                    border: 0;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .addEqub {
+                    margin-bottom: 20px;
+                    width: 100%;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .equbTypeTab {
+                    width: 100%;
+                }
+            }
 </style>
 @endsection
 
@@ -202,6 +260,60 @@ Auth::user()->role == 'it')
             }
         });
     }
+    $(document).ready(function() {
+                $(document).on('click', '.view-icon', function(e) {
+                    e.preventDefault();
+
+                    var adminId = $(this).attr('equb-type-id');
+                    var image = $(this).attr('equb-type-image');
+
+                    $("#viewImage").attr("src", "/storage/" + image);
+
+                    $('#modaloff6').modal('show');
+                });
+                $('.textareaa').summernote();
+                const selectBox = document.getElementById("type");
+                const lotteryDate = document.getElementById("lottery_date_div");
+                const startDate = document.getElementById("start_date_div");
+                const endDate = document.getElementById("end_date_div");
+                const quota = document.getElementById("quota_div");
+                const rote = document.getElementById("rote");
+                const options = rote.options;
+                $("#type").on("change", function() {
+                    var type = $(this).find("option:selected").val();
+                    if (type === "Automatic") {
+                        lotteryDate.classList.remove("d-none");
+                        startDate.classList.remove("d-none");
+                        endDate.classList.remove("d-none");
+                        quota.classList.remove("d-none");
+                        //for (var i = 1; i < options.length; i++) {
+                        //    options[i].disabled = false;
+                        //    if (options[i].value !== "Weekly") {
+                        //        options[i].disabled = true;
+                        //    }
+                        //}
+                        lotteryDate.required = true;
+                        startDate.required = true;
+                        endDate.required = true;
+                        quota.required = true;
+                    } else {
+                        lotteryDate.classList.add("d-none");
+                        startDate.classList.add("d-none");
+                        endDate.classList.add("d-none");
+                        quota.classList.add("d-none");
+                        //for (var i = 1; i < options.length; i++) {
+                        //   options[i].disabled = false;
+                        //  if (options[i].value !== "Daily") {
+                        //       options[i].disabled = true;
+                        //   }
+                        //}
+                        lotteryDate.required = false;
+                        startDate.required = false;
+                        endDate.required = false;
+                        quota.required = false;
+                    }
+                });
+            });
 </script>
 @endsection
 

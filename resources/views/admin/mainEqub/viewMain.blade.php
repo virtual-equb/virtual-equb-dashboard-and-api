@@ -47,7 +47,7 @@ Auth::user()->role == 'it')
                     <!-- small box -->
                     <div class="small-box bg-success">
                         <div class="inner">
-                            <h3>{{ $activeEqubs }}</h3>
+                            <h3>{{ $activeEqubs->sub_equb_count }}</h3>
                             <p>Active Sub Equbs</p>
                         </div>
                         <div class="icon">
@@ -61,7 +61,7 @@ Auth::user()->role == 'it')
                     <!-- small box -->
                     <div class="small-box bg-danger">
                         <div class="inner">
-                            <h3>{{ $deactiveEqubs }}</h3>
+                            <h3>{{ $deactiveEqubs->sub_equb_count }}</h3>
                             <p>Deactive Sub Equbs</p>
                         </div>
                         <div class="icon">

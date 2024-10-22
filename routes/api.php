@@ -24,6 +24,7 @@ use App\Http\Controllers\Api\PaymentTypeController;
 use App\Http\Controllers\Api\RejectedDateController;
 use App\Http\Controllers\Api\PaymentGatewayController;
 use App\Http\Controllers\Api\PaymentTesterController;
+use App\Http\Controllers\Api\SubcityController as ApiSubcityController;
 use App\Http\Controllers\CodeController;
 use App\Http\Controllers\SubcityController;
 
@@ -102,7 +103,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::resource('/countries', CountryController::class);
     Route::resource('/countrycode', CountryCodeController::class);
     Route::resource('/city', CityController::class);
-    Route::resource('/subcity', SubcityController::class);
+    Route::resource('/subcity', ApiSubcityController::class);
 });
 
 // Route::get('/testequb', [MainEqubController::class, 'getTypes']);
