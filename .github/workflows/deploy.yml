@@ -8,16 +8,28 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
-      
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0' # Specify your PHP version
+          extensions: mbstring, xml, bcmath, curl # Add any other required extensions
+
+      - name: Install Dependencies
+        run: composer install --no-progress --no-suggest --prefer-dist
+
+      - name: Run Tests
+        run: php artisan test
+
       - name: FTP Deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ftp.virtualekubdash.com                     # FTP server address
-          username:  test@test.virtualekubdash.com          # Full FTP username
-          password: ${{ secrets.FTP_PASSWORD }}             # Use a GitHub secret for the password
-          protocol: ftp                                      # Use 'ftp' or 'ftps' as needed
-          local-dir: ./                
-          
+          username: test@test.virtualekubdash.com             # Full FTP username
+          password: ${{ secrets.FTP_PASSWORD }}               # Use a GitHub secret for the password
+          protocol: ftp                                       # Use 'ftp' or 'ftps' as needed
+          local-dir: ./                                       # Local directory to deploy
