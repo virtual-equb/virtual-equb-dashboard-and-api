@@ -17,28 +17,22 @@ class RolesAndPermissionsSeeder extends Seeder
     public function run()
     {
         // Create Roles
-        $adminRole = Roles::create(['name' => 'admin']);
-        $editorRole = Roles::create(['name' => 'editor']);
-        $memberRole = Roles::create(['name' => 'member']);
-        $generalManagerRole = Roles::create(['name' => 'general_manager']);
-        $operationManagerRole = Roles::create(['name' => 'operation_manager']);
-        $ItRole = Roles::create(['name' => 'it']);
-        $customerService = Roles::create(['name' => 'customer_service']);
-        $equbCollecterRole = Roles::create(['name' => 'equb_collector']);
-        $assistant = Roles::create(['name' => 'assistant']);
-        $callCenterRole = Roles::create(['name' => 'call_center']);
-        $financeRole = Roles::create(['name' => 'finance']);
+
+        $roles = ['admin', 'editor', 'member', 'general_manager', 'operation_manager', 'it', 'customer_service', 'equb_collector', 'assistant', 'call_center', 'finance'];
+        foreach ($roles as $role) {
+            Roles::create(['name' => $role]);
+        }
 
         // Create Permission
-        $permissions = ['edit articles', 'delete articles', 'publish articles', 'read articles'];
+        $permissions = ['manage_users', 'manage_roles', 'view_dashboard', 'create_equb', 'manage_equb'];
 
         foreach ($permissions as $permission) {
             Permission::create(['name' => $permission]);
         }
 
         // Assign Permissions to Roles
-        $adminRole->permissions()->sync(Permission::pluck('id'));
-        $editorRole->permissions()->sync(Permission::where('name', 'edit articles')->pluck('id'));
+        $admin = Roles::where('name', 'admin')->first();
+        $admin->permissions()->sync(Permission::pluck('id'));
 
     }
 }

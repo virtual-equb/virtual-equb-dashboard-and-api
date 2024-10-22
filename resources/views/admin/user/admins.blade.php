@@ -134,6 +134,7 @@
                                                         onclick="removeTabs();"> <span class="fa fa-plus-circle"></span> Add
                                                         User</a>
                                                 </li>
+                                                {{-- {{$roles}} --}}
                                             @endif
                                             <li class="nav-item updateUser" id="update-equb_taker-div"
                                                 style="display: none;">

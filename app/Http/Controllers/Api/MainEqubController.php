@@ -141,7 +141,7 @@ class MainEqubController extends Controller
                 // Build the update array
                 $update = [
                     'name' => $request->input('name'),
-                    'created_by' => $request->input('created_by'),
+                    'created_by' => $userData->id,
                     'active' => $request->input('active'),
                     'status' => $request->input('status'),
                     'remark' => $request->input('remark'),

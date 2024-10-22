@@ -3,14 +3,16 @@
 namespace App\Models;
 
 use App\Models\Traits\HasUuid;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
+use Laravel\Jetstream\HasProfilePhoto;
+use Spatie\Permission\Traits\HasRoles;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
-use Laravel\Jetstream\HasProfilePhoto;
-use Laravel\Sanctum\HasApiTokens;
-use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -19,7 +21,7 @@ class User extends Authenticatable implements JWTSubject
     use Notifiable;
     use HasFactory;
     use TwoFactorAuthenticatable;
-    // use HasRoles;
+    use HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -90,7 +92,7 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
-    public function roles()
+    public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Roles::class);
     }
@@ -102,7 +104,9 @@ class User extends Authenticatable implements JWTSubject
 
     public function permissions()
     {
-        return $this->roles->map->permissions->flatten()->pluck('name')->unique();
+        // return $this->roles->map->permissions->flatten()->pluck('name')->unique();
+        return $this->roles()->with('permissions')->get()
+            ->pluck('permissions')->flatten();
     }
 
     public function hasPermission($permission)
@@ -112,7 +116,11 @@ class User extends Authenticatable implements JWTSubject
 
     public function assignRole($role)
     {
-        $this->roles()->attach($role);
+        // $this->roles()->attach($role);
+        $roles = Roles::where('name', $role)->first();
+        if ($roles) {
+            $this->roles()->attach($roles);
+        }
     }
 
     public function removeRole($role)

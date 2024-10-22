@@ -13,6 +13,7 @@ use App\Repositories\ActivityLog\IActivityLogRepository;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -33,6 +34,8 @@ class UserController extends Controller
             if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
                 $this->middleware('auth');
                 $data['title'] = $this->title;
+                $data['roles'] = $this->userRepository->getRoles();
+                // dd($roles);
                 return view('admin/user.admins', $data);
             } else {
                 return view('auth/login');

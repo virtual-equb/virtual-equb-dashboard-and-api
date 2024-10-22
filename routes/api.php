@@ -24,9 +24,13 @@ use App\Http\Controllers\Api\PaymentTypeController;
 use App\Http\Controllers\Api\RejectedDateController;
 use App\Http\Controllers\Api\PaymentGatewayController;
 use App\Http\Controllers\Api\PaymentTesterController;
+use App\Http\Controllers\Api\PermissionController;
+use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\SubcityController as ApiSubcityController;
 use App\Http\Controllers\CodeController;
 use App\Http\Controllers\SubcityController;
+use App\Models\Roles;
+use App\Models\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -104,6 +108,10 @@ Route::middleware(['auth:api'])->group(function () {
     Route::resource('/countrycode', CountryCodeController::class);
     Route::resource('/city', CityController::class);
     Route::resource('/subcity', ApiSubcityController::class);
+    Route::resource('/roles', RoleController::class);
+    Route::resource('/permissions', PermissionController::class);
+    Route::get('/roles/{roleId}/give-permissions', [RoleController::class, 'addPermissionToRole']);
+    Route::put('/roles/{roleId}/give-permissions', [RoleController::class, 'updatePermissionToRole']);
 });
 
 // Route::get('/testequb', [MainEqubController::class, 'getTypes']);

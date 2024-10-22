@@ -7,6 +7,8 @@ use Illuminate\Support\Str;
 use Mail;
 use App\Models\User;
 use App\Http\Controllers\Controller;
+use App\Models\Permission;
+use App\Models\Roles;
 use Exception;
 use App\Repositories\User\IUserRepository;
 use App\Repositories\ActivityLog\IActivityLogRepository;
@@ -876,4 +878,30 @@ class UserController extends Controller
             ]);
         }
     }
+
+    public function assignRole(Request $request, User $user) {
+        $role = Roles::find($request->role_id);
+        if ($role) {
+            $user->assignRole($role->id);
+            return response()->json([
+                'message' => 'Role assigned successfully'
+            ]);
+        }
+        return response()->json([
+            'message' => 'Role not found'
+        ], 400);
+    }
+
+    public function assignPermission(Request $request, Roles $role)
+    {
+        $permission = Permission::find($request->permission_id);
+        if ($permission) {
+            $role->permissions()->attach($permission->id);
+            return response()->json([
+                'message' => 'Permission assigned successfully'
+            ]);
+        }
+        return response()->json(['message' => 'Permission not found'], 404);
+    }
+
 }

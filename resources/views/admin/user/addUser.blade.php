@@ -46,21 +46,25 @@
                 </div>
 
                 <div class="form-group row">
+                    {{-- {{ $roles }} --}}
                     <label for="phone" class="control-label col-md-2 "> Role  <i class="fa fa-asterisk text-danger" style="font-size: 8px"></i></label>
                     <div class="form-group required col-md-10">
 
-                        <select class="custom-select form-control" id="role"
+                        <select class="custom-select form-control" id="role" multiple
                         name="role">
+                        
                         <option selected value="">Choose...</option>
-                            <option value="admin">Admin</option>
-                            <option value="equb_collector">Equb Collector</option>
+                            @foreach ($roles as $role)
+                                <option value="role">{{ $role->name }}</option>
+                            @endforeach
+                            {{-- <option value="equb_collector">Equb Collector</option>
                             <option value="general_manager">General Manager</option>
                             <option value="operation_manager">Operation Manager</option>
                             <option value="marketing_manager">Marketing Manager</option>
                             <option value="assistant">Assistant</option>
                             <option value="customer_service">Customer Service</option>
                             <option value="finance">Finance</option>
-                            <option value="it">IT</option>
+                            <option value="it">IT</option> --}}
                         </select>
                     </div>
                 </div>

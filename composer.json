@@ -1,4 +1,3 @@
-
 {
     "name": "laravel/laravel",
     "type": "project",
@@ -15,7 +14,7 @@
         "laravel/sanctum": "^2.15",
         "laravel/tinker": "^2.7",
         "livewire/livewire": "^2.5",
-        "spatie/laravel-permission": "^6.9",
+        "spatie/laravel-permission": "*",
         "tymon/jwt-auth": "^1.0"
     },
     "require-dev": {
