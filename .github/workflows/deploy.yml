@@ -17,7 +17,7 @@ jobs:
         with:
           server: ftp.virtualekubdash.com                     # FTP server address
           username:  test@test.virtualekubdash.com          # Full FTP username
-          password: ${{ secrets.FTP_PASSWORD }}            # Use a GitHub secret for the password
+          password: samisams@123             # Use a GitHub secret for the password
           protocol: ftp                                      # Use 'ftp' or 'ftps' as needed
           local-dir: ./                
           
