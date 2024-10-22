@@ -60,13 +60,15 @@ class FrontMainEqubController extends Controller
 
         $Equb = MainEqub::where('id', $id)->with('subEqub')->first();
 
-        $activeEqubs = MainEqub::where('id', $id)->with(['subEqub' => function ($query) {
+        $activeEqubs = MainEqub::where('id', $id)->withCount(['subEqub' => function ($query) {
             $query->where('status', 'Active');
-        }])->count();
+        }])->first();
 
-        $deactiveEqubs = MainEqub::where('id', $id)->with(['subEqub' => function ($query) {
+        $deactiveEqubs = MainEqub::where('id', $id)->withCount(['subEqub' => function ($query) {
             $query->where('status', 'Deactive');
-        }])->count();
+        }])->first();
+
+        // dd($activeEqubs, $deactiveEqubs);
 
         $mainEqubs = $this->mainEqubRepository->all();
 
