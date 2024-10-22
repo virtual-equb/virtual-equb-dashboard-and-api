@@ -4,7 +4,7 @@ namespace App\Http\Requests\SubCity;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateSubcityController extends FormRequest
+class UpdateSubcityRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

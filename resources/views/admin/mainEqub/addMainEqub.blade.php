@@ -31,6 +31,19 @@ Auth::user()->role == 'it')
                             <label for="remark" class="control-label">Remark</label>
                             <textarea class="form-control" id="remark" name="remark" placeholder="Additional Information"></textarea>
                         </div>
+
+                        <div class="form-group">
+                            <label class="control-label">Terms and Conditions</label>
+                            <textarea class="form-control textareaa" id="terms" name="terms" placeholder="terms"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="active" class="control-label">Active:</label>
+                            <select class="form-control" id="active" name="active">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">

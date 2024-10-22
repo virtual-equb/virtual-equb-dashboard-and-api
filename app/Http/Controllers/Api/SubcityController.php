@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\City\StoreCityRequest;
-use App\Http\Requests\City\UpdateCityRequest;
-use App\Models\Cities;
-use Exception;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\SubCity\StoreSubcityRequest;
+use App\Http\Requests\SubCity\UpdateSubcityController;
+use App\Http\Requests\SubCity\UpdateSubcityRequest;
+use App\Models\Sub_city;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 
-class CityController extends Controller
+use function PHPSTORM_META\map;
+
+class SubcityController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -20,14 +23,14 @@ class CityController extends Controller
     public function index()
     {
         $userData = Auth::user();
-        try {
-            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "member", "it"])) {
 
-                $cities = Cities::with('cityCountry', 'subCity')->get();
+        try {
+            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it", 'member'])) {
+                $subCity = Sub_city::with('city')->get();
 
                 return response()->json([
-                    'code' => 200,
-                    'data' => $cities
+                    'data' => $subCity,
+                    'code' => 200
                 ]);
             } else {
                 return response()->json([
@@ -35,9 +38,10 @@ class CityController extends Controller
                     'message' => 'You can\'t perform this action!'
                 ]);
             }
+        
         } catch (Exception $ex) {
             return response()->json([
-                'code' => 400,
+                'code' => 500,
                 'message' => $ex->getMessage()
             ]);
         }
@@ -59,30 +63,31 @@ class CityController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreCityRequest $request)
+    public function store(StoreSubcityRequest $request)
     {
         $userData = Auth::user();
 
         try {
-            if ($userData && in_array($userData['role'], ['admin', 'member', 'general_manager', 'operation_manager', 'it', 'customer_service', 'assistant'])) {
-
+            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it", 'member'])) {
                 $data = $request->validated();
-                $city = Cities::create($data);
+                $subCity = Sub_city::create($data);
 
                 return response()->json([
                     'code' => 200,
-                    'data' => $city
+                    'data' => $subCity
                 ]);
+
             } else {
                 return response()->json([
                     'code' => 403,
                     'message' => 'You can\'t perform this action!'
                 ]);
             }
+
         } catch (Exception $ex) {
             return response()->json([
-                'code' => 400,
-                'error' => $ex->getMessage()
+                'code' => 500,
+                'message' => $ex->getMessage()
             ]);
         }
     }
@@ -98,23 +103,27 @@ class CityController extends Controller
         $userData = Auth::user();
 
         try {
-            if ($userData && in_array($userData['role'], ['admin', 'member', 'general_manager', 'operation_manager', 'it', 'customer_service', 'assistant'])) {
-                $city = Cities::where('id', $id)->with('cityCountry', 'subCity')->first();
+            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it", 'member'])) {
+                
+                $subCity = Sub_city::where('id', $id)->with('city')->first();
 
                 return response()->json([
                     'code' => 200,
-                    'data' => $city
+                    'data' => $subCity
                 ]);
+
             } else {
                 return response()->json([
                     'code' => 403,
                     'message' => 'You can\'t perform this action!'
                 ]);
             }
+
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 400,
-                'error' => $ex->getMessage()
+                'message' => 'Something went wrong!',
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -137,22 +146,41 @@ class CityController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateCityRequest $request, $id)
+    public function update(Request $request, $id)
     {
         $userData = Auth::user();
-
+        // return 123;
         try {
+
             if ($userData && in_array($userData['role'], ['admin', 'member', 'general_manager', 'operation_manager', 'it', 'customer_service', 'assistant'])) {
-                $city = Cities::where('id', $id)->with('cityCountry', 'subCity')->first();
+               
+                $subCity = Sub_city::where('id', $id)->with('city')->first();
 
-                $data = $request->validated();
-                $city->update($data);
-
-                return response()->json([
-                    'code' => 200,
-                    'data' => $city
+                $request->validate([
+                    'name' => 'required',
+                    'created_by' => 'required|exists:users,id',
+                    'city_id' => 'required|exists:cities,id',
+                    'active' => 'nullable',
+                    'remark' => 'nullable',
+                    'status' => 'nullable'
                 ]);
 
+                $data = [
+                    'name' => $request->input('name'),
+                    'city_id' => $request->input('city_id'),
+                    'remark' => $request->input('remark'),
+                    'active' => $request->input('active'),
+                    'status' => $request->input('status'),
+                    'created_by' => $userData->id
+                ];
+
+                $subCity->update($data);
+
+                return response()->json([
+                    'data' => $subCity,
+                    'code' => 200,
+                    'message' => 'The Subcity was successfully updated !'
+                ]);
             } else {
                 return response()->json([
                     'code' => 403,

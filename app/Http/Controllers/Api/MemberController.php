@@ -434,6 +434,7 @@ class MemberController extends Controller
                         'gender' => 'required',
                         'city' => 'required',
                         'location' => 'required',
+                        'date_of_birth' => 'required'
                     ]
                 );
                 $fullName = $request->input('full_name');
@@ -445,6 +446,7 @@ class MemberController extends Controller
                 $housenumber = $request->input('housenumber');
                 $location = $request->input('location');
                 $email = $request->input('email');
+                $date_of_birth = $request->input('date_of_birth');
                 // $password = '123456';
                 $password = rand(100000, 999999);
                 // $formated_name = str_replace(' ', '', $fullName);
@@ -486,6 +488,7 @@ class MemberController extends Controller
                     'woreda' => $woreda,
                     'house_number' => $housenumber,
                     'specific_location' => $location,
+                    'date_of_birth' => $date_of_birth
                     // 'address' => json_encode($address),
                 ];
                 $create = $this->memberRepository->create($memberData);

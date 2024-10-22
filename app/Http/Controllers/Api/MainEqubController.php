@@ -24,8 +24,8 @@ class MainEqubController extends Controller
     }
 
     public function index() {
+        $userData = Auth::user();
         try {
-            $userData = Auth::user();
             if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it", 'member'])) {
                 $mainEqubs = MainEqub::with('subEqub')->get();
                 return response()->json([
@@ -55,7 +55,7 @@ class MainEqubController extends Controller
         $userData = Auth::user();
         
         try {
-            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it", "member"])) {
+            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "it", "member"])) {
                 $this->validate($request, [
                     'name' => 'required',
                     'created_by' => 'required',

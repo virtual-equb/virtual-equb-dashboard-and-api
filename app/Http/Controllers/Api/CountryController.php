@@ -22,7 +22,7 @@ class CountryController extends Controller
     {
         $userData = Auth::user();
         try {
-            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it"])) {
+            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it", "member"])) {
                 $countries = Country::with('countryCode')->get();
     
                 return response()->json([
@@ -65,7 +65,7 @@ class CountryController extends Controller
     {
         $userData = Auth::user();
         try {
-            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it"])) {
+            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it", "member"])) {
                 $data = $request->validated();
                 $country = Country::create($data);
 
@@ -99,7 +99,7 @@ class CountryController extends Controller
     {
         $userData = Auth::user();
         try {
-            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it"])) {
+            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it", "member"])) {
                 $country = Country::where('id', $id)->with('countryCode')->first();
 
                 return response()->json([
@@ -144,7 +144,7 @@ class CountryController extends Controller
         $userData = Auth::user();
         try {
 
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
+            if ($userData && in_array($userData['role'], ['admin', "operation_manager", "general_manager", "it", "member"])) {
                 $country = Country::where('id', $id)->with('countryCode')->first();
 
                 $request->validate([
