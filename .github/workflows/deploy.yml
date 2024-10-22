@@ -30,4 +30,3 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}               # Use a GitHub secret for the password
           protocol: ftp                                       # Use 'ftp' or 'ftps' as needed
           local-dir: ./                                       # Local directory to deploy
-          server-dir: /path/to/deploy                         # Specify the remote directory if needed
