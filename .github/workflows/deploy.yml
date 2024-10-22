@@ -19,8 +19,7 @@ jobs:
           php-version: '8.0' # Specify your PHP version
           extensions: mbstring, xml, bcmath, curl # Add any other required extensions
 
-      - name: Install Dependencies
-        run: composer install --no-progress --no-suggest --prefer-dist
+      
 
       - name: Run Tests
         run: php artisan test
