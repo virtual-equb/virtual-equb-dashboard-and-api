@@ -45,7 +45,7 @@ class SubCityRepository implements ISubCityRepository
     {
         return $this->model->where('city_id', $cityId)->get(); // Retrieve sub-cities for a specific city
     }
-
+    
     /**
      * Create a new sub-city.
      *

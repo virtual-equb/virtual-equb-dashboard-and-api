@@ -37,7 +37,11 @@ class SubCityController extends Controller
             'cities' =>$cities
         ]);
     }
-
+    public function getSubCitiesByCityId($cityId)
+    {
+    $subCities=     $this->subCityRepository->getSubCityByCityId(1);
+        return response()->json($subCities);
+    }
     /**
      * Store a newly created sub city in storage.
      *

@@ -17,7 +17,7 @@ class CityController extends Controller
         $this->cityRepository = $cityRepository;
         $this->title = "Virtual Equb - City";
     }
-
+    
     /**
      * Display a listing of cities for authorized users.
      *
