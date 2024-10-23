@@ -216,6 +216,29 @@
                         </a>
                     </li>
                 @endif
+                <li class="nav-item" id="settingNavm">
+    <a href="#" class="nav-link" id="settingsLink">
+        <i class="nav-icon fas fa-cog"></i> <!-- Changed to settings icon -->
+        <p>
+            Settings
+            <i class="fas fa-angle-left right"></i>
+        </p>
+    </a>
+    <ul class="nav nav-treeview ml-2">
+        <li class="nav-item">
+            <a href="{{ route('permissions.index') }}" class="nav-link" id="nav-permissions">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Permissions</p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="" class="nav-link" id="nav-languages">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Language</p>
+            </a>
+        </li>
+    </ul>
+</li>
                 @if (Auth::user()->role == 'admin' ||
                         Auth::user()->role == 'general_manager' ||
                         Auth::user()->role == 'operation_manager' ||

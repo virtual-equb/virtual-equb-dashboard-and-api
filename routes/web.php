@@ -16,6 +16,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\SubCityController;
 use App\Http\Controllers\MainEqubController;
+use App\Http\Controllers\RolesController;
 
 
 
@@ -312,5 +313,5 @@ Route::middleware([
           // Delete a main equb
           Route::delete('{id}', [MainEqubController::class, 'delete'])->name('mainEqubs.destroy');
     });
-  
+   
 });
