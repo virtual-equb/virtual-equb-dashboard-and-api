@@ -42,6 +42,7 @@ class MainEqubController extends Controller
             return back();
         }
     }
+
     public function store(Request $request)
     {
         // Validate the incoming request data
@@ -54,7 +55,7 @@ class MainEqubController extends Controller
         // Create a new Main Equb instance
         $mainEqub = new MainEqub();
         $mainEqub->name = $request->name;
-        $mainEqub->created_by =1;
+        $mainEqub->created_by = Auth::id(); // Store the ID of the authenticated user
         if ($request->hasFile('image')) {
             // Store the image and get the path
             $path = $request->file('image')->store('equb_images', 'public');
@@ -67,5 +68,54 @@ class MainEqubController extends Controller
 
         // Redirect or return a response
         return redirect()->route('mainEqubs.index')->with('success', 'Main Equb added successfully.');
+    }
+
+    public function show($id)
+    {
+        // $mainEqub = MainEqub::findOrFail($id);
+       // dd($mainEqub);
+
+         // Retrieve the equb by ID
+         $equb = MainEqub::findOrFail($id);
+        
+         // Return the data as JSON
+         return response()->json($equb);
+    }
+
+    public function edit($id)
+    {
+        $mainEqub = MainEqub::findOrFail($id);
+        return response()->json($mainEqub); // Return the data as JSON for the AJAX request
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'remark' => 'nullable|string|max:500',
+            'status' => 'required|boolean',
+        ]);
+    
+        $equb = MainEqub::findOrFail($id);
+        $equb->name = $request->input('name');
+        $equb->remark = $request->input('remark');
+        $equb->active = $request->input('status');
+        $equb->save();
+    
+        return response()->json(['message' => 'Main Equb updated successfully!']);
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $mainEqub = MainEqub::findOrFail($id);
+            $mainEqub->delete(); // Delete the Main Equb record
+
+            return redirect()->route('mainEqubs.index')->with('success', 'Main Equb deleted successfully.');
+        } catch (Exception $ex) {
+            $msg = "Unable to delete the Main Equb, please try again!";
+            Session::flash('error', $msg);
+            return back();
+        }
     }
 }

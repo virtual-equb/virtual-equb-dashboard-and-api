@@ -307,7 +307,7 @@ Route::middleware([
       
           // Update an existing main equb
           Route::put('{id}', [MainEqubController::class, 'update'])->name('mainEqubs.update');
-      
+        
           // Delete a main equb
           Route::delete('{id}', [MainEqubController::class, 'delete'])->name('mainEqubs.destroy');
     });

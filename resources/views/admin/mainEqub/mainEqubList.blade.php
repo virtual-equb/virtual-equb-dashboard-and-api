@@ -64,6 +64,7 @@
                                             <tr>
                                                 <th>#</th>
                                                 <th>Main Equb Name</th>
+                                                <th>Status</th>
                                                 <th>Actions</th>
                                             </tr>
                                         </thead>
@@ -72,6 +73,11 @@
                                                 <tr>
                                                     <td>{{ $key + 1 }}</td>
                                                     <td>{{ $equb->name }}</td>
+                                                    <td>
+                                                        <span class="badge {{ $equb->active == 1 ? 'badge-success' : 'badge-danger' }}">
+                                                            {{ $equb->active == 1 ? 'Active' : 'Inactive' }}
+                                                        </span>
+                                                    </td>
                                                     @if (Auth::user()->role != 'assistant')
                                                         <td>
                                                             <div class='dropdown'>
@@ -109,7 +115,49 @@
 
 <!-- Include the Add Main Equb Modal -->
 @include('admin.mainEqub.addMainEqub')
-@include('admin.mainEqub.editMainEqub') 
+
+<!-- Edit Main Equb Modal -->
+<div class="modal fade" id="editMainEqubModal" tabindex="-1" role="dialog" aria-labelledby="editMainEqubModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editMainEqubModalLabel">Edit Main Equb</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editMainEqubForm">
+                    @csrf
+                    <input type="hidden" id="edit_equb_id" name="equb_id">
+                    
+                    <div class="form-group required">
+                        <label for="edit_name">Main Equb Name</label>
+                        <input type="text" class="form-control" id="edit_name" name="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit_status">Status</label>
+                        <select class="form-control" id="edit_status" name="status" required>
+                            <option value="1">Active</option>
+                            <option value="0">Inactive</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit_remark">Remark</label>
+                        <textarea class="form-control" id="edit_remark" name="remark"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="saveChanges">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @section('scripts')
@@ -118,7 +166,7 @@
         const equbId = $(this).data('id');
         if (confirm('Are you sure you want to remove this main equb?')) {
             $.ajax({
-                url: '/equbs/' + equbId,
+                url: '/main-equbs/' + equbId,
                 type: 'DELETE',
                 success: function(result) {
                     location.reload(); // Refresh the equb table
@@ -137,14 +185,13 @@
 
     function openEditModal(equbId) {
         $.ajax({
-            url: '/equbs/' + equbId + '/edit',  // Ensure this route exists
             type: 'GET',
+            url: '/main-equbs/' + equbId, // Adjust URL to fetch the specific equb data
             success: function(data) {
-                console.log(data); // Debugging line to check the response
                 $('#edit_equb_id').val(data.id);
                 $('#edit_name').val(data.name);
-                $('#edit_created_by').val(data.created_by);
                 $('#edit_remark').val(data.remark);
+                $('#edit_status').val(data.active); // Set the status dropdown
                 $('#editMainEqubModal').modal('show'); // Open the modal
             },
             error: function(xhr) {
@@ -152,5 +199,30 @@
             }
         });
     }
+
+    $('#saveChanges').click(function() {
+        const id = $('#edit_equb_id').val();
+        const name = $('#edit_name').val();
+        const remark = $('#edit_remark').val();
+        const status = $('#edit_status').val();
+
+        $.ajax({
+    type: 'PUT',
+    url: '/main-equbs/' + id,
+    data: {
+        _token: '{{ csrf_token() }}',
+        name: name,
+        remark: remark,
+        status: status // Include status in the data sent
+    },
+    success: function(result) {
+        location.reload(); // Refresh the equb table after saving
+    },
+    error: function(xhr) {
+        console.log(xhr.responseText); // Corrected here
+        alert('Error updating equb: ' + xhr.responseText);
+    }
+});
+    });
 </script>
 @endsection
