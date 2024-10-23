@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Traits\HasUuid;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Models\Role;
 use Laravel\Jetstream\HasProfilePhoto;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -12,6 +13,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -93,32 +95,38 @@ class User extends Authenticatable implements JWTSubject
 
     public function roles()
     {
-        return $this->belongsToMany(Roles::class);
+        return $this->belongsTo(Role::class, 'role');
     }
 
-    public function hasRole($role)
-    {
-        return $this->roles()->where('name', $role)->exists();
-    }
+    // public function hasRole($role)
+    // {
+    //     return $this->roles()->where('name', $role)->exists();
+    // }
 
-    public function permissions()
-    {
-        return $this->roles->map->permissions->flatten()->pluck('name')->unique();
-    }
+    // public function permissions()
+    // {
+    //     // return $this->roles->map->permissions->flatten()->pluck('name')->unique();
+    //     return $this->roles()->with('permissions')->get()
+    //         ->pluck('permissions')->flatten();
+    // }
 
-    public function hasPermission($permission)
-    {
-        return $this->permissions()->contains($permission);
-    }
+    // public function hasPermission($permission)
+    // {
+    //     return $this->permissions()->contains($permission);
+    // }
 
-    public function assignRole($role)
-    {
-        $this->roles()->attach($role);
-    }
+    // public function assignRole($role)
+    // {
+    //     // $this->roles()->attach($role);
+    //     $roles = Role::where('name', $role)->first();
+    //     if ($roles) {
+    //         $this->roles()->attach($roles);
+    //     }
+    // }
 
-    public function removeRole($role)
-    {
-        $this->roles()->detach($role);
-    }
+    // public function removeRole($role)
+    // {
+    //     $this->roles()->detach($role);
+    // }
 
 }
