@@ -112,6 +112,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::resource('/permissions', PermissionController::class);
     Route::get('/roles/{roleId}/give-permissions', [RoleController::class, 'addPermissionToRole']);
     Route::put('/roles/{roleId}/give-permissions', [RoleController::class, 'updatePermissionToRole']);
+    Route::post('/createuser', [UserController::class, 'store']);
 });
 
 // Route::get('/testequb', [MainEqubController::class, 'getTypes']);

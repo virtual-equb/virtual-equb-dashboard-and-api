@@ -548,7 +548,7 @@ class UserController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
+            if ($userData && in_array($userData['role'], ["admin", "general_manager", "operation_manager", "it", "member"])) {
                 $this->validate(
                     $request,
                     [

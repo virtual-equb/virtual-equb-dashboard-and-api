@@ -4,7 +4,7 @@
             </h1>
         </section>
         <form role="form" method="post" class="form-horizontal form-group"
-            action="{{ route('registerUser') }}" enctype="multipart/form-data"
+            action="{{ route('createUser') }}" enctype="multipart/form-data"
             id="addUserForm">
             {{ csrf_field() }}
             <div class="card-body">
@@ -51,11 +51,11 @@
                     <div class="form-group required col-md-10">
 
                         <select class="custom-select form-control" id="role" multiple
-                        name="role">
+                        name="role[]">
                         
                         <option selected value="">Choose...</option>
                             @foreach ($roles as $role)
-                                <option value="role">{{ $role->name }}</option>
+                                <option value="{{ $role->name }}">{{ $role->name }}</option>
                             @endforeach
                             {{-- <option value="equb_collector">Equb Collector</option>
                             <option value="general_manager">General Manager</option>

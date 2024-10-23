@@ -252,9 +252,10 @@ class UserController extends Controller
                     'password' => Hash::make($password),
                     'phone_number' => $phone_number,
                     'gender' => $gender,
-                    'role' => $role,
                 ];
                 $create = $this->userRepository->createUser($userData);
+                $create->syncRoles([$role]);
+                // dd($create);
                 if ($create) {
                     $userData = Auth::user();
                     $activityLog = [
@@ -293,6 +294,30 @@ class UserController extends Controller
             Session::flash($type, $msg);
             return back();
         }
+    }
+
+    public function storeUser(Request $request) {
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required',
+            'gender' => 'required',
+            'role' => 'required'
+        ]);
+        $password = rand(100000, 999999);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'gender' => $request->gender,
+            'phone_number' => $request->phone_number,
+            'password' => Hash::make($password),
+        ]);
+        $user->syncRoles($request->role);
+
+        $msg = "User has been registered successfully!";
+        $type = 'success';
+        Session::flash($type, $msg);
+        return redirect('/user');
     }
 
     public function deactiveStatus($id, Request $request)

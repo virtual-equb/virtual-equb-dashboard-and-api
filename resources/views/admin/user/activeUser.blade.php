@@ -20,7 +20,14 @@
                 <td>{{ $item->email }}</td>
                 <td>{{ $item->phone_number }}</td>
                 <td>{{ $item->gender }}</td>
-                <td>{{ $item->role }}</td>
+                <td>
+                   {{$item->roles}}
+                   {{-- @if (!empty($item->getRoleNames()))
+                    @foreach($item->getRoleNames() as $rolename)
+                        <label class="badge badge-primary">{{ $rolename }}</label>
+                    @endforeach
+                   @endif --}}
+                </td>
                 <td>{{ $item->enabled ? 'Active' : 'Inactive' }}</td>
                 <td>
                     <?php
