@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EqubTypeController;
 use App\Http\Controllers\MemberController;
@@ -18,8 +17,6 @@ use App\Http\Controllers\SubCityController;
 use App\Http\Controllers\MainEqubController;
 use App\Http\Controllers\WebPermissionController;
 use App\Http\Controllers\WebRoleController;
-
-
 
 /*
 |--------------------------------------------------------------------------
