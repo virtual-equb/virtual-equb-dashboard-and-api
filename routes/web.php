@@ -16,7 +16,8 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\SubCityController;
 use App\Http\Controllers\MainEqubController;
-use App\Http\Controllers\RolesController;
+use App\Http\Controllers\WebPermissionController;
+use App\Http\Controllers\WebRoleController;
 
 
 
