@@ -69,4 +69,6 @@ interface IUserRepository
     public function searchActiveUsers($role,$offset,$searchInput);
 
     public function searchDeactivatedUsers($role,$offset,$searchInput);
+
+    public function getRoles();
 }

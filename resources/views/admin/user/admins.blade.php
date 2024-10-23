@@ -134,6 +134,14 @@
                                                         onclick="removeTabs();"> <span class="fa fa-plus-circle"></span> Add
                                                         User</a>
                                                 </li>
+                                                {{-- {{$roles}} --}}
+                                            @endif
+                                            @if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant')
+                                            <div class="float-right">
+                                                @include('rolePermission.nav-links')
+                                            </div>
+                                            
+                                                {{-- {{$roles}} --}}
                                             @endif
                                             <li class="nav-item updateUser" id="update-equb_taker-div"
                                                 style="display: none;">
@@ -151,7 +159,8 @@
                                                             onclick="clearSearchEntry()">
                                                             Clear
                                                         </button>
-                                                    </div>
+                                            </div>
+                                            
                                         </ul>
                                     </div>
                                     <div class="card-body">

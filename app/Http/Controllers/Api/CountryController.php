@@ -41,8 +41,6 @@ class CountryController extends Controller
                 'error' => $ex->getMessage()
             ]);
         }
-        
-        
     }
 
     /**

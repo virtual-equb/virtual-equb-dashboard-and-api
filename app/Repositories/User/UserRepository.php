@@ -7,6 +7,7 @@ namespace App\Repositories\User;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use phpDocumentor\Reflection\PseudoTypes\True_;
+use Spatie\Permission\Models\Role;
 
 class UserRepository implements IUserRepository
 {
@@ -17,6 +18,11 @@ class UserRepository implements IUserRepository
     {
         $this->model = $user;
         $this->limit = 10;
+    }
+
+    public function getRoles()
+    {
+        return Role::all();
     }
 
     public function getAll()
@@ -72,7 +78,7 @@ class UserRepository implements IUserRepository
     }
     public function getActiveForUsers($offset, $id)
     {
-        return $this->model->orderBy('name', 'asc')->where('id', '!=', $id)->where('enabled', 1)->offset($offset)->limit($this->limit)->get();
+        return $this->model->with('roles')->orderBy('name', 'asc')->where('id', '!=', $id)->where('enabled', 1)->offset($offset)->limit($this->limit)->get();
     }
 
     public function getById($id)

@@ -50,6 +50,7 @@ class MainEqubController extends Controller
             'name' => 'required|string|max:255',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', // Adjust as needed
             'remark' => 'nullable|string',
+            'active' => 'nullable'
         ]);
 
         // Create a new Main Equb instance

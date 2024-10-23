@@ -29,6 +29,14 @@ use App\Http\Controllers\WebRoleController;
 |
 */
 
+Route::resource('/permission', WebPermissionController::class);
+Route::get('/permission/{permissionId}/delete',[ WebPermissionController::class, 'destroy']);
+
+Route::resource('/roles', WebRoleController::class);
+Route::get('/roles/{roleId}/delete', [WebRoleController::class, 'destroy']);
+Route::get('/roles/{roleId}/assign-permission', [WebRoleController::class, 'assignPermission']);
+Route::put('/roles/{roleId}/assign-permission', [WebRoleController::class, 'updateRolePermission']);
+
 Route::get('/register', function () {
     return view('auth/login');
 });
@@ -188,6 +196,7 @@ Route::middleware([
         Route::get('/search-user/{searchInput}/{offset}/{pageNumber?}', [UserController::class, 'searchUser'])->name('searchUser');
         Route::get('/deactiveUser/{offsetVal}/{pageNumberVal}', [UserController::class, 'deactiveUser']);
         Route::post('/store-user', [UserController::class, 'store'])->name('registerUser');
+        Route::post('/createusers', [UserController::class, 'storeUser'])->name('createUser');
         Route::get('/edit/{id}', [UserController::class, 'edit'])->name('editUser');
         Route::put('/update/{id}', [UserController::class, 'update'])->name('updateUser');
         Route::put('/deactivateUser/{id}', [UserController::class, 'deactiveStatus'])->name('deactivateUser');
