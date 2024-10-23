@@ -81,6 +81,7 @@
                                                 <tr>
                                                     <th>#</th>
                                                     <th>Sub City Name</th>
+                                                    <th>Status</th>
                                                     <th>Actions</th>
                                                 </tr>
                                             </thead>
@@ -89,6 +90,11 @@
                                                     <tr>
                                                         <td>{{ $key + 1 }}</td>
                                                         <td>{{ $subCity->name }}</td>
+                                                        <th>
+                                                            <span class="badge {{ $subCity->active == 1 ? 'badge-success' : 'badge-danger' }}">
+                                                                {{ $subCity->active == 1 ? 'Active' : 'Inactive' }}
+                                                            </span>
+                                                        </th>
                                                         @if (Auth::user()->role != 'assistant')
                                                             <td>
                                                                 <div class='dropdown'>
@@ -127,10 +133,85 @@
     <!-- Include the Add Sub City Modal -->
     @include('admin.subCity.addSubCity')
 
+    <!-- Edit Sub City Modal -->
+    <div class="modal fade" id="editSubCityModal" tabindex="-1" role="dialog" aria-labelledby="editSubCityModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editSubCityModalLabel">Edit Sub City</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editSubCityForm">
+                        <input type="hidden" id="editSubCityId">
+                        <div class="form-group">
+                            <label for="editSubCityName" class="control-label">Sub City Name:</label>
+                            <input type="text" class="form-control" id="editSubCityName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editSubCityStatus" class="control-label">Status:</label>
+                            <select class="form-control" id="editSubCityStatus" required>
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveEditSubCity">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @section('scripts')
     <script>
+        function openEditModal(subCityId) {
+            // Fetch sub city data
+            $.ajax({
+                url: '/subcities/' + subCityId,
+                type: 'GET',
+                success: function(subCity) {
+                    // Populate the modal fields
+                    $('#editSubCityId').val(subCity.id);
+                    $('#editSubCityName').val(subCity.name);
+                    $('#editSubCityStatus').val(subCity.active); // Set the status dropdown
+                    $('#editSubCityModal').modal('show'); // Show the modal
+                },
+                error: function(xhr) {
+                    console.error('Error fetching sub city data:', xhr.responseText);
+                }
+            });
+        }
+
+        $('#saveEditSubCity').click(function() {
+            const id = $('#editSubCityId').val(); // Get the sub city ID
+            const name = $('#editSubCityName').val();
+            const status = $('#editSubCityStatus').val();
+
+            $.ajax({
+                type: 'PUT',
+                url: '/subcities/' + id,
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    name: name,
+                    status: status
+                },
+                success: function(result) {
+                    location.reload(); // Refresh the sub city table after saving
+                },
+                error: function(xhr) {
+                    console.log(xhr.responseText); // Log the error response
+                    alert('Error updating sub city: ' + xhr.responseText); // Update alert message
+                }
+            });
+        });
+
         $(document).on('click', '.delete-sub-city', function() {
             const subCityId = $(this).data('id');
             if (confirm('Are you sure you want to remove this sub city?')) {

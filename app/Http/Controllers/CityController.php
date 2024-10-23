@@ -41,6 +41,16 @@ class CityController extends Controller
             return Response::json(['error' => 'Failed to retrieve cities.'], 500);
         }
     }    
+    public function show($id)
+    {
+
+         // Retrieve the equb by ID
+         $city = $this->cityRepository->getAll();
+         // Return the data as JSON
+         return response()->json($city);
+    }
+    
+    
     public function store(Request $request)
     {
         // Validate the request
@@ -62,6 +72,22 @@ class CityController extends Controller
      * @param  \Illuminate\Contracts\Auth\Authenticatable|null  $user
      * @return bool
      */
+    public function update(Request $request, $id) {
+        // Validate the request data
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'status' => 'required|boolean',
+        ]);
+    
+        // Find the city by ID and update it
+        $city = City::findOrFail($id);
+        $city->name = $validatedData['name'];
+        $city->active = $validatedData['status'];
+        $city->save();
+    
+        return response()->json(['message' => 'City updated successfully.']);
+
+    }
     private function isAuthorized($user)
     {
         $allowedRoles = [

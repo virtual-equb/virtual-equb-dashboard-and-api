@@ -257,6 +257,7 @@ Route::middleware([
     });
     Route::prefix('cities')->group(function () {
         // Get all cities
+        
         Route::get('/', [CityController::class, 'index'])->name('cities.index');
             // Create a new city
             Route::get('/create', [CityController::class, 'create'])->name('admin.city.addCity');

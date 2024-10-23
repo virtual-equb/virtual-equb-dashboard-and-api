@@ -81,6 +81,7 @@
                                                 <tr>
                                                     <th>#</th>
                                                     <th>City Name</th>
+                                                    <th>Status</th>
                                                     <th>Actions</th>
                                                 </tr>
                                             </thead>
@@ -89,6 +90,11 @@
                                                     <tr>
                                                         <td>{{ $key + 1 }}</td>
                                                         <td>{{ $city->name }}</td>
+                                                        <td>
+                                                            <span class="badge {{ $city->active == 1 ? 'badge-success' : 'badge-danger' }}">
+                                                                {{ $city->active == 1 ? 'Active' : 'Inactive' }}
+                                                            </span>
+                                                        </td>
                                                         @if (Auth::user()->role != 'assistant')
                                                             <td>
                                                                 <div class='dropdown'>
@@ -127,26 +133,83 @@
     <!-- Include the Add City Modal -->
     @include('admin.city.addCity')
 
+    <!-- Edit City Modal -->
+    <div class="modal fade" id="editCityModal" tabindex="-1" role="dialog" aria-labelledby="editCityModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editCityModalLabel">Edit City</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editCityForm">
+                        <input type="hidden" id="editCityId">
+                        <div class="form-group">
+                            <label for="editCityName" class="control-label">City Name:</label>
+                            <input type="text" class="form-control" id="editCityName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editCityStatus" class="control-label">Status:</label>
+                            <select class="form-control" id="editCityStatus" required>
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveEditCity">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @section('scripts')
     <script>
-        $(document).on('click', '.delete-city', function() {
-            const cityId = $(this).data('id');
-            if (confirm('Are you sure you want to remove this city?')) {
-                $.ajax({
-                    url: '/cities/' + cityId,
-                    type: 'DELETE',
-                    success: function(result) {
-                        location.reload(); // Refresh the city table
-                    }
-                });
-            }
-        });
+        function openEditModal(cityId) {
+            // Fetch city data
+            $.ajax({
+                url: '/cities/' + cityId,
+                type: 'GET',
+                success: function(city) {
+                    // Populate the modal fields
+                    $('#editCityId').val(city.id);
+                    $('#editCityName').val(city.name);
+                    $('#editCityStatus').val(city.active); // Set the status dropdown
+                    $('#editCityModal').modal('show'); // Show the modal
+                },
+                error: function(xhr) {
+                    console.error('Error fetching city data:', xhr.responseText);
+                }
+            });
+        }
 
-        $('#clearSearch').click(function() {
-            $('#citySearchText').val('');
-            // Optionally refresh the table or apply a filter reset
+        $('#saveEditCity').click(function() {
+            const id = $('#editCityId').val(); // Get the city ID
+            const name = $('#editCityName').val();
+            const status = $('#editCityStatus').val();
+
+            $.ajax({
+    type: 'PUT',
+    url: '/cities/' + id, // Ensure this matches the route
+    data: {
+        _token: '{{ csrf_token() }}',
+        name: name,
+        status: status
+    },
+    success: function(result) {
+        location.reload(); // Refresh the city table after saving
+    },
+    error: function(xhr) {
+        console.log(xhr.responseText);
+        alert('Error updating city: ' + xhr.responseText);
+    }
+});
         });
     </script>
 @endsection

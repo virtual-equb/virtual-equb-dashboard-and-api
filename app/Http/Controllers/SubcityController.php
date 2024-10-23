@@ -42,6 +42,13 @@ class SubCityController extends Controller
     $subCities=     $this->subCityRepository->getSubCityByCityId(1);
         return response()->json($subCities);
     }
+    public function show($id)
+    {
+         // Retrieve the equb by ID
+         $city = $this->subCityRepository->getSubCityById($id);
+         // Return the data as JSON
+         return response()->json($city);
+    }
     /**
      * Store a newly created sub city in storage.
      *
