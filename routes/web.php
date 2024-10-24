@@ -17,6 +17,7 @@ use App\Http\Controllers\SubCityController;
 use App\Http\Controllers\MainEqubController;
 use App\Http\Controllers\WebPermissionController;
 use App\Http\Controllers\WebRoleController;
+use App\Http\Controllers\SubController;
 
 /*
 |--------------------------------------------------------------------------
@@ -320,5 +321,6 @@ Route::middleware([
           // Delete a main equb
           Route::delete('{id}', [MainEqubController::class, 'delete'])->name('mainEqubs.destroy');
     });
-   
+
+    Route::get('/subs', [SubController::class, 'index'])->name('mainEqubs.index');
 });
