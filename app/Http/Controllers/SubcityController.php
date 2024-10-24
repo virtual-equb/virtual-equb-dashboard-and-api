@@ -4,94 +4,104 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Repositories\SubCity\ISubCityRepository;
-use App\Repositories\City\ICityRepository;
+use App\Repositories\SubCity\ISubCityRepository; // Updated repository interface
 use Illuminate\Support\Facades\Response;
-use App\Models\SubCity;
+use App\Models\SubCity; // Updated model
 
-class SubCityController extends Controller
+class SubCityController extends Controller // Updated controller name
 {
-    private $subCityRepository;
-    private $cityRepository;
+    private $subCityRepository; // Updated variable name
     private $title;
 
-    public function __construct(ISubCityRepository $subCityRepository,ICityRepository $cityRepository)
+    public function __construct(ISubCityRepository $subCityRepository) // Updated constructor
     {
         $this->subCityRepository = $subCityRepository;
-        $this->cityRepository = $cityRepository;
-        $this->title = "Virtual Equb - Sub City";
-
-        // Guards
-        $this->middleware('permission:edit sub_city', ['only' => ['update', 'edit']]);
-        $this->middleware('permission:delete sub_city', ['only' => ['destroy']]);
-        $this->middleware('permission:view sub_city', ['only' => ['index', 'show']]);
-        $this->middleware('permission:create sub_city', ['only' => ['store', 'create']]);
+        $this->title = "Virtual Equb - SubCity"; // Updated title
     }
-
+    
     /**
-     * Display a listing of sub cities for authorized users.
+     * Display a listing of SubCities for authorized users.
      *
      * @return \Illuminate\View\View|\Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        $subCities = $this->subCityRepository->getAll(); // Assuming this method retrieves all sub cities
-        $cities = $this->cityRepository->getActiveCity();
-        return view('admin.subCity.subCityList', [
-            'title' => $this->title,
-            'subCities' => $subCities,
-            'cities' =>$cities
-        ]);
-    }
+        try {
+            $user = Auth::user();
 
-    /**
-     * Store a newly created sub city in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
+            if ($this->isAuthorized($user)) {
+                $subCities = $this->subCityRepository->getAll(); // Updated method
+                $title = $this->title;
+                
+                return view('admin/subCity.subCityList', compact('title', 'subCities','cities')); // Updated view path
+            }
+            return Response::json(['error' => 'Unauthorized access.'], 403);
+        } catch (\Exception $e) {
+            return Response::json(['error' => 'Failed to retrieve SubCities.'], 500);
+        }
+    }    
+    
+    public function show($id)
+    {
+        // Retrieve the SubCity by ID
+        $subCity = $this->subCityRepository->getAll(); // Adjust this as per your logic
+        // Return the data as JSON
+        return response()->json($subCity);
+    }
+    
     public function store(Request $request)
     {
         // Validate the request
         $request->validate([
             'name' => 'required|string|max:255',
-            'city_id' => 'required|exists:cities,id', // Ensure the city exists
-            'remark' => 'nullable|string', // If you have a remark field
-            'active' => 'boolean', // Optional, depending on your needs
+            'city_id' => 'required|exists:cities,id', // Assuming there's a city_id field
         ]);
-    
-        // Create a new sub city
+
+        // Create a new SubCity
         SubCity::create([
             'name' => $request->name,
-            'city_id' => $request->city_id, // Add city_id to the creation
-            'active' => $request->active ?? false, // Default to false if not provided
+            'city_id' => $request->city_id,
+        ]);
+
+        // Redirect back with a success message
+        return redirect()->back()->with('success', 'SubCity added successfully!');
+    }
+    
+    /**
+     * Update a SubCity.
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(Request $request, $id) {
+        // Validate the request data
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'active' => 'required|boolean', // Assuming it's the field for status
         ]);
     
-        // Redirect back with a success message
-        return redirect()->back()->with('success', 'Sub City added successfully!');
+        // Find the SubCity by ID and update it
+        $subCity = SubCity::findOrFail($id);
+        $subCity->name = $validatedData['name'];
+        $subCity->active = $validatedData['active'];
+        $subCity->save();
+    
+        return response()->json(['message' => 'SubCity updated successfully.']);
     }
 
-    /**
-     * Check if the user has the required role to access the sub cities.
-     *
-     * @param  \Illuminate\Contracts\Auth\Authenticatable|null  $user
-     * @return bool
-     */
-    public function show($id) {
-        //
-    }
-
-    public function update($id) {
-        //
-    }
-
-    public function create()
+    private function isAuthorized($user)
     {
-        //
-    }
+        $allowedRoles = [
+            'admin',
+            'general_manager',
+            'operation_manager',
+            'it',
+            'finance',
+            'customer_service',
+            'assistant',
+        ];
 
-    public function destroy($id)
-    {
-        //
+        return $user && in_array($user->role, $allowedRoles);
     }
 }
