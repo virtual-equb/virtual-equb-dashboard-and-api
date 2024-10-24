@@ -22,18 +22,24 @@ class RejectedDateController extends Controller
         $this->activityLogRepository = $activityLogRepository;
         $this->rejectedDateRepository = $rejectedDateRepository;
         $this->title = "Virtual Equb - Off Date";
+
+        // Permission Guard
+        $this->middleware('permission:update rejected_date', ['only' => ['update', 'edit']]);
+        $this->middleware('permission:delete rejected_date', ['only' => ['destroy']]);
+        $this->middleware('permission:view rejected_date', ['only' => ['index', 'show', 'offDateCheck']]);
+        $this->middleware('permission:create rejected_date', ['only' => ['store', 'create']]);
     }
     public function index()
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")){
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")){
                 $data['title'] = $this->title;
                 $data['rejectedDate']  = $this->rejectedDateRepository->getAll();
                 return view('admin/rejectedDate.rejectedDateList', $data);
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
@@ -45,7 +51,7 @@ class RejectedDateController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")){
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")){
                 $this->validate($request, [
                     'rejected_date' => 'required',
                 ]);
@@ -76,9 +82,9 @@ class RejectedDateController extends Controller
                     Session::flash($type, $msg);
                     redirect('/rejectedDate');
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
@@ -112,7 +118,7 @@ class RejectedDateController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")){
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")){
                 $date = $request->input('rejected_date');
                 $description = $request->input('description');
                 $updated = [
@@ -140,9 +146,9 @@ class RejectedDateController extends Controller
                     Session::flash($type, $msg);
                     return back();
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -154,7 +160,7 @@ class RejectedDateController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")){
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")){
                 $rejectedDate = $this->rejectedDateRepository->getById($id);
                 if ($rejectedDate != null) {
                     $deleted = $this->rejectedDateRepository->delete($id);
@@ -181,9 +187,9 @@ class RejectedDateController extends Controller
                 } else {
                     return false;
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';

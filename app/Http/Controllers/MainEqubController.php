@@ -15,27 +15,31 @@ class MainEqubController extends Controller
     public function __construct()
     {
         $this->title = "Virtual Equb - Main Equb";
+        $this->middleware('permission:update main_equb', ['only' => ['update', 'edit']]);
+        $this->middleware('permission:delete main_equb', ['only' => ['destroy']]);
+        $this->middleware('permission:view main_equb', ['only' => ['index', 'show']]);
+        $this->middleware('permission:create main_equb', ['only' => ['store', 'create']]);
     }
 
     public function index()
     {
         try {
             $userData = Auth::user();
-            if ($userData && in_array($userData['role'], [
-                "admin", 
-                "member", 
-                "general_manager", 
-                "operation_manager", 
-                "it", 
-                "customer_service", 
-                "assistant"
-            ])) {
+            // if ($userData && in_array($userData['role'], [
+            //     "admin", 
+            //     "member", 
+            //     "general_manager", 
+            //     "operation_manager", 
+            //     "it", 
+            //     "customer_service", 
+            //     "assistant"
+            // ])) {
                 $data['title'] = $this->title;
                 $data['mainEqubs'] = MainEqub::all(); // Fetch all MainEqub records
                 return view('admin/mainEqub.mainEqubList', $data);
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             Session::flash('error', $msg);
@@ -50,18 +54,21 @@ class MainEqubController extends Controller
             'name' => 'required|string|max:255',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', // Adjust as needed
             'remark' => 'nullable|string',
-            'active' => 'nullable'
+            'active' => 'nullable',
+            'created_by' => 'required'
         ]);
 
         // Create a new Main Equb instance
         $mainEqub = new MainEqub();
         $mainEqub->name = $request->name;
         $mainEqub->created_by = Auth::id(); // Store the ID of the authenticated user
+        
         if ($request->hasFile('image')) {
             // Store the image and get the path
             $path = $request->file('image')->store('equb_images', 'public');
             $mainEqub->image = $path; // Save the path in the database
         }
+        
         $mainEqub->remark = $request->remark;
 
         // Save the Main Equb to the database
@@ -73,14 +80,11 @@ class MainEqubController extends Controller
 
     public function show($id)
     {
-        // $mainEqub = MainEqub::findOrFail($id);
-       // dd($mainEqub);
-
-         // Retrieve the equb by ID
-         $equb = MainEqub::findOrFail($id);
+        // Retrieve the equb by ID
+        $equb = MainEqub::findOrFail($id);
         
-         // Return the data as JSON
-         return response()->json($equb);
+        // Return the data as JSON
+        return response()->json($equb);
     }
 
     public function edit($id)

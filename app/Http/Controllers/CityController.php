@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Repositories\City\ICityRepository;
 use Illuminate\Support\Facades\Response;
 use App\Models\City;
+
 class CityController extends Controller
 {
     private $cityRepository;
@@ -28,28 +29,27 @@ class CityController extends Controller
         try {
             $user = Auth::user();
 
-            if ($this->isAuthorized($user)) {
+            // if ($this->isAuthorized($user)) {
                 $cities = $this->cityRepository->getAll();
-                $title =$this->title;
+                $title = $this->title;
                 $equbTypes = $this->cityRepository->getAll(); // Assuming this method exists
                 $equbs = $this->cityRepository->getAll(); // Assuming this method exists
                 $payments = $this->cityRepository->getAll(); // Assuming this method exists
                 return view('admin/city.cityList', compact('title', 'cities'));            
-           }
+            // }
             return Response::json(['error' => 'Unauthorized access.'], 403);
         } catch (\Exception $e) {
             return Response::json(['error' => 'Failed to retrieve cities.'], 500);
         }
     }    
+
     public function show($id)
     {
-
-         // Retrieve the equb by ID
-         $city = $this->cityRepository->getAll();
-         // Return the data as JSON
-         return response()->json($city);
+        // Retrieve the equb by ID
+        $city = $this->cityRepository->getAll(); // Adjust this logic based on your needs
+        // Return the data as JSON
+        return response()->json($city);
     }
-    
     
     public function store(Request $request)
     {
@@ -66,6 +66,7 @@ class CityController extends Controller
         // Redirect back with a success message
         return redirect()->back()->with('success', 'City added successfully!');
     }
+
     /**
      * Check if the user has the required role to access the cities.
      *
@@ -86,8 +87,8 @@ class CityController extends Controller
         $city->save();
     
         return response()->json(['message' => 'City updated successfully.']);
-
     }
+
     private function isAuthorized($user)
     {
         $allowedRoles = [
@@ -101,5 +102,10 @@ class CityController extends Controller
         ];
 
         return $user && in_array($user->role, $allowedRoles);
+    }
+
+    public function destroy($id)
+    {
+        // Implement the logic to delete the city
     }
 }

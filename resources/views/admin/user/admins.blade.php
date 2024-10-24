@@ -1,8 +1,8 @@
-@if (Auth::user()->role == 'admin' ||
+{{-- @if (Auth::user()->role == 'admin' ||
         Auth::user()->role == 'general_manager' ||
         Auth::user()->role == 'operation_manager' ||
         Auth::user()->role == 'assistant' ||
-        Auth::user()->role == 'it')
+        Auth::user()->role == 'it') --}}
     @extends('layouts.app')
     @section('styles')
         <style type="text/css">
@@ -126,7 +126,7 @@
                                                     onclick="removeTabs();"><span class="fa fa-list"> </span>Deactivated
                                                     User</a>
                                             </li>
-                                            @if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant')
+                                            {{-- @if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant') --}}
                                                 <li class="nav-item addUser">
                                                     <a class="nav-link" id="custom-tabs-two-settings-tab" data-toggle="pill"
                                                         href="#custom-tabs-two-settings" role="tab"
@@ -135,14 +135,14 @@
                                                         User</a>
                                                 </li>
                                                 {{-- {{$roles}} --}}
-                                            @endif
-                                            @if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant')
+                                            {{-- @endif --}}
+                                            {{-- @if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant') --}}
                                             <div class="float-right">
                                                 @include('rolePermission.nav-links')
                                             </div>
                                             
                                                 {{-- {{$roles}} --}}
-                                            @endif
+                                            {{-- @endif --}}
                                             <li class="nav-item updateUser" id="update-equb_taker-div"
                                                 style="display: none;">
                                                 <a class="nav-link" id="custom-tabs-two-profile-tab" data-toggle="pill"
@@ -622,4 +622,4 @@
             });
         </script>
     @endsection
-@endif
+{{-- @endif --}}

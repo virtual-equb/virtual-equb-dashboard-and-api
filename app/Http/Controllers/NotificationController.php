@@ -31,6 +31,12 @@ class NotificationController extends Controller
         $this->equbTypeRepository = $equbTypeRepository;
         $this->memberRepository = $memberRepository;
         $this->title = "Virtual Equb - Notification";
+
+        // Permission guard
+        $this->middleware('permission:update notification', ['only' => ['update', 'edit', 'approve', 'updatePending']]);
+        $this->middleware('permission:delete notification', ['only' => ['destroy']]);
+        $this->middleware('permission:view notification', ['only' => ['index', 'show']]);
+        $this->middleware('permission:create notification', ['only' => ['store', 'create', 'sendToIndividual']]);
     }
     /**
      * Display a listing of the resource.
@@ -41,15 +47,15 @@ class NotificationController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
                 $data['title'] = $this->title;
                 $data['notifications']  = $this->notificationRepository->getAll();
                 $data['equbTypes']  = $this->equbTypeRepository->getActive();
                 // dd($data);
                 return view('admin/notification.notificationList', $data);
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             // dd($ex);
             $msg = "Unknown Error Occurred, Please try again!";
@@ -70,7 +76,7 @@ class NotificationController extends Controller
         // dd($request);
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
                 $this->validate($request, [
                     'title' => 'required',
                     'body' => 'required',
@@ -136,9 +142,9 @@ class NotificationController extends Controller
                     Session::flash($type, $msg);
                     redirect('/notification');
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
@@ -150,7 +156,7 @@ class NotificationController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
                 $this->validate($request, [
                     'send_title' => 'required',
                     'send_body' => 'required',
@@ -205,9 +211,9 @@ class NotificationController extends Controller
                     Session::flash($type, $msg);
                     redirect('/member');
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
@@ -227,7 +233,7 @@ class NotificationController extends Controller
         try {
             $notification = $this->notificationRepository->getById($id);
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
                 $title = $notification->title;
                 $body = $notification->body;
                 $equb_type_id = $notification->equb_type_id;
@@ -291,9 +297,9 @@ class NotificationController extends Controller
                     Session::flash($type, $msg);
                     redirect('/notification');
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
@@ -313,7 +319,7 @@ class NotificationController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
                 $this->validate($request, [
                     'update_title' => 'required',
                     'update_body' => 'required',
@@ -371,9 +377,9 @@ class NotificationController extends Controller
                     Session::flash($type, $msg);
                     return back();
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -385,7 +391,7 @@ class NotificationController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
                 $this->validate($request, [
                     'update_title_pending' => 'required',
                     'update_body_pending' => 'required',
@@ -423,9 +429,9 @@ class NotificationController extends Controller
                     Session::flash($type, $msg);
                     return back();
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -444,7 +450,7 @@ class NotificationController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
                 $notification = $this->notificationRepository->getById($id);
                 if ($notification != null) {
                     $deleted = $this->notificationRepository->delete($id);
@@ -471,9 +477,9 @@ class NotificationController extends Controller
                 } else {
                     return false;
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';

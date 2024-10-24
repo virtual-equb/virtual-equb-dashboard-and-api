@@ -108,11 +108,13 @@ Route::middleware(['auth:api'])->group(function () {
     Route::resource('/countrycode', CountryCodeController::class);
     Route::resource('/city', CityController::class);
     Route::resource('/subcity', ApiSubcityController::class);
+    // Roles & Permissions
     Route::resource('/roles', RoleController::class);
     Route::resource('/permissions', PermissionController::class);
     Route::get('/roles/{roleId}/give-permissions', [RoleController::class, 'addPermissionToRole']);
     Route::put('/roles/{roleId}/give-permissions', [RoleController::class, 'updatePermissionToRole']);
-    Route::post('/createuser', [UserController::class, 'store']);
+    // Route::post('/createuser', [UserController::class, 'store']);
+    
 });
 
 // Route::get('/testequb', [MainEqubController::class, 'getTypes']);

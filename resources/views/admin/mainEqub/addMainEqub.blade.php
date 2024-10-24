@@ -33,11 +33,6 @@ Auth::user()->role == 'it')
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label">Terms and Conditions</label>
-                            <textarea class="form-control textareaa" id="terms" name="terms" placeholder="terms"></textarea>
-                        </div>
-
-                        <div class="form-group">
                             <label for="active" class="control-label">Active:</label>
                             <select class="form-control" id="active" name="active">
                                 <option value="0">No</option>

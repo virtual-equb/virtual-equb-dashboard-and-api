@@ -1,8 +1,8 @@
-        @if (Auth::user()->role == 'admin' ||
+        {{-- @if (Auth::user()->role == 'admin' ||
                 Auth::user()->role == 'general_manager' ||
                 Auth::user()->role == 'operation_manager' ||
                 Auth::user()->role == 'customer_service' ||
-                Auth::user()->role == 'it')
+                Auth::user()->role == 'it') --}}
             <div class="modal fade" id="myModal" role="dialog">
                 <div class="modal-dialog">
 
@@ -60,7 +60,7 @@
                                     </div>
                                     <div id="start_date_div" class="form-group d-none">
                                         <label for="start_date" class="control-label">Start Date</label>
-                                        <input type="text" class="form-control" id="start_date" name="start_date"
+                                        <input type="date" class="form-control" id="start_date" name="start_date"
                                             placeholder="Start Date" autocomplete="off">
                                     </div>
                                     <div id="quota_div" class="form-group d-none">
@@ -146,4 +146,4 @@
 
                 </div>
             </div>
-        @endif
+        {{-- @endif --}}

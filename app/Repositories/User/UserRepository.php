@@ -22,7 +22,12 @@ class UserRepository implements IUserRepository
 
     public function getRoles()
     {
-        return Role::all();
+        return Role::where('guard_name', 'web')->get();
+    }
+
+    public function getUserRoles()
+    {
+        return User::with('roles')->get();
     }
 
     public function getAll()
@@ -103,7 +108,10 @@ class UserRepository implements IUserRepository
 
     public function updateUser($id, array $attributes)
     {
-        return $this->model->where("id", $id)->update($attributes);
+        $user = User::findOrFail($id);
+        $user->update($attributes);
+        return $user;
+        // return $this->model->where("id", $id)->update($attributes);
     }
 
     public function deleteUser($id)

@@ -21,12 +21,11 @@
                 <td>{{ $item->phone_number }}</td>
                 <td>{{ $item->gender }}</td>
                 <td>
-                   {{$item->roles}}
-                   {{-- @if (!empty($item->getRoleNames()))
-                    @foreach($item->getRoleNames() as $rolename)
-                        <label class="badge badge-primary">{{ $rolename }}</label>
-                    @endforeach
-                   @endif --}}
+                    @if (!empty($item->roles))
+                        @foreach ($item->roles as $role)
+                            <span class="badge badge-primary">{{ $role->name }}</span>
+                        @endforeach
+                    @endif
                 </td>
                 <td>{{ $item->enabled ? 'Active' : 'Inactive' }}</td>
                 <td>
@@ -35,7 +34,7 @@
                     $createdDate = $toCreatedAt->format('M-j-Y');
                     echo $createdDate; ?>
                 </td>
-                @if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant')
+                {{-- @if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant') --}}
                     <td>
 
                         <div class='dropdown'>
@@ -43,7 +42,7 @@
                                 data-toggle='dropdown'>Menu<span class='caret'></span></button>
                             <ul class='dropdown-menu p-4'>
                                 <li><button href='javascript:void(0);'
-                                        class="text-secondary btn btn-flat {{ $item->role == 'member' ? 'disabled' : '' }}"
+                                        class="text-secondary btn btn-flat"
                                         onclick="openEditTab({{ $item }})">
                                         <span class="fas fa-edit "></span> Edit</button>
                                 </li>
@@ -53,21 +52,21 @@
                                 </li>
                                 <li>
                                     <a href="javascript:void(0);"
-                                        class="text-secondary btn btn-flat {{ $item->role == 'member' ? 'disabled' : '' }}"
+                                        class="text-secondary btn btn-flat"
                                         onclick="openDeleteUserModal({{ $item }})"><i
                                             class="fas fa-trash-alt"></i>
                                         Delete</a>
                                 </li>
                                 <li>
                                     <a href="javascript:void(0);"
-                                        class="text-secondary btn btn-flat {{ $item->role == 'member' ? 'disabled' : '' }}"
+                                        class="text-secondary btn btn-flat"
                                         onclick="openDeactivatedModal({{ $item }})" id="statuss"
                                         name="statuss"><i class="fab fa-shopware"></i> Deactivate</a>
                                 </li>
                             </ul>
                         </div>
                     </td>
-                @endif
+                {{-- @endif --}}
             </tr>
         @endforeach
     </tbody>
