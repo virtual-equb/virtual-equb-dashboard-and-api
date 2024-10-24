@@ -27,7 +27,7 @@ class SubCityController extends Controller
      */
     public function index()
     {
-        $subCities = $this->cityRepository->getAll(); // Assuming this method retrieves all sub cities
+        $subCities = $this->subCityRepository->getAll(); // Assuming this method retrieves all sub cities
         $cities = $this->cityRepository->getActiveCity();
         return view('admin.subCity.subCityList', [
             'title' => $this->title,
