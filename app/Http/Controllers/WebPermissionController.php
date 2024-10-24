@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use Spatie\Permission\Models\Permission;
 use App\Repositories\User\IUserRepository;
 use App\Repositories\ActivityLog\IActivityLogRepository;
-use Spatie\Permission\Models\Permission;
 
 class WebPermissionController extends Controller
 {
@@ -28,8 +29,14 @@ class WebPermissionController extends Controller
     
     public function index()
     {
-        $data['title'] = $this->title;
-        $permissions = Permission::get();
+        if (request()->route()->getPrefix() === 'api') {
+        // Request is coming from an API route
+        } else {
+            // Request is coming from a web route
+            $data['title'] = $this->title;
+            $permissions = Permission::where('guard_name', 'web')->get();
+        }
+        
 
         return view('rolePermission.permission.index', ['title' => $this->title, 'permissions' => $permissions]);
     }

@@ -35,7 +35,7 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'phone_number',
         'gender',
-        'role',
+        // 'role',
         'enabled',
         'token',
         'fcm_id',
@@ -93,10 +93,10 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
-    public function roles()
-    {
-        return $this->belongsTo(Role::class, 'role');
-    }
+    // public function roles()
+    // {
+    //     return $this->belongsTo(Role::class, 'role');
+    // }
 
     // public function hasRole($role)
     // {

@@ -35,7 +35,7 @@ class FrontMainEqubController extends Controller
         $userData = Auth::user();
 
         try {
-            if ($userData && in_array($userData['role'], ['admin', 'member', 'general_manager', 'operation_manager', 'it', 'customer_service', 'assistant'])) {
+            // if ($userData && in_array($userData['role'], ['admin', 'member', 'general_manager', 'operation_manager', 'it', 'customer_service', 'assistant'])) {
                 $Equbs = $this->mainEqubRepository->all();
 
                 $countSubEqubs = MainEqub::withCount('subEqub')->get();
@@ -43,9 +43,9 @@ class FrontMainEqubController extends Controller
                 $mainEqubs = $this->mainEqubRepository->all();
 
                 return view('admin/mainEqub/indexMain', ['equbs' => $Equbs, 'title' => $this->title, 'mainEqubs' => $mainEqubs, 'countSubEqub' => $countSubEqubs]);
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 400,
@@ -79,7 +79,7 @@ class FrontMainEqubController extends Controller
         $userData = Auth::user();
 
         try {
-            if ($userData && in_array($userData['role'], ['admin', 'member', 'general_manager', 'operation_manager', 'it', 'customer_service', 'assistant'])) {
+            // if ($userData && in_array($userData['role'], ['admin', 'member', 'general_manager', 'operation_manager', 'it', 'customer_service', 'assistant'])) {
                 $data = $request->validate([
                     'name' => 'required|string|max:255',
                     'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', 
@@ -90,9 +90,9 @@ class FrontMainEqubController extends Controller
 
 
                 return view('admin/mainEqub/indexMain', ['mainEqub' => $mainEqub, 'title' => $this->title, 'mainEqubs' => $mainEqubs]);
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
 
         } catch (Exception $ex) {
             return response()->json([

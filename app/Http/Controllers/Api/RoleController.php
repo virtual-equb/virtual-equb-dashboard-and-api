@@ -13,6 +13,13 @@ use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:edit role', ['only' => ['update', 'edit', 'updatePermissionToRole']]);
+        $this->middleware('permission:delete role', ['only' => ['destroy']]);
+        $this->middleware('permission:view role', ['only' => ['index', 'show']]);
+        $this->middleware('permission:create role', ['only' => ['store', 'create', 'addPermissionToRole']]);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -20,7 +27,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $users = User::with('roles')->get();
+        $users = User::with('roles')->where('guard_name', 'web')->get();
         return response()->json([
             'roles' => Role::all(),
             'users' => $users

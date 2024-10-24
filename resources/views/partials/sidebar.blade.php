@@ -10,19 +10,19 @@
                 {{ Auth::user()->profile_photo_path }}
             </div>
             <div class="info">
-                <a href="/user/profile" class="d-block">{{ Auth::user()->name }}</a>
+                <a href="/user/profile" class="d-block">{{ Auth::user()->name }}, {{ Auth::user()->id }}</a>
             </div>
         </div>
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                 data-accordion="false">
-                @if (Auth::user()->role == 'admin' ||
+                {{-- @if (Auth::user()->role == 'admin' ||
                         Auth::user()->role == 'general_manager' ||
                         Auth::user()->role == 'operation_manager' ||
                         Auth::user()->role == 'assistant' ||
                         Auth::user()->role == 'finance' ||
                         // Auth::user()->role == 'customer_service' ||
-                        Auth::user()->role == 'it')
+                        Auth::user()->role == 'it') --}}
                     <li class="nav-item" id="settingNava">
                         <a href="#" class="nav-link " id="dashboard">
                             <i class="nav-icon fas fa-indent"></i>
@@ -62,14 +62,14 @@
                             @endforeach
                         </ul>
                     </li>
-                @endif
-                @if (Auth::user()->role == 'admin' ||
+                {{-- @endif --}}
+                {{-- @if (Auth::user()->role == 'admin' ||
                         Auth::user()->role == 'general_manager' ||
                         Auth::user()->role == 'operation_manager' ||
                         Auth::user()->role == 'finance' ||
                         Auth::user()->role == 'customer_service' ||
                         Auth::user()->role == 'assistant' ||
-                        Auth::user()->role == 'it')
+                        Auth::user()->role == 'it') --}}
                     {{-- <li class="nav-item" id="nav-mem">
                         <a href="{{ route('showMember') }}" class="nav-link " id="mem">
                             <i class="nav-icon fas fa-users"></i>
@@ -128,13 +128,13 @@
                             </li>
                         </ul>
                     </li>
-                @endif
-                @if (Auth::user()->role == 'admin' ||
+                {{-- @endif --}}
+                {{-- @if (Auth::user()->role == 'admin' ||
                         Auth::user()->role == 'general_manager' ||
                         Auth::user()->role == 'operation_manager' ||
                         Auth::user()->role == 'customer_service' ||
                         Auth::user()->role == 'assistant' ||
-                        Auth::user()->role == 'it')
+                        Auth::user()->role == 'it') --}}
                         <li class="nav-item" id="nav-ety">
                         <a href="{{ route('mainEqubs.index') }}" class="nav-link " id="city">
                             <i class="nav-icon fa fa-server"></i>
@@ -143,13 +143,13 @@
                             </p>
                         </a>
                     </li>
-                @endif
-                @if (Auth::user()->role == 'admin' ||
+                {{-- @endif --}}
+                {{-- @if (Auth::user()->role == 'admin' ||
                         Auth::user()->role == 'general_manager' ||
                         Auth::user()->role == 'operation_manager' ||
                         Auth::user()->role == 'customer_service' ||
                         Auth::user()->role == 'assistant' ||
-                        Auth::user()->role == 'it')
+                        Auth::user()->role == 'it') --}}
                 <li class="nav-item" id="nav-ety">
                 <a href="{{ route('showEqubType') }}" class="nav-link " id="city">
                             <i class="nav-icon fa fa-network-wired"></i>
@@ -158,12 +158,12 @@
                             </p>
                         </a>
                     </li>
-                @endif
-                @if (Auth::user()->role == 'admin' ||
+                {{-- @endif --}}
+                {{-- @if (Auth::user()->role == 'admin' ||
                         Auth::user()->role == 'general_manager' ||
                         Auth::user()->role == 'operation_manager' ||
                         Auth::user()->role == 'assistant' ||
-                        Auth::user()->role == 'it')
+                        Auth::user()->role == 'it') --}}
                     <li class="nav-item" id="nav-ety">
                         <a href="{{ route('showRejectedDate') }}" class="nav-link " id="offDate">
                             <i class="nav-icon fas fa-calendar-minus"></i>
@@ -172,12 +172,12 @@
                             </p>
                         </a>
                     </li>
-                @endif
-                @if (Auth::user()->role == 'admin' ||
+                {{-- @endif --}}
+                {{-- @if (Auth::user()->role == 'admin' ||
                         Auth::user()->role == 'general_manager' ||
                         Auth::user()->role == 'operation_manager' ||
                         Auth::user()->role == 'assistant' ||
-                        Auth::user()->role == 'it')
+                        Auth::user()->role == 'it') --}}
                     <li class="nav-item" id="nav-ety">
                         <a href="{{ route('showNotifations') }}" class="nav-link " id="notification">
                             <i class="nav-icon fa fa-bell"></i>
@@ -186,13 +186,13 @@
                             </p>
                         </a>
                     </li>
-                @endif
+                {{-- @endif --}}
            
-                @if (Auth::user()->role == 'admin' ||
+                {{-- @if (Auth::user()->role == 'admin' ||
                         Auth::user()->role == 'general_manager' ||
                         Auth::user()->role == 'operation_manager' ||
                         Auth::user()->role == 'assistant' ||
-                        Auth::user()->role == 'it')
+                        Auth::user()->role == 'it') --}}
                     <li class="nav-item" id="nav-ety">
                         <a href="{{ route('cities.index') }}" class="nav-link " id="city">
                             <i class="nav-icon fas fa-calendar-minus"></i>
@@ -201,12 +201,12 @@
                             </p>
                         </a>
                     </li>
-                @endif
-                @if (Auth::user()->role == 'admin' ||
+                {{-- @endif --}}
+                {{-- @if (Auth::user()->role == 'admin' ||
                         Auth::user()->role == 'general_manager' ||
                         Auth::user()->role == 'operation_manager' ||
                         Auth::user()->role == 'assistant' ||
-                        Auth::user()->role == 'it')
+                        Auth::user()->role == 'it') --}}
                     <li class="nav-item" id="nav-ety">
                         <a href="{{ route('user') }}" class="nav-link" id="adminNav">
                             <i class="nav-icon far fa-user"></i>
@@ -215,12 +215,12 @@
                             </p>
                         </a>
                     </li>
-                @endif
-                @if (Auth::user()->role == 'admin' ||
+                {{-- @endif --}}
+                {{-- @if (Auth::user()->role == 'admin' ||
                         Auth::user()->role == 'general_manager' ||
                         Auth::user()->role == 'operation_manager' ||
                         Auth::user()->role == 'assistant' ||
-                        Auth::user()->role == 'it')
+                        Auth::user()->role == 'it') --}}
                     <li class="nav-item" id="nav-ety">
                         <a href="{{ route('showActivityLog') }}" class="nav-link" id="activity_log">
                             <i class="nav-icon fa fa-chart-line"></i>
@@ -229,7 +229,7 @@
                             </p>
                         </a>
                     </li>
-                @endif
+                {{-- @endif --}}
                 <li class="nav-item">
                     <a href="" onclick="$('#logout').submit(); return false;"class="nav-link" id="adminNav">
                         <i class="nav-icon fas fa-sign-out-alt"></i>

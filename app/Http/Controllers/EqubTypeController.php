@@ -51,12 +51,17 @@ class EqubTypeController extends Controller
         $this->memberRepository = $memberRepository;
         $this->title = "Virtual Equb - Equb Type";
         $this->mainEqubRepository = $mainEqubRepository;
+        // Guards
+        $this->middleware('permission:update equb_type', ['only' => ['update', 'edit', 'updateStatus']]);
+        $this->middleware('permission:delete equb_type', ['only' => ['destroy', 'dateInterval']]);
+        $this->middleware('permission:view equb_type', ['only' => ['index', 'show']]);
+        $this->middleware('permission:create equb_type', ['only' => ['store', 'create']]);
     }
     public function index()
     {
         try {
             $userData = Auth::user();
-            if ($userData && in_array($userData['role'], ["admin", "member", "general_manager", "operation_manager", "it", "customer_service", "assistant"])) {
+            // if ($userData && in_array($userData['role'], ["admin", "member", "general_manager", "operation_manager", "it", "customer_service", "assistant"])) {
                 $data['equbTypes'] = $this->equbTypeRepository->getAll();
                 $data['deactiveEqubType']  = $this->equbTypeRepository->getDeactive();
                 $data['activeEqubType']  = $this->equbTypeRepository->getActive();
@@ -64,9 +69,9 @@ class EqubTypeController extends Controller
                 $data['mainEqubs'] = $this->mainEqubRepository->all();
                //dd( $data['equbTypes'] );
                 return view('admin/equbType.equbTypeList', $data);
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -187,14 +192,14 @@ class EqubTypeController extends Controller
         
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
                 $data['title'] = $this->title;
                 $data['mainEqubs'] = $this->mainEqubRepository->all();
                 
                 return view('admin/equbType/addEqubType', $data);
-            } else {
-                return back();
-            }
+            // } else {
+            //     return back();
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -208,7 +213,7 @@ class EqubTypeController extends Controller
         try {
             $userData = Auth::user();
             
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
                 $this->validate($request, [
                     'name' => 'required',
                     'round' => 'required',
@@ -284,9 +289,9 @@ class EqubTypeController extends Controller
                     Session::flash($type, $msg);
                     redirect('/equbType');
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             // dd($ex);
             $msg = $ex->getMessage();
@@ -690,12 +695,12 @@ class EqubTypeController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
                 $equb = $this->equbTypeRepository->getById($equbType);
                 return $equb;
-            } else {
-                return view('auth/login');
-            };
+            // } else {
+            //     return view('auth/login');
+            // };
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -707,12 +712,12 @@ class EqubTypeController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
                 $data['equbType'] = $this->equbTypeRepository->getById($equbType);
                 return view('admin/equbType/updateEqubType', $data);
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -767,7 +772,7 @@ class EqubTypeController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
                 $status = $this->equbTypeRepository->getStatusById($id)->status;
                 if ($status == "Deactive") {
                     $status = "Active";
@@ -803,9 +808,9 @@ class EqubTypeController extends Controller
                     Session::flash($type, $msg);
                     return back();
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -818,7 +823,7 @@ class EqubTypeController extends Controller
         // dd($request);
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
                 $equbTypeDetail = EqubType::where('id', $id)->first();
                 // dd($request);
                 // $validated = $this->validate($request, []);
@@ -924,9 +929,9 @@ class EqubTypeController extends Controller
                     Session::flash($type, $msg);
                     return back();
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             // dd($ex);
             $msg = "Unable to process your request, Please try again!";
@@ -939,7 +944,7 @@ class EqubTypeController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
                 $equb = $this->equbRepository->getEqubType($id);
                 if (!$equb->isEmpty()) {
                     $msg = "This equb type is being used, please deactive it instead of deleting";
@@ -973,9 +978,9 @@ class EqubTypeController extends Controller
                 } else {
                     return false;
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';

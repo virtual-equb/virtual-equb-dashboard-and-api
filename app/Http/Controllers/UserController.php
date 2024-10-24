@@ -26,20 +26,26 @@ class UserController extends Controller
         $this->activityLogRepository = $activityLogRepository;
         $this->userRepository = $userRepository;
         $this->title = "Virtual Equb - User";
+
+        // Permission Guard
+        $this->middleware('permission:update user', ['only' => ['update', 'edit', 'resetPassword', 'deactiveStatus', 'activeUser']]);
+        $this->middleware('permission:delete user', ['only' => ['destroy']]);
+        $this->middleware('permission:view user', ['only' => ['index', 'show', 'indexForDeactivated', 'deactiveUser', 'user']]);
+        $this->middleware('permission:create user', ['only' => ['store', 'create', 'storeUser']]);
     }
     public function index()
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
                 $this->middleware('auth');
                 $data['title'] = $this->title;
                 $data['roles'] = $this->userRepository->getRoles();
                 // dd($roles);
                 return view('admin/user.admins', $data);
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -51,13 +57,13 @@ class UserController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
                 $this->middleware('auth');
                 $data['title'] = $this->title;
                 return view('admin/user.admins', $data);
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -71,7 +77,7 @@ class UserController extends Controller
             $offset = $offsetVal;
             $pageNumber = $pageNumberVal;
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
                 $this->middleware('auth');
                 $data['title'] = $this->title;
                 $data['totalUser'] = $this->userRepository->getUser();;
@@ -82,9 +88,9 @@ class UserController extends Controller
                 $data['activeUsers']  = $this->userRepository->getActiveForUsers($offset, $userData->id);
                 // $data['activeUsers']  = $this->userRepository->getActive($offset);
                 return view('admin/user/activeUser', $data);
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -98,7 +104,7 @@ class UserController extends Controller
             $offset = $offsetVal;
             $pageNumber = $pageNumberVal;
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
                 $this->middleware('auth');
                 $data['title'] = $this->title;
                 $data['totalDeacivatedUser'] = $this->userRepository->getDeactivatedUser();;
@@ -108,9 +114,9 @@ class UserController extends Controller
                 $data['deactivatedUsers']  = $this->userRepository->getDeactive($offset);
                 $data['activeUsers']  = $this->userRepository->getActive($offset);
                 return view('admin/user/deactivatedUser', $data);
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -169,7 +175,7 @@ class UserController extends Controller
             $password = rand(100000, 999999);
             $user = User::where('id', $u_id)->first();
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
                 $updated = [
                     'password' => Hash::make($password),
                 ];
@@ -192,9 +198,9 @@ class UserController extends Controller
                     Session::flash($type, $msg);
                     return back();
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -228,7 +234,7 @@ class UserController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
                 $this->validate(
                     $request,
                     [
@@ -236,7 +242,8 @@ class UserController extends Controller
                         'email' => 'required',
                         'phone_number' => 'required',
                         'gender' => 'required',
-                        'role' => 'required',
+                        'role' => 'required|array',
+                        'password' => 'required'
                     ]
                 );
                 $fullName = $request->input('name');
@@ -244,8 +251,9 @@ class UserController extends Controller
                 $phone_number = $request->input('phone_number');
                 $gender = $request->input('gender');
                 $role = $request->input('role');
+                $password = $request->input('password');
                 // $password = '123456';
-                $password = rand(100000, 999999);
+                // $password = rand(100000, 999999);
                 $userData = [
                     'name' => $fullName,
                     'email' => $email,
@@ -284,9 +292,9 @@ class UserController extends Controller
                     Session::flash($type, $msg);
                     redirect('/user');
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
@@ -324,7 +332,7 @@ class UserController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
                 $enabled = 0;
                 $updated = [
                     'enabled' => $enabled,
@@ -350,9 +358,9 @@ class UserController extends Controller
                     Session::flash($type, $msg);
                     return back();
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -364,7 +372,7 @@ class UserController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
                 $enabled = 1;
                 $updated = [
                     'enabled' => $enabled,
@@ -390,9 +398,9 @@ class UserController extends Controller
                     Session::flash($type, $msg);
                     return back();
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -404,16 +412,19 @@ class UserController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
                 if ($userData) {
+                    $user = User::find($id);
                     $data['user'] = $this->userRepository->getById($id);
+                    $data['roles'] = Role::where('guard_name', 'web')->get();
+                    $data['userRoles'] = $user->roles->where('guard_name', 'web')->pluck('name')->toArray();
                     return view('admin/user/editUser', $data);
                 } else {
                     return back();
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -425,7 +436,7 @@ class UserController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
                 $this->validate(
                     $request,
                     [
@@ -433,7 +444,7 @@ class UserController extends Controller
                         'email' => 'required',
                         'phone_number' => 'required',
                         'gender' => 'required',
-                        'role' => 'required',
+                        'role' => 'required|array',
                     ]
                 );
                 $name = $request->input('name');
@@ -446,9 +457,10 @@ class UserController extends Controller
                     'email' => $email,
                     'phone_number' => $phone,
                     'gender' => $gender,
-                    'role' => $role,
                 ];
                 $updated = $this->userRepository->updateUser($id, $updated);
+                // dd($updated);
+                $updated->syncRoles([$role]);
                 if ($updated) {
                     $activityLog = [
                         'type' => 'users',
@@ -469,9 +481,9 @@ class UserController extends Controller
                     Session::flash($type, $msg);
                     return back();
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -483,7 +495,7 @@ class UserController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
                 $user = $this->userRepository->getById($id);
                 if ($user != null) {
                     $check = $this->activityLogRepository->getByAdminId($id);
@@ -517,9 +529,9 @@ class UserController extends Controller
                 } else {
                     return false;
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             // dd($ex);
             $msg = "Unable to process your request, Please try again!";
@@ -532,7 +544,7 @@ class UserController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service")) {
                 $data['offset'] = $offset;
                 $limit = 50;
                 $data['limit'] = $limit;
@@ -546,7 +558,7 @@ class UserController extends Controller
                 $data['users'] = $this->userRepository->searchUser($offset, $searchInput);
                 // dd($data['users']);
                 return view('admin/user/searchUsers', $data)->render();
-            } elseif ($userData && ($userData['role'] == "equb_collector")) {
+            // } elseif ($userData && ($userData['role'] == "equb_collector")) {
                 $data['offset'] = $offset;
                 $limit = 50;
                 $data['limit'] = $limit;
@@ -559,7 +571,7 @@ class UserController extends Controller
                 $data['searchInput'] = $searchInput;
                 $data['users'] = $this->userRepository->searchUser($offset, $searchInput);
                 return view('equbCollecter/user/searchUsers', $data)->render();
-            }
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';

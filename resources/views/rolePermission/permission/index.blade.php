@@ -14,6 +14,7 @@
                         <div class="card-header">
                             <h4>Permissions
                                 <a href="{{ url('permission/create')}}" class="btn btn-primary float-right">Create Permission</a>
+                                <a href="{{ route('user')}}" class="btn btn-danger float-right mr-3">Back</a>
                             </h4>
                         </div>
                         <div class="card-body">

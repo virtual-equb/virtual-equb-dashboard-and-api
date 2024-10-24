@@ -53,6 +53,12 @@ class MemberController extends Controller
         $this->cityRepository = $cityRepository;
         $this->subCityRepository = $subCityRepository;
         $this->title = "Virtual Equb - Member";
+
+        // Guard Permission
+        $this->middleware('permission:update member', ['only' => ['update', 'updateStatus', 'updatePendingStatus', 'rate', 'edit']]);
+        $this->middleware('permission:delete member', ['only' => ['destroy']]);
+        $this->middleware('permission:view member', ['only' => ['index', 'show', 'indexPending', 'searchPendingMember', 'member', 'searchMember', 'searchEqub', 'searchStatus']]);
+        $this->middleware('permission:create member', ['only' => ['store', 'create', 'register']]);
     }
     public function clearSearchEntry()
     {

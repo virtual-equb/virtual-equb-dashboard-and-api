@@ -9,6 +9,13 @@ use Spatie\Permission\Models\Permission;
 
 class PermissionController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:edit', ['only' => ['update', 'edit']]);
+        $this->middleware('permission:delete', ['only' => ['destroy']]);
+        $this->middleware('permission:read', ['only' => ['index', 'show']]);
+        $this->middleware('permission:create', ['only' => ['store', 'create']]);
+    }
     /**
      * Display a listing of the resource.
      *
