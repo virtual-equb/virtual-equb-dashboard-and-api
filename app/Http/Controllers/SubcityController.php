@@ -1,10 +1,12 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\Sub_city;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\SubCity\ISubCityRepository;
 use App\Repositories\City\ICityRepository;
+use Exception;
 use Illuminate\Support\Facades\Response;
 
 
@@ -26,7 +28,7 @@ class SubCityController extends Controller
      *
      * @return \Illuminate\View\View|\Illuminate\Http\JsonResponse
      */
-    public function index()
+   /* public function index()
     {
         if (!$this->isAuthorized(Auth::user())) {
             return response()->json(['message' => 'Unauthorized'], 403);
@@ -36,8 +38,31 @@ class SubCityController extends Controller
         $cities = $this->cityRepository->getActiveCity();
         $title =$this->title;
         return view('admin.subCity.subCityList', compact('title','subCities', 'cities')); // Return a view with data
-    }
+    }*/
+    public function index()
+    {
+        $userData = Auth::user();
 
+        try {
+            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it", 'member'])) {
+                $subCities = Sub_city::with('city')->get();
+                $cities = Sub_city::with('city')->get();
+               $title = "sub City";
+                return view('admin.subCity.subCityList', compact('title','subCities', 'cities')); // Return a view with data
+            } else {
+                return response()->json([
+                    'code' => 403,
+                    'message' => 'You can\'t perform this action!'
+                ]);
+            }
+        
+        } catch (Exception $ex) {
+            return response()->json([
+                'code' => 500,
+                'message' => $ex->getMessage()
+            ]);
+        }
+    }
     public function getSubCitiesByCityId($cityId)
     {
         $subCities = $this->subCityRepository->getSubCityByCityId($cityId); // Use the passed cityId
@@ -66,7 +91,7 @@ class SubCityController extends Controller
         ]);
 
         try {
-            SubCity::create([
+            Sub_city::create([
                 'name' => $request->name,
                 'city_id' => $request->city_id,
                 'active' => $request->active ?? false,
