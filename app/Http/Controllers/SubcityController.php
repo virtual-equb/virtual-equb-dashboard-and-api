@@ -4,10 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Sub_city;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Repositories\SubCity\ISubCityRepository;
 use App\Repositories\City\ICityRepository;
-use Illuminate\Support\Facades\Response;
 
 class SubCityController extends Controller
 {
@@ -29,7 +27,7 @@ class SubCityController extends Controller
      */
     public function index()
     {
-        $subCities = $this->subCityRepository->getAll(); // Assuming this method retrieves all sub cities
+        $subCities = $this->cityRepository->getAll(); // Assuming this method retrieves all sub cities
         $cities = $this->cityRepository->getActiveCity();
         return view('admin.subCity.subCityList', [
             'title' => $this->title,
