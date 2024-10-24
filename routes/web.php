@@ -304,8 +304,8 @@ Route::middleware([
     });
     Route::prefix('mycity')->group(function () {
         // Get all sub-cities
-        Route::get('/', [SubCityController::class, 'index'])->name('subcities.index');
-    
+        Route::get('/', [CityController::class, 'index'])->name('cities.index');
+
         // Get a sub-city by ID
         Route::get('{id}', [SubCityController::class, 'show'])->name('subcities.show');
     
