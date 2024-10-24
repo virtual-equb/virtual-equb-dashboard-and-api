@@ -8,6 +8,7 @@ use App\Repositories\MainEqub\MainEqubRepositoryInterface;
 use App\Repositories\Payment\IPaymentRepository;
 use Exception;
 use Google\Cloud\Storage\Connection\Rest;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -77,28 +78,46 @@ class FrontMainEqubController extends Controller
 
     public function store(Request $request) {
         $userData = Auth::user();
-
+    
         try {
-            if ($userData && in_array($userData['role'], ['admin', 'member', 'general_manager', 'operation_manager', 'it', 'customer_service', 'assistant'])) {
+            // Check if user is authenticated and has the correct role
+            if ($userData && in_array($userData->role, ['admin', 'member', 'general_manager', 'operation_manager', 'it', 'customer_service', 'assistant'])) {
+                // Validate the request data
                 $data = $request->validate([
                     'name' => 'required|string|max:255',
                     'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', 
                     'remark' => 'nullable|string',
                 ]);
-                $mainEqubs = $this->mainEqubRepository->all();
+    
+                // Handle image upload if provided
+                if ($request->hasFile('image')) {
+                    $imagePath = $request->file('image')->store('images/equbs', 'public'); // Store the image
+                    $data['image'] = $imagePath; // Add the image path to the data array
+                }
+    
+                // Create the main equipment entry
                 $mainEqub = MainEqub::create($data);
-
-
-                return view('admin/mainEqub/indexMain', ['mainEqub' => $mainEqub, 'title' => $this->title, 'mainEqubs' => $mainEqubs]);
+    
+                // Fetch all main equipment entries for the view
+                $mainEqubs = $this->mainEqubRepository->all();
+    
+                  // Flash a success message
+        $msg = "Main Equb added successfully.";
+        $type = 'success';
+        Session::flash($type, $msg);
+        // Redirect to the index route instead of returning a view
+        return redirect()->route('mainEqubs.index'); // Adjust the route name as needed
             } else {
-                return view('auth/login');
+                // Redirect to login if the user is unauthorized
+                return redirect()->route('login');
             }
-
+    
         } catch (Exception $ex) {
+            // Return a JSON response for errors
             return response()->json([
                 'code' => 400,
                 'message' => 'Something went wrong!',
-                "error" => $ex->getMessage()
+                'error' => $ex->getMessage()
             ]);
         }
     }
