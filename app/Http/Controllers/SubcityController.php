@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Repositories\SubCity\ISubCityRepository;
 use App\Repositories\City\ICityRepository;
 use Illuminate\Support\Facades\Response;
-use App\Models\SubCity;
+
 
 class SubCityController extends Controller
 {

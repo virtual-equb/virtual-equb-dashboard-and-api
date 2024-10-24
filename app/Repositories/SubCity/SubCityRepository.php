@@ -2,13 +2,13 @@
 
 namespace App\Repositories\SubCity;
 
-use App\Models\SubCity;
+use App\Models\Sub_city;
 
 class SubCityRepository implements ISubCityRepository
 {
     private $model;
 
-    public function __construct(SubCity $subCity)
+    public function __construct(Sub_city $subCity)
     {
         $this->model = $subCity;
     }
