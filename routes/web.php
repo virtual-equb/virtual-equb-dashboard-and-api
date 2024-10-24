@@ -302,26 +302,6 @@ Route::middleware([
         Route::get('city/{cityId}', [SubCityController::class, 'getSubCitiesByCityId'])->name('subcities.byCityId');
         
     });
-    Route::prefix('mycity')->group(function () {
-        // Get all sub-cities
-        Route::get('/', [CityController::class, 'index'])->name('cities.index');
-
-        // Get a sub-city by ID
-        Route::get('{id}', [SubCityController::class, 'show'])->name('subcities.show');
-    
-        // Create a new sub-city
-        Route::post('/', [SubCityController::class, 'store'])->name('subcities.store');
-    
-        // Update an existing sub-city
-        Route::put('{id}', [SubCityController::class, 'update'])->name('subcities.update');
-    
-        // Delete a sub-city
-        Route::delete('{id}', [SubCityController::class, 'destroy'])->name('subcities.destroy');
-    
-        // Get sub-cities by city ID
-        Route::get('city/{cityId}', [SubCityController::class, 'getSubCitiesByCityId'])->name('subcities.byCityId');
-        
-    });
     Route::prefix('main-equbs')->group(function () {
         // Get all cities
           Route::get('/', [MainEqubController::class, 'index'])->name('mainEqubs.index');

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -15,7 +14,7 @@ class SubCityController extends Controller
     private $cityRepository;
     private $title;
 
-    public function __construct(ISubCityRepository $subCityRepository,ICityRepository $cityRepository)
+    public function __construct(ISubCityRepository $subCityRepository, ICityRepository $cityRepository)
     {
         $this->subCityRepository = $subCityRepository;
         $this->cityRepository = $cityRepository;
@@ -29,22 +28,28 @@ class SubCityController extends Controller
      */
     public function index()
     {
-        $subCities = $this->subCityRepository->getAll(); // Assuming this method retrieves all sub cities
+        if (!$this->isAuthorized(Auth::user())) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $subCities = $this->subCityRepository->getAll();
         $cities = $this->cityRepository->getActiveCity();
-      return "hello subcity";
+        $title =$this->title;
+        return view('admin.subCity.subCityList', compact('title','subCities', 'cities')); // Return a view with data
     }
+
     public function getSubCitiesByCityId($cityId)
     {
-    $subCities=     $this->subCityRepository->getSubCityByCityId(1);
+        $subCities = $this->subCityRepository->getSubCityByCityId($cityId); // Use the passed cityId
         return response()->json($subCities);
     }
+
     public function show($id)
     {
-         // Retrieve the equb by ID
-         $city = $this->subCityRepository->getSubCityById($id);
-         // Return the data as JSON
-         return response()->json($city);
+        $city = $this->subCityRepository->getSubCityById($id);
+        return response()->json($city);
     }
+
     /**
      * Store a newly created sub city in storage.
      *
@@ -53,23 +58,23 @@ class SubCityController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate the request
         $request->validate([
             'name' => 'required|string|max:255',
-            'city_id' => 'required|exists:cities,id', // Ensure the city exists
-            'remark' => 'nullable|string', // If you have a remark field
-            'active' => 'boolean', // Optional, depending on your needs
+            'city_id' => 'required|exists:cities,id',
+            'remark' => 'nullable|string',
+            'active' => 'boolean',
         ]);
-    
-        // Create a new sub city
-        SubCity::create([
-            'name' => $request->name,
-            'city_id' => $request->city_id, // Add city_id to the creation
-            'active' => $request->active ?? false, // Default to false if not provided
-        ]);
-    
-        // Redirect back with a success message
-        return redirect()->back()->with('success', 'Sub City added successfully!');
+
+        try {
+            SubCity::create([
+                'name' => $request->name,
+                'city_id' => $request->city_id,
+                'active' => $request->active ?? false,
+            ]);
+            return redirect()->back()->with('success', 'Sub City added successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to add Sub City: ' . $e->getMessage());
+        }
     }
 
     /**
