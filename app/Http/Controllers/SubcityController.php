@@ -2,19 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Sub_city;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\SubCity\ISubCityRepository; // Updated repository interface
+use App\Repositories\City\ICityRepository; // Updated repository interface
 use Illuminate\Support\Facades\Response;
 use App\Models\SubCity; // Updated model
 
 class SubCityController extends Controller // Updated controller name
 {
     private $subCityRepository; // Updated variable name
+    private $cityRepository; // Updated variable name
     private $title;
 
-    public function __construct(ISubCityRepository $subCityRepository) // Updated constructor
+    public function __construct(ISubCityRepository $subCityRepository, ICityRepository $cityRepository) // Updated constructor
     {
+        $this->cityRepository = $cityRepository;
         $this->subCityRepository = $subCityRepository;
         $this->title = "Virtual Equb - SubCity"; // Updated title
     }
@@ -29,13 +33,13 @@ class SubCityController extends Controller // Updated controller name
         try {
             $user = Auth::user();
 
-            if ($this->isAuthorized($user)) {
+           // if ($this->isAuthorized($user)) {
                 $subCities = $this->subCityRepository->getAll(); // Updated method
                 $title = $this->title;
-                $cities =  $this->subCityRepository->getAll(); // Updated method
+                $cities =  $this->cityRepository->getAll(); // Updated method
                 return view('admin/subCity.subCityList', compact('title', 'subCities','cities')); // Updated view path
-            }
-            return Response::json(['error' => 'Unauthorized access.'], 403);
+         //   }
+          //  return Response::json(['error' => 'Unauthorized access.'], 403);
         } catch (\Exception $e) {
             return Response::json(['error' => 'Failed to retrieve SubCities.'], 500);
         }
@@ -58,7 +62,7 @@ class SubCityController extends Controller // Updated controller name
         ]);
 
         // Create a new SubCity
-        SubCity::create([
+        Sub_city::create([
             'name' => $request->name,
             'city_id' => $request->city_id,
         ]);
@@ -82,7 +86,7 @@ class SubCityController extends Controller // Updated controller name
         ]);
     
         // Find the SubCity by ID and update it
-        $subCity = SubCity::findOrFail($id);
+        $subCity = Sub_city::findOrFail($id);
         $subCity->name = $validatedData['name'];
         $subCity->active = $validatedData['active'];
         $subCity->save();

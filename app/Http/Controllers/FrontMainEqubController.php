@@ -79,44 +79,48 @@ class FrontMainEqubController extends Controller
         ]);
     }
 
-    public function store(Request $request) {
-        $userData = Auth::user();
-    
-        try {
-            // Check if user is authenticated and has the correct role
-            if ($userData && in_array($userData->role, ['admin', 'member', 'general_manager', 'operation_manager', 'it', 'customer_service', 'assistant'])) {
-                $data = $request->validate([
-                    'name' => 'required|string|max:255',
-                    'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', 
-                    'remark' => 'nullable|string',
-                ]);
-    
-                // Handle image upload if provided
-                if ($request->hasFile('image')) {
-                    $imagePath = $request->file('image')->store('images/equbs', 'public'); // Store the image
-                    $data['image'] = $imagePath; // Add the image path to the data array
-                }
-    
-                // Create the main equipment entry
-                $mainEqub = MainEqub::create($data);
-    
-                // Flash a success message
-                $msg = "Main Equb added successfully.";
-                $type = 'success';
-                Session::flash($type, $msg);
-                // Redirect to the index route instead of returning a view
-                return redirect()->route('mainEqubs.index'); // Adjust the route name as needed
-            } else {
-                // Redirect to login if the user is unauthorized
-                return redirect()->route('login');
-            }
-        } catch (Exception $ex) {
-            // Return a JSON response for errors
-            return response()->json([
-                'code' => 400,
-                'message' => 'Something went wrong!',
-                'error' => $ex->getMessage()
+public function store(Request $request) {
+    $userData = Auth::user();
+
+    try {
+        // Check if user is authenticated and has the correct role
+      //  if ($userData && in_array($userData->role, ['admin', 'member', 'general_manager', 'operation_manager', 'it', 'customer_service', 'assistant'])) {
+            // Validate the request data
+            $data = $request->validate([
+                'name' => 'required|string|max:255',
+                'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', 
+                'remark' => 'nullable|string',
             ]);
-        }
+
+            // Handle image upload if provided
+            if ($request->hasFile('image')) {
+                $imagePath = $request->file('image')->store('images/equbs', 'public'); // Store the image
+                $data['image'] = $imagePath; // Add the image path to the data array
+            }
+
+            // Create the main equipment entry
+            $mainEqub = MainEqub::create($data);
+
+            // Flash a success message
+            $msg = "Main Equb added successfully.";
+            $type = 'success';
+            Session::flash($type, $msg);
+
+            // Redirect to the index route
+            return redirect()->route('mainEqubs.index'); // Adjust the route name as needed
+       /* } else {
+            // Redirect to login if the user is unauthorized
+            return redirect()->route('login');
+        }*/
+    } catch (Exception $ex) {
+        // Log the error for debugging purposes (optional)
+
+        // Return a JSON response for errors
+        return response()->json([
+            'code' => 400,
+            'message' => 'Something went wrong!',
+            'error' => $ex->getMessage()
+        ]);
     }
+}
 }
