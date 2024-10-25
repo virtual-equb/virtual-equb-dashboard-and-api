@@ -27,26 +27,28 @@ class FrontMainEqubController extends Controller
         $this->equbRepository = $equbRepository;
         $this->mainEqubRepository = $mainEqubRepository;
         $this->title = "Virtual Equb - Dashboard";
+
+        // Permission Guard
+        $this->middleware('permission:update main_equb', ['only' => ['update', 'edit']]);
+        $this->middleware('permission:delete main_equb', ['only' => ['destroy']]);
+        $this->middleware('permission:view main_equb', ['only' => ['index', 'show']]);
+        $this->middleware('permission:create main_equb', ['only' => ['store', 'create']]);
     }
 
     public function index() {
         $userData = Auth::user();
 
         try {
-            // if ($userData && in_array($userData['role'], ['admin', 'member', 'general_manager', 'operation_manager', 'it', 'customer_service', 'assistant'])) {
-                $Equbs = $this->mainEqubRepository->all();
-                $countSubEqubs = MainEqub::withCount('subEqub')->get();
-                $mainEqubs = $this->mainEqubRepository->all();
+            $Equbs = $this->mainEqubRepository->all();
+            $countSubEqubs = MainEqub::withCount('subEqub')->get();
+            $mainEqubs = $this->mainEqubRepository->all();
 
-                return view('admin/mainEqub/indexMain', [
-                    'equbs' => $Equbs,
-                    'title' => $this->title,
-                    'mainEqubs' => $mainEqubs,
-                    'countSubEqub' => $countSubEqubs
-                ]);
-            // } else {
-            //     return view('auth/login');
-            // }
+            return view('admin/mainEqub/indexMain', [
+                'equbs' => $Equbs,
+                'title' => $this->title,
+                'mainEqubs' => $mainEqubs,
+                'countSubEqub' => $countSubEqubs
+            ]);
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 400,
@@ -79,18 +81,18 @@ class FrontMainEqubController extends Controller
         ]);
     }
 
-public function store(Request $request) {
-    $userData = Auth::user();
+    public function store(Request $request) {
+        $userData = Auth::user();
 
-    try {
-        // Check if user is authenticated and has the correct role
-      //  if ($userData && in_array($userData->role, ['admin', 'member', 'general_manager', 'operation_manager', 'it', 'customer_service', 'assistant'])) {
+        try {
             // Validate the request data
             $data = $request->validate([
                 'name' => 'required|string|max:255',
                 'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', 
                 'remark' => 'nullable|string',
+                'active' => 'nullable'
             ]);
+            $data['created_by'] = Auth::id();
 
             // Handle image upload if provided
             if ($request->hasFile('image')) {
@@ -108,19 +110,13 @@ public function store(Request $request) {
 
             // Redirect to the index route
             return redirect()->route('mainEqubs.index'); // Adjust the route name as needed
-       /* } else {
-            // Redirect to login if the user is unauthorized
-            return redirect()->route('login');
-        }*/
-    } catch (Exception $ex) {
-        // Log the error for debugging purposes (optional)
-
-        // Return a JSON response for errors
-        return response()->json([
-            'code' => 400,
-            'message' => 'Something went wrong!',
-            'error' => $ex->getMessage()
-        ]);
+        } catch (Exception $ex) {
+            // Return a JSON response for errors
+            return response()->json([
+                'code' => 400,
+                'message' => 'Something went wrong!',
+                'error' => $ex->getMessage()
+            ]);
+        }
     }
-}
 }

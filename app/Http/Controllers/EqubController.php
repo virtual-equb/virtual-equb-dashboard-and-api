@@ -61,15 +61,15 @@ class EqubController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "finance" || $userData['role'] == "finance")) {
+            if ($userData->hasAnyRole(['Super Admin', 'General manager', 'Operation manager', 'IT', 'Finance'])) {
                 $userData = Auth::user();
                 $equbs = $this->equbRepository->getAll();
                 return view('admin/equb.equbList', compact('equbs'));
-            } elseif ($userData && ($userData['role'] == "equb_collector")) {
+            } elseif ($userData->hasRole('Equb collector')) {
                 $userData = Auth::user();
                 $equbs = $this->equbRepository->getAll();
                 return view('equbCollecter/equb.equbList', compact('equbs'));
-            } elseif ($userData && ($userData['role'] == "member")) {
+            } elseif ($userData->hasRole('Member')) {
                 $userData = Auth::user();
                 $equbs = $this->equbRepository->getAll();
                 return view('member/equb.equbList', compact('equbs'));
@@ -325,15 +325,15 @@ class EqubController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "finance")) {
+            if ($userData->hasAnyRole(['Super Admin', 'General manager', 'Operation manager', 'IT', 'Finance'])) {
                 $equbTakerData['equb'] = $this->equbRepository->getByIdNestedForLottery($id);
                 $equbTakerData['total'] = $this->paymentRepository->getTotal($id);
                 return view('admin/equb.equbDetails', $equbTakerData);
-            } elseif ($userData && ($userData['role'] == "equb_collector")) {
+            } elseif ($userData->hasRole('Equb collector')) {
                 $equbTakerData['equb'] = $this->equbRepository->getByIdNested($id);
                 $equbTakerData['total'] = $this->paymentRepository->getTotal($id);
                 return view('equbCollecter/equb.equbDetails', $equbTakerData);
-            } elseif ($userData && ($userData['role'] == "member")) {
+            } elseif ($userData->hasRole('Member')) {
                 $equbTakerData['equb'] = $this->equbRepository->getByIdNested($id);
                 $equbTakerData['total'] = $this->paymentRepository->getTotal($id);
                 return view('member/equb.equbDetails', $equbTakerData);
@@ -356,13 +356,13 @@ class EqubController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "finance")) {
+            if ($userData->hasAnyRole(['Super Admin', 'General manager', 'Operation manager', 'IT', 'Finance'])) {
                 $data['title'] = $this->title;
                 return view('admin/equb/addEqub', $data);
-            } elseif ($userData && ($userData['role'] == "equb_collector")) {
+            } elseif ($userData->hasRole('Equb collector')) {
                 $data['title'] = $this->title;
                 return view('equbCollecter/equb/addEqub', $data);
-            } elseif ($userData && ($userData['role'] == "member")) {
+            } elseif ($userData->hasRole('Member')) {
                 $data['title'] = $this->title;
                 return view('member/equb/addEqub', $data);
             } else {
@@ -459,7 +459,7 @@ class EqubController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+            // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $this->validate($request, [
                     'equb_type_id' => 'required',
                     'amount' => 'required',
@@ -527,6 +527,7 @@ class EqubController extends Controller
                 ];
                 $createEkubTaker = $this->equbTakerRepository->create($equbTakerData);
                 // dd($equbTakerData, $createEkubTaker);
+                
                 if ($create) {
                     $activityLog = [
                         'type' => 'equbs',
@@ -547,9 +548,9 @@ class EqubController extends Controller
                     Session::flash($type, $msg);
                     redirect('/member');
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             // dd($ex);
             $msg = "Unknown Error Occurred, Please try again!";
@@ -601,13 +602,13 @@ class EqubController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "finance")) {
+            if ($userData->hasAnyRole(['Super Admin', 'General manager', 'Operation manager', 'IT', 'Finance'])) {
                 $data['equb'] = $this->equbRepository->getById($equb);
                 return view('admin/member/updateMember', $data);
-            } elseif ($userData && ($userData['role'] == "equb_collector")) {
+            } elseif ($userData->hasRole('Equb collector')) {
                 $data['equb'] = $this->equbRepository->getById($equb);
                 return view('equbCollecter/member/updateMember', $data);
-            } elseif ($userData && ($userData['role'] == "member")) {
+            } elseif ($userData->hasRole('Member')) {
                 $data['equb'] = $this->equbRepository->getById($equb);
                 return view('member/member/updateMember', $data);
             } else {
@@ -624,7 +625,6 @@ class EqubController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $status = $this->equbRepository->getStatusById($id)->status;
                 if ($status == "Deactive") {
                     $status = "Active";
@@ -660,9 +660,6 @@ class EqubController extends Controller
                     Session::flash($type, $msg);
                     return redirect('/member');
                 }
-            } else {
-                return view('auth/login');
-            }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -674,7 +671,7 @@ class EqubController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+            // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $status = $this->equbRepository->getStatusById($id)->check_for_draw;
                 if ($status == false) {
                     $status = true;
@@ -711,9 +708,9 @@ class EqubController extends Controller
                     Session::flash($type, $msg);
                     return redirect('/member');
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -733,7 +730,7 @@ class EqubController extends Controller
         // dd($request->end_date);
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+            // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $oldEqub = Equb::where('id', $id)->first();
                 $oldEqubTypeData = EqubType::where('id', $oldEqub->equb_type_id)->first();
                 $member = Member::where('id', $oldEqub->member_id)->first();
@@ -808,9 +805,9 @@ class EqubController extends Controller
                     Session::flash($type, $msg);
                     return redirect('/member');
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             // dd($ex);
             $msg = "Unable to process your request, Please try again!";
@@ -829,7 +826,7 @@ class EqubController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+            // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $equb = $this->paymentRepository->getEqubForDelete($id);
                 // dd($equb);
                 if ($equb) {
@@ -898,9 +895,9 @@ class EqubController extends Controller
                 } else {
                     return false;
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             // dd($ex);
             $msg = "Unable to process your request, Please try again!";

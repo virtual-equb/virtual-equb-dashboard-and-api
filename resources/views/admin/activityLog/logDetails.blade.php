@@ -1,8 +1,8 @@
-@if (Auth::user()->role == 'admin' ||
+{{-- @if (Auth::user()->role == 'admin' ||
         Auth::user()->role == 'general_manager' ||
         Auth::user()->role == 'operation_manager' ||
         Auth::user()->role == 'assistant' ||
-        Auth::user()->role == 'it')
+        Auth::user()->role == 'it') --}}
     <div class="row justify-content-center">
         <p class="card-title">Details on {{ $activityLogs[0]->type }} logs</p>
     </div>
@@ -132,4 +132,4 @@
 
         }).buttons().container().appendTo('#logs-detail_wrapper .col-md-6:eq(0)');
     </script>
-@endif
+{{-- @endif --}}

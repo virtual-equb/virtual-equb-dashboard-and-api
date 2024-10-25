@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Models\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class ActivityLog extends Model
 {
@@ -40,6 +42,21 @@ class ActivityLog extends Model
         return $this->belongsTo(Equb::class, 'type_id');
     }
 
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'type_id');
+    }
+
+    public function permission()
+    {
+        return $this->belongsTo(Permission::class, 'type_id');
+    }
+
+    public function mainEqub()
+    {
+        return $this->belongsTo(MainEqub::class, 'type_id');
+    }
+
     public function getTypeAttribute($value)
     {
         switch ($value) {
@@ -47,6 +64,8 @@ class ActivityLog extends Model
                 return "Users";
             case 'members':
                 return "Members";
+            case 'main_equbs';
+                return 'Main Equbs';
             case 'equb_types':
                 return "Equb Types";
             case 'equb_takers':
@@ -59,6 +78,10 @@ class ActivityLog extends Model
                 return "Off Dates";
             case 'notification':
                 return "Notifications";
+            case 'roles';
+                return 'Roles';
+            case 'permissions';
+                return 'Permissions';
             default:
                 return;
         }

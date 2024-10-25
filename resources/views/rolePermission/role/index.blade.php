@@ -25,6 +25,7 @@
                                         <th>ID</th>
                                         <th>Name</th>
                                         <th>Guard Name</th>
+                                        <th>Created Date</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -34,6 +35,7 @@
                                         <td>{{ $role->id}}</td>
                                         <td>{{ $role->name}}</td>
                                         <td>{{ $role->guard_name}}</td>
+                                        <td>{{ date('d-m-Y', strtotime($role->created_at))}}</td>
                                         <td>
                                             <a href="{{ url('roles/'.$role->id.'/assign-permission') }}" class="btn btn-info">
                                                 Add / Edit Role Permission

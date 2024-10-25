@@ -35,6 +35,9 @@ class HomeController extends Controller
         $this->userRepository = $userRepository;
         $this->title = "Virtual Equb - Dashboard";
         $this->mainEqubRepository = $mainEqubRepository;
+
+        // Permission Guard
+        $this->middleware('permission:view dashboard', ['only' => ['index', 'show', 'equbTypeIndex']]);
     }
     //Projection chart updated here
     public function index()
@@ -277,7 +280,7 @@ class HomeController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "finance" || $userData['role'] == "marketing_manager" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "finance" || $userData['role'] == "marketing_manager" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
                 $profile = Auth::user();
                 $title = $this->title;
                 $totalEqubAmount = $this->equbRepository->getEqubTypeExpectedTotal($equb_type_id);
@@ -505,13 +508,13 @@ class HomeController extends Controller
                     }
                 }
                 return view('admin/equbtype-dashboard', compact('equb_type_id', 'automaticMembersArray', 'title', 'lables', 'fullPaidAmount', 'fullUnPaidAmount', 'Expected', 'daylyPaidAmount', 'daylyUnpaidAmount', 'daylyExpected', 'weeklyPaidAmount', 'weeklyUnpaidAmount', 'weeklyExpected', 'monthlyPaidAmount', 'monthlyUnpaidAmount', 'monthlyExpected', 'yearlyPaidAmount', 'yearlyUnpaidAmount', 'yearlyExpected', 'totalMember', 'tudayPaidMember', 'activeMember', 'totalUser', 'totalEqubPayment', 'mainEqubs'));
-            } elseif ($userData && ($userData['role'] == "equb_collector")) {
-                return redirect('/member/');
-            } elseif ($userData && ($userData['role'] == "member")) {
-                return redirect('/member/');
-            } else {
-                return view('auth/login');
-            }
+            // } elseif ($userData && ($userData['role'] == "equb_collector")) {
+            //     return redirect('/member/');
+            // } elseif ($userData && ($userData['role'] == "member")) {
+            //     return redirect('/member/');
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             // dd($ex);
             $msg = "Unable to process your request, Please try again!";

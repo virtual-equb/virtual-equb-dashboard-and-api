@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Session;
 use DateTime;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Spatie\Permission\Models\Role;
 
 /**
  * @group Members
@@ -422,10 +423,9 @@ class MemberController extends Controller
     public function store(Request $request)
     {
         $shortcode = config('key.SHORT_CODE');
-        // dd($request);
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+            // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $this->validate(
                     $request,
                     [
@@ -447,37 +447,15 @@ class MemberController extends Controller
                 $location = $request->input('location');
                 $email = $request->input('email');
                 $date_of_birth = $request->input('date_of_birth');
-                // $password = '123456';
                 $password = rand(100000, 999999);
-                // $formated_name = str_replace(' ', '', $fullName);
-                // $email = $formated_name . "@virtualequb.com";
-                // dd($request);
-                if (!empty($phone)) {
-                    $member_count = Member::where('phone', $phone)->count();
-                    if ($member_count > 0) {
-                        return response()->json([
-                            'code' => 403,
-                            'message' => 'Phone already exist',
-                        ]);
-                    }
+
+                if (!empty($phone) && Member::where('phone', $phone)->exists()) {
+                    return response()->json(['code' => 403, 'message' => 'Phone already exists']);
                 }
-                if (!empty($email)) {
-                    $member_count = Member::where('email', $email)->count();
-                    if ($member_count > 0) {
-                        return response()->json([
-                            'code' => 403,
-                            'message' => 'Email already exist',
-                        ]);
-                    }
+                if (!empty($email) && Member::where('email', $email)->exists()) {
+                    return response()->json(['code' => 403, 'message' => 'Email already exists']);
                 }
-                // $this->memberRepository->checkPhone($phone);
-                // $address = [
-                //     'City' => $city,
-                //     'SubCity' => $subcity,
-                //     'Woreda' => $woreda,
-                //     'House_Number' => $housenumber,
-                //     'Specific_Location' => $location
-                // ];
+                
                 $memberData = [
                     'full_name' => $fullName,
                     'phone' => $phone,
@@ -492,16 +470,21 @@ class MemberController extends Controller
                     // 'address' => json_encode($address),
                 ];
                 $create = $this->memberRepository->create($memberData);
+                
                 // dd($memberData);
                 $user = [
                     'name' => $fullName,
                     'email' => $email,
                     'password' => Hash::make($password),
                     'phone_number' => $phone,
-                    'gender' => $gender,
-                    'role' => "member",
+                    'gender' => $gender
                 ];
                 $user = $this->userRepository->createUser($user);
+                $memberRole = Role::firstOrCreate(['name' => 'Member']);
+                // $user->assignRole($memberRole);
+                $user->syncRoles([$memberRole->name]);
+
+                $roleName = $create->getRoleNames()->first();
                 if ($create && $user) {
                     $activityLog = [
                         'type' => 'members',
@@ -509,7 +492,7 @@ class MemberController extends Controller
                         'action' => 'created',
                         'user_id' => $userData->id,
                         'username' => $userData->name,
-                        'role' => $userData->role,
+                        'role' => $roleName,
                     ];
                     $this->activityLogRepository->createActivityLog($activityLog);
                     try {
@@ -526,7 +509,8 @@ class MemberController extends Controller
                     return response()->json([
                         'code' => 200,
                         'message' => "Member has been registered successfully!",
-                        'data' => $create
+                        'data' => $create,
+                        'user' => $user
                     ]);
                 } else {
                     return response()->json([
@@ -535,12 +519,12 @@ class MemberController extends Controller
                         "error" => "Unknown error occurred, Please try again!"
                     ]);
                 }
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,

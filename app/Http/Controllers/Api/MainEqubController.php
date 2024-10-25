@@ -69,7 +69,7 @@ class MainEqubController extends Controller
     
                 $mainEqub = [
                     'name' => $name,
-                    'created_by' => $created_by,
+                    'created_by' => $userData->id,
                     'remark' => $remark,
                 ];
                 if ($request->file('image')) {
