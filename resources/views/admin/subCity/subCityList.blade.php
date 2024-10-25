@@ -172,16 +172,16 @@
 @section('scripts')
     <script>
         function openEditModal(subCityId) {
-            // Fetch sub city data
+            console.log('Opening edit modal for subCityId:', subCityId); // Added log
             $.ajax({
                 url: '/subcities/' + subCityId,
                 type: 'GET',
                 success: function(subCity) {
-                    // Populate the modal fields
+                    console.log('Fetched subCity data:', subCity); // Log the fetched data
                     $('#editSubCityId').val(subCity.id);
                     $('#editSubCityName').val(subCity.name);
-                    $('#editSubCityStatus').val(subCity.active); // Set the status dropdown
-                    $('#editSubCityModal').modal('show'); // Show the modal
+                    $('#editSubCityStatus').val(subCity.active);
+                    $('#editSubCityModal').modal('show');
                 },
                 error: function(xhr) {
                     console.error('Error fetching sub city data:', xhr.responseText);
@@ -190,7 +190,7 @@
         }
 
         $('#saveEditSubCity').click(function() {
-            const id = $('#editSubCityId').val(); // Get the sub city ID
+            const id = $('#editSubCityId').val();
             const name = $('#editSubCityName').val();
             const status = $('#editSubCityStatus').val();
 
@@ -203,11 +203,11 @@
                     status: status
                 },
                 success: function(result) {
-                    location.reload(); // Refresh the sub city table after saving
+                    location.reload();
                 },
                 error: function(xhr) {
-                    console.log(xhr.responseText); // Log the error response
-                    alert('Error updating sub city: ' + xhr.responseText); // Update alert message
+                    console.log(xhr.responseText);
+                    alert('Error updating sub city: ' + xhr.responseText);
                 }
             });
         });
@@ -219,7 +219,7 @@
                     url: '/subcities/' + subCityId,
                     type: 'DELETE',
                     success: function(result) {
-                        location.reload(); // Refresh the sub city table
+                        location.reload();
                     }
                 });
             }

@@ -46,7 +46,9 @@ class CityController extends Controller
     public function show($id)
     {
         // Retrieve the equb by ID
-        $city = $this->cityRepository->getAll(); // Adjust this logic based on your needs
+      //  $city = $this->cityRepository->getAll(); // Adjust this logic based on your needs
+
+        $city = City::findOrFail($id);
         // Return the data as JSON
         return response()->json($city);
     }

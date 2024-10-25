@@ -45,14 +45,22 @@ class SubCityController extends Controller // Updated controller name
         }
     }    
     
-    public function show($id)
+   /* public function show($id)
     {
         // Retrieve the SubCity by ID
         $subCity = $this->subCityRepository->getAll(); // Adjust this as per your logic
         // Return the data as JSON
         return response()->json($subCity);
+    }*/
+    public function show($id)
+    {
+        // Retrieve the equb by ID
+      //  $city = $this->cityRepository->getAll(); // Adjust this logic based on your needs
+
+        $subCity = Sub_city::findOrFail($id);
+        // Return the data as JSON
+        return response()->json($subCity);
     }
-    
     public function store(Request $request)
     {
         // Validate the request
