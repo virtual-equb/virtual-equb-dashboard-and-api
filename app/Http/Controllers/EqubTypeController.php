@@ -220,9 +220,6 @@ class EqubTypeController extends Controller
                     'rote' => 'required',
                     'type' => 'required',
                     'main_equb_id' => 'required'
-                    // 'quota' => 'required',
-                    // 'start_date' => 'required',
-                    // 'end_date' => 'required',
                 ]);
                 $name = $request->input('name');
                 $round = $request->input('round');
@@ -235,7 +232,6 @@ class EqubTypeController extends Controller
                 $quota = $request->input('quota');
                 $terms = $request->input('terms');
                 $main_equb = $request->input('main_equb_id');
-                // dd($request->file('icon'));
 
 
                 // dd($end_date);
@@ -269,6 +265,8 @@ class EqubTypeController extends Controller
                 }
                 // dd($equbTypeData);
                 $create = $this->equbTypeRepository->create($equbTypeData);
+                $user = Auth::user();
+                $roleName = $user->getRoleNames()->first();
                 if ($create) {
                     $activityLog = [
                         'type' => 'equb_types',
@@ -276,7 +274,7 @@ class EqubTypeController extends Controller
                         'action' => 'created',
                         'user_id' => $userData->id,
                         'username' => $userData->name,
-                        'role' => $userData->role,
+                        'role' => $roleName,
                     ];
                     $this->activityLogRepository->createActivityLog($activityLog);
                     $msg = "Equb type has been registered successfully!";

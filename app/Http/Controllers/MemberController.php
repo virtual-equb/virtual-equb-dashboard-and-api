@@ -2,26 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use App\Models\Member;
-use App\Http\Controllers\Controller;
-use App\Models\LotteryWinner;
 use Exception;
-use App\Repositories\User\IUserRepository;
-use App\Repositories\Member\IMemberRepository;
-use App\Repositories\Payment\IPaymentRepository;
-use App\Repositories\EqubType\IEqubTypeRepository;
-use App\Repositories\Equb\IEqubRepository;
-use App\Repositories\ActivityLog\IActivityLogRepository;
-use App\Repositories\City\ICityRepository;
-use App\Repositories\ISubCityRepository;
-use App\Repositories\SubCity\ISubCityRepository as SubCityISubCityRepository;
-use App\Repositories\SubCity\SubCityRepository;
-
+use App\Models\Member;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use App\Models\LotteryWinner;
+use Spatie\Permission\Models\Role;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
+use App\Repositories\ISubCityRepository;
+use App\Repositories\City\ICityRepository;
+use App\Repositories\Equb\IEqubRepository;
+use App\Repositories\User\IUserRepository;
+use App\Repositories\Member\IMemberRepository;
+use App\Repositories\SubCity\SubCityRepository;
+
+use App\Repositories\Payment\IPaymentRepository;
+use App\Repositories\EqubType\IEqubTypeRepository;
+use App\Repositories\ActivityLog\IActivityLogRepository;
+use App\Repositories\SubCity\ISubCityRepository as SubCityISubCityRepository;
 
 class MemberController extends Controller
 {
@@ -564,7 +565,6 @@ class MemberController extends Controller
     {
         try {
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $this->validate(
                     $request,
                     [
@@ -585,18 +585,8 @@ class MemberController extends Controller
                 $housenumber = $request->input('housenumber');
                 $location = $request->input('location');
                 $email = $request->input('email');
-                // $password = '123456';
                 $password = rand(100000, 999999);
-                // $formated_name = str_replace(' ', '', $fullName);
-                // $email = $formated_name . "@virtualequb.com";
                 $this->memberRepository->checkPhone($phone);
-                // $address = [
-                //     'City' => $city,
-                //     'SubCity' => $subcity,
-                //     'Woreda' => $woreda,
-                //     'House_Number' => $housenumber,
-                //     'Specific_Location' => $location
-                // ];
                 $memberData = [
                     'full_name' => $fullName,
                     'phone' => $phone,
@@ -617,17 +607,23 @@ class MemberController extends Controller
                     'password' => Hash::make($password),
                     'phone_number' => $phone,
                     'gender' => $gender,
-                    'role' => "member",
                 ];
                 $user = $this->userRepository->createUser($user);
+                // Find or create the "member" role
+                $memberRole = Role::firstOrCreate(['name' => 'Member']);
+
+                // Assign the role to the user
+                $user->assignRole($memberRole);
+                $roleName = $user->getRoleNames()->first();
                 if ($create && $user) {
+                    
                     $activityLog = [
                         'type' => 'members',
                         'type_id' => $create->id,
                         'action' => 'created',
                         'user_id' => $userData->id,
                         'username' => $userData->name,
-                        'role' => $userData->role,
+                        'role' => $roleName,
                     ];
                     $this->activityLogRepository->createActivityLog($activityLog);
                     try {
@@ -647,9 +643,6 @@ class MemberController extends Controller
                     Session::flash($type, $msg);
                     redirect('/member');
                 }
-            // } else {
-            //     return view('auth/login');
-            // }
         } catch (Exception $ex) {
             // dd($ex);
             $msg = "Unknown Error Occurred, Please try again!";
