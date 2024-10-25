@@ -1,3 +1,11 @@
+{{-- @if(Auth::user()->role == 'admin' ||
+Auth::user()->role == 'general_manager' ||
+Auth::user()->role == 'operation_manager' ||
+Auth::user()->role == 'finance' ||
+Auth::user()->role == 'assistant' ||
+Auth::user()->role == 'it') --}}
+
+
 @extends('layouts.app')
 
 @section('styles')
@@ -21,15 +29,111 @@
             width: 100%;
             margin-bottom: 20px;
         }
-        .addEqub, .equbTypeTab {
-            width: 100%;
-            margin-bottom: 20px;
-        }
     }
+    td.details-control_equb {
+                background: url("{{ url('images/plus20.webp') }}") no-repeat center center;
+                cursor: pointer;
+            }
+
+            tr.shown td.details-control_equb {
+                background: url("{{ url('images/minus20.webp') }}") no-repeat center center;
+            }
+
+            td.details-control_payment {
+                background: url("{{ url('images/plus20.webp') }}") no-repeat center center;
+                cursor: pointer;
+
+            }
+
+            tr.shown td.details-control_payment {
+                background: url("{{ url('images/minus20.webp') }}") no-repeat center center;
+            }
+
+            div.dataTables_wrapper div.dataTables_info {
+                padding-top: 0.85em;
+                display: none;
+            }
+
+            .form-group.required .control-label:after {
+                content: "*";
+                color: red;
+            }
+
+            .modaloff6 {
+                visibility: hidden;
+            }
+
+            @media (max-width: 575.98px) {
+                #equbType-list-table {
+                    display: block;
+                    width: 100%;
+                    overflow-x: auto;
+                    -webkit-overflow-scrolling: touch;
+                }
+
+                .table-responsive-sm>.table-bordered {
+                    border: 0;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .addEqub {
+                    margin-bottom: 20px;
+                    width: 100%;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .equbTypeTab {
+                    width: 100%;
+                }
+            }
 </style>
 @endsection
 
 @section('content')
+
+{{-- <div class="content-wrapper">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">{{'Equbs'}}</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrump float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active">Dashboard</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div> --}}
+    {{-- <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                @foreach ($equbs as $equb)
+                    <div class="col-md-4">
+                        <div class="">
+                            <div class="card bg-info"> --}}
+                                {{-- <img class="card-img-top" src="{{ asset('storage/' . $equb->image) }}" alt="Card image cap"> --}}
+                                {{-- <div class="card-body">
+                                    <h5 class="card-title">{{ $equb->name }}</h5>
+                                    <p class="card-text">{{ $equb->remark }}.</p>
+                                    <p class="card-text"><small class="text-sm text-white">Created Date {{ $equb->created_at }}</small></p>
+                                </div> --}}
+                                {{-- <div class="icon">
+                                    <i class="ion ion-bag"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+</div> --}}
+
 <div class="wrapper">
     <div class="content-wrapper">
         <section class="content">
@@ -124,7 +228,7 @@
             $.ajax({
                 url: '/equbs/' + equbId,
                 type: 'DELETE',
-                success: function() {
+                success: function(result) {
                     location.reload(); // Refresh the equb table
                 },
                 error: function(xhr) {
@@ -139,35 +243,12 @@
         // Optionally refresh the table or apply a filter reset
     });
 
-    // Show loading overlay on form submission
-    $('#addMainEqubModal form').on('submit', function(e) {
-        e.preventDefault(); // Prevent default form submission
-        $.LoadingOverlay("show"); // Show loading spinner
-
-        // Perform AJAX submission
-        $.ajax({
-            url: $(this).attr('action'), // Use form action URL
-            type: 'POST',
-            data: $(this).serialize(), // Serialize form data
-            success: function(response) {
-                // Handle success (e.g., refresh table, close modal)
-                location.reload(); // Refresh the page or table
-            },
-            error: function(xhr) {
-                // Handle error (e.g., show error message)
-                alert('Error saving equb: ' + xhr.responseText);
-            },
-            complete: function() {
-                $.LoadingOverlay("hide"); // Hide loading spinner after completion
-            }
-        });
-    });
-
     function openEditModal(equbId) {
         $.ajax({
-            url: '/equbs/' + equbId + '/edit',
+            url: '/equbs/' + equbId + '/edit',  // Ensure this route exists
             type: 'GET',
             success: function(data) {
+                console.log(data); // Debugging line to check the response
                 $('#edit_equb_id').val(data.id);
                 $('#edit_name').val(data.name);
                 $('#edit_created_by').val(data.created_by);
@@ -179,43 +260,61 @@
             }
         });
     }
-
     $(document).ready(function() {
-        $(document).on('click', '.view-icon', function(e) {
-            e.preventDefault();
-            var image = $(this).attr('equb-type-image');
-            $("#viewImage").attr("src", "/storage/" + image);
-            $('#modaloff6').modal('show');
-        });
+                $(document).on('click', '.view-icon', function(e) {
+                    e.preventDefault();
 
-        $('.textareaa').summernote();
+                    var adminId = $(this).attr('equb-type-id');
+                    var image = $(this).attr('equb-type-image');
 
-        $("#type").on("change", function() {
-            const lotteryDate = document.getElementById("lottery_date_div");
-            const startDate = document.getElementById("start_date_div");
-            const endDate = document.getElementById("end_date_div");
-            const quota = document.getElementById("quota_div");
+                    $("#viewImage").attr("src", "/storage/" + image);
 
-            if ($(this).find("option:selected").val() === "Automatic") {
-                lotteryDate.classList.remove("d-none");
-                startDate.classList.remove("d-none");
-                endDate.classList.remove("d-none");
-                quota.classList.remove("d-none");
-                lotteryDate.required = true;
-                startDate.required = true;
-                endDate.required = true;
-                quota.required = true;
-            } else {
-                lotteryDate.classList.add("d-none");
-                startDate.classList.add("d-none");
-                endDate.classList.add("d-none");
-                quota.classList.add("d-none");
-                lotteryDate.required = false;
-                startDate.required = false;
-                endDate.required = false;
-                quota.required = false;
-            }
-        });
-    });
+                    $('#modaloff6').modal('show');
+                });
+                $('.textareaa').summernote();
+                const selectBox = document.getElementById("type");
+                const lotteryDate = document.getElementById("lottery_date_div");
+                const startDate = document.getElementById("start_date_div");
+                const endDate = document.getElementById("end_date_div");
+                const quota = document.getElementById("quota_div");
+                const rote = document.getElementById("rote");
+                const options = rote.options;
+                $("#type").on("change", function() {
+                    var type = $(this).find("option:selected").val();
+                    if (type === "Automatic") {
+                        lotteryDate.classList.remove("d-none");
+                        startDate.classList.remove("d-none");
+                        endDate.classList.remove("d-none");
+                        quota.classList.remove("d-none");
+                        //for (var i = 1; i < options.length; i++) {
+                        //    options[i].disabled = false;
+                        //    if (options[i].value !== "Weekly") {
+                        //        options[i].disabled = true;
+                        //    }
+                        //}
+                        lotteryDate.required = true;
+                        startDate.required = true;
+                        endDate.required = true;
+                        quota.required = true;
+                    } else {
+                        lotteryDate.classList.add("d-none");
+                        startDate.classList.add("d-none");
+                        endDate.classList.add("d-none");
+                        quota.classList.add("d-none");
+                        //for (var i = 1; i < options.length; i++) {
+                        //   options[i].disabled = false;
+                        //  if (options[i].value !== "Daily") {
+                        //       options[i].disabled = true;
+                        //   }
+                        //}
+                        lotteryDate.required = false;
+                        startDate.required = false;
+                        endDate.required = false;
+                        quota.required = false;
+                    }
+                });
+            });
 </script>
 @endsection
+
+{{-- @endif --}}
