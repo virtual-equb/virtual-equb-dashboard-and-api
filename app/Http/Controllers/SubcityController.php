@@ -20,12 +20,6 @@ class SubCityController extends Controller
         $this->subCityRepository = $subCityRepository;
         $this->cityRepository = $cityRepository;
         $this->title = "Virtual Equb - Sub City";
-
-        // Guards
-        $this->middleware('permission:edit sub_city', ['only' => ['update', 'edit']]);
-        $this->middleware('permission:delete sub_city', ['only' => ['destroy']]);
-        $this->middleware('permission:view sub_city', ['only' => ['index', 'show']]);
-        $this->middleware('permission:create sub_city', ['only' => ['store', 'create']]);
     }
 
     /**
@@ -77,21 +71,18 @@ class SubCityController extends Controller
      * @param  \Illuminate\Contracts\Auth\Authenticatable|null  $user
      * @return bool
      */
-    public function show($id) {
-        //
-    }
-
-    public function update($id) {
-        //
-    }
-
-    public function create()
+    private function isAuthorized($user)
     {
-        //
-    }
+        $allowedRoles = [
+            'admin',
+            'general_manager',
+            'operation_manager',
+            'it',
+            'finance',
+            'customer_service',
+            'assistant',
+        ];
 
-    public function destroy($id)
-    {
-        //
+        return $user && in_array($user->role, $allowedRoles);
     }
 }
