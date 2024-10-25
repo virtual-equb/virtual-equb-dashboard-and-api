@@ -1,10 +1,10 @@
-@if (Auth::user()->role == 'admin' ||
+{{-- @if (Auth::user()->role == 'admin' ||
         Auth::user()->role == 'general_manager' ||
         Auth::user()->role == 'operation_manager' ||
         Auth::user()->role == 'customer_service' ||
         Auth::user()->role == 'assistant' ||
         Auth::user()->role == 'finance' ||
-        Auth::user()->role == 'it')
+        Auth::user()->role == 'it') --}}
     <table id="equb-list-table" class="table table-bordered table-striped">
         <thead>
             <tr>
@@ -167,7 +167,7 @@
                     }
 
                     ?>
-                    @if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant')
+                    {{-- @if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant') --}}
                         <td>
                             <div class='dropdown'>
                                 <button class='btn btn-secondary btn-sm btn-flat dropdown-toggle' type='button'
@@ -237,7 +237,7 @@
                                 </ul>
                             </div>
                         </td>
-                    @endif
+                    {{-- @endif --}}
                 </tr>
             @endforeach
         </tbody>
@@ -362,4 +362,4 @@
             });
         });
     </script>
-@endif
+{{-- @endif --}}

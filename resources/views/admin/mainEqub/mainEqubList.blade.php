@@ -42,11 +42,11 @@
                                     </li>
                                 </ul>
                                 <div class="float-right">
-                                    @if (!in_array(Auth::user()->role, ['assistant', 'finance']))
+                                    {{-- @if (!in_array(Auth::user()->role, ['assistant', 'finance'])) --}}
                                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addMainEqubModal" style="margin-right: 30px;">
                                             <span class="fa fa-plus-circle"></span> Add Main Equb
                                         </button>
-                                    @endif
+                                    {{-- @endif --}}
                                 </div>
                             </div>
                             <div class="card-body">
@@ -72,12 +72,13 @@
                                                 <tr>
                                                     <td>{{ $key + 1 }}</td>
                                                     <td>{{ $equb->name }}</td>
-                                                    @if (Auth::user()->role != 'assistant')
+                                                    {{-- @if (Auth::user()->role != 'assistant') --}}
+                                                    {{-- @role('assistant') --}}
                                                         <td>
                                                             <div class='dropdown'>
                                                                 <button class='btn btn-secondary btn-sm btn-flat dropdown-toggle' type='button' data-toggle='dropdown'>Menu<span class='caret'></span></button>
                                                                 <ul class='dropdown-menu p-4'>
-                                                                    @if (Auth::user()->role != 'finance')
+                                                                    {{-- @if (Auth::user()->role != 'finance') --}}
                                                                         <li>
                                                                             <button class="text-secondary btn btn-flat" onclick="openEditModal({{ $equb->id }})">
                                                                                 <span class="fa fa-edit"></span> Edit
@@ -88,11 +89,12 @@
                                                                                 <i class="fas fa-trash-alt"></i> Delete
                                                                             </button>
                                                                         </li>
-                                                                    @endif
+                                                                    {{-- @endif --}}
                                                                 </ul>
                                                             </div>
                                                         </td>
-                                                    @endif
+                                                    {{-- @endrole --}}
+                                                    {{-- @endif --}}
                                                 </tr>
                                             @endforeach
                                         </tbody>

@@ -17,6 +17,12 @@ class ActivityLogController extends Controller
         $this->activityLogRepository = $activityLogRepository;
         $this->title = "Virtual Equb - Activity Log";
         $this->limit = 10;
+
+        // Permission guard
+        $this->middleware('permission:update activity_log', ['only' => ['update', 'edit']]);
+        $this->middleware('permission:delete activity_log', ['only' => ['destroy']]);
+        $this->middleware('permission:view activity_log', ['only' => ['index', 'show', 'searchActivity', 'paginateActivityLog', 'clearSearchEntry', 'logDetail', 'logDetailPaginate']]);
+        $this->middleware('permission:create activity_log', ['only' => ['store', 'create']]);
     }
     /**
      * Display a listing of the resource.
@@ -28,13 +34,13 @@ class ActivityLogController extends Controller
         $this->middleware('auth');
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
                 $data['title'] = $this->title;
                 $data['countedTypes']  = $this->activityLogRepository->countByType();
                 return view('admin/activityLog.activityLogs', $data);
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
@@ -48,7 +54,7 @@ class ActivityLogController extends Controller
             $offset = $offsetVal;
             $pageNumber = $pageNumberVal;
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
                 $data['title'] = $this->title;
                 $data['countedTypes']  = $this->activityLogRepository->paginateCountByType($offset);
                 $data['totalTypes']  = $this->activityLogRepository->totalCountByType();
@@ -57,9 +63,9 @@ class ActivityLogController extends Controller
                 $data['limit'] = $this->limit;
                 // dd($data['totalTypes']);
                 return view('admin/activityLog.activityLogsTable', $data);
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -74,7 +80,7 @@ class ActivityLogController extends Controller
             $limit = $this->limit;
             $pageNumber = 1;
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "finance" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "finance" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
                 $data['countedTypes']  = $this->activityLogRepository->paginateCountByType($offset);
                 $data['totalTypes']  = $this->activityLogRepository->totalCountByType();
                 $data['pageNumber'] = $pageNumber;
@@ -82,7 +88,7 @@ class ActivityLogController extends Controller
                 $data['limit'] = $limit;
                 $title = $this->title;
                 return view('admin/activityLog.activityLogsTable', $data);
-            }
+            // }
         } catch (Exception $ex) {
             // dd($ex);
             $msg = "Unknown Error Occurred, Please try again!";
@@ -98,7 +104,7 @@ class ActivityLogController extends Controller
             $limit = $this->limit;
             $pageNumber = 1;
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
                 $data['title'] = $this->title;
                 $data['activityLogs']  = $this->activityLogRepository->getAllActivityLog($type, $offset, $searchInput);
                 $data['totalLoge'] = $this->activityLogRepository->countActivityLog($type, $searchInput);
@@ -106,9 +112,9 @@ class ActivityLogController extends Controller
                 $data['limit'] = $limit;
                 $data['pageNumber'] = $pageNumber;
                 return view('admin/activityLog.logDetails', $data);
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
@@ -123,7 +129,7 @@ class ActivityLogController extends Controller
             $offset = $offsetVal;
             $pageNumber = $pageNumberVal;
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant")) {
                 $data['title'] = $this->title;
                 $data['activityLogs']  = $this->activityLogRepository->getAllActivityLog($type, $offset, $searchInput);
                 $data['totalLoge'] = $this->activityLogRepository->countActivityLog($type, $searchInput);
@@ -131,9 +137,9 @@ class ActivityLogController extends Controller
                 $data['limit'] = $limit;
                 $data['pageNumber'] = $pageNumber;
                 return view('admin/activityLog.logDetails', $data);
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
@@ -145,7 +151,7 @@ class ActivityLogController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service")) {
                 $data['offset'] = $offset;
                 $limit = $this->limit;
                 $data['limit'] = $limit;
@@ -162,7 +168,7 @@ class ActivityLogController extends Controller
                 // dd($data['totalLoge']);
                 return view('admin/activityLog.searchActivityLogsTable', $data);
                 // return view('admin/activityLog/searchActivityLogsTable', $data)->render();
-            } elseif ($userData && ($userData['role'] == "equb_collector")) {
+            // } elseif ($userData && ($userData['role'] == "equb_collector")) {
                 $data['offset'] = $offset;
                 $limit = $this->limit;
                 $data['limit'] = $limit;
@@ -176,7 +182,7 @@ class ActivityLogController extends Controller
                 $data['users'] = $this->activityLogRepository->searchActivity($offset, $searchInput, $type);
                 return view('equbCollecter/activityLog.searchActivityLogsTable', $data);
                 // return view('equbCollecter/activityLog/searchActivityLogsTable', $data)->render();
-            }
+            // }
         } catch (Exception $ex) {
             // dd($ex);
             $msg = "Unable to process your request, Please try again!";

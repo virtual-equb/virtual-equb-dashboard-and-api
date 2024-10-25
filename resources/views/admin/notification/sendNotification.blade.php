@@ -1,7 +1,7 @@
-@if (Auth::user()->role == 'admin' ||
+{{-- @if (Auth::user()->role == 'admin' ||
         Auth::user()->role == 'general_manager' ||
         Auth::user()->role == 'operation_manager' ||
-        Auth::user()->role == 'it')
+        Auth::user()->role == 'it') --}}
     <div class="modal fade" id="addNotificationModal" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -98,4 +98,4 @@
 
         </div>
     </div>
-@endif
+{{-- @endif --}}

@@ -10,7 +10,7 @@
                 {{ Auth::user()->profile_photo_path }}
             </div>
             <div class="info">
-                <a href="/user/profile" class="d-block">{{ Auth::user()->name }}, {{ Auth::user()->id }}</a>
+                <a href="/user/profile" class="d-block">{{ Auth::user()->name }}</a>
             </div>
         </div>
         <nav class="mt-2">
