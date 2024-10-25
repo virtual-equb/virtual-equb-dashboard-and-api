@@ -29,6 +29,12 @@ class FrontMainEqubController extends Controller
         $this->equbRepository = $equbRepository;
         $this->mainEqubRepository = $mainEqubRepository;
         $this->title = "Virtual Equb - Dashboard";
+
+        // Permission Guard
+        $this->middleware('permission:update main_equb', ['only' => ['update', 'edit']]);
+        $this->middleware('permission:delete main_equb', ['only' => ['destroy']]);
+        $this->middleware('permission:view main_equb', ['only' => ['index', 'show']]);
+        $this->middleware('permission:create main_equb', ['only' => ['store', 'create']]);
     }
     public function index() {
 
@@ -84,15 +90,15 @@ class FrontMainEqubController extends Controller
                     'name' => 'required|string|max:255',
                     'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', 
                     'remark' => 'nullable|string',
+                    'active' => 'nullable'
                 ]);
-                $mainEqubs = $this->mainEqubRepository->all();
+                $data['created_by'] = Auth::id();
+                
                 $mainEqub = MainEqub::create($data);
-
+                $mainEqubs = $this->mainEqubRepository->all();
 
                 return view('admin/mainEqub/indexMain', ['mainEqub' => $mainEqub, 'title' => $this->title, 'mainEqubs' => $mainEqubs]);
-            // } else {
-            //     return view('auth/login');
-            // }
+
 
         } catch (Exception $ex) {
             return response()->json([

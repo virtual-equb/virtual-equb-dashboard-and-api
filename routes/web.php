@@ -35,10 +35,9 @@ use App\Http\Controllers\WebRoleController;
 Route::group(['middleware' => ['role:Super Admin|admin']], function() {
     Route::resource('/permission', WebPermissionController::class);
     Route::get('/permission/{permissionId}/delete',[ WebPermissionController::class, 'destroy']);
-
     Route::resource('/roles', WebRoleController::class);
-    Route::get('/roles/{roleId}/delete', [WebRoleController::class, 'destroy'])
-        ->middleware('permission:delete');
+    Route::get('/roles/{roleId}/delete', [WebRoleController::class, 'destroy']);
+        // ->middleware('permission:delete');
     Route::get('/roles/{roleId}/assign-permission', [WebRoleController::class, 'assignPermission']);
     Route::put('/roles/{roleId}/assign-permission', [WebRoleController::class, 'updateRolePermission']);
 
