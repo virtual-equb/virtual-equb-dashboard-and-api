@@ -1,10 +1,10 @@
-@if (Auth::user()->role == 'admin' ||
+{{-- @if (Auth::user()->role == 'admin' ||
         Auth::user()->role == 'general_manager' ||
         Auth::user()->role == 'operation_manager' ||
         Auth::user()->role == 'finance' ||
         Auth::user()->role == 'customer_service' ||
         Auth::user()->role == 'assistant' ||
-        Auth::user()->role == 'it')
+        Auth::user()->role == 'it') --}}
     @extends('layouts.app')
     @section('styles')
         <style type="text/css">
@@ -157,7 +157,7 @@
                                                 @include('admin/equb.addEqub')
                                                 @include('admin/member.addMember')
                                                 <div class="float-left checkLotteryandAddMember" id="member_table_filter">
-                                                    @if (Auth::user()->role != 'assistant' && Auth::user()->role != 'finance')
+                                                    {{-- @if (Auth::user()->role != 'assistant' && Auth::user()->role != 'finance') --}}
                                                         <button type="button" class=" btn btn-primary checkLottery"
                                                             id="lotteryDatec" data-toggle="modal"
                                                             data-target="#lotteryDateCheckModal"
@@ -167,7 +167,7 @@
                                                             id="register" data-toggle="modal" data-target="#myModal"
                                                             style="margin-right: 30px;"> <span class="fa fa-plus-circle">
                                                             </span> Add member</button>
-                                                    @endif
+                                                    {{-- @endif --}}
                                                 </div>
                                                 <div class="row">
                                                     <div class="float-right searchEqubandClear col-4"
@@ -1731,4 +1731,4 @@
             });
         </script>
     @endSection
-@endif
+{{-- @endif --}}

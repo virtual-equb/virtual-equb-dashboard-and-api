@@ -1,11 +1,11 @@
-@if(Auth::user()->role == 'admin' ||
+{{-- @if(Auth::user()->role == 'admin' ||
 Auth::user()->role == 'general_manager' ||
 Auth::user()->role == 'operation_manager' ||
 Auth::user()->role == 'finance' ||
 Auth::user()->role == 'assistant' ||
 Auth::user()->role == 'it')
 
-
+ --}}
 
 <div class="modal fade" id="addMainEqubModal" role="dialog">
     <div class="modal-dialog">
@@ -50,4 +50,4 @@ Auth::user()->role == 'it')
     </div>
 </div>
 
-@endif
+{{-- @endif --}}

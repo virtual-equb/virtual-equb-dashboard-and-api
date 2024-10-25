@@ -67,7 +67,7 @@ class MemberController extends Controller
             $limit = 10;
             $pageNumber = 1;
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "finance" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "finance" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
                 $totalMember = $this->memberRepository->getMember();
                 $members = $this->memberRepository->getAllByPaginate($offset);
                 $equbTypes = $this->equbTypeRepository->getActive();
@@ -75,7 +75,7 @@ class MemberController extends Controller
                 $payments = $this->paymentRepository->getAllPayment();
                 $title = $this->title;
                 return view('admin/member.memberTable', compact('title', 'members', 'equbTypes', 'equbs', 'payments', 'pageNumber', 'offset', 'limit', 'totalMember'));
-            }
+            // }
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
@@ -90,7 +90,7 @@ class MemberController extends Controller
             $limit = 10;
             $pageNumber = 1;
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "finance" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "finance" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
                 $totalMember = $this->memberRepository->getPendingMembers();
                 $members = $this->memberRepository->getAllPendingByPaginate($offset);
                 $equbTypes = $this->equbTypeRepository->getActive();
@@ -98,7 +98,7 @@ class MemberController extends Controller
                 $payments = $this->paymentRepository->getAllPayment();
                 $title = $this->title;
                 return view('admin/member.pendingMemberTable', compact('title', 'members', 'equbTypes', 'equbs', 'payments', 'pageNumber', 'offset', 'limit', 'totalMember'));
-            }
+            // }
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
@@ -113,7 +113,7 @@ class MemberController extends Controller
             $limit = 50;
             $pageNumber = 1;
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "finance" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "finance" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
                 $totalMember = $this->memberRepository->getMember();
                 $members = $this->memberRepository->getAllByPaginate($offset);
                 $equbTypes = $this->equbTypeRepository->getActive();
@@ -122,7 +122,7 @@ class MemberController extends Controller
                 $title = $this->title;
                 $cities = $this->cityRepository->getAll();
                 return view('admin/member.memberList', compact('title', 'equbTypes', 'members', 'equbs', 'payments','cities'));
-            } elseif ($userData && ($userData['role'] == "equb_collector")) {
+            // } elseif ($userData && ($userData['role'] == "equb_collector")) {
                 $totalMember = $this->memberRepository->getMember();
                 $members = $this->memberRepository->getAllByPaginate($offset);
                 $equbTypes = $this->equbTypeRepository->getActive();
@@ -131,7 +131,7 @@ class MemberController extends Controller
                 $title = $this->title;
                 $cities = $this->cityRepository->getAll();
                 return view('equbCollecter/member.memberList', compact('title', 'equbTypes', 'equbs', 'payments','cities'));
-            } elseif ($userData && ($userData['role'] == "member")) {
+            // } elseif ($userData && ($userData['role'] == "member")) {
                 $members = $this->memberRepository->getByPhone($userData['phone_number']);
                 $equbTypes = $this->equbTypeRepository->getActive();
                 $equbs = $this->equbRepository->getAll();
@@ -139,9 +139,9 @@ class MemberController extends Controller
                 $members = $this->memberRepository->getByPhone($userData['phone_number']);
                 $cities = $this->cityRepository->getAll();
                 return view('member/member.memberList', compact('title', 'members', 'equbTypes', 'equbs', 'payments','cities'));
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
@@ -180,7 +180,7 @@ class MemberController extends Controller
             $limit = 50;
             $pageNumber = 1;
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "finance" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "finance" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
                 $totalMember = $this->memberRepository->getPendingMembers();
                 $members = $this->memberRepository->getAllPendingByPaginate($offset);
                 $equbTypes = $this->equbTypeRepository->getActive();
@@ -191,7 +191,7 @@ class MemberController extends Controller
                 $title = $this->title;
                 $cities = $this->cityRepository->getAll();
                 return view('admin/member.pendingMemberList', compact('title', 'equbTypes', 'members', 'equbs', 'payments','cities'));
-            } elseif ($userData && ($userData['role'] == "equb_collector")) {
+            // } elseif ($userData && ($userData['role'] == "equb_collector")) {
                 $totalMember = $this->memberRepository->getPendingMembers();
                 $members = $this->memberRepository->getAllPendingByPaginate($offset);
                 $equbTypes = $this->equbTypeRepository->getActive();
@@ -199,16 +199,16 @@ class MemberController extends Controller
                 $payments = $this->paymentRepository->getAllPayment();
                 $title = $this->title;
                 return view('equbCollecter/member.pendingMemberList', compact('title', 'equbTypes', 'equbs', 'payments'));
-            } elseif ($userData && ($userData['role'] == "member")) {
+            // } elseif ($userData && ($userData['role'] == "member")) {
                 $members = $this->memberRepository->getByPhone($userData['phone_number']);
                 $equbTypes = $this->equbTypeRepository->getActive();
                 $equbs = $this->equbRepository->getAll();
                 $payments = $this->paymentRepository->getAllPayment();
                 $title = $this->title;
                 return view('member/member.pendingMemberList', compact('title', 'members', 'equbTypes', 'equbs', 'payments'));
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
@@ -223,7 +223,7 @@ class MemberController extends Controller
             $offset = $offsetVal;
             $pageNumber = $pageNumberVal;
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "finance" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "finance" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
                 $totalMember = $this->memberRepository->getMember();
                 $members = $this->memberRepository->getAllByPaginate($offset);
                 $equbTypes = $this->equbTypeRepository->getActive();
@@ -231,7 +231,7 @@ class MemberController extends Controller
                 $payments = $this->paymentRepository->getAllPayment();
                 $title = $this->title;
                 return view('admin/member.memberTable', compact('title', 'equbTypes', 'members', 'equbs', 'payments', 'pageNumber', 'offset', 'limit', 'totalMember'));
-            } elseif ($userData && ($userData['role'] == "equb_collector")) {
+            // } elseif ($userData && ($userData['role'] == "equb_collector")) {
                 $totalMember = $this->memberRepository->getMember();
                 $members = $this->memberRepository->getAllByPaginate($offset);
                 $equbTypes = $this->equbTypeRepository->getActive();
@@ -239,16 +239,16 @@ class MemberController extends Controller
                 $payments = $this->paymentRepository->getAllPayment();
                 $title = $this->title;
                 return view('equbCollecter/member.memberTable', compact('title', 'members', 'equbTypes', 'equbs', 'payments', 'pageNumber', 'offset', 'limit', 'totalMember'));
-            } elseif ($userData && ($userData['role'] == "member")) {
+            // } elseif ($userData && ($userData['role'] == "member")) {
                 $members = $this->memberRepository->getByPhone($userData['phone_number']);
                 $equbTypes = $this->equbTypeRepository->getActive();
                 $equbs = $this->equbRepository->getAll();
                 $payments = $this->paymentRepository->getAllPayment();
                 $title = $this->title;
                 return view('member/member.memberList', compact('title', 'members', 'equbTypes', 'equbs', 'payments'));
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
@@ -263,7 +263,7 @@ class MemberController extends Controller
             $offset = $offsetVal;
             $pageNumber = $pageNumberVal;
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "finance" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "finance" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
                 $totalMember = $this->memberRepository->getPendingMembers();
                 $members = $this->memberRepository->getAllPendingByPaginate($offset);
                 $equbTypes = $this->equbTypeRepository->getActive();
@@ -271,7 +271,7 @@ class MemberController extends Controller
                 $payments = $this->paymentRepository->getAllPayment();
                 $title = $this->title;
                 return view('admin/member.pendingMemberTable', compact('title', 'equbTypes', 'members', 'equbs', 'payments', 'pageNumber', 'offset', 'limit', 'totalMember'));
-            } elseif ($userData && ($userData['role'] == "equb_collector")) {
+            // } elseif ($userData && ($userData['role'] == "equb_collector")) {
                 $totalMember = $this->memberRepository->getPendingMembers();
                 $members = $this->memberRepository->getAllPendingByPaginate($offset);
                 $equbTypes = $this->equbTypeRepository->getActive();
@@ -279,16 +279,16 @@ class MemberController extends Controller
                 $payments = $this->paymentRepository->getAllPayment();
                 $title = $this->title;
                 return view('equbCollecter/member.pendingMemberTable', compact('title', 'members', 'equbTypes', 'equbs', 'payments', 'pageNumber', 'offset', 'limit', 'totalMember'));
-            } elseif ($userData && ($userData['role'] == "member")) {
+            // } elseif ($userData && ($userData['role'] == "member")) {
                 $members = $this->memberRepository->getByPhone($userData['phone_number']);
                 $equbTypes = $this->equbTypeRepository->getActive();
                 $equbs = $this->equbRepository->getAll();
                 $payments = $this->paymentRepository->getAllPayment();
                 $title = $this->title;
                 return view('member/member.pendingMemberTable', compact('title', 'members', 'equbTypes', 'equbs', 'payments'));
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
@@ -345,21 +345,21 @@ class MemberController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service")) {
                 $data['payment'] = $this->paymentRepository->getAll();
                 $data['equb'] = $this->equbRepository->getAll();
                 return view('admin/member.memberList', $data);
-            } elseif (($userData && $userData['role'] == "equb_collector")) {
+            // } elseif (($userData && $userData['role'] == "equb_collector")) {
                 $data['payment'] = $this->paymentRepository->getAll();
                 $data['equb'] = $this->equbRepository->getAll();
                 return view('equbCollecter/member.memberList', $data);
-            } elseif (($userData && $userData['role'] == "member")) {
+            // } elseif (($userData && $userData['role'] == "member")) {
                 $data['payment'] = $this->paymentRepository->getAll();
                 $data['equb'] = $this->equbRepository->getAll();
                 return view('member/member.memberList', $data);
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -371,7 +371,7 @@ class MemberController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service")) {
                 $data['offset'] = $offset;
                 $limit = 10;
                 $data['limit'] = $limit;
@@ -384,7 +384,7 @@ class MemberController extends Controller
                 $data['searchInput'] = $searchInput;
                 $data['members'] = $this->memberRepository->searchMember($offset, $searchInput);
                 return view('admin/member/searchMembers', $data)->render();
-            } elseif ($userData && ($userData['role'] == "equb_collector")) {
+            // } elseif ($userData && ($userData['role'] == "equb_collector")) {
                 $data['offset'] = $offset;
                 $limit = 10;
                 $data['limit'] = $limit;
@@ -397,7 +397,7 @@ class MemberController extends Controller
                 $data['searchInput'] = $searchInput;
                 $data['members'] = $this->memberRepository->searchMember($offset, $searchInput);
                 return view('equbCollecter/member/searchMembers', $data)->render();
-            }
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -409,7 +409,7 @@ class MemberController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service")) {
                 $data['offset'] = $offset;
                 $limit = 50;
                 $data['limit'] = $limit;
@@ -422,7 +422,7 @@ class MemberController extends Controller
                 $data['searchInput'] = $searchInput;
                 $data['members'] = $this->memberRepository->searchPendingMember($offset, $searchInput);
                 return view('admin/member/searchPendingEqubMembers', $data)->render();
-            } elseif ($userData && ($userData['role'] == "equb_collector")) {
+            // } elseif ($userData && ($userData['role'] == "equb_collector")) {
                 $data['offset'] = $offset;
                 $limit = 50;
                 $data['limit'] = $limit;
@@ -435,7 +435,7 @@ class MemberController extends Controller
                 $data['searchInput'] = $searchInput;
                 $data['members'] = $this->memberRepository->searchPendingMember($offset, $searchInput);
                 return view('equbCollecter/member/searchPendingEqubMembers', $data)->render();
-            }
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -447,7 +447,7 @@ class MemberController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service")) {
                 $data['offset'] = $offset;
                 $limit = 10;
                 $data['limit'] = $limit;
@@ -461,7 +461,7 @@ class MemberController extends Controller
                 $data['members'] = $this->memberRepository->searchEqub($offset, $searchInput);
                 // dd($data['members']);
                 return view('admin/member/searchEqubMembers', $data)->render();
-            } elseif ($userData && ($userData['role'] == "equb_collector")) {
+            // } elseif ($userData && ($userData['role'] == "equb_collector")) {
                 $data['offset'] = $offset;
                 $limit = 10;
                 $data['limit'] = $limit;
@@ -474,7 +474,7 @@ class MemberController extends Controller
                 $data['searchInput'] = $searchInput;
                 $data['members'] = $this->memberRepository->searchEqub($offset, $searchInput);
                 return view('equbCollecter/member/searchEqubMembers', $data)->render();
-            }
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -486,7 +486,7 @@ class MemberController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service")) {
                 $data['offset'] = $offset;
                 $limit = 50;
                 $data['limit'] = $limit;
@@ -500,7 +500,7 @@ class MemberController extends Controller
                 $data['members'] = $this->memberRepository->searchPendingEqub($offset, $searchInput);
                 // dd($data['members']);
                 return view('admin/member/searchPendingEqubMembers', $data)->render();
-            } elseif ($userData && ($userData['role'] == "equb_collector")) {
+            // } elseif ($userData && ($userData['role'] == "equb_collector")) {
                 $data['offset'] = $offset;
                 $limit = 50;
                 $data['limit'] = $limit;
@@ -513,7 +513,7 @@ class MemberController extends Controller
                 $data['searchInput'] = $searchInput;
                 $data['members'] = $this->memberRepository->searchEqub($offset, $searchInput);
                 return view('equbCollecter/member/searchPendingEqubMembers', $data)->render();
-            }
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -525,7 +525,7 @@ class MemberController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service")) {
                 $data['offset'] = $offset;
                 $limit = 10;
                 $data['limit'] = $limit;
@@ -539,7 +539,7 @@ class MemberController extends Controller
                 $data['members'] = $this->memberRepository->searchStatus($offset, $searchInput);
                 // dd($data['totalMember']);
                 return view('admin/member/searchStatusMembers', $data)->render();
-            } elseif ($userData && ($userData['role'] == "equb_collector")) {
+            // } elseif ($userData && ($userData['role'] == "equb_collector")) {
                 $data['offset'] = $offset;
                 $limit = 10;
                 $data['limit'] = $limit;
@@ -552,7 +552,7 @@ class MemberController extends Controller
                 $data['searchInput'] = $searchInput;
                 $data['members'] = $this->memberRepository->searchStatus($offset, $searchInput);
                 return view('equbCollecter/member/searchStatusMembers', $data)->render();
-            }
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -564,7 +564,7 @@ class MemberController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+            // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $this->validate(
                     $request,
                     [
@@ -647,9 +647,9 @@ class MemberController extends Controller
                     Session::flash($type, $msg);
                     redirect('/member');
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             // dd($ex);
             $msg = "Unknown Error Occurred, Please try again!";
@@ -744,22 +744,22 @@ class MemberController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service" || $userData['role'] == "finance")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service" || $userData['role'] == "finance")) {
                 $data['member'] = $this->memberRepository->getByIdNested($id);
                 $data['data'] = $this->memberRepository->getByIdNested($id)->equbs->pluck('lottery_date')->first();
                 return view('admin/member.memberDetails', $data);
-            } elseif ($userData && ($userData['role'] == "equb_collector")) {
+            // } elseif ($userData && ($userData['role'] == "equb_collector")) {
                 $totalPayment = $this->paymentRepository->getTotalPaid($id);
                 $data['member'] = $this->memberRepository->getByIdNested($id);
                 $data['data'] = $this->memberRepository->getByIdNested($id)->equbs->pluck('lottery_date')->first();
                 return view('equbCollecter/member.memberDetails', $data);
-            } elseif ($userData && ($userData['role'] == "member")) {
+            // } elseif ($userData && ($userData['role'] == "member")) {
                 $data['member'] = $this->memberRepository->getByIdNested($id);
                 $data['data'] = $this->memberRepository->getByIdNested($id)->equbs->pluck('lottery_date')->first();
                 return view('member/member.memberDetails', $data);
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -771,7 +771,7 @@ class MemberController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+            // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $status = $this->memberRepository->getStatusById($id)->status;
                 $member_phone = $this->memberRepository->getPhone($id);
                 $member_phone = $member_phone->phone;
@@ -828,9 +828,9 @@ class MemberController extends Controller
                     Session::flash($type, $msg);
                     return back();
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -843,7 +843,7 @@ class MemberController extends Controller
         // dd($status);
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+            // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 // $status = $this->memberRepository->getStatusById($id)->status;
                 $member_phone = $this->memberRepository->getPhone($id);
                 $member_phone = $member_phone->phone;
@@ -900,9 +900,9 @@ class MemberController extends Controller
                     Session::flash($type, $msg);
                     return back();
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -914,18 +914,18 @@ class MemberController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service")) {
                 $data['member'] = $this->memberRepository->getById($member);
                 return view('admin/member/updateMember', $data);
-            } elseif ($userData && ($userData['role'] == "equb_collector")) {
+            // } elseif ($userData && ($userData['role'] == "equb_collector")) {
                 $data['member'] = $this->memberRepository->getById($member);
                 return view('equbCollecter/member/updateMember', $data);
-            } elseif ($userData && ($userData['role'] == "member")) {
+            // } elseif ($userData && ($userData['role'] == "member")) {
                 $data['member'] = $this->memberRepository->getById($member);
                 return view('member/member/updateMember', $data);
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -938,7 +938,7 @@ class MemberController extends Controller
         // dd($request);
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+            // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $this->validate(
                     $request,
                     [
@@ -1010,9 +1010,9 @@ class MemberController extends Controller
                     Session::flash($type, $msg);
                     return back();
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             // dd($ex);
             $msg = "Unable to process your request, Please try again!";
@@ -1026,7 +1026,7 @@ class MemberController extends Controller
         // dd($id);
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+            // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $this->validate(
                     $request,
                     [
@@ -1058,9 +1058,9 @@ class MemberController extends Controller
                     Session::flash($type, $msg);
                     return back();
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             // dd($ex);
             $msg = "Unable to process your request, Please try again!";
@@ -1073,7 +1073,7 @@ class MemberController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+            // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $member = $this->equbRepository->getMember($id);
                 $lottery = LotteryWinner::where('member_id', $id)->first();
                 if (!$member->isEmpty() || $lottery) {
@@ -1122,9 +1122,9 @@ class MemberController extends Controller
                 } else {
                     return false;
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             // dd($ex);
             $msg = "Unable to process your request, Please try again!";

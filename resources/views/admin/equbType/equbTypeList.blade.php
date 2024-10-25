@@ -146,7 +146,7 @@
                                                                     $createdDate = $toCreatedAt->format('M-j-Y');
                                                                     echo $createdDate; ?>
                                                                 </td>
-                                                                @if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant')
+                                                                {{-- @if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant') --}}
                                                                     <td>
 
                                                                         <div class='dropdown'>
@@ -196,7 +196,7 @@
                                                                             </ul>
                                                                         </div>
                                                                     </td>
-                                                                @endif
+                                                                {{-- @endif --}}
                                                             </tr>
                                                         @endforeach
                                                     </tbody>

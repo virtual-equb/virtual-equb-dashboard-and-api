@@ -1,4 +1,4 @@
-@if (Auth::user()->role == 'member')
+{{-- @role ('Member') --}}
 @extends('layouts.app')
   @section('styles')
     <style type="text/css">
@@ -38,7 +38,7 @@
               padding-top: 0.85em;
               display: none;
           }
-        }
+        
          @media (max-width: 768px) {
               .table.table-bordered.dataTable {
                padding-right: 2px;
@@ -306,4 +306,4 @@
       });
     </script>
   @endSection
-  @endif
+  {{-- @endrole --}}

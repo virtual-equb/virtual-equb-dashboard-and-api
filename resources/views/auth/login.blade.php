@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <x-jet-authentication-card>
+    <x-jet-authentication-card class="container">
         <x-slot name="logo">
             <img src="{{ url('dist/img/PNG/VirtualEqubLogoIcon.png') }}" alt="AdminLTE Logo"
             class="brand-image elevation-3" style="width:100px">

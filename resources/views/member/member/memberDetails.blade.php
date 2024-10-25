@@ -1,4 +1,4 @@
-@if (Auth::user()->role == 'member')
+{{-- @if (Auth::user()->role == 'member') --}}
 <table id="equb-list-table" class="table table-bordered table-striped">      
     <thead>
         <tr>
@@ -148,5 +148,5 @@
 
       });
   </script>
-  @endif
+  {{-- @endif --}}
 
