@@ -329,5 +329,5 @@ Route::middleware([
           Route::delete('{id}', [MainEqubController::class, 'delete'])->name('mainEqubs.destroy');
     });
 
-    Route::get('/subs', [SubController::class, 'index'])->name('mainEqubs.index');
+   
 });
