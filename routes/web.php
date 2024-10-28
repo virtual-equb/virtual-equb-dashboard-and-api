@@ -289,7 +289,7 @@ Route::middleware([
         // Delete a city
         Route::delete('{id}', [CityController::class, 'destroy'])->name('cities.destroy');
     });
-  /*  Route::prefix('subcities')->group(function () {
+    Route::prefix('subcities')->group(function () {
         // Get all sub-cities
         Route::get('/', [SubCityController::class, 'index'])->name('subcities.index');
     
@@ -308,25 +308,6 @@ Route::middleware([
         // Get sub-cities by city ID
         Route::get('city/{cityId}', [SubCityController::class, 'getSubCitiesByCityId'])->name('subcities.byCityId');
         
-    });*/
-    Route::prefix('vir')->group(function () {
-        // Get all cities
-        
-        Route::get('/', [SubcityController::class, 'index'])->name('vir.index');
-            // Create a new city
-            Route::get('/create', [CityController::class, 'create'])->name('admin.city.addCity');
-            Route::post('/', [CityController::class, 'store'])->name('cities.store');
-        // Get a city by ID
-        Route::get('{id}', [CityController::class, 'show'])->name('cities.show');
-    
-        // Create a new city
-        Route::post('/', [CityController::class, 'store'])->name('cities.store');
-    
-        // Update an existing city
-        Route::put('{id}', [CityController::class, 'update'])->name('cities.update');
-    
-        // Delete a city
-        Route::delete('{id}', [CityController::class, 'destroy'])->name('cities.destroy');
     });
     Route::prefix('main-equbs')->group(function () {
         // Get all cities

@@ -65,7 +65,7 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="row mb-3">
-                                        <a href="{{ route('vir.index') }}" class="btn btn-primary" style="margin-right: 30px;">
+                                        <a href="{{ route('subcities.index') }}" class="btn btn-primary" style="margin-right: 30px;">
                                             <i class="fa fa-check-square"></i> Sub City
                                         </a>
                                         <div class="col-md-4">
