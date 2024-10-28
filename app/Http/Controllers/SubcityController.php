@@ -5,22 +5,17 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\City\ICityRepository;
-use App\Repositories\SubCity\ISubCityRepository; // Updated repository interface
 use Illuminate\Support\Facades\Response;
 use App\Models\City;
 
 class SubCityController extends Controller
 {
-
-    private $subCityRepository; // Updated variable name
-    private $cityRepository; // Updated variable name
+    private $cityRepository;
     private $title;
-    public function __construct(ICityRepository $cityRepository,ISubCityRepository $subCityRepository)
-    {
 
+    public function __construct(ICityRepository $cityRepository)
+    {
         $this->cityRepository = $cityRepository;
-        $this->subCityRepository = $subCityRepository;
-        $this->title = "Virtual Equb - SubCity"; // Updated title
         $this->title = "Virtual Equb - City";
     }
     
@@ -34,17 +29,19 @@ class SubCityController extends Controller
         try {
             $user = Auth::user();
 
-           // if ($this->isAuthorized($user)) {
-                $subCities = $this->subCityRepository->getAll(); // Updated method
+            // if ($this->isAuthorized($user)) {
+                $cities = $this->cityRepository->getAll();
                 $title = $this->title;
-                $cities =  $this->cityRepository->getAll(); // Updated method
-                return view('admin/subCity.subCityList', compact('title', 'subCities','cities')); // Updated view path
-         //   }
-          //  return Response::json(['error' => 'Unauthorized access.'], 403);
+                $equbTypes = $this->cityRepository->getAll(); // Assuming this method exists
+                $equbs = $this->cityRepository->getAll(); // Assuming this method exists
+                $payments = $this->cityRepository->getAll(); // Assuming this method exists
+                return view('admin/city.cityList', compact('title', 'cities'));            
+            // }
+            return Response::json(['error' => 'Unauthorized access.'], 403);
         } catch (\Exception $e) {
-            return Response::json(['error' => 'Failed to retrieve SubCities.'], 500);
+            return Response::json(['error' => 'Failed to retrieve cities.'], 500);
         }
-    } 
+    }    
 
     public function show($id)
     {
