@@ -97,7 +97,7 @@ Route::get('/getDailyPaidAmount/{equb_id}', [EqubController::class, 'getDailyPai
 Route::post('/changePassword/{id}', [UserController::class, 'changePassword'])->name('changePassword');
 
 // New Apis CBE Gatway 1
-Route::get('/encrypt-data', [PaymentGatewayController::class, 'encryptData']);
+Route::post('/encrypt-data', [PaymentGatewayController::class, 'generateUrl']);
 Route::post('/transaction-status', [PaymentGatewayController::class, 'transactionStatus']);
 // Route::post('/check-transaction-status', [PaymentGatewayController::class, 'checkTransactionStatus']);
 

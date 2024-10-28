@@ -66,14 +66,32 @@ class PaymentGatewayController extends Controller {
         //     return openssl_decrypt($encryptedText, 'des-ede3', $securityKeyArray, OPENSSL_RAW_DATA);
         // }
 
-        // Encrypt and send payload
-        public function encryptData(Request $request)
+        private $storedAmount;
+
+        public function generateUrl(Request $request)
         {
+            // Validate that the 'amount' field (A) is present in the request
+            $request->validate([
+                'amount' => 'required|numeric'
+            ]);
+
+            // Store the amount in the class property for access by `encryptData`
+            $this->storedAmount = $request->input('amount');
+
+            // Call the `encryptData` function and get the URL
+            return $this->encryptData();
+        }
+
+        // Encrypt and send payload
+        public function encryptData()
+        {
+            $amount = $this->storedAmount;
             $payload = [
                 "U" => "VEKUB",
                 "W" => "782290",
                 "T" => "1122_t_med_lab22",
-                "A" => "500",
+                // "A" => "500",
+                "A" => $amount,
                 "MC" => "822100",
                 "Key" => $this->securityKey
             ];
