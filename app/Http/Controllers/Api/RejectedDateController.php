@@ -39,16 +39,16 @@ class RejectedDateController extends Controller
         $this->middleware('auth');
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")){
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")){
                 $data['title'] = $this->title;
                 $data['rejectedDate']  = $this->rejectedDateRepository->getAll();
                 return response()->json($data);
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -71,7 +71,7 @@ class RejectedDateController extends Controller
 
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")){
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")){
                 $this->validate($request, [
                     'rejected_date' => 'required',
                 ]);
@@ -104,12 +104,12 @@ class RejectedDateController extends Controller
                         "error" => "Unknown error occurred, Please try again!"
                     ]);
                 }
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -166,7 +166,7 @@ class RejectedDateController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")){
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")){
                 $date = $request->input('rejected_date');
                 $description = $request->input('description');
 
@@ -197,12 +197,12 @@ class RejectedDateController extends Controller
                         "error" => "Unknown error occurred, Please try again!"
                     ]);
                 }
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -224,7 +224,7 @@ class RejectedDateController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")){
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")){
                 $rejectedDate = $this->rejectedDateRepository->getById($id);
                 if ($rejectedDate != null) {
                     $deleted = $this->rejectedDateRepository->delete($id);
@@ -252,12 +252,12 @@ class RejectedDateController extends Controller
                 } else {
                     return false;
                 }
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,

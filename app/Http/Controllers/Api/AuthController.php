@@ -72,8 +72,8 @@ class AuthController extends Controller
                 "email" => $user->email,
                 "phone_number" => $user->phone_number,
                 "gender" => $user->gender,
-                // "role" => $user->getRoleNames()->first(),
-                "roles" => $user->getRoleNames()->toArray(),
+                "role" => $user->getRoleNames()->first(),
+                // "roles" => $user->getRoleNames()->toArray(),
                 "enabled" => $user->enabled,
                 "member_id" => $memberId
             ];

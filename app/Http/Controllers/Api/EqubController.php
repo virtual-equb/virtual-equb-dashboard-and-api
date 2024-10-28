@@ -61,17 +61,17 @@ class EqubController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" ||
-                $userData['role'] == "equb_collector" || $userData['role'] == "member")) {
+            // if ($userData && ($userData['role'] == "admin" ||
+            //     $userData['role'] == "equb_collector" || $userData['role'] == "member")) {
                 $userData = Auth::user();
                 $data['equbs'] = $this->equbRepository->getAll();
                 return response()->json($data);
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -402,20 +402,20 @@ class EqubController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")){
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")){
                 $equbTakerData['equb'] = $this->equbRepository->getByIdNestedForLottery($id);
                 $equbTakerData['total'] = $this->paymentRepository->getTotal($id);
                 return response()->json($equbTakerData);
-            } elseif ($userData && ($userData['role'] == "equb_collector" || $userData['role'] == "member")) {
+            // } elseif ($userData && ($userData['role'] == "equb_collector" || $userData['role'] == "member")) {
                 $equbTakerData['equb'] = $this->equbRepository->getByIdNested($id);
                 $equbTakerData['total'] = $this->paymentRepository->getTotal($id);
                 return response()->json($equbTakerData);
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -443,15 +443,15 @@ class EqubController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "equb_collector")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "equb_collector")) {
                 $data['title'] = $this->title;
                 return response()->json($data);
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -558,7 +558,7 @@ class EqubController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector") || ($userData['role'] == "member")) {
+            // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector") || ($userData['role'] == "member")) {
                 $this->validate($request, [
                     'equb_type_id' => 'required',
                     'amount' => 'required',
@@ -651,12 +651,12 @@ class EqubController extends Controller
                         'message' => 'Unkown Error Occurred! Please try again!'
                     ]);
                 }
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             // dd($ex);
             return response()->json([
@@ -690,7 +690,7 @@ class EqubController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+            // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $status = $this->equbRepository->getStatusById($id)->status;
                 if ($status == "Deactive") {
                     $status = "Active";
@@ -727,12 +727,12 @@ class EqubController extends Controller
                         'message' => 'Unkown Error Occurred! Please try again!'
                     ]);
                 }
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -757,7 +757,7 @@ class EqubController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+            // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $oldEqub = Equb::where('id', $id)->first();
                 $member = Member::where('id', $oldEqub->member_id)->first();
                 $oldEqubTypeData = EqubType::where('id', $oldEqub->equb_type_id)->first();
@@ -816,12 +816,12 @@ class EqubController extends Controller
                         'message' => 'Unkown Error occurred! Please try again!'
                     ]);
                 }
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             // dd($ex);
             return response()->json([
@@ -842,7 +842,7 @@ class EqubController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector") || ($userData['role'] == "member")) {
+            // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector") || ($userData['role'] == "member")) {
                 // dd("hello");
                 $equbP = $this->paymentRepository->getEqubForDelete($id);
                 // dd($equb);
@@ -904,12 +904,12 @@ class EqubController extends Controller
                         'message' => 'Equb not found'
                     ]);
                 }
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             // dd($ex);
             return response()->json([
