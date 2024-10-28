@@ -17,12 +17,12 @@ class MainEqubController extends Controller
     private $title;
     private $activityLogRepository;
     private $mainEqubRepository;
+
     public function __construct(
         IMemberRepository $memberRepository,
         IActivityLogRepository $activityLogRepository,
         MainEqubRepositoryInterface $mainEqubRepository
-    )
-    {
+    ) {
         $this->title = "Virtual Equb - Main Equb";
         $this->activityLogRepository = $activityLogRepository;
 
@@ -37,69 +37,54 @@ class MainEqubController extends Controller
     {
         try {
             $userData = Auth::user();
-            // if ($userData && in_array($userData['role'], [
-            //     "admin", 
-            //     "member", 
-            //     "general_manager", 
-            //     "operation_manager", 
-            //     "it", 
-            //     "customer_service", 
-            //     "assistant"
-            // ])) {
-                $data['title'] = $this->title;
-                $data['mainEqubs'] = MainEqub::all(); // Fetch all MainEqub records
-                return view('admin/mainEqub.mainEqubList', $data);
-            // } else {
-            //     return view('auth/login');
-            // }
+            $data['title'] = $this->title;
+            $data['mainEqubs'] = MainEqub::all(); // Fetch all MainEqub records
+            return view('admin/mainEqub.mainEqubList', $data);
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             Session::flash('error', $msg);
             return back();
         }
     }
+
     public function store(Request $request)
     {
         $user = Auth::user();
         // Validate the incoming request data
         $data = $request->validate([
-                    'name' => 'required|string|max:255',
-                    'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', 
-                    'remark' => 'nullable|string',
-                    'active' => 'nullable'
-                ]);
-                $data['created_by'] = Auth::id();
-                $mainEqub = MainEqub::create($data);
-                $mainEqubs = $this->mainEqubRepository->all();
-                if ($mainEqub) {
-                    $activityLog = [
-                        'type' => 'main_equbs',
-                        'type_id' => $mainEqub->id,
-                        'action' => 'created',
-                        'user_id' => $user->id,
-                        'username' => $user->name
-                    ];
-                    // $this->activityLogRepository->createActivityLog($activityLog);
-                    ActivityLog::create($activityLog);
-                    $msg = "Main Equb has been created successfully";
-                    $type = 'success';
-                    Session::flash($type, $msg);
-                    // return redirect('/main-equbs');
-                }
+            'name' => 'required|string|max:255',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', 
+            'remark' => 'nullable|string',
+            'active' => 'nullable'
+        ]);
+        $data['created_by'] = Auth::id();
+        $mainEqub = MainEqub::create($data);
+        $mainEqubs = $this->mainEqubRepository->all();
+        if ($mainEqub) {
+            $activityLog = [
+                'type' => 'main_equbs',
+                'type_id' => $mainEqub->id,
+                'action' => 'created',
+                'user_id' => $user->id,
+                'username' => $user->name
+            ];
+            ActivityLog::create($activityLog);
+            $msg = "Main Equb has been created successfully";
+            $type = 'success';
+            Session::flash($type, $msg);
+        }
+
         // Redirect or return a response
         return redirect()->route('mainEqubs.index', ['mainEqubs' => $mainEqubs])->with('success', 'Main Equb added successfully.');
     }
 
     public function show($id)
     {
-        // $mainEqub = MainEqub::findOrFail($id);
-       // dd($mainEqub);
-
-         // Retrieve the equb by ID
-         $equb = MainEqub::findOrFail($id);
+        // Retrieve the equb by ID
+        $equb = MainEqub::findOrFail($id);
         
-         // Return the data as JSON
-         return response()->json($equb);
+        // Return the data as JSON
+        return response()->json($equb);
     }
 
     public function edit($id)
@@ -138,5 +123,4 @@ class MainEqubController extends Controller
             return back();
         }
     }
-
 }

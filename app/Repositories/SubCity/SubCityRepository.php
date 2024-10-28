@@ -2,13 +2,13 @@
 
 namespace App\Repositories\SubCity;
 
-use App\Models\SubCity;
+use App\Models\Sub_city;
 
 class SubCityRepository implements ISubCityRepository
 {
     private $model;
 
-    public function __construct(SubCity $subCity)
+    public function __construct(Sub_city $subCity)
     {
         $this->model = $subCity;
     }
@@ -45,7 +45,10 @@ class SubCityRepository implements ISubCityRepository
     {
         return $this->model->where('city_id', $cityId)->get(); // Retrieve sub-cities for a specific city
     }
-
+    public function getSubCityById($id){
+        
+        return $this->model->findOrFail($id);
+    }
     /**
      * Create a new sub-city.
      *

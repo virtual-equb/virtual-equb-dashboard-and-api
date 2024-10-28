@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EqubTypeController;
 use App\Http\Controllers\MemberController;
@@ -18,6 +17,7 @@ use App\Http\Controllers\SubCityController;
 use App\Http\Controllers\MainEqubController;
 use App\Http\Controllers\WebPermissionController;
 use App\Http\Controllers\WebRoleController;
+use App\Http\Controllers\SubController;
 
 /*
 |--------------------------------------------------------------------------
@@ -272,6 +272,7 @@ Route::middleware([
     });
     Route::prefix('cities')->group(function () {
         // Get all cities
+        
         Route::get('/', [CityController::class, 'index'])->name('cities.index');
             // Create a new city
             Route::get('/create', [CityController::class, 'create'])->name('admin.city.addCity');
@@ -315,16 +316,17 @@ Route::middleware([
           Route::get('/types', [MainEqubController::class, 'getTypes'])->name('mainEqubs.types');
     
           // Create a new main equb
-          Route::post('/', [MainEqubController::class, 'store'])->name('mainEqubs.store');
+        //  Route::post('/', [MainEqubController::class, 'store'])->name('mainEqubs.store');
       
           // Get a main equb by ID
           Route::get('{id}', [MainEqubController::class, 'show'])->name('mainEqubs.show');
       
           // Update an existing main equb
           Route::put('{id}', [MainEqubController::class, 'update'])->name('mainEqubs.update');
-      
+        
           // Delete a main equb
           Route::delete('{id}', [MainEqubController::class, 'delete'])->name('mainEqubs.destroy');
     });
-  
+
+   
 });

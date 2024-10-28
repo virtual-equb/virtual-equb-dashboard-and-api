@@ -10,6 +10,8 @@ interface ISubCityRepository
 
     public function getByIdToDelete($id);
 
+    public function getSubCityById($id);
+
     public function getSubCityByCityId($cityId);
 
     public function create(array $data);

@@ -42,11 +42,11 @@
                                     </li>
                                 </ul>
                                 <div class="float-right">
-                                    {{-- @if (!in_array(Auth::user()->role, ['assistant', 'finance'])) --}}
+                                    @if (!in_array(Auth::user()->role, ['assistant', 'finance']))
                                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addMainEqubModal" style="margin-right: 30px;">
                                             <span class="fa fa-plus-circle"></span> Add Main Equb
                                         </button>
-                                    {{-- @endif --}}
+                                    @endif
                                 </div>
                             </div>
                             <div class="card-body">
@@ -63,7 +63,8 @@
                                         <thead>
                                             <tr>
                                                 <th>#</th>
-                                                <th>Main Equb Name</th>
+                                                <th>Main s Name</th>
+                                                <th>Status</th>
                                                 <th>Actions</th>
                                             </tr>
                                         </thead>
@@ -72,13 +73,17 @@
                                                 <tr>
                                                     <td>{{ $key + 1 }}</td>
                                                     <td>{{ $equb->name }}</td>
-                                                    {{-- @if (Auth::user()->role != 'assistant') --}}
-                                                    {{-- @role('assistant') --}}
+                                                    <td>
+                                                        <span class="badge {{ $equb->active == 1 ? 'badge-success' : 'badge-danger' }}">
+                                                            {{ $equb->active == 1 ? 'Active' : 'Inactive' }}
+                                                        </span>
+                                                    </td>
+                                                    @if (Auth::user()->role != 'assistant')
                                                         <td>
                                                             <div class='dropdown'>
                                                                 <button class='btn btn-secondary btn-sm btn-flat dropdown-toggle' type='button' data-toggle='dropdown'>Menu<span class='caret'></span></button>
                                                                 <ul class='dropdown-menu p-4'>
-                                                                    {{-- @if (Auth::user()->role != 'finance') --}}
+                                                                    @if (Auth::user()->role != 'finance')
                                                                         <li>
                                                                             <button class="text-secondary btn btn-flat" onclick="openEditModal({{ $equb->id }})">
                                                                                 <span class="fa fa-edit"></span> Edit
@@ -89,12 +94,11 @@
                                                                                 <i class="fas fa-trash-alt"></i> Delete
                                                                             </button>
                                                                         </li>
-                                                                    {{-- @endif --}}
+                                                                    @endif
                                                                 </ul>
                                                             </div>
                                                         </td>
-                                                    {{-- @endrole --}}
-                                                    {{-- @endif --}}
+                                                    @endif
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -111,7 +115,9 @@
 
 <!-- Include the Add Main Equb Modal -->
 @include('admin.mainEqub.addMainEqub')
-@include('admin.mainEqub.editMainEqub') 
+@include('admin.mainEqub.editMainEqub')
+
+
 @endsection
 
 @section('scripts')
@@ -120,7 +126,7 @@
         const equbId = $(this).data('id');
         if (confirm('Are you sure you want to remove this main equb?')) {
             $.ajax({
-                url: '/equbs/' + equbId,
+                url: '/main-equbs/' + equbId,
                 type: 'DELETE',
                 success: function(result) {
                     location.reload(); // Refresh the equb table
@@ -139,14 +145,13 @@
 
     function openEditModal(equbId) {
         $.ajax({
-            url: '/equbs/' + equbId + '/edit',  // Ensure this route exists
             type: 'GET',
+            url: '/main-equbs/' + equbId, // Adjust URL to fetch the specific equb data
             success: function(data) {
-                console.log(data); // Debugging line to check the response
                 $('#edit_equb_id').val(data.id);
                 $('#edit_name').val(data.name);
-                $('#edit_created_by').val(data.created_by);
                 $('#edit_remark').val(data.remark);
+                $('#edit_status').val(data.active); // Set the status dropdown
                 $('#editMainEqubModal').modal('show'); // Open the modal
             },
             error: function(xhr) {
@@ -154,5 +159,30 @@
             }
         });
     }
+
+    $('#saveChanges').click(function() {
+        const id = $('#edit_equb_id').val();
+        const name = $('#edit_name').val();
+        const remark = $('#edit_remark').val();
+        const status = $('#edit_status').val();
+
+        $.ajax({
+    type: 'PUT',
+    url: '/main-equbs/' + id,
+    data: {
+        _token: '{{ csrf_token() }}',
+        name: name,
+        remark: remark,
+        status: status // Include status in the data sent
+    },
+    success: function(result) {
+        location.reload(); // Refresh the equb table after saving
+    },
+    error: function(xhr) {
+        console.log(xhr.responseText); // Corrected here
+        alert('Error updating equb: ' + xhr.responseText);
+    }
+});
+    });
 </script>
 @endsection

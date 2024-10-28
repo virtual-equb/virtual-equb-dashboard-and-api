@@ -81,6 +81,7 @@
                                                 <tr>
                                                     <th>#</th>
                                                     <th>City Name</th>
+                                                    <th>Status</th>
                                                     <th>Actions</th>
                                                 </tr>
                                             </thead>
@@ -89,6 +90,11 @@
                                                     <tr>
                                                         <td>{{ $key + 1 }}</td>
                                                         <td>{{ $city->name }}</td>
+                                                        <td>
+                                                            <span class="badge {{ $city->active == 1 ? 'badge-success' : 'badge-danger' }}">
+                                                                {{ $city->active == 1 ? 'Active' : 'Inactive' }}
+                                                            </span>
+                                                        </td>
                                                         @if (Auth::user()->role != 'assistant')
                                                             <td>
                                                                 <div class='dropdown'>
@@ -126,27 +132,53 @@
 
     <!-- Include the Add City Modal -->
     @include('admin.city.addCity')
+    @include('admin.city.editCity')
+    <!-- Edit City Modal -->
+
 
 @endsection
 
 @section('scripts')
     <script>
-        $(document).on('click', '.delete-city', function() {
-            const cityId = $(this).data('id');
-            if (confirm('Are you sure you want to remove this city?')) {
-                $.ajax({
-                    url: '/cities/' + cityId,
-                    type: 'DELETE',
-                    success: function(result) {
-                        location.reload(); // Refresh the city table
-                    }
-                });
-            }
-        });
+        function openEditModal(cityId) {
+            // Fetch city data
+            $.ajax({
+                url: '/cities/' + cityId,
+                type: 'GET',
+                success: function(city) {
+                    // Populate the modal fields
+                    $('#editCityId').val(city.id);
+                    $('#editCityName').val(city.name);
+                    $('#editCityStatus').val(city.active); // Set the status dropdown
+                    $('#editCityModal').modal('show'); // Show the modal
+                },
+                error: function(xhr) {
+                    console.error('Error fetching city data:', xhr.responseText);
+                }
+            });
+        }
 
-        $('#clearSearch').click(function() {
-            $('#citySearchText').val('');
-            // Optionally refresh the table or apply a filter reset
+        $('#saveEditCity').click(function() {
+            const id = $('#editCityId').val(); // Get the city ID
+            const name = $('#editCityName').val();
+            const status = $('#editCityStatus').val();
+
+            $.ajax({
+    type: 'PUT',
+    url: '/cities/' + id, // Ensure this matches the route
+    data: {
+        _token: '{{ csrf_token() }}',
+        name: name,
+        status: status
+    },
+    success: function(result) {
+        location.reload(); // Refresh the city table after saving
+    },
+    error: function(xhr) {
+        console.log(xhr.responseText);
+        alert('Error updating city: ' + xhr.responseText);
+    }
+});
         });
     </script>
 @endsection
