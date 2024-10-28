@@ -16,7 +16,7 @@ class MainEqubController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:view main_equb', ['only' => ['index', 'show']]);
+        $this->middleware('permission:view main_equb', ['only' => ['index', 'show']]);
     }
     public function getTypes() {
         $types = EqubType::with('mainEqub')->get();
