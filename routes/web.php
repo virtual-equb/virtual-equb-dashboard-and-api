@@ -13,7 +13,7 @@ use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\FrontMainEqubController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\CityController;
-use App\Http\Controllers\SubCityController;
+use App\Http\Controllers\BoleController;
 use App\Http\Controllers\MainEqubController;
 use App\Http\Controllers\WebPermissionController;
 use App\Http\Controllers\WebRoleController;
@@ -288,7 +288,7 @@ Route::middleware([
         // Delete a city
         Route::delete('{id}', [CityController::class, 'destroy'])->name('cities.destroy');
     });
-    Route::get('/lala', [SubCityController::class, 'index'])->name('subcities.index');
+    Route::get('/lala', [BoleController::class, 'index'])->name('subcities.index');
    
     Route::prefix('main-equbs')->group(function () {
         // Get all cities
