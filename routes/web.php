@@ -288,8 +288,26 @@ Route::middleware([
         // Delete a city
         Route::delete('{id}', [CityController::class, 'destroy'])->name('cities.destroy');
     });
-    Route::get('/lala', [BoleController::class, 'index'])->name('subcities.index');
-   
+    Route::prefix('subcities')->group(function () {
+        // Get all sub-cities
+        Route::get('/', [BoleController::class, 'index'])->name('subcities.index');
+    
+        // Get a sub-city by ID
+        Route::get('{id}', [BoleController::class, 'show'])->name('subcities.show');
+    
+        // Create a new sub-city
+        Route::post('/', [BoleController::class, 'store'])->name('subcities.store');
+    
+        // Update an existing sub-city
+        Route::put('{id}', [BoleController::class, 'update'])->name('subcities.update');
+    
+        // Delete a sub-city
+        Route::delete('{id}', [BoleController::class, 'destroy'])->name('subcities.destroy');
+    
+        // Get sub-cities by city ID
+        Route::get('city/{cityId}', [BoleController::class, 'getSubCitiesByCityId'])->name('subcities.byCityId');
+        
+    });
     Route::prefix('main-equbs')->group(function () {
         // Get all cities
           Route::get('/', [MainEqubController::class, 'index'])->name('mainEqubs.index');
