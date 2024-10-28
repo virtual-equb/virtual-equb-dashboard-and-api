@@ -4,124 +4,75 @@ namespace App\Http\Controllers;
 
 use App\Models\Sub_city;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Repositories\SubCity\ISubCityRepository; // Updated repository interface
-use App\Repositories\City\ICityRepository; // Updated repository interface
 use Illuminate\Support\Facades\Response;
-use App\Models\SubCity; // Updated model
 
-class SubCityController extends Controller // Updated controller name
+class SubCityController extends Controller
 {
-    private $subCityRepository; // Updated variable name
-    private $cityRepository; // Updated variable name
-    private $title;
-
-    public function __construct(ISubCityRepository $subCityRepository, ICityRepository $cityRepository) // Updated constructor
-    {
-        $this->cityRepository = $cityRepository;
-        $this->subCityRepository = $subCityRepository;
-        $this->title = "Virtual Equb - SubCity"; // Updated title
-    }
-    
-    /**
-     * Display a listing of SubCities for authorized users.
-     *
-     * @return \Illuminate\View\View|\Illuminate\Http\JsonResponse
-     */
+    // Display a listing of the sub-cities
     public function index()
     {
-        try {
-            $user = Auth::user();
-
-           // if ($this->isAuthorized($user)) {
-                $subCities = $this->subCityRepository->getAll(); // Updated method
-                $title = $this->title;
-                $cities =  $this->cityRepository->getAll(); // Updated method
-                return view('admin/subCity.subCityList', compact('title', 'subCities','cities')); // Updated view path
-         //   }
-          //  return Response::json(['error' => 'Unauthorized access.'], 403);
-        } catch (\Exception $e) {
-            return Response::json(['error' => 'Failed to retrieve SubCities.'], 500);
-        }
-    }    
-    
-   /* public function show($id)
-    {
-        // Retrieve the SubCity by ID
-        $subCity = $this->subCityRepository->getAll(); // Adjust this as per your logic
-        // Return the data as JSON
-        return response()->json($subCity);
-    }*/
-    public function show($id)
-    {
-        // Retrieve the equb by ID
-      //  $city = $this->cityRepository->getAll(); // Adjust this logic based on your needs
-
-        $subCity = Sub_city::findOrFail($id);
-        // Return the data as JSON
-        return response()->json($subCity);
+        $subCities = Sub_city::all();
+        return Response::json($subCities);
     }
-    public function getSubCitiesByCityId($cityId)
-    {
-        // Fetch sub-cities based on the city ID
-        $subcities = Sub_city::where('city_id', $cityId)->get();
 
-        // Return the sub-cities as a JSON response
-        return response()->json($subcities);
-    }
+    // Store a newly created sub-city
     public function store(Request $request)
     {
-        // Validate the request
         $request->validate([
             'name' => 'required|string|max:255',
-            'city_id' => 'required|exists:cities,id', // Assuming there's a city_id field
+            'city_id' => 'required|exists:cities,id', // Assuming a city relationship
         ]);
 
-        // Create a new SubCity
-        Sub_city::create([
+        $subCity = Sub_city::create([
             'name' => $request->name,
             'city_id' => $request->city_id,
         ]);
 
-        // Redirect back with a success message
-        return redirect()->back()->with('success', 'SubCity added successfully!');
-    }
-    
-    /**
-     * Update a SubCity.
-     *
-     * @param Request $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update(Request $request, $id) {
-        // Validate the request data
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'active' => 'required|boolean', // Assuming it's the field for status
-        ]);
-    
-        // Find the SubCity by ID and update it
-        $subCity = Sub_city::findOrFail($id);
-        $subCity->name = $validatedData['name'];
-        $subCity->active = $validatedData['active'];
-        $subCity->save();
-    
-        return response()->json(['message' => 'SubCity updated successfully.']);
+        return Response::json($subCity, 201);
     }
 
-    private function isAuthorized($user)
+    // Display the specified sub-city
+    public function show($id)
     {
-        $allowedRoles = [
-            'admin',
-            'general_manager',
-            'operation_manager',
-            'it',
-            'finance',
-            'customer_service',
-            'assistant',
-        ];
+        $subCity = Sub_city::find($id);
 
-        return $user && in_array($user->role, $allowedRoles);
+        if (!$subCity) {
+            return Response::json(['message' => 'Sub-city not found'], 404);
+        }
+
+        return Response::json($subCity);
+    }
+
+    // Update the specified sub-city
+    public function update(Request $request, $id)
+    {
+        $subCity = Sub_city::find($id);
+
+        if (!$subCity) {
+            return Response::json(['message' => 'Sub-city not found'], 404);
+        }
+
+        $request->validate([
+            'name' => 'string|max:255',
+            'city_id' => 'exists:cities,id',
+        ]);
+
+        $subCity->update($request->only(['name', 'city_id']));
+
+        return Response::json($subCity);
+    }
+
+    // Remove the specified sub-city
+    public function destroy($id)
+    {
+        $subCity = Sub_city::find($id);
+
+        if (!$subCity) {
+            return Response::json(['message' => 'Sub-city not found'], 404);
+        }
+
+        $subCity->delete();
+
+        return Response::json(['message' => 'Sub-city deleted successfully']);
     }
 }
