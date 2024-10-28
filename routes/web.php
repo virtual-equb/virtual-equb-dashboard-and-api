@@ -17,7 +17,6 @@ use App\Http\Controllers\SubCityController;
 use App\Http\Controllers\MainEqubController;
 use App\Http\Controllers\WebPermissionController;
 use App\Http\Controllers\WebRoleController;
-use App\Http\Controllers\SubController;
 
 /*
 |--------------------------------------------------------------------------
