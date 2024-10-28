@@ -26,18 +26,18 @@ class MainEqubController extends Controller
     public function index() {
         $userData = Auth::user();
         try {
-            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it", 'member'])) {
+            // if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it", 'member'])) {
                 $mainEqubs = MainEqub::with('subEqub')->get();
                 return response()->json([
                     'data' => $mainEqubs,
                     'code' => 200,
                 ]);
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
             
             
         } catch (Exception $ex) {
@@ -55,7 +55,7 @@ class MainEqubController extends Controller
         $userData = Auth::user();
         
         try {
-            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "it", "member"])) {
+            // if ($userData && in_array($userData['role'], ['admin', "equb_collector", "it", "member"])) {
                 $this->validate($request, [
                     'name' => 'required',
                     'created_by' => 'required',
@@ -85,12 +85,12 @@ class MainEqubController extends Controller
                     'message' => 'Successfully Created Main Equb',
                     'data' => $create
                 ]);
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
             
         } catch (Exception $ex) {
             return response()->json([
@@ -104,17 +104,17 @@ class MainEqubController extends Controller
 
     public function show($id) {
         $userData = Auth::user();
-        if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it", "member"])) {
+        // if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it", "member"])) {
             $mainEqub = MainEqub::where('id', $id)->with('subEqub')->first();
             return response()->json([
                 'data' => $mainEqub
             ]);
-        } else {
-            return response()->json([
-                'code' => 403,
-                'message' => 'You can\'t perform this action!'
-            ]);
-        }
+        // } else {
+        //     return response()->json([
+        //         'code' => 403,
+        //         'message' => 'You can\'t perform this action!'
+        //     ]);
+        // }
     }
 
     public function update($id, Request $request)
@@ -123,7 +123,7 @@ class MainEqubController extends Controller
             // dd($request->all());
             $userData = Auth::user();
             
-            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it"])) {
+            // if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it"])) {
 
                 // Fetch the MainEqub by ID
                 $mainEqub = MainEqub::where('id', $id)->with('subEqub')->first();
@@ -164,12 +164,12 @@ class MainEqubController extends Controller
                     'code' => 200,
                     'message' => 'The Equb was successfully updated'
                 ]);
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'Unauthorized to update this Equb'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'Unauthorized to update this Equb'
+            //     ]);
+            // }
 
         } catch (Exception $ex) {
             return response()->json([
