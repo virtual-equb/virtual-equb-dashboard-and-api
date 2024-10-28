@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Sub_city;
+use App\Models\City;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 
@@ -11,7 +11,7 @@ class SubCityController extends Controller
     // Display a listing of the sub-cities
     public function index()
     {
-        $subCities = Sub_city::all();
+        $subCities = City::all();
         return Response::json($subCities);
     }
 
@@ -23,7 +23,7 @@ class SubCityController extends Controller
             'city_id' => 'required|exists:cities,id', // Assuming a city relationship
         ]);
 
-        $subCity = Sub_city::create([
+        $subCity = City::create([
             'name' => $request->name,
             'city_id' => $request->city_id,
         ]);
@@ -34,7 +34,7 @@ class SubCityController extends Controller
     // Display the specified sub-city
     public function show($id)
     {
-        $subCity = Sub_city::find($id);
+        $subCity = City::find($id);
 
         if (!$subCity) {
             return Response::json(['message' => 'Sub-city not found'], 404);
@@ -46,7 +46,7 @@ class SubCityController extends Controller
     // Update the specified sub-city
     public function update(Request $request, $id)
     {
-        $subCity = Sub_city::find($id);
+        $subCity = City::find($id);
 
         if (!$subCity) {
             return Response::json(['message' => 'Sub-city not found'], 404);
@@ -65,7 +65,7 @@ class SubCityController extends Controller
     // Remove the specified sub-city
     public function destroy($id)
     {
-        $subCity = Sub_city::find($id);
+        $subCity = City::find($id);
 
         if (!$subCity) {
             return Response::json(['message' => 'Sub-city not found'], 404);
