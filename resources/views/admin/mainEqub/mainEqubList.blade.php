@@ -63,7 +63,8 @@
                                         <thead>
                                             <tr>
                                                 <th>#</th>
-                                                <th>Main s Name</th>
+                                                <th>Image</th>
+                                                <th>Main Equbs Name</th>
                                                 <th>Status</th>
                                                 <th>Actions</th>
                                             </tr>
@@ -72,6 +73,10 @@
                                             @foreach ($mainEqubs as $key => $equb)
                                                 <tr>
                                                     <td>{{ $key + 1 }}</td>
+                                                    <td>
+    <img src="{{ asset('storage/' . $equb->image) }}" alt="{{ $equb->name }}" style="width: 50px; height: auto;">
+</td>
+
                                                     <td>{{ $equb->name }}</td>
                                                     <td>
                                                         <span class="badge {{ $equb->active == 1 ? 'badge-success' : 'badge-danger' }}">
@@ -116,7 +121,6 @@
 <!-- Include the Add Main Equb Modal -->
 @include('admin.mainEqub.addMainEqub')
 @include('admin.mainEqub.editMainEqub')
-
 
 @endsection
 
@@ -167,22 +171,22 @@
         const status = $('#edit_status').val();
 
         $.ajax({
-    type: 'PUT',
-    url: '/main-equbs/' + id,
-    data: {
-        _token: '{{ csrf_token() }}',
-        name: name,
-        remark: remark,
-        status: status // Include status in the data sent
-    },
-    success: function(result) {
-        location.reload(); // Refresh the equb table after saving
-    },
-    error: function(xhr) {
-        console.log(xhr.responseText); // Corrected here
-        alert('Error updating equb: ' + xhr.responseText);
-    }
-});
+            type: 'PUT',
+            url: '/main-equbs/' + id,
+            data: {
+                _token: '{{ csrf_token() }}',
+                name: name,
+                remark: remark,
+                status: status // Include status in the data sent
+            },
+            success: function(result) {
+                location.reload(); // Refresh the equb table after saving
+            },
+            error: function(xhr) {
+                console.log(xhr.responseText); // Corrected here
+                alert('Error updating equb: ' + xhr.responseText);
+            }
+        });
     });
 </script>
 @endsection

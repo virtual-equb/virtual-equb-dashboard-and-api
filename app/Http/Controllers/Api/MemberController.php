@@ -482,7 +482,7 @@ class MemberController extends Controller
                 $user = $this->userRepository->createUser($user);
                 $memberRole = Role::firstOrCreate(['name' => 'Member']);
                 // $user->assignRole($memberRole);
-                $user->syncRoles([$memberRole->name]);
+                $user->assignRole($memberRole->name);
 
                 $roleName = $create->getRoleNames()->first();
                 if ($create && $user) {
@@ -1100,11 +1100,12 @@ class MemberController extends Controller
                 'email' => $email,
                 'password' => Hash::make($password),
                 'phone_number' => $phone,
-                'gender' => $gender,
-                'role' => "member",
+                'gender' => $gender
             ];
             $user = $this->userRepository->createUser($user);
-
+            $memberRole = Role::firstOrCreate(['name' => 'Member']);
+            
+            $user->assignRole($memberRole->name);
             if ($create && $user) {
                 return response()->json([
                     'code' => 200,

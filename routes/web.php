@@ -17,6 +17,8 @@ use App\Http\Controllers\BoleController;
 use App\Http\Controllers\MainEqubController;
 use App\Http\Controllers\WebPermissionController;
 use App\Http\Controllers\WebRoleController;
+use App\Http\Controllers\TermsAndConditionsController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -327,5 +329,7 @@ Route::middleware([
           Route::delete('{id}', [MainEqubController::class, 'delete'])->name('mainEqubs.destroy');
     });
 
-   
+
+    // Route to display Terms and Conditions
+    Route::get('/terms-and-conditions', [TermsAndConditionsController::class, 'index'])->name('terms.index');
 });

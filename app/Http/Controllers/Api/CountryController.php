@@ -22,19 +22,19 @@ class CountryController extends Controller
     {
         $userData = Auth::user();
         try {
-            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it", "member"])) {
+            // if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it", "member"])) {
                 $countries = Country::with('countryCode')->get();
     
                 return response()->json([
                     'data' => $countries,
                     'code' => 200
                 ]);
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 400,
@@ -63,7 +63,7 @@ class CountryController extends Controller
     {
         $userData = Auth::user();
         try {
-            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it", "member"])) {
+            // if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it", "member"])) {
                 $data = $request->validated();
                 $country = Country::create($data);
 
@@ -72,12 +72,12 @@ class CountryController extends Controller
                     'message' => 'Successfully Created Country',
                     'data' => $country
                 ]);
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 400,
@@ -97,19 +97,19 @@ class CountryController extends Controller
     {
         $userData = Auth::user();
         try {
-            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it", "member"])) {
+            // if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it", "member"])) {
                 $country = Country::where('id', $id)->with('countryCode')->first();
 
                 return response()->json([
                     'data' => $country,
                     'code' => 200
                 ]);
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -142,7 +142,7 @@ class CountryController extends Controller
         $userData = Auth::user();
         try {
 
-            if ($userData && in_array($userData['role'], ['admin', "operation_manager", "general_manager", "it", "member"])) {
+            // if ($userData && in_array($userData['role'], ['admin', "operation_manager", "general_manager", "it", "member"])) {
                 $country = Country::where('id', $id)->with('countryCode')->first();
 
                 $request->validate([
@@ -169,12 +169,12 @@ class CountryController extends Controller
                     'data' => $country,
                     'message' => 'The Country was successfully updated'
                 ]);
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,

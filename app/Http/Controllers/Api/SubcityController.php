@@ -25,19 +25,19 @@ class SubcityController extends Controller
         $userData = Auth::user();
 
         try {
-            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it", 'member'])) {
+            // if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it", 'member'])) {
                 $subCity = Sub_city::with('city')->get();
 
                 return response()->json([
                     'data' => $subCity,
                     'code' => 200
                 ]);
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         
         } catch (Exception $ex) {
             return response()->json([
@@ -68,7 +68,7 @@ class SubcityController extends Controller
         $userData = Auth::user();
 
         try {
-            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it", 'member'])) {
+            // if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it", 'member'])) {
                 $data = $request->validated();
                 $subCity = Sub_city::create($data);
 
@@ -77,12 +77,12 @@ class SubcityController extends Controller
                     'data' => $subCity
                 ]);
 
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
 
         } catch (Exception $ex) {
             return response()->json([
@@ -103,7 +103,7 @@ class SubcityController extends Controller
         $userData = Auth::user();
 
         try {
-            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it", 'member'])) {
+            // if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it", 'member'])) {
                 
                 $subCity = Sub_city::where('id', $id)->with('city')->first();
 
@@ -112,12 +112,12 @@ class SubcityController extends Controller
                     'data' => $subCity
                 ]);
 
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
 
         } catch (Exception $ex) {
             return response()->json([
@@ -152,7 +152,7 @@ class SubcityController extends Controller
         // return 123;
         try {
 
-            if ($userData && in_array($userData['role'], ['admin', 'member', 'general_manager', 'operation_manager', 'it', 'customer_service', 'assistant'])) {
+            // if ($userData && in_array($userData['role'], ['admin', 'member', 'general_manager', 'operation_manager', 'it', 'customer_service', 'assistant'])) {
                
                 $subCity = Sub_city::where('id', $id)->with('city')->first();
 
@@ -181,12 +181,12 @@ class SubcityController extends Controller
                     'code' => 200,
                     'message' => 'The Subcity was successfully updated !'
                 ]);
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
 
         } catch (Exception $ex) {
             return response()->json([
