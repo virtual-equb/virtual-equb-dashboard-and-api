@@ -61,6 +61,14 @@ class SubCityController extends Controller // Updated controller name
         // Return the data as JSON
         return response()->json($subCity);
     }
+    public function getSubCitiesByCityId($cityId)
+    {
+        // Fetch sub-cities based on the city ID
+        $subcities = Sub_city::where('city_id', $cityId)->get();
+
+        // Return the sub-cities as a JSON response
+        return response()->json($subcities);
+    }
     public function store(Request $request)
     {
         // Validate the request
