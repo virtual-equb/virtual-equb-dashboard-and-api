@@ -67,12 +67,6 @@
 
                      <select class="custom-select form-control" id="editRole" multiple name="role[]">
                         @foreach($roles as $role)
-                            {{-- <option 
-                                value="{{ $role->name }}"
-                                {{ in_array($role, $userRoles) ? 'selected' : '' }}
-                            >
-                                {{ $role->name }}
-                            </option> --}}
                             <option 
                                 value="{{ $role->name }}"
                                 {{ in_array($role->name, $userRoles) ? 'selected' : '' }}
@@ -80,11 +74,6 @@
                                 {{ $role->name }}
                             </option>
                         @endforeach
-                         {{-- @if ($user['role'] == 'admin')
-                             <option value="admin" selected>Admin</option>
-                         @else
-                             <option value="admin">Admin</option>
-                         @endif --}}
 
                      </select>
                  </div>

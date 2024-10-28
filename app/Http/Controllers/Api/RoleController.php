@@ -15,10 +15,10 @@ class RoleController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:edit role', ['only' => ['update', 'edit', 'updatePermissionToRole']]);
-        $this->middleware('permission:delete role', ['only' => ['destroy']]);
-        $this->middleware('permission:view role', ['only' => ['index', 'show']]);
-        $this->middleware('permission:create role', ['only' => ['store', 'create', 'addPermissionToRole']]);
+        // $this->middleware('permission:edit role', ['only' => ['update', 'edit', 'updatePermissionToRole']]);
+        // $this->middleware('permission:delete role', ['only' => ['destroy']]);
+        // $this->middleware('permission:view role', ['only' => ['index', 'show']]);
+        // $this->middleware('permission:create role', ['only' => ['store', 'create', 'addPermissionToRole']]);
     }
     /**
      * Display a listing of the resource.
@@ -27,10 +27,10 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $users = User::with('roles')->where('guard_name', 'web')->get();
+        // $users = User::with('roles')->where('guard_name', 'web')->get();
         return response()->json([
             'roles' => Role::all(),
-            'users' => $users
+            // 'users' => $users
         ]);
     }
 
@@ -53,16 +53,25 @@ class RoleController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|unique:roles,name'
+            'name' => 'required'
         ]);
 
-        $role = Role::create([
-            'name' => $request->name
+        $roleWeb = Role::create([
+            'name' => $request->name,
+            'guard_name' => 'web'
+        ]);
+
+        $roleApi = Role::create([
+            'name' => $request->name,
+            'guard_name' => 'api'
         ]);
 
         return response()->json([
             'message' => 'Role created successfully',
-            'data' => $role
+            'data' =>[
+                'web' => $roleWeb,
+                'api' => $roleApi
+            ]
         ]);
     }
 
@@ -95,20 +104,34 @@ class RoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Role $role)
+    public function update(Request $request, $roleId)
     {
         $request->validate([
-            'name' => 'required|unique:roles,name,' . $role->id 
+            'name' => 'required'
         ]);
 
-        $role->update([
-            'name' => $request->name
-        ]);
+        try {
+            // Find the role by ID, using the current guard name (could be web or api)
+            $role = Role::findOrFail($roleId);
 
-        return response()->json([
-            'message' => 'Role updated successfully',
-            'data' => $role
-        ]);
+            // Update both roles with the same name for 'web' and 'api' guards
+            Role::where('name', $role->name)->whereIn('guard_name', ['web', 'api'])->update([
+                'name' => $request->name
+            ]);
+
+            return response()->json([
+                'message' => 'Role updated successfully for both guards',
+                'data' => [
+                    'web' => Role::where('name', $request->name)->where('guard_name', 'web')->first(),
+                    'api' => Role::where('name', $request->name)->where('guard_name', 'api')->first()
+                ]
+            ]);
+        } catch (Exception $ex) {
+            return response()->json([
+                'message' => 'Error updating role',
+                'error' => $ex->getMessage()
+            ], 400);
+        }
     }
 
     /**
@@ -117,13 +140,25 @@ class RoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Role $role)
+    public function destroy($roleId)
     {
-        $role->delete();
+        try {
+            $role = Role::findOrFail($roleId);
 
-        return response()->json([
-            'message' => 'Role Deleted successfully'
-        ]);
+            Role::where('name', $role->name)->whereIn('guard_name', ['web', 'api'])->delete();
+
+            return response()->json([
+                'message' => 'Role Deleted successfully',
+                'deleted_role' => $role->name
+            ]);
+
+        } catch (Exception $ex) {
+            return response()->json([
+                'message' => 'Error deleting role',
+                'error' => $ex->getMessage()
+            ], 400);
+        }
+        
     }
 
     public function addPermissionToRole($roleId) {
@@ -173,32 +208,5 @@ class RoleController extends Controller
         
 
     }
-
-    // public function assignPermissionRole(Request $request, $roleId)
-    // {
-    //     // $request->validate([
-    //     //     'roles' => 'required|array',  // Validate that 'roles' is an array
-    //     //     'roles.*' => 'exists:roles,name',  // Ensure each role exists
-    //     // ]);
-
-    //     // // Fetch the user by ID
-    //     // $user = User::findOrFail($roleId);
-
-    //     // // Assign the roles to the user
-    //     // $user->syncRoles($request->input('roles'));
-
-    //     // return response()->json([
-    //     //     'message' => 'Roles assigned successfully!',
-    //     //     'user' => $user->load('roles'),  // Optionally load the roles relation
-    //     // ]);
-    //     $request->validate([
-    //         'permission' => 'required|array'
-    //     ]);
-
-    //     $role = Role::findOrFail($roleId);
-    //     $role->syncPermissions($request->permission);
-
-
-    // }
 
 }

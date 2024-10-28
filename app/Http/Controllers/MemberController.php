@@ -610,10 +610,14 @@ class MemberController extends Controller
                 ];
                 $user = $this->userRepository->createUser($user);
                 // Find or create the "member" role
-                $memberRole = Role::firstOrCreate(['name' => 'Member']);
+                // $memberRole = Role::firstOrCreate(['name' => 'Member']);
+                $memberRoleAPI = Role::firstOrCreate(['name' => 'member', 'guard_name' => 'api']);
+                $memberRoleWEB = Role::firstOrCreate(['name' => 'member', 'guard_name' => 'web']);
+                $user->assignRole($memberRoleWEB);
+                $user->assignRole($memberRoleAPI);
 
                 // Assign the role to the user
-                $user->assignRole($memberRole);
+                $user->assignRole($memberRoleWEB);
                 $roleName = $user->getRoleNames()->first();
                 if ($create && $user) {
                     

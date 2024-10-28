@@ -14,6 +14,14 @@ use App\Models\EqubType;
 
 class MainEqubController extends Controller
 {
+    public function __construct()
+    {
+        // $this->middleware('auth:api');
+        // $this->middleware('permission:update main_equb', ['only' => ['update', 'edit']]);
+        // $this->middleware('permission:delete main_equb', ['only' => ['destroy']]);
+        // $this->middleware('permission:view main_equb', ['only' => ['index', 'show']]);
+        // $this->middleware('permission:create main_equb', ['only' => ['store', 'create']]);
+    }
     public function getTypes() {
         $types = EqubType::with('mainEqub')->get();
         return response()->json([
@@ -25,20 +33,14 @@ class MainEqubController extends Controller
 
     public function index() {
         $userData = Auth::user();
+        // dd($userData);
         try {
-            // if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it", 'member'])) {
-                $mainEqubs = MainEqub::with('subEqub')->get();
-                return response()->json([
-                    'data' => $mainEqubs,
-                    'code' => 200,
-                ]);
-            // } else {
-            //     return response()->json([
-            //         'code' => 403,
-            //         'message' => 'You can\'t perform this action!'
-            //     ]);
-            // }
             
+            $mainEqubs = MainEqub::with('subEqub')->get();
+            return response()->json([
+                'data' => $mainEqubs,
+                'code' => 200,
+            ]); 
             
         } catch (Exception $ex) {
             return response()->json([
@@ -55,7 +57,6 @@ class MainEqubController extends Controller
         $userData = Auth::user();
         
         try {
-            // if ($userData && in_array($userData['role'], ['admin', "equb_collector", "it", "member"])) {
                 $this->validate($request, [
                     'name' => 'required',
                     'created_by' => 'required',
@@ -85,12 +86,6 @@ class MainEqubController extends Controller
                     'message' => 'Successfully Created Main Equb',
                     'data' => $create
                 ]);
-            // } else {
-            //     return response()->json([
-            //         'code' => 403,
-            //         'message' => 'You can\'t perform this action!'
-            //     ]);
-            // }
             
         } catch (Exception $ex) {
             return response()->json([
@@ -103,18 +98,11 @@ class MainEqubController extends Controller
     }
 
     public function show($id) {
-        $userData = Auth::user();
-        // if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it", "member"])) {
-            $mainEqub = MainEqub::where('id', $id)->with('subEqub')->first();
-            return response()->json([
-                'data' => $mainEqub
-            ]);
-        // } else {
-        //     return response()->json([
-        //         'code' => 403,
-        //         'message' => 'You can\'t perform this action!'
-        //     ]);
-        // }
+        
+        $mainEqub = MainEqub::where('id', $id)->with('subEqub')->first();
+        return response()->json([
+            'data' => $mainEqub
+        ]);
     }
 
     public function update($id, Request $request)

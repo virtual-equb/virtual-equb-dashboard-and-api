@@ -1103,9 +1103,12 @@ class MemberController extends Controller
                 'gender' => $gender
             ];
             $user = $this->userRepository->createUser($user);
-            $memberRole = Role::firstOrCreate(['name' => 'Member']);
-            
-            $user->assignRole($memberRole->name);
+
+            $memberRoleAPI = Role::firstOrCreate(['name' => 'member', 'guard_name' => 'api']);
+            $memberRoleWEB = Role::firstOrCreate(['name' => 'member', 'guard_name' => 'web']);
+            $user->assignRole($memberRoleWEB);
+            $user->assignRole($memberRoleAPI);
+
             if ($create && $user) {
                 return response()->json([
                     'code' => 200,

@@ -60,11 +60,17 @@ class WebPermissionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|unique:permissions,name'
+            'name' => 'required'
         ]);
 
-        Permission::create([
-            'name' => $request->name
+        $permissionWeb = Permission::create([
+            'name' => $request->name,
+            'guard_name' => 'web'
+        ]);
+
+        $permissionApi = Permission::create([
+            'name' => $request->name,
+            'guard_name' => 'api'
         ]);
 
         return redirect('/permission')->with('status', 'Permission created successfully');
@@ -100,14 +106,15 @@ class WebPermissionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Permission $permission)
+    public function update(Request $request, $permissionId)
     {
-        $permission = Permission::where('id', $permission->id)->first();
         $request->validate([
-            'name' => 'required|string|unique:permissions,name'
+            'name' => 'required'
         ]);
 
-        $permission->update([
+        $permission = Permission::findOrFail($permissionId);
+
+        Permission::where('name', $permission->name)->whereIn('guard_name', ['web', 'api'])->update([
             'name' => $request->name
         ]);
 
@@ -123,7 +130,7 @@ class WebPermissionController extends Controller
     public function destroy($permissionId)
     {
         $permission = Permission::find($permissionId);
-        $permission->delete();
+        Permission::where('name', $permission->name)->whereIn('guard_name', ['web', 'api'])->delete();
 
         return redirect('permission')->with('status', 'Permission Deleted successfully');
     }

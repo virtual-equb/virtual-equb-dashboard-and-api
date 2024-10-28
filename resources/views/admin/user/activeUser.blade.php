@@ -6,6 +6,7 @@
             <th>Email</th>
             <th>Phone</th>
             <th>Gender</th>
+            <th>Role Guard</th>
             <th>Role</th>
             <th>Status</th>
             <th>Register At </th>
@@ -20,6 +21,13 @@
                 <td>{{ $item->email }}</td>
                 <td>{{ $item->phone_number }}</td>
                 <td>{{ $item->gender }}</td>
+                <td>
+                    @foreach($item->roles as $guard)
+                        <div class="badge badge-primary">
+                            {{ $guard->guard_name }}
+                        </div>
+                    @endforeach
+                </td>
                 <td>
                     @if (!empty($item->roles))
                         @foreach ($item->roles as $role)
