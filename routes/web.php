@@ -288,7 +288,7 @@ Route::middleware([
         // Delete a city
         Route::delete('{id}', [CityController::class, 'destroy'])->name('cities.destroy');
     });
-    Route::get('/subcities', [SubCityController::class, 'index'])->name('subcities.index');
+    Route::get('/lala', [SubCityController::class, 'index'])->name('subcities.index');
    
     Route::prefix('main-equbs')->group(function () {
         // Get all cities
