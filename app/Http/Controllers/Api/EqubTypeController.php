@@ -74,18 +74,18 @@ class EqubTypeController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && in_array($userData['role'], ['admin', 'member', 'equb_collector'])) {
+            // if ($userData && in_array($userData['role'], ['admin', 'member', 'equb_collector'])) {
                 $data['equbTypes'] = $this->equbTypeRepository->getAll();
                 $data['deactiveEqubType']  = $this->equbTypeRepository->getDeactive();
                 $data['activeEqubType']  = $this->equbTypeRepository->getActive();
                 $data['title']  = $this->title;
                 return response()->json($data);
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -253,15 +253,15 @@ class EqubTypeController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && in_array($userData['role'], ["admin", "general_manager", "operation_manager", "it"])) {
+            // if ($userData && in_array($userData['role'], ["admin", "general_manager", "operation_manager", "it"])) {
                 $data['title'] = $this->title;
                 return response()->json($data);
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -288,7 +288,7 @@ class EqubTypeController extends Controller
         // dd($request);
         try {
             $userData = Auth::user();
-            if ($userData && in_array($userData['role'], ["admin", "general_manager", "operation_manager", "it"])) {
+            // if ($userData && in_array($userData['role'], ["admin", "general_manager", "operation_manager", "it"])) {
                 $this->validate($request, [
                     'main_equb_id' => 'required',
                     'name' => 'required',
@@ -351,12 +351,12 @@ class EqubTypeController extends Controller
                         "error" => "Unknown error occurred, Please try again!"
                     ]);
                 }
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -369,17 +369,17 @@ class EqubTypeController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && in_array($userData['role'], ["admin", "general_manager", "operation_manager", "it"])) {
+            // if ($userData && in_array($userData['role'], ["admin", "general_manager", "operation_manager", "it"])) {
                 // $data['equb'] = $this->equbTypeRepository->getById($equbType);
                 $data = EqubType::where('id', $id)->with('mainEqub')->first();
                 // dd($data);
                 return response()->json($data);
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            };
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // };
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -392,15 +392,15 @@ class EqubTypeController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && in_array($userData['role'], ["admin", "general_manager", "operation_manager", "it"])) {
+            // if ($userData && in_array($userData['role'], ["admin", "general_manager", "operation_manager", "it"])) {
                 $data['equbType'] = $this->equbTypeRepository->getById($equbType);
                 return response()->json($data);
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -422,7 +422,7 @@ class EqubTypeController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && in_array($userData['role'], ["admin", "general_manager", "operation_manager", "it"])) {
+            // if ($userData && in_array($userData['role'], ["admin", "general_manager", "operation_manager", "it"])) {
                 $status = $this->equbTypeRepository->getStatusById($id)->status;
                 if ($status == "Deactive") {
                     $status = "Active";
@@ -460,12 +460,12 @@ class EqubTypeController extends Controller
                         "error" => "Unknown error occurred, Please try again!"
                     ]);
                 }
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -572,7 +572,7 @@ class EqubTypeController extends Controller
         // dd($request);
         try {
             $userData = Auth::user();
-            if ($userData && in_array($userData['role'],  ["admin", "general_manager", "operation_manager", "it"])) {
+            // if ($userData && in_array($userData['role'],  ["admin", "general_manager", "operation_manager", "it"])) {
                 $validated = $this->validate($request, []);
                 $name = $request->input('update_name');
                 $round = $request->input('update_round');
@@ -617,12 +617,12 @@ class EqubTypeController extends Controller
                         "error" => "Unknown error occurred, Please try again!"
                     ]);
                 }
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -644,7 +644,7 @@ class EqubTypeController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && in_array($userData['role'], ["admin", "general_manager", "operation_manager", "it"])) {
+            // if ($userData && in_array($userData['role'], ["admin", "general_manager", "operation_manager", "it"])) {
                 $equb = $this->equbRepository->getEqubType($id);
                 if (!$equb->isEmpty()) {
                     return response()->json([
@@ -679,12 +679,12 @@ class EqubTypeController extends Controller
                 } else {
                     return false;
                 }
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
