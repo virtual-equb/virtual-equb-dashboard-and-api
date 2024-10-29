@@ -37,7 +37,7 @@ class HomeController extends Controller
         $this->title = "Virtual Equb - Dashboard";
 
         // Guard Permission
-        // $this->middleware('permission: view dashboard', ['only' => ['index', 'equbTypeIndex']]);
+        $this->middleware('permission: view dashboard', ['only' => ['index', 'equbTypeIndex']]);
     }
     /**
      * Get all dashboard info
