@@ -783,7 +783,6 @@ class UserController extends Controller
                     'phone_number' => $phone,
                     'gender' => $gender,
                     'role' => $role,
-
                 ];
                 $updated = $this->userRepository->updateUser($id, $updated);
                 if ($updated) {

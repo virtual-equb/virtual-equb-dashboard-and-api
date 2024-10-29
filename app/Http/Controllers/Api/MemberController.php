@@ -765,7 +765,7 @@ class MemberController extends Controller
         // dd($request);
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+            // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $name = $request->input('full_name');
                 $phone = $request->input('phone');
                 $gender = $request->input('gender');
@@ -847,12 +847,12 @@ class MemberController extends Controller
                         "error" => "Unknown error occurred, Please try again!"
                     ]);
                 }
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -866,7 +866,7 @@ class MemberController extends Controller
         // dd($id);
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+            // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $this->validate(
                     $request,
                     [
@@ -900,12 +900,12 @@ class MemberController extends Controller
                         "error" => "Unknown error occurred, Please try again!"
                     ]);
                 }
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             // dd($ex);
             return response()->json([
@@ -928,7 +928,7 @@ class MemberController extends Controller
     {
         try {
             $userData = Auth::user();
-            if (($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+            // if (($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $member = $this->equbRepository->getMember($id);
                 if (!$member->isEmpty()) {
                     return response()->json([
@@ -971,12 +971,12 @@ class MemberController extends Controller
                         'message' => 'member not found'
                     ]);
                 }
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -1103,9 +1103,12 @@ class MemberController extends Controller
                 'gender' => $gender
             ];
             $user = $this->userRepository->createUser($user);
-            $memberRole = Role::firstOrCreate(['name' => 'Member']);
-            
-            $user->assignRole($memberRole->name);
+
+            $memberRoleAPI = Role::firstOrCreate(['name' => 'member', 'guard_name' => 'api']);
+            $memberRoleWEB = Role::firstOrCreate(['name' => 'member', 'guard_name' => 'web']);
+            $user->assignRole($memberRoleWEB);
+            $user->assignRole($memberRoleAPI);
+
             if ($create && $user) {
                 return response()->json([
                     'code' => 200,
