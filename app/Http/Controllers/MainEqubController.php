@@ -99,8 +99,14 @@ class MainEqubController extends Controller
             'name' => 'required|string|max:255',
             'remark' => 'nullable|string|max:500',
             'status' => 'required|boolean',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', 
+
         ]);
-    
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('images/equbs', 'public'); // Store the image
+            $data['image'] = $imagePath; // Add the image path to the data array
+        }
+
         $equb = MainEqub::findOrFail($id);
         $equb->name = $request->input('name');
         $equb->remark = $request->input('remark');

@@ -25,7 +25,10 @@
                             <option value="0">Inactive</option>
                         </select>
                     </div>
-                    
+                    <div class="form-group">
+                        <label for="image" class="control-label">Image</label>
+                        <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                    </div>
                     <div class="form-group">
                         <label for="edit_remark">Remark</label>
                         <textarea class="form-control" id="edit_remark" name="remark"></textarea>

@@ -170,6 +170,7 @@
         const name = $('#edit_name').val();
         const remark = $('#edit_remark').val();
         const status = $('#edit_status').val();
+        const imageFile = $('#image')[0].files[0]; // Get the selected file
 
         $.ajax({
             type: 'PUT',
@@ -178,7 +179,8 @@
                 _token: '<?php echo e(csrf_token()); ?>',
                 name: name,
                 remark: remark,
-                status: status // Include status in the data sent
+                status: status, // Include status in the data sent
+                image:imageFile
             },
             success: function(result) {
                 location.reload(); // Refresh the equb table after saving
