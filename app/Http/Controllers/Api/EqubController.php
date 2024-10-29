@@ -49,6 +49,12 @@ class EqubController extends Controller
         $this->equbRepository = $equbRepository;
         $this->equbTakerRepository = $equbTakerRepository;
         $this->title = "Virtual Equb - Equb";
+
+        // Guard Permissions
+        $this->middleware('permission:update equb', ['only' => ['update', 'edit', 'updateStatus']]);
+        $this->middleware('permission:delete equb', ['only' => ['destroy']]);
+        $this->middleware('permission:view equb', ['only' => ['index', 'show', 'create']]);
+        $this->middleware('permission:create equb', ['only' => ['store', 'create']]);
     }
     /**
      * Get All Equbs

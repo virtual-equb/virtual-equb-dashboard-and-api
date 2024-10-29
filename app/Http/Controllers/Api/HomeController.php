@@ -35,6 +35,9 @@ class HomeController extends Controller
         $this->memberRepository = $memberRepository;
         $this->userRepository = $userRepository;
         $this->title = "Virtual Equb - Dashboard";
+
+        // Guard Permission
+        $this->middleware('permission: view dashboard', ['only' => ['index', 'equbTypeIndex']]);
     }
     /**
      * Get all dashboard info
