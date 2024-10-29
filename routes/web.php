@@ -332,6 +332,6 @@ Route::middleware([
 
     // Route to display Terms and Conditions
     Route::get('/terms-conditions', [TermsAndConditionsController::class, 'index'])->name('terms.index');
-    Route::get('/terms-and-conditions', [TermsAndConditionsController::class, 'termsConditions'])->name('termsconditions');
+    Route::get('/terms-and-conditions', [TermsAndConditionsController::class, 'termsCondition'])->name('termsconditions');
     
 });
