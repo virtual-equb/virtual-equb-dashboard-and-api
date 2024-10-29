@@ -91,7 +91,7 @@ class AuthController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request,Please try again!',
-                "error" => $error
+                "error" => $error->getMessage()
             ]);
         }
     }
