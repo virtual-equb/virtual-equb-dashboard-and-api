@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use App\Repositories\Equb\IEqubRepository;
 use App\Http\Requests\MainEqub\UpdateEqubRequest;
+use App\Http\Resources\Api\MainEqubResource;
 use App\Models\EqubType;
 
 class MainEqubController extends Controller
@@ -17,10 +18,10 @@ class MainEqubController extends Controller
     public function __construct()
     {
         // $this->middleware('auth:api');
-        // $this->middleware('permission:update main_equb', ['only' => ['update', 'edit']]);
-        // $this->middleware('permission:delete main_equb', ['only' => ['destroy']]);
-        // $this->middleware('permission:view main_equb', ['only' => ['index', 'show']]);
-        // $this->middleware('permission:create main_equb', ['only' => ['store', 'create']]);
+        $this->middleware('permission:update main_equb', ['only' => ['update', 'edit']]);
+        $this->middleware('permission:delete main_equb', ['only' => ['destroy']]);
+        $this->middleware('permission:view main_equb', ['only' => ['index', 'show']]);
+        $this->middleware('permission:create main_equb', ['only' => ['store', 'create']]);
     }
     public function getTypes() {
         $types = EqubType::with('mainEqub')->get();
@@ -37,8 +38,23 @@ class MainEqubController extends Controller
         try {
             
             $mainEqubs = MainEqub::with('subEqub')->get();
+
+            // $mainEqubData = $mainEqubs->map(function ($equb) {
+            //     return [
+            //         'id' => $equb->id,
+            //         'name' => $equb->name,
+            //         'created_by' => $equb->created_by,
+            //         'remark' => $equb->remark,
+            //         'status' => $equb->status,
+            //         'active' => $equb->active,
+            //         'created_at' => $equb->created_at,
+            //         'updated_at' => $equb->updated_at,
+            //         'image_url' => $equb->image ? asset('storage/' . $equb->image) : null, // Generates the full URL
+            //         'subEqub' => $equb->subEqub, // Include related subEqubs if needed
+            //     ];
+            // });
             return response()->json([
-                'data' => $mainEqubs,
+                'data' => MainEqubResource::collection($mainEqubs),
                 'code' => 200,
             ]); 
             
@@ -84,7 +100,10 @@ class MainEqubController extends Controller
                 return response()->json([
                     'code' => 200,
                     'message' => 'Successfully Created Main Equb',
-                    'data' => $create
+                    'data' => [
+                        'main_equb' => $create,
+                        'image_url' => url($create->image)
+                    ],
                 ]);
             
         } catch (Exception $ex) {

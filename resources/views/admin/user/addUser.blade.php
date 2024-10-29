@@ -55,7 +55,7 @@
                         
                         <option selected value="">Choose...</option>
                             @foreach ($roles as $role)
-                                <option value="{{ $role->name }}">{{ $role->name }}</option>
+                                <option value="{{ $role->name }}">{{ $role->name }} ({{ $role->guard_name }})</option>
                             @endforeach
                             {{-- <option value="equb_collector">Equb Collector</option>
                             <option value="general_manager">General Manager</option>

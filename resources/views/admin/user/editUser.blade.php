@@ -71,7 +71,7 @@
                                 value="{{ $role->name }}"
                                 {{ in_array($role->name, $userRoles) ? 'selected' : '' }}
                             >
-                                {{ $role->name }}
+                                {{ $role->name }} ({{ $role->guard_name }})
                             </option>
                         @endforeach
 
