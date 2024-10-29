@@ -10,10 +10,19 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use App\Repositories\Equb\IEqubRepository;
 use App\Http\Requests\MainEqub\UpdateEqubRequest;
+use App\Http\Resources\Api\MainEqubResource;
 use App\Models\EqubType;
 
 class MainEqubController extends Controller
 {
+    public function __construct()
+    {
+        // $this->middleware('auth:api');
+        $this->middleware('permission:update main_equb', ['only' => ['update', 'edit']]);
+        $this->middleware('permission:delete main_equb', ['only' => ['destroy']]);
+        $this->middleware('permission:view main_equb', ['only' => ['index', 'show']]);
+        $this->middleware('permission:create main_equb', ['only' => ['store', 'create']]);
+    }
     public function getTypes() {
         $types = EqubType::with('mainEqub')->get();
         return response()->json([
@@ -25,26 +34,35 @@ class MainEqubController extends Controller
 
     public function index() {
         $userData = Auth::user();
+        // dd($userData);
         try {
-            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it", 'member'])) {
-                $mainEqubs = MainEqub::with('subEqub')->get();
-                return response()->json([
-                    'data' => $mainEqubs,
-                    'code' => 200,
-                ]);
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
             
+            $mainEqubs = MainEqub::with('subEqub')->get();
+
+            // $mainEqubData = $mainEqubs->map(function ($equb) {
+            //     return [
+            //         'id' => $equb->id,
+            //         'name' => $equb->name,
+            //         'created_by' => $equb->created_by,
+            //         'remark' => $equb->remark,
+            //         'status' => $equb->status,
+            //         'active' => $equb->active,
+            //         'created_at' => $equb->created_at,
+            //         'updated_at' => $equb->updated_at,
+            //         'image_url' => $equb->image ? asset('storage/' . $equb->image) : null, // Generates the full URL
+            //         'subEqub' => $equb->subEqub, // Include related subEqubs if needed
+            //     ];
+            // });
+            return response()->json([
+                'data' => MainEqubResource::collection($mainEqubs),
+                'code' => 200,
+            ]); 
             
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
         
@@ -55,7 +73,6 @@ class MainEqubController extends Controller
         $userData = Auth::user();
         
         try {
-            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "it", "member"])) {
                 $this->validate($request, [
                     'name' => 'required',
                     'created_by' => 'required',
@@ -83,14 +100,11 @@ class MainEqubController extends Controller
                 return response()->json([
                     'code' => 200,
                     'message' => 'Successfully Created Main Equb',
-                    'data' => $create
+                    'data' => [
+                        'main_equb' => $create,
+                        'image_url' => url($create->image)
+                    ],
                 ]);
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
             
         } catch (Exception $ex) {
             return response()->json([
@@ -103,18 +117,11 @@ class MainEqubController extends Controller
     }
 
     public function show($id) {
-        $userData = Auth::user();
-        if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it", "member"])) {
-            $mainEqub = MainEqub::where('id', $id)->with('subEqub')->first();
-            return response()->json([
-                'data' => $mainEqub
-            ]);
-        } else {
-            return response()->json([
-                'code' => 403,
-                'message' => 'You can\'t perform this action!'
-            ]);
-        }
+        
+        $mainEqub = MainEqub::where('id', $id)->with('subEqub')->first();
+        return response()->json([
+            'data' => $mainEqub
+        ]);
     }
 
     public function update($id, Request $request)
@@ -123,7 +130,7 @@ class MainEqubController extends Controller
             // dd($request->all());
             $userData = Auth::user();
             
-            if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it"])) {
+            // if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it"])) {
 
                 // Fetch the MainEqub by ID
                 $mainEqub = MainEqub::where('id', $id)->with('subEqub')->first();
@@ -164,12 +171,12 @@ class MainEqubController extends Controller
                     'code' => 200,
                     'message' => 'The Equb was successfully updated'
                 ]);
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'Unauthorized to update this Equb'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'Unauthorized to update this Equb'
+            //     ]);
+            // }
 
         } catch (Exception $ex) {
             return response()->json([
