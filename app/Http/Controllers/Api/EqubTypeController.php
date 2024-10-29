@@ -44,6 +44,13 @@ class EqubTypeController extends Controller
         $this->paymentRepository = $paymentRepository;
         $this->memberRepository = $memberRepository;
         $this->title = "Virtual Equb - Equb Type";
+
+        // Guard Permission
+        $this->middleware('permission:update equb_type', ['only' => ['update', 'edit', 'nameEqubTypeCheckForUpdate', 'updateStatus']]);
+        $this->middleware('permission:delete equb_type', ['only' => ['destroy']]);
+        $this->middleware('permission:view equb_type', ['only' => ['index', 'show', 'create', 'getIcon']]);
+        $this->middleware('permission:create equb_type', ['only' => ['store', 'create']]);
+
     }
     public function getIcon($equbTypeId)
     {
@@ -369,17 +376,8 @@ class EqubTypeController extends Controller
     {
         try {
             $userData = Auth::user();
-            // if ($userData && in_array($userData['role'], ["admin", "general_manager", "operation_manager", "it"])) {
-                // $data['equb'] = $this->equbTypeRepository->getById($equbType);
-                $data = EqubType::where('id', $id)->with('mainEqub')->first();
-                // dd($data);
-                return response()->json($data);
-            // } else {
-            //     return response()->json([
-            //         'code' => 403,
-            //         'message' => 'You can\'t perform this action!'
-            //     ]);
-            // };
+            $data = EqubType::where('id', $id)->with('mainEqub')->first();
+            return response()->json($data);
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -644,7 +642,6 @@ class EqubTypeController extends Controller
     {
         try {
             $userData = Auth::user();
-            // if ($userData && in_array($userData['role'], ["admin", "general_manager", "operation_manager", "it"])) {
                 $equb = $this->equbRepository->getEqubType($id);
                 if (!$equb->isEmpty()) {
                     return response()->json([
@@ -679,17 +676,11 @@ class EqubTypeController extends Controller
                 } else {
                     return false;
                 }
-            // } else {
-            //     return response()->json([
-            //         'code' => 403,
-            //         'message' => 'You can\'t perform this action!'
-            //     ]);
-            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }

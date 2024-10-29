@@ -3,8 +3,8 @@
 namespace App\Http\Resources\Api;
 
 use App\Models\MainEqub;
-use App\Http\Resources\Api\MainEqubResource;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\Api\MainEqubResource;
 
 class EqubTypeResource extends JsonResource
 {
