@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Api;
 
 use App\Models\MainEqub;
+use App\Http\Resources\Api\MainEqubResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class EqubTypeResource extends JsonResource
@@ -35,7 +36,7 @@ class EqubTypeResource extends JsonResource
             'start_date' => (new \DateTime($this->start_date))->format('Y-m-d H:i:s'),
             'end_date' => (new \DateTime($this->end_date))->format('Y-m-d H:i:s'),
             'image' =>  $this->image ? asset('storage/' . $this->image) : null,
-            'mainEqub' =>  MainEqub::collection($this->whenLoaded('mainEqub'))
+            'mainEqub' =>  MainEqubResource::collection($this->whenLoaded('mainEqub'))
             
         ];
     }
