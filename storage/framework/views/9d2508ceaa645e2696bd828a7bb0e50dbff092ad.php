@@ -7,11 +7,6 @@
             <p><?php echo e($term->content); ?></p>
         </div>
     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-
-    <div class="button-container">
-        <button id="agreeButton" class="btn btn-agree">Agree</button>
-        <button id="disagreeButton" class="btn btn-disagree">Don't Agree</button>
-    </div>
 </div>
 
 <style>
@@ -19,16 +14,20 @@
         font-family: Arial, sans-serif;
         background-color: #f4f4f4;
         color: #333;
+        margin: 0;
+        padding: 20px;
     }
 
     .terms-container {
         max-width: 700px;
-        margin: 40px auto;
+        max-height: 600px; /* Set a maximum height for scrolling */
+        margin: 0 auto;
         padding: 20px;
         border: 1px solid #ccc;
         border-radius: 8px;
         background-color: #fff;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        overflow-y: auto; /* Enable vertical scrolling */
     }
 
     .terms-title {
@@ -52,50 +51,4 @@
         color: #333;
         font-weight: bold;
     }
-
-    .button-container {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 30px;
-    }
-
-    .btn {
-        padding: 12px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-weight: bold;
-        transition: background-color 0.3s;
-        font-size: 16px;
-    }
-
-    .btn-agree {
-        background-color: #4CAF50; /* Green */
-        color: white;
-    }
-
-    .btn-agree:hover {
-        background-color: #45a049;
-    }
-
-    .btn-disagree {
-        background-color: #f44336; /* Red */
-        color: white;
-    }
-
-    .btn-disagree:hover {
-        background-color: #e53935;
-    }
-</style>
-
-<script>
-    document.getElementById('agreeButton').addEventListener('click', function() {
-        alert('You agreed to the terms and conditions.');
-        // Add further logic for agreeing
-    });
-
-    document.getElementById('disagreeButton').addEventListener('click', function() {
-        alert('You did not agree to the terms and conditions.');
-        // Add further logic for disagreeing
-    });
-</script><?php /**PATH D:\virtual Equb\virtual-backend\resources\views/admin/terms/termsCondition.blade.php ENDPATH**/ ?>
+</style><?php /**PATH D:\virtual Equb\virtual-backend\resources\views/admin/terms/termsCondition.blade.php ENDPATH**/ ?>
