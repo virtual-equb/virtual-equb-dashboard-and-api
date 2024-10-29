@@ -37,7 +37,7 @@ class HomeController extends Controller
         $this->mainEqubRepository = $mainEqubRepository;
 
         // Permission Guard
-        // $this->middleware('permission:view dashboard', ['only' => ['index', 'show', 'equbTypeIndex']]);
+        $this->middleware('permission:view dashboard', ['only' => ['index', 'show', 'equbTypeIndex']]);
     }
     //Projection chart updated here
     public function index()
