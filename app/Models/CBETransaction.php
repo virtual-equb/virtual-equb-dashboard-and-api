@@ -8,4 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class CBETransaction extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'enc_val',
+        'transaction_id',
+        'state',
+        'tnd_date',
+        'signature'
+    ];
 }
