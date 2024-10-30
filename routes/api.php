@@ -99,9 +99,10 @@ Route::post('/changePassword/{id}', [UserController::class, 'changePassword'])->
 
 // New Apis CBE Gatway 1
 Route::middleware(['auth:api'])->group(function () {
-    Route::post('/cbegateway', [PaymentGatewayController::class, 'generateUrl']);
-    Route::post('/transaction-status', [PaymentGatewayController::class, 'transactionStatus']);
+    
 });
+Route::post('/cbegateway', [PaymentGatewayController::class, 'generateUrl']);
+Route::post('/transaction-status', [PaymentGatewayController::class, 'transactionStatus']);
 
 // Route::post('/cbebirr/payment', [CBEBirrController::class, 'initiateTransaction']);
 // Route::get('/cbebirr/status/{transactionId}', [CBEBirrController::class, 'transactionStatus']);
