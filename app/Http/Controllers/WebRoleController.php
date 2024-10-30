@@ -26,10 +26,16 @@ class WebRoleController extends Controller
         $this->activityLogRepository = $activityLogRepository;
         $this->userRepository = $userRepository;
         $this->title = "Virtual Equb - User";
+
+        // // Guard Permission
+        // $this->middleware('permission:edit role', ['only' => ['update', 'edit', 'updatePermissionToRole']]);
+        // $this->middleware('permission:delete role', ['only' => ['destroy']]);
+        // $this->middleware('permission:view role', ['only' => ['index', 'show']]);
+        // $this->middleware('permission:create role', ['only' => ['store', 'create', 'addPermissionToRole']]);
     }
     public function index()
     {
-        $roles = Role::get();
+        $roles = Role::where('guard_name', 'web')->get();
 
         return view('rolePermission.role.index', ['title' => $this->title, 'roles' => $roles]);
     }
@@ -53,11 +59,17 @@ class WebRoleController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|unique:roles,name'
+            'name' => 'required'
         ]);
 
-        Role::create([
-            'name' => $request->name
+        $roleApi = Role::create([
+            'name' => $request->name,
+            'guard_name' => 'api'
+        ]);
+
+        $roleWeb = Role::create([
+            'name' => $request->name,
+            'guard_name' => 'web'
         ]);
 
         return redirect('roles')->with('status', 'Role created successfully ');
@@ -92,14 +104,14 @@ class WebRoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Role $role)
+    public function update(Request $request, $roleId)
     {
-        $role = Role::where('id', $role->id)->first();
+        $role = Role::findOrFail($roleId);
         $request->validate([
-            'name' => 'required|string|unique:permissions,name'
+            'name' => 'required'
         ]);
 
-        $role->update([
+        Role::where('name', $role->name)->whereIn('guard_name', ['web', 'api'])->update([
             'name' => $request->name
         ]);
 
@@ -115,8 +127,9 @@ class WebRoleController extends Controller
      */
     public function destroy($roleId)
     {
-        $role = Role::find($roleId);
-        $role->delete();
+        $role = Role::findOrFail($roleId);
+        
+        Role::where('name', $role->name)->whereIn('guard_name', ['web', 'api'])->delete();
 
         return redirect('roles')->with('status', 'Role deleted successfully');
     }
@@ -125,7 +138,7 @@ class WebRoleController extends Controller
 
         $role = Role::findOrFail($roleId);
 
-        $permissions = Permission::get();
+        $permissions = Permission::where('guard_name', 'web')->get();
 
         $rolePermissions = DB::table('role_has_permissions')
                             ->where('role_has_permissions.role_id', $role->id)
@@ -144,11 +157,17 @@ class WebRoleController extends Controller
     public function updateRolePermission(Request $request, $roleId) {
 
         $request->validate([
-            'permission' => 'required'
+            'permission' => 'required|array'
         ]);
 
         $role = Role::findOrFail($roleId);
-        $role->syncPermissions($request->permission);
+        $roleName = $role->name;
+
+        foreach(['web', 'api'] as $guard) {
+            $role = Role::firstOrCreate(['name' => $roleName, 'guard_name' => $guard]);
+            $role->syncPermissions($request->permission);
+        }
+        
 
         return redirect()->back()->with('status', 'Permissions added to role');
     }

@@ -26,6 +26,12 @@ class RejectedDateController extends Controller
         $this->activityLogRepository = $activityLogRepository;
         $this->rejectedDateRepository = $rejectedDateRepository;
         $this->title = "Virtual Equb - Off Dates";
+
+        // Guard Permission
+        $this->middleware('permission:update rejected_date', ['only' => ['update', 'edit']]);
+        $this->middleware('permission:delete rejected_date', ['only' => ['destroy']]);
+        $this->middleware('permission:view rejected_date', ['only' => ['index', 'show', 'offDateCheck']]);
+        $this->middleware('permission:create rejected_date', ['only' => ['store', 'create']]);
     }
     /**
      * Get all rejected dates

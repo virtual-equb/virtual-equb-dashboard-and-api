@@ -250,7 +250,7 @@ class UserController extends Controller
                 $email = $request->input('email');
                 $phone_number = $request->input('phone_number');
                 $gender = $request->input('gender');
-                $role = $request->input('role');
+                $roles = $request->input('role');
                 $password = $request->input('password');
                 // $password = '123456';
                 // $password = rand(100000, 999999);
@@ -262,7 +262,12 @@ class UserController extends Controller
                     'gender' => $gender,
                 ];
                 $create = $this->userRepository->createUser($userData);
-                $create->syncRoles([$role]);
+                foreach($roles as $role) {
+                    $create->assignRole([$role, 'guard_name' => 'web']);
+                    $create->assignRole([$role, 'guard_name' => 'api']);
+                }
+                // $create->syncRoles([$role]);
+                
                 // dd($create);
                 if ($create) {
                     $userData = Auth::user();
@@ -309,8 +314,9 @@ class UserController extends Controller
             'name' => 'required',
             'email' => 'required',
             'gender' => 'required',
-            'role' => 'required'
+            'role' => 'required|array'
         ]);
+        $roles = $request->input('role');
         $password = rand(100000, 999999);
 
         $user = User::create([
@@ -320,7 +326,21 @@ class UserController extends Controller
             'phone_number' => $request->phone_number,
             'password' => Hash::make($password),
         ]);
-        $user->syncRoles($request->role);
+        // $user->syncRoles($request->role);
+        // dd($roles);
+        if ($user) {
+
+            // Assign each role separately for both guards
+            foreach ($roles as $roleName) {
+                // First, ensure the roles exist for each guard
+                $roleForWeb = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web']);
+                $roleForApi = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'api']);
+
+                // Assign the roles to the user for both guards
+                $user->assignRole($roleForWeb);
+                $user->assignRole($roleForApi);
+            }
+        }
 
         $msg = "User has been registered successfully!";
         $type = 'success';
@@ -416,7 +436,7 @@ class UserController extends Controller
                 if ($userData) {
                     $user = User::find($id);
                     $data['user'] = $this->userRepository->getById($id);
-                    $data['roles'] = Role::where('guard_name', 'web')->get();
+                    $data['roles'] = Role::all();
                     $data['userRoles'] = $user->roles->where('guard_name', 'web')->pluck('name')->toArray();
                     return view('admin/user/editUser', $data);
                 } else {
@@ -451,7 +471,7 @@ class UserController extends Controller
                 $email = $request->input('email');
                 $phone = $request->input('phone_number');
                 $gender = $request->input('gender');
-                $role = $request->input('role');
+                $roles = $request->input('role');
                 $updated = [
                     'name' => $name,
                     'email' => $email,
@@ -459,8 +479,21 @@ class UserController extends Controller
                     'gender' => $gender,
                 ];
                 $updated = $this->userRepository->updateUser($id, $updated);
+                if ($updated) {
+            
+                    // Assign each role separately for both guards
+                    foreach ($roles as $roleName) {
+                        // First, ensure the roles exist for each guard
+                        $roleForWeb = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web']);
+                        $roleForApi = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'api']);
+
+                        // Assign the roles to the updated for both guards
+                        $updated->assignRole($roleForWeb);
+                        $updated->assignRole($roleForApi);
+                    }
+                }
                 // dd($updated);
-                $updated->syncRoles([$role]);
+                // $updated->syncRoles([$role]);
                 if ($updated) {
                     $activityLog = [
                         'type' => 'users',

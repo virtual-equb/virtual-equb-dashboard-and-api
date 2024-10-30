@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\EqubTypeController;
 use App\Http\Controllers\Api\EqubTakerController;
 use App\Http\Controllers\Api\ActivityLogController;
+use App\Http\Controllers\Api\CBEBirrController;
 use App\Http\Controllers\Api\CityController;
 use App\Http\Controllers\Api\CountryCodeController;
 use App\Http\Controllers\Api\CountryController;
@@ -97,8 +98,15 @@ Route::get('/getDailyPaidAmount/{equb_id}', [EqubController::class, 'getDailyPai
 Route::post('/changePassword/{id}', [UserController::class, 'changePassword'])->name('changePassword');
 
 // New Apis CBE Gatway 1
-Route::post('/encrypt-data', [PaymentGatewayController::class, 'generateUrl']);
+Route::middleware(['auth:api'])->group(function () {
+    
+});
+Route::post('/cbegateway', [PaymentGatewayController::class, 'generateUrl']);
 Route::post('/transaction-status', [PaymentGatewayController::class, 'transactionStatus']);
+
+// Route::post('/cbebirr/payment', [CBEBirrController::class, 'initiateTransaction']);
+// Route::get('/cbebirr/status/{transactionId}', [CBEBirrController::class, 'transactionStatus']);
+
 // Route::post('/check-transaction-status', [PaymentGatewayController::class, 'checkTransactionStatus']);
 
 // Main Equb
@@ -113,9 +121,8 @@ Route::middleware(['auth:api'])->group(function () {
     Route::resource('/permissions', PermissionController::class);
     Route::get('/roles/{roleId}/give-permissions', [RoleController::class, 'addPermissionToRole']);
     Route::put('/roles/{roleId}/give-permissions', [RoleController::class, 'updatePermissionToRole']);
-    // Route::post('/createuser', [UserController::class, 'store']);
-    
 });
+
 
 // Route::get('/testequb', [MainEqubController::class, 'getTypes']);
 

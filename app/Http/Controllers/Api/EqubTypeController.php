@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use Illuminate\Http\Request;
 use App\Models\EqubType;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Api\EqubTypeResource;
 use App\Models\LotteryWinner;
 use Exception;
 use App\Repositories\EqubType\IEqubTypeRepository;
@@ -44,6 +45,13 @@ class EqubTypeController extends Controller
         $this->paymentRepository = $paymentRepository;
         $this->memberRepository = $memberRepository;
         $this->title = "Virtual Equb - Equb Type";
+
+        // Guard Permission
+        $this->middleware('permission:update equb_type', ['only' => ['update', 'edit', 'nameEqubTypeCheckForUpdate', 'updateStatus']]);
+        $this->middleware('permission:delete equb_type', ['only' => ['destroy']]);
+        $this->middleware('permission:view equb_type', ['only' => ['index', 'show', 'create', 'getIcon']]);
+        $this->middleware('permission:create equb_type', ['only' => ['store', 'create']]);
+
     }
     public function getIcon($equbTypeId)
     {
@@ -74,24 +82,25 @@ class EqubTypeController extends Controller
     {
         try {
             $userData = Auth::user();
-            // if ($userData && in_array($userData['role'], ['admin', 'member', 'equb_collector'])) {
-                $data['equbTypes'] = $this->equbTypeRepository->getAll();
-                $data['deactiveEqubType']  = $this->equbTypeRepository->getDeactive();
-                $data['activeEqubType']  = $this->equbTypeRepository->getActive();
-                $data['title']  = $this->title;
-                return response()->json($data);
-            // } else {
-            //     return response()->json([
-            //         'code' => 403,
-            //         'message' => 'You can\'t perform this action!'
-            //     ]);
-            // }
+            $equbTypes = EqubType::with('mainEqub')->get();
+            
+            $data['equbTypes'] = $this->equbTypeRepository->getAll();
+            $data['deactiveEqubType'] = $this->equbTypeRepository->getDeactive();
+            $data['activeEqubType'] = $this->equbTypeRepository->getActive();
+            $data['title'] = $this->title;
+        
+            return response()->json([
+                'code' => 200,
+                'data' => EqubTypeResource::collection($equbTypes),
+                'activeEqubType' => EqubTypeResource::collection($data['activeEqubType']),
+                'deactiveEqubType' => EqubTypeResource::collection($data['deactiveEqubType'])
+            ]);
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
-            ]);
+                "error" => $ex->getMessage()
+            ], 400);
         }
     }
     /**
@@ -253,15 +262,11 @@ class EqubTypeController extends Controller
     {
         try {
             $userData = Auth::user();
-            // if ($userData && in_array($userData['role'], ["admin", "general_manager", "operation_manager", "it"])) {
-                $data['title'] = $this->title;
-                return response()->json($data);
-            // } else {
-            //     return response()->json([
-            //         'code' => 403,
-            //         'message' => 'You can\'t perform this action!'
-            //     ]);
-            // }
+
+            $data['title'] = $this->title;
+
+            return response()->json($data);
+
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -287,17 +292,14 @@ class EqubTypeController extends Controller
     {
         // dd($request);
         try {
-            $userData = Auth::user();
-            // if ($userData && in_array($userData['role'], ["admin", "general_manager", "operation_manager", "it"])) {
+                $userData = Auth::user();
+
                 $this->validate($request, [
                     'main_equb_id' => 'required',
                     'name' => 'required',
                     'round' => 'required',
                     'rote' => 'required',
                     'type' => 'required',
-                    // 'quota' => 'required',
-                    // 'start_date' => 'required',
-                    // 'end_date' => 'required',
                 ]);
                 $name = $request->input('name');
                 $main_equb_id = $request->input('main_equb_id');
@@ -342,7 +344,7 @@ class EqubTypeController extends Controller
                     return response()->json([
                         'code' => 200,
                         'message' => 'Equb type has been registered successfully!',
-                        'data' => $create
+                        'data' => new EqubTypeResource($create)
                     ]);
                 } else {
                     return response()->json([
@@ -351,17 +353,11 @@ class EqubTypeController extends Controller
                         "error" => "Unknown error occurred, Please try again!"
                     ]);
                 }
-            // } else {
-            //     return response()->json([
-            //         'code' => 403,
-            //         'message' => 'You can\'t perform this action!'
-            //     ]);
-            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -369,17 +365,10 @@ class EqubTypeController extends Controller
     {
         try {
             $userData = Auth::user();
-            // if ($userData && in_array($userData['role'], ["admin", "general_manager", "operation_manager", "it"])) {
-                // $data['equb'] = $this->equbTypeRepository->getById($equbType);
-                $data = EqubType::where('id', $id)->with('mainEqub')->first();
-                // dd($data);
-                return response()->json($data);
-            // } else {
-            //     return response()->json([
-            //         'code' => 403,
-            //         'message' => 'You can\'t perform this action!'
-            //     ]);
-            // };
+            $data = EqubType::where('id', $id)->with('mainEqub')->first();
+            return response([
+                'data' => EqubTypeResource::collection($data)
+            ]);
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -392,15 +381,10 @@ class EqubTypeController extends Controller
     {
         try {
             $userData = Auth::user();
-            // if ($userData && in_array($userData['role'], ["admin", "general_manager", "operation_manager", "it"])) {
-                $data['equbType'] = $this->equbTypeRepository->getById($equbType);
-                return response()->json($data);
-            // } else {
-            //     return response()->json([
-            //         'code' => 403,
-            //         'message' => 'You can\'t perform this action!'
-            //     ]);
-            // }
+
+            $data['equbType'] = $this->equbTypeRepository->getById($equbType);
+            return response()->json($data);
+
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -470,7 +454,7 @@ class EqubTypeController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -518,55 +502,7 @@ class EqubTypeController extends Controller
      *
      * @return JsonResponse
      */
-    // public function update($id, Request $request)
-    // {
-    //     try {
-    //         $userData = Auth::user();
-    //         if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")){
-    //             $validated = $this->validate($request, []);
-    //             $name = $request->input('update_name');
-    //             $round = $request->input('update_round');
-    //             $updated = [
-    //                 'name' => $name,
-    //                 'round' => $round,
-    //             ];
-    //             $updated = $this->equbTypeRepository->update($id, $updated);
-    //             if ($updated) {
-    //                 $activityLog = [
-    //                     'type' => 'equb_types',
-    //                     'type_id' => $id,
-    //                     'action' => 'updated',
-    //                     'user_id' => $userData->id,
-    //                     'username' => $userData->name,
-    //                     'role' => $userData->role,
-    //                 ];
-    //                 $this->activityLogRepository->createActivityLog($activityLog);
-    //                 return response()->json([
-    //                     'code' => 200,
-    //                     'message' => 'Equb type updated successfully!',
-    //                     'data' => $updated
-    //                 ]);
-    //             } else {
-    //                 return response()->json([
-    //                     'code' => 400,
-    //                     'message' => 'Unknown error occurred, Please try again!',
-    //                     "error" => "Unknown error occurred, Please try again!"
-    //                 ]);
-    //             }
-    //         } else {
-    //             return response()->json([
-    //                 'code' => 403,
-    //                 'message' => 'You can\'t perform this action!'
-    //             ]);
-    //         }
-    //     } catch (Exception $ex) {
-    //         return response()->json([
-    //             'code' => 500,
-    //             'message' => 'Unable to process your request, Please try again!',
-    //             "error" => $ex
-    //         ]);
-    //     }
-    // }
+
     public function update($id, Request $request)
     {
         // dd($request);
@@ -617,17 +553,11 @@ class EqubTypeController extends Controller
                         "error" => "Unknown error occurred, Please try again!"
                     ]);
                 }
-            // } else {
-            //     return response()->json([
-            //         'code' => 403,
-            //         'message' => 'You can\'t perform this action!'
-            //     ]);
-            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -644,7 +574,6 @@ class EqubTypeController extends Controller
     {
         try {
             $userData = Auth::user();
-            // if ($userData && in_array($userData['role'], ["admin", "general_manager", "operation_manager", "it"])) {
                 $equb = $this->equbRepository->getEqubType($id);
                 if (!$equb->isEmpty()) {
                     return response()->json([
@@ -679,17 +608,11 @@ class EqubTypeController extends Controller
                 } else {
                     return false;
                 }
-            // } else {
-            //     return response()->json([
-            //         'code' => 403,
-            //         'message' => 'You can\'t perform this action!'
-            //     ]);
-            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }

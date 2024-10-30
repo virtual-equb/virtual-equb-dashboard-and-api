@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Models\Roles;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Exception;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class PermissionController extends Controller
 {
@@ -45,16 +47,25 @@ class PermissionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|unique:permissions,name'
+            'name' => 'required'
         ]);
 
-        $permission = Permission::create([
-            'name' => $request->name
+        $permissionWeb = Permission::create([
+            'name' => $request->name,
+            'guard_name' => 'web'
+        ]);
+
+        $permissionApi = Permission::create([
+            'name' => $request->name,
+            'guard_name' => 'api'
         ]);
 
         return response()->json([
             'message' => 'Permission created successfully',
-            'data' => $permission
+            'data' => [
+                'web' => $permissionWeb,
+                'api' => $permissionApi
+            ]
         ]);
     }
 
@@ -87,18 +98,33 @@ class PermissionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Permission $permission)
+    public function update(Request $request, $permissionId)
     {
         $request->validate([
-            'name' => 'required|unique:permissions,name,' . $permission->id
+            'name' => 'required'
         ]);
 
-        $permission->update(['name' => $request->name]);
+        try {
+            $permission = Permission::findOrFail($permissionId);
 
-        return response()->json([
-            'message' => 'Permission updated successfully',
-            'data' => $permission
-        ]);
+            Permission::where('name', $permission->name)->whereIn('guard_name', ['web', 'api'])->update([
+                'name' => $request->name
+            ]);
+
+            return response()->json([
+                'message' => 'Permission updated successfully for both guards',
+                'data' => [
+                    'web' => Permission::where('name', $request->name)->where('guard_name', 'web')->first(),
+                    'api' => Permission::where('name', $request->name)->where('guard_name', 'api')->first()
+                ]
+            ]);
+
+        } catch (Exception $ex) {
+            return response()->json([
+                'message' => 'Error updating permission',
+                'error' => $ex->getMessage()
+            ], 400);
+        }
     }
 
     /**
@@ -107,9 +133,24 @@ class PermissionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Permission $permission)
+    public function destroy($permissionId)
     {
-        $permission->delete();
+        try {
+            $permission = Permission::findOrFail($permissionId);
+
+            Permission::where('name', $permission->name)->whereIn('guard_name', ['web', 'api'])->delete();
+
+            return response()->json([
+                'message' => 'Role Deleted successfully',
+                'deleted_role' => $permission->name
+            ]);
+
+        } catch (Exception $ex) {
+            return response()->json([
+                'message' => 'Error deleting permission',
+                'error' => $ex->getMessage()
+            ], 400);
+        }
 
         return response()->json([
             'message' => 'Permission deleted successfully',
