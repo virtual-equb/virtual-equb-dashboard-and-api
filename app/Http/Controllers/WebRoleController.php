@@ -35,7 +35,7 @@ class WebRoleController extends Controller
     }
     public function index()
     {
-        $roles = Role::get();
+        $roles = Role::where('guard_name', 'web')->get();
 
         return view('rolePermission.role.index', ['title' => $this->title, 'roles' => $roles]);
     }
@@ -138,7 +138,7 @@ class WebRoleController extends Controller
 
         $role = Role::findOrFail($roleId);
 
-        $permissions = Permission::get();
+        $permissions = Permission::where('guard_name', 'web')->get();
 
         $rolePermissions = DB::table('role_has_permissions')
                             ->where('role_has_permissions.role_id', $role->id)

@@ -36,7 +36,8 @@ class EqubTypeResource extends JsonResource
             'start_date' => (new \DateTime($this->start_date))->format('Y-m-d H:i:s'),
             'end_date' => (new \DateTime($this->end_date))->format('Y-m-d H:i:s'),
             'image' =>  $this->image ? asset('storage/' . $this->image) : null,
-            'mainEqub' =>  MainEqubResource::collection($this->whenLoaded('mainEqub'))
+            // 'mainEqub' =>  MainEqubResource::collection($this->whenLoaded('mainEqub')),
+            'mainEqub' => new MainEqubResource($this->whenLoaded('mainEqub')),
             
         ];
     }

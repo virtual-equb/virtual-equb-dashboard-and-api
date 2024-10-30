@@ -39,20 +39,6 @@ class MainEqubController extends Controller
             
             $mainEqubs = MainEqub::with('subEqub')->get();
 
-            // $mainEqubData = $mainEqubs->map(function ($equb) {
-            //     return [
-            //         'id' => $equb->id,
-            //         'name' => $equb->name,
-            //         'created_by' => $equb->created_by,
-            //         'remark' => $equb->remark,
-            //         'status' => $equb->status,
-            //         'active' => $equb->active,
-            //         'created_at' => $equb->created_at,
-            //         'updated_at' => $equb->updated_at,
-            //         'image_url' => $equb->image ? asset('storage/' . $equb->image) : null, // Generates the full URL
-            //         'subEqub' => $equb->subEqub, // Include related subEqubs if needed
-            //     ];
-            // });
             return response()->json([
                 'data' => MainEqubResource::collection($mainEqubs),
                 'code' => 200,
@@ -100,10 +86,7 @@ class MainEqubController extends Controller
                 return response()->json([
                     'code' => 200,
                     'message' => 'Successfully Created Main Equb',
-                    'data' => [
-                        'main_equb' => $create,
-                        'image_url' => url($create->image)
-                    ],
+                    'data' => new MainEqubResource($create)
                 ]);
             
         } catch (Exception $ex) {
@@ -120,64 +103,54 @@ class MainEqubController extends Controller
         
         $mainEqub = MainEqub::where('id', $id)->with('subEqub')->first();
         return response()->json([
-            'data' => $mainEqub
+            'data' => new MainEqubResource($mainEqub)
         ]);
     }
 
     public function update($id, Request $request)
     {
         try {
-            // dd($request->all());
             $userData = Auth::user();
             
-            // if ($userData && in_array($userData['role'], ['admin', "equb_collector", "role", "it"])) {
+            // Fetch the MainEqub by ID
+            $mainEqub = MainEqub::where('id', $id)->with('subEqub')->first();
 
-                // Fetch the MainEqub by ID
-                $mainEqub = MainEqub::where('id', $id)->with('subEqub')->first();
+            // Validate the incoming request
+            $request->validate([
+                'name' => 'required|string',
+                'created_by' => 'required|integer',
+                'remark' => 'nullable|string',
+                'status' => 'nullable|string',
+                'active' => 'nullable|boolean',
+                'image' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',  // Image validation
+            ]);
 
-                // Validate the incoming request
-                $request->validate([
-                    'name' => 'required|string',
-                    'created_by' => 'required|integer',
-                    'remark' => 'nullable|string',
-                    'status' => 'nullable|string',
-                    'active' => 'nullable|boolean',
-                    'image' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',  // Image validation
-                ]);
+            // Build the update array
+            $update = [
+                'name' => $request->input('name'),
+                'created_by' => $userData->id,
+                'active' => $request->input('active'),
+                'status' => $request->input('status'),
+                'remark' => $request->input('remark'),
+            ];
 
-                // Build the update array
-                $update = [
-                    'name' => $request->input('name'),
-                    'created_by' => $userData->id,
-                    'active' => $request->input('active'),
-                    'status' => $request->input('status'),
-                    'remark' => $request->input('remark'),
-                ];
+            // Handle image upload
+            if ($request->file('image')) {
+                $image = $request->file('image');
+                $imageName = time() . '.' . $image->getClientOriginalExtension();
+                $image->storeAs('public/mainEqub', $imageName);
+                $update['image'] = 'mainEqub/' . $imageName;
+            }
 
-                // Handle image upload
-                if ($request->file('image')) {
-                    $image = $request->file('image');
-                    $imageName = time() . '.' . $image->getClientOriginalExtension();
-                    $image->storeAs('public/mainEqub', $imageName);
-                    $update['image'] = 'mainEqub/' . $imageName;
-                }
+            // Update the MainEqub
+            $mainEqub->update($update);
 
-                // Update the MainEqub
-                $mainEqub->update($update);
-
-                // Return success response
-                return response()->json([
-                    'data' => $mainEqub,
-                    'code' => 200,
-                    'message' => 'The Equb was successfully updated'
-                ]);
-            // } else {
-            //     return response()->json([
-            //         'code' => 403,
-            //         'message' => 'Unauthorized to update this Equb'
-            //     ]);
-            // }
-
+            // Return success response
+            return response()->json([
+                'data' => new MainEqubResource($mainEqub),
+                'code' => 200,
+                'message' => 'The Equb was successfully updated'
+            ]);
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,

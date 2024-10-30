@@ -28,10 +28,10 @@ class UserController extends Controller
         $this->title = "Virtual Equb - User";
 
         // Permission Guard
-        // $this->middleware('permission:update user', ['only' => ['update', 'edit', 'resetPassword', 'deactiveStatus', 'activeUser']]);
-        // $this->middleware('permission:delete user', ['only' => ['destroy']]);
-        // $this->middleware('permission:view user', ['only' => ['index', 'show', 'indexForDeactivated', 'deactiveUser', 'user']]);
-        // $this->middleware('permission:create user', ['only' => ['store', 'create', 'storeUser']]);
+        $this->middleware('permission:update user', ['only' => ['update', 'edit', 'resetPassword', 'deactiveStatus', 'activeUser']]);
+        $this->middleware('permission:delete user', ['only' => ['destroy']]);
+        $this->middleware('permission:view user', ['only' => ['index', 'show', 'indexForDeactivated', 'deactiveUser', 'user']]);
+        $this->middleware('permission:create user', ['only' => ['store', 'create', 'storeUser']]);
     }
     public function index()
     {

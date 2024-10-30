@@ -29,6 +29,8 @@ return [
     */
 
     'env' => env('APP_ENV', 'production'),
+    'cbebirr_api_url' => env('CBEBIRR_API_URL', 'https://cbebirrpaymentgateway.cbe.com.et:8888/Default.aspx'),
+    'cbebirr_status_api_url' => env('CBEBIRR_STATUS_API_URL', 'https://cbebirrpaymentgateway.cbe.com.et:8888/api/cbebpg/TXNSTAT'),
 
     /*
     |--------------------------------------------------------------------------

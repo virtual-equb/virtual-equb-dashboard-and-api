@@ -22,7 +22,7 @@ class UserRepository implements IUserRepository
 
     public function getRoles()
     {
-        return Role::all();
+        return Role::where('guard_name', 'web')->get();
     }
 
     public function getUserRoles()

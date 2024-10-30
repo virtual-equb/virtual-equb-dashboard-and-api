@@ -22,11 +22,10 @@ class MainEqubResource extends JsonResource
             'remark' => $this->remark,
             'status' => $this->status,
             'active' => $this->active,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'created_at' => (new \DateTime($this->created_at))->format('Y-m-d H:i:s'),
+            'updated_at' => (new \DateTime($this->update_at))->format('Y-m-d H:i:s'),
             'image_url' => $this->image ? asset('storage/' . $this->image) : null, // Generates the full URL
             'subEqub' => EqubTypeResource::collection($this->whenLoaded('subEqub')),
-            // 'subEqub' => $this->subEqub
         ];
     }
 }
