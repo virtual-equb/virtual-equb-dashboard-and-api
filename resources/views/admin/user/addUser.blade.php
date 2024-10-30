@@ -46,7 +46,6 @@
                 </div>
 
                 <div class="form-group row">
-                    {{-- {{ $roles }} --}}
                     <label for="phone" class="control-label col-md-2 "> Role  <i class="fa fa-asterisk text-danger" style="font-size: 8px"></i></label>
                     <div class="form-group required col-md-10">
 
@@ -55,16 +54,8 @@
                         
                         <option selected value="">Choose...</option>
                             @foreach ($roles as $role)
-                                <option value="{{ $role->name }}">{{ $role->name }} ({{ $role->guard_name }})</option>
+                                <option value="{{ $role->name }}">{{ $role->name }}</option>
                             @endforeach
-                            {{-- <option value="equb_collector">Equb Collector</option>
-                            <option value="general_manager">General Manager</option>
-                            <option value="operation_manager">Operation Manager</option>
-                            <option value="marketing_manager">Marketing Manager</option>
-                            <option value="assistant">Assistant</option>
-                            <option value="customer_service">Customer Service</option>
-                            <option value="finance">Finance</option>
-                            <option value="it">IT</option> --}}
                         </select>
                     </div>
                 </div>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Models\CBETransaction;
 use Illuminate\Support\Facades\Http;
 
 class PaymentGatewayController extends Controller {
@@ -181,6 +182,14 @@ class PaymentGatewayController extends Controller {
 
             // Compare the calculated hash with the provided signature
             if ($calculatedHash === $signature) {
+                // Save transaction details
+                $transaction = new CBETransaction();
+                $transaction->enc_val = $encVal;
+                $transaction->transaction_id = $transactionId;
+                $transaction->state = $state;
+                $transaction->tnd_date = $tndDate;
+                $transaction->signature = $signature;
+                $transaction->save();
                 Log::info('Transaction verified successfully.');
                 return response()->json([
                     'message' => 'Transaction verified',
