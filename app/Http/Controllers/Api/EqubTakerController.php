@@ -11,6 +11,9 @@ use App\Repositories\EqubType\IEqubTypeRepository;
 use App\Repositories\Equb\IEqubRepository;
 use App\Repositories\ActivityLog\IActivityLogRepository;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Api\EqubResource;
+use App\Http\Resources\Api\EqubTakerResource;
+use App\Http\Resources\Api\MemberResource;
 use Illuminate\Support\Facades\Auth;
 /**
  * @group Equb Takers
@@ -40,6 +43,11 @@ class EqubTakerController extends Controller
         $this->equbTypeRepository = $equbTypeRepository;
         $this->paymentRepository = $paymentRepository;
         $this->title = "Virtual Equb - Equb Taker";
+
+        $this->middleware('permission:update equb_taker', ['only' => ['update', 'edit', 'updateLottery']]);
+        $this->middleware('permission:delete equb_taker', ['only' => ['destroy']]);
+        $this->middleware('permission:view equb_taker', ['only' => ['index', 'show']]);
+        $this->middleware('permission:create equb_taker', ['only' => ['store']]);
     }
     /**
      * Get All Equb Takers
@@ -52,23 +60,29 @@ class EqubTakerController extends Controller
     {
         try {
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "equb_collector")) {
+            $roles = ['admin', 'equb_collector'];
+            if ($userData && $userData->hasAnyRole($roles)) {
                 $data['equbTakers']  = $this->equbTakerRepository->getAll();
                 $data['equbs']  = $this->equbRepository->getAll();
                 $data['members']  = $this->memberRepository->getMemberWithEqub();
                 $data['title']  = $this->title;
-                return response()->json($data);
-            // } else {
-            //     return response()->json([
-            //         'code' => 400,
-            //         'message' => 'You can\'t perform this action!'
-            //     ]);
-            // }
+                return response()->json([
+                    'code' => 200,
+                    'equbTakers' => EqubTakerResource::collection($data['equbTakers']),
+                    'equbs' => EqubResource::collection($data['equbs']),
+                    'members' => MemberResource::collection($data['members'])
+                ]);
+            } else {
+                return response()->json([
+                    'code' => 400,
+                    'message' => 'You can\'t perform this action!'
+                ]);
+            }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -117,7 +131,8 @@ class EqubTakerController extends Controller
     {
         try {
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+            $roles = ['admin', 'equb_collector'];
+            if ($userData && $userData->hasAnyRole($roles)) {
                 $this->validate($request, [
                     'payment_type' => 'required',
                     'amount' => 'required',
@@ -176,17 +191,17 @@ class EqubTakerController extends Controller
                         "error" => "Unknown error occurred, Please try again!"
                     ]);
                 }
-            // } else {
-            //     return response()->json([
-            //         'code' => 400,
-            //         'message' => 'You can\'t perform this action!'
-            //     ]);
-            // }
+            } else {
+                return response()->json([
+                    'code' => 400,
+                    'message' => 'You can\'t perform this action!'
+                ]);
+            }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }

@@ -261,13 +261,6 @@ class HomeController extends Controller
                     }
                 }
                 return view('admin/home', compact('automaticMembersArray',  'title', 'lables', 'fullPaidAmount', 'fullUnPaidAmount', 'Expected', 'daylyPaidAmount', 'daylyUnpaidAmount', 'daylyExpected', 'weeklyPaidAmount', 'weeklyUnpaidAmount', 'weeklyExpected', 'monthlyPaidAmount', 'monthlyUnpaidAmount', 'monthlyExpected', 'yearlyPaidAmount', 'yearlyUnpaidAmount', 'yearlyExpected', 'totalMember', 'tudayPaidMember', 'activeMember', 'totalUser', 'totalEqubPayment'));
-            // } elseif ($userData && ($userData['role'] == "equb_collector")) {
-            //     return redirect('/member/');
-            // } elseif ($userData && ($userData['role'] == "member")) {
-            //     return redirect('/member/');
-            // } else {
-            //     return view('auth/login');
-            // }
         } catch (Exception $ex) {
             // dd($ex);
             $msg = "Unable to process your request, Please try again!";

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Api\EqubResource;
+use App\Http\Resources\Api\MemberResource;
 use Exception;
 use App\Repositories\Member\IMemberRepository;
 use App\Repositories\Payment\IPaymentRepository;
@@ -43,7 +45,8 @@ class ReportController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && $userData['role'] == 'admin') {
+            $roles = ['admin'];
+            if ($userData && $userData->hasAnyRole($roles)) {
                 $data['title'] = "Virtual Equb - Members Report";
                 return response()->json($data);
             } else {
@@ -78,7 +81,8 @@ class ReportController extends Controller
             $data['limit'] = 50;
             $data['pageNumber'] = 1;
             $userData = Auth::user();
-            if ($userData && $userData['role'] == 'admin') {
+            $roles = ['admin'];
+            if ($userData && $userData->hasAnyRole($roles)) {
                 $data['title'] = "Virtual Equb - Members Report";
                 $data['totalMember'] = $this->memberRepository->getCountByDate($dateFrom, $dateTo);
                 $data['members'] = $this->memberRepository->getByDate($dateFrom, $dateTo, $offset);
@@ -117,7 +121,8 @@ class ReportController extends Controller
             $data['limit'] = 50;
             $data['pageNumber'] = $pageNumberVal;
             $userData = Auth::user();
-            if ($userData && $userData['role'] == 'admin') {
+            $roles = ['admin'];
+            if ($userData && $userData->hasAnyRole($roles)) {
                 $data['title'] = "Virtual Equb - Members Report";
                 $data['totalMember'] = $this->memberRepository->getCountByDate($dateFrom, $dateTo);
                 $data['members'] = $this->memberRepository->getByDate($dateFrom, $dateTo, $offset);
@@ -140,7 +145,8 @@ class ReportController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && $userData['role'] == 'admin') {
+            $roles = ['admin'];
+            if ($userData && $userData->hasAnyRole($roles)) {
                 $data['title'] = "Virtual Equb - Equb Types Report";
                 return response()->json($data);
             } else {
@@ -153,7 +159,7 @@ class ReportController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -171,7 +177,8 @@ class ReportController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && $userData['role'] == 'admin') {
+            $role = ['admin'];
+            if ($userData && $userData->hasAnyRole($role)) {
                 $data['title'] = "Virtual Equb - Equb Types Report";
                 $data['equbTypes'] = $this->equbTypeRepository->getByDate($dateFrom, $dateTo);
                 return response()->json($data);
@@ -200,7 +207,8 @@ class ReportController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && $userData['role'] == 'admin') {
+            $role = ['admin'];
+            if ($userData && $userData->hasAnyRole($role)) {
                 $data['title'] = "Virtual Equb - Payments Report";
                 $data['members'] = $this->memberRepository->getAll();
                 return response()->json($data);
@@ -214,7 +222,7 @@ class ReportController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -238,7 +246,8 @@ class ReportController extends Controller
             $data['limit'] = 50;
             $data['pageNumber'] = 1;
             $userData = Auth::user();
-            if ($userData && $userData['role'] == 'admin') {
+            $role = ['admin'];
+            if ($userData && $userData->hasAnyRole($role)) {
                 $data['title'] = "Virtual Equb - Payments Report";
                 if ($member_id == "all" && $equb_id != "all") {
                     $data['totalPayments'] = $this->paymentRepository->getCountWithDateAndEqub($dateFrom, $dateTo, $equb_id);
@@ -264,7 +273,7 @@ class ReportController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -290,7 +299,8 @@ class ReportController extends Controller
             $data['limit'] = 50;
             $data['pageNumber'] = $pageNumberVal;
             $userData = Auth::user();
-            if ($userData && $userData['role'] == 'admin') {
+            $role = ['admin'];
+            if ($userData && $userData->hasAnyRole($role)) {
                 $data['title'] = "Virtual Equb - Payments Report";
                 if ($member_id == "all" && $equb_id != "all") {
                     $data['totalPayments'] = $this->paymentRepository->getCountWithDateAndEqub($dateFrom, $dateTo, $equb_id);
@@ -316,7 +326,7 @@ class ReportController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -331,7 +341,8 @@ class ReportController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && $userData['role'] == 'admin') {
+            $role = ['admin'];
+            if ($userData && $userData->hasAnyRole($role)) {
                 $data['title'] = "Virtual Equb - Collected By Report";
                 $data['collecters'] = $this->userRepository->getCollecters();
                 return response()->json($data);
@@ -345,7 +356,7 @@ class ReportController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -368,7 +379,8 @@ class ReportController extends Controller
             $data['limit'] = 50;
             $data['pageNumber'] = 1;
             $userData = Auth::user();
-            if ($userData && $userData['role'] == 'admin') {
+            $role = ['admin'];
+            if ($userData && $userData->hasAnyRole($role)) {
                 $data['title'] = "Virtual Equb - Collected by Report";
                 if ($collecter == "all") {
                     $data['totalPayments'] = $this->paymentRepository->getCountCollectedBys($dateFrom, $dateTo);
@@ -388,7 +400,7 @@ class ReportController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -413,7 +425,8 @@ class ReportController extends Controller
             $data['limit'] = 50;
             $data['pageNumber'] = $pageNumberVal;
             $userData = Auth::user();
-            if ($userData && $userData['role'] == 'admin') {
+            $role = ['admin'];
+            if ($userData && $userData->hasAnyRole($role)) {
                 $data['title'] = "Virtual Equb - Collected by Report";
                 if ($collecter == "all") {
                     $data['totalPayments'] = $this->paymentRepository->getCountCollectedBys($dateFrom, $dateTo);
@@ -433,7 +446,7 @@ class ReportController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -448,7 +461,8 @@ class ReportController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && $userData['role'] == 'admin') {
+            $role = ['admin'];
+            if ($userData && $userData->hasAnyRole($role)) {
                 $data['title'] = "Virtual Equb - Equbs Report";
                 $data['members'] = $this->memberRepository->getAll();
                 return response()->json($data);
@@ -462,7 +476,7 @@ class ReportController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -484,12 +498,16 @@ class ReportController extends Controller
             $data['limit'] = 50;
             $data['pageNumber'] = 1;
             $userData = Auth::user();
-            if ($userData && $userData['role'] == 'admin') {
+            $role = ['admin'];
+            if ($userData && $userData->hasAnyRole($role)) {
 
                 $data['title'] = "Virtual Equb - Equbs Report";
                 $data['totalEqub'] = $this->equbRepository->getCountByDate($dateFrom, $dateTo);
                 $data['equbs'] = $this->equbRepository->getByDate($dateFrom, $dateTo, $offset);
-                return response()->json($data);
+                return response()->json([
+                    'totalEqub' => $data['totalEqub'],
+                    'equbs' => EqubResource::collection($data['equbs'])
+                ]);
             } else {
                 return response()->json([
                     'code' => 400,
@@ -500,7 +518,7 @@ class ReportController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -524,7 +542,8 @@ class ReportController extends Controller
             $data['limit'] = 50;
             $data['pageNumber'] = $pageNumberVal;
             $userData = Auth::user();
-            if ($userData && $userData['role'] == 'admin') {
+            $role = ['admin'];
+            if ($userData && $userData->hasAnyRole($role)) {
 
                 $data['title'] = "Virtual Equb - Equbs Report";
                 $data['totalEqub'] = $this->equbRepository->getCountByDate($dateFrom, $dateTo);
@@ -540,7 +559,7 @@ class ReportController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -556,10 +575,14 @@ class ReportController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && $userData['role'] == 'admin') {
+            $role = ['admin'];
+            if ($userData && $userData->hasAnyRole($role)) {
                 $data['members'] = $this->memberRepository->getAll();
                 $data['title'] = "Virtual Equb - Lotterys Report";
-                return response()->json($data);
+                return response()->json([
+                    'title' => $data['title'],
+                    'members' => MemberResource::collection($data['members'])
+                ]);
             } else {
                 return response()->json([
                     'code' => 400,
@@ -570,7 +593,7 @@ class ReportController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -594,7 +617,8 @@ class ReportController extends Controller
             $data['limit'] = 50;
             $data['pageNumber'] = 1;
             $userData = Auth::user();
-            if ($userData && $userData['role'] == 'admin') {
+            $role = ['admin'];
+            if ($userData && $userData->hasAnyRole($role)) {
                 $data['title'] = "Virtual Equb - Lotterys Report";
                 if ($member_id == "all" && $equb_type_id != "all") {
                     $data['totalLotterys'] = $this->equbTakerRepository->getCountWithDateAndEqub($dateFrom, $dateTo, $equb_type_id);
@@ -620,7 +644,7 @@ class ReportController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -646,7 +670,8 @@ class ReportController extends Controller
             $data['limit'] = 50;
             $data['pageNumber'] = $pageNumberVal;
             $userData = Auth::user();
-            if ($userData && $userData['role'] == 'admin') {
+            $role = ['admin'];
+            if ($userData && $userData->hasAnyRole($role)) {
                 $data['title'] = "Virtual Equb - Lotterys Report";
                 if ($member_id == "all" && $equb_type_id != "all") {
                     $data['totalLotterys'] = $this->equbTakerRepository->getCountWithDateAndEqub($dateFrom, $dateTo, $equb_type_id);
@@ -672,7 +697,7 @@ class ReportController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -687,7 +712,8 @@ class ReportController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && $userData['role'] == 'admin') {
+            $role = ['admin'];
+            if ($userData && $userData->hasAnyRole($role)) {
                 $data['title'] = "Virtual Equb - Lotterys Report";
                 return response()->json($data);
             } else {
@@ -700,7 +726,7 @@ class ReportController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -719,7 +745,8 @@ class ReportController extends Controller
             $data['limit'] = 50;
             $data['pageNumber'] = 1;
             $userData = Auth::user();
-            if ($userData && $userData['role'] == 'admin') {
+            $role = ['admin'];
+            if ($userData && $userData->hasAnyRole($role)) {
                 $data['title'] = "Virtual Equb - UnPaid Lotterys Report";
                 $member_id = $this->equbTakerRepository->getMemberId();
                 $data['totalLotterys'] = $this->equbRepository->getUnPaidLotteryCount($member_id);
@@ -735,7 +762,7 @@ class ReportController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -757,7 +784,8 @@ class ReportController extends Controller
             $data['limit'] = 50;
             $data['pageNumber'] = $pageNumberVal;
             $userData = Auth::user();
-            if ($userData && $userData['role'] == 'admin') {
+            $role = ['admin'];
+            if ($userData && $userData->hasAnyRole($role)) {
                 $data['title'] = "Virtual Equb - UnPaid Lotterys Report";
                 $member_id = $this->equbTakerRepository->getMemberId();
                 $data['totalLotterys'] = $this->equbRepository->getUnPaidLotteryCount($member_id);
@@ -773,7 +801,7 @@ class ReportController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
