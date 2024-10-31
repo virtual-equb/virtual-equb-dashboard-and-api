@@ -82,13 +82,13 @@
                     </ul>
                 </li>
                 <li class="nav-item" id="nav-ety">
-                    <a href="{{ route('mainEqubs.index') }}" class="nav-link" id="city">
+                    <a href="{{ route('mainEqubs.index') }}" class="nav-link" id="mainEqubs">
                         <i class="nav-icon fa fa-server"></i>
                         <p>Main Equbs</p>
                     </a>
                 </li>
                 <li class="nav-item" id="nav-ety">
-                    <a href="{{ route('showEqubType') }}" class="nav-link" id="city">
+                    <a href="{{ route('showEqubType') }}" class="nav-link" id="showEqubType">
                         <i class="nav-icon fa fa-network-wired"></i>
                         <p>Equb Type</p>
                     </a>
@@ -106,16 +106,27 @@
                     </a>
                 </li>
                 <li class="nav-item" id="nav-ety">
-                    <a href="{{ route('cities.index') }}" class="nav-link" id="city">
-                        <i class="nav-icon fas fa-calendar-minus"></i>
-                        <p>City</p>
-                    </a>
-                </li>
-                <li class="nav-item" id="nav-ety">
                     <a href="{{ route('user') }}" class="nav-link" id="adminNav">
                         <i class="nav-icon far fa-user"></i>
                         <p>User</p>
                     </a>
+                </li>
+                <li class="nav-item" id="settingNavm">
+                    <a href="#" class="nav-link" id="settingsLink">
+                        <i class="nav-icon fas fa-cog"></i>
+                        <p>
+                            Locations
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview ml-2">
+                        <li class="nav-item">
+                        <a href="{{ route('cities.index') }}" class="nav-link" id="city">
+                        <i class="nav-icon fas fa-calendar-minus"></i>
+                        <p>City</p>
+                    </a>
+                        </li>
+                    </ul>
                 </li>
                 <li class="nav-item" id="settingNavm">
                     <a href="#" class="nav-link" id="settingsLink">
