@@ -16,7 +16,6 @@ use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\EqubTypeController;
 use App\Http\Controllers\Api\EqubTakerController;
 use App\Http\Controllers\Api\ActivityLogController;
-use App\Http\Controllers\Api\CBEBirrController;
 use App\Http\Controllers\Api\CityController;
 use App\Http\Controllers\Api\CountryCodeController;
 use App\Http\Controllers\Api\CountryController;
@@ -99,15 +98,11 @@ Route::post('/changePassword/{id}', [UserController::class, 'changePassword'])->
 
 // New Apis CBE Gatway 1
 Route::middleware(['auth:api'])->group(function () {
-    
+    Route::post('/cbegateway', [PaymentGatewayController::class, 'generateUrl']);
 });
-Route::post('/cbegateway', [PaymentGatewayController::class, 'generateUrl']);
+// Transaction Status EncVal
 Route::post('/transaction-status', [PaymentGatewayController::class, 'transactionStatus']);
 
-// Route::post('/cbebirr/payment', [CBEBirrController::class, 'initiateTransaction']);
-// Route::get('/cbebirr/status/{transactionId}', [CBEBirrController::class, 'transactionStatus']);
-
-// Route::post('/check-transaction-status', [PaymentGatewayController::class, 'checkTransactionStatus']);
 
 // Main Equb
 Route::middleware(['auth:api'])->group(function () {
