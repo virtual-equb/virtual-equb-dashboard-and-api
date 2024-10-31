@@ -67,23 +67,53 @@ class UserController extends Controller
      *
      * @return JsonResponse
      */
+    // public function sendOtp($phone)
+    // {
+
+    //     $prefixMessage = "Your Verification Code is";
+    //     $response = Http::withHeaders([
+    //         'Authorization' => 'Bearer ' . $this->afroApiKey,
+    //     ])
+    //         ->baseUrl($this->afroBaseUrl)
+    //         ->get('/challenge?from=' . $this->afroSenderId .
+    //             '&sender=' . $this->afroSenderName .
+    //             '&to=' . $phone .
+    //             '&pr=' . $prefixMessage .
+    //             '&sb=' . $this->afroSpaceBefore .
+    //             '&sa=' . $this->afroSpaceAfter .
+    //             '&ttl=' . $this->afroExpiresIn .
+    //             '&len=' . $this->afroLength .
+    //             '&t=' . $this->afroType);
+    //     $responseData = $response->json();
+    //     if ($responseData['acknowledge'] == 'success') {
+    //         return ['acknowledge' => $responseData['acknowledge']];
+    //     }
+    //     return [
+    //         'acknowledge' => $responseData['acknowledge'],
+    //         'message' => $responseData['response']['errors']
+    //     ];
+    // }
     public function sendOtp($phone)
     {
-
         $prefixMessage = "Your Verification Code is";
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $this->afroApiKey,
         ])
-            ->baseUrl($this->afroBaseUrl)
-            ->get('/challenge?from=' . $this->afroSenderId .
-                '&sender=' . $this->afroSenderName .
-                '&to=' . $phone .
-                '&pr=' . $prefixMessage .
-                '&sb=' . $this->afroSpaceBefore .
-                '&sa=' . $this->afroSpaceAfter .
-                '&ttl=' . $this->afroExpiresIn .
-                '&len=' . $this->afroLength .
-                '&t=' . $this->afroType);
+        ->baseUrl($this->afroBaseUrl)
+        ->withOptions(['verify' => false])
+        // ->withOptions(['verify' => base_path('C:/wamp64/cacert.pem')])  
+        ->get('/challenge', [
+            'from' => $this->afroSenderId,
+            'sender' => $this->afroSenderName,
+            'to' => $phone,
+            'pr' => $prefixMessage,
+            'sb' => $this->afroSpaceBefore,
+            'sa' => $this->afroSpaceAfter,
+            'ttl' => $this->afroExpiresIn,
+            'len' => $this->afroLength,
+            't' => $this->afroType
+        ]);
+
         $responseData = $response->json();
         if ($responseData['acknowledge'] == 'success') {
             return ['acknowledge' => $responseData['acknowledge']];
@@ -93,6 +123,7 @@ class UserController extends Controller
             'message' => $responseData['response']['errors']
         ];
     }
+
     /**
      * Verify OTP
      *
