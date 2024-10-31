@@ -1,8 +1,4 @@
-<?php if(Auth::user()->role == 'admin' ||
-        Auth::user()->role == 'general_manager' ||
-        Auth::user()->role == 'operation_manager' ||
-        Auth::user()->role == 'customer_service' ||
-        Auth::user()->role == 'it'): ?>
+
     <div class="modal fade" id="addEqubModal" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -99,5 +95,5 @@
 
         </div>
     </div>
-<?php endif; ?>
+    
 <?php /**PATH D:\virtual Equb\virtual-backend\resources\views/admin/equb/addEqub.blade.php ENDPATH**/ ?>
