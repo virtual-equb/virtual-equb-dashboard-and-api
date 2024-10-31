@@ -61,15 +61,15 @@ class EqubController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData->hasAnyRole(['Super Admin', 'General manager', 'Operation manager', 'IT', 'Finance'])) {
+            if ($userData->hasAnyRole(['admin', 'general_manager', 'operation_manager', 'it', 'finance'])) {
                 $userData = Auth::user();
                 $equbs = $this->equbRepository->getAll();
                 return view('admin/equb.equbList', compact('equbs'));
-            } elseif ($userData->hasRole('Equb collector')) {
+            } elseif ($userData->hasRole('equb_collector')) {
                 $userData = Auth::user();
                 $equbs = $this->equbRepository->getAll();
                 return view('equbCollecter/equb.equbList', compact('equbs'));
-            } elseif ($userData->hasRole('Member')) {
+            } elseif ($userData->hasRole('member')) {
                 $userData = Auth::user();
                 $equbs = $this->equbRepository->getAll();
                 return view('member/equb.equbList', compact('equbs'));
@@ -325,15 +325,15 @@ class EqubController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData->hasAnyRole(['Super Admin', 'General manager', 'Operation manager', 'IT', 'Finance'])) {
+            if ($userData->hasAnyRole(['admin', 'general_manager', 'operation_manager', 'it', 'finance'])) {
                 $equbTakerData['equb'] = $this->equbRepository->getByIdNestedForLottery($id);
                 $equbTakerData['total'] = $this->paymentRepository->getTotal($id);
                 return view('admin/equb.equbDetails', $equbTakerData);
-            } elseif ($userData->hasRole('Equb collector')) {
+            } elseif ($userData->hasRole('equb_collector')) {
                 $equbTakerData['equb'] = $this->equbRepository->getByIdNested($id);
                 $equbTakerData['total'] = $this->paymentRepository->getTotal($id);
                 return view('equbCollecter/equb.equbDetails', $equbTakerData);
-            } elseif ($userData->hasRole('Member')) {
+            } elseif ($userData->hasRole('member')) {
                 $equbTakerData['equb'] = $this->equbRepository->getByIdNested($id);
                 $equbTakerData['total'] = $this->paymentRepository->getTotal($id);
                 return view('member/equb.equbDetails', $equbTakerData);
@@ -356,13 +356,13 @@ class EqubController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData->hasAnyRole(['Super Admin', 'General manager', 'Operation manager', 'IT', 'Finance'])) {
+            if ($userData->hasAnyRole(['admin', 'general_manager', 'operation_manager', 'it', 'finance'])) {
                 $data['title'] = $this->title;
                 return view('admin/equb/addEqub', $data);
-            } elseif ($userData->hasRole('Equb collector')) {
+            } elseif ($userData->hasRole('equb_collector')) {
                 $data['title'] = $this->title;
                 return view('equbCollecter/equb/addEqub', $data);
-            } elseif ($userData->hasRole('Member')) {
+            } elseif ($userData->hasRole('member')) {
                 $data['title'] = $this->title;
                 return view('member/equb/addEqub', $data);
             } else {
@@ -602,13 +602,13 @@ class EqubController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData->hasAnyRole(['Super Admin', 'General manager', 'Operation manager', 'IT', 'Finance'])) {
+            if ($userData->hasAnyRole(['admin', 'general_manager', 'operation_manager', 'it', 'finance'])) {
                 $data['equb'] = $this->equbRepository->getById($equb);
                 return view('admin/member/updateMember', $data);
-            } elseif ($userData->hasRole('Equb collector')) {
+            } elseif ($userData->hasRole('equb_collector')) {
                 $data['equb'] = $this->equbRepository->getById($equb);
                 return view('equbCollecter/member/updateMember', $data);
-            } elseif ($userData->hasRole('Member')) {
+            } elseif ($userData->hasRole('member')) {
                 $data['equb'] = $this->equbRepository->getById($equb);
                 return view('member/member/updateMember', $data);
             } else {

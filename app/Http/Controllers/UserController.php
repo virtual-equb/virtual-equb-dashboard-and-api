@@ -186,7 +186,7 @@ class UserController extends Controller
                         $message = "Your Virtual Equb password has been reset to $password. You can now login through the app. For further information please call " . $shortcode;
                         $this->sendSms($user->phone_number, $message);
                     } catch (Exception $ex) {
-                        return redirect()->back()->with('error', 'Failed to send SMS');
+                        return redirect()->back()->with('error', 'Failed to send SMS' . $ex->getMessage());
                     };
                     $msg = "Password has been changed successfully!";
                     $type = 'success';
