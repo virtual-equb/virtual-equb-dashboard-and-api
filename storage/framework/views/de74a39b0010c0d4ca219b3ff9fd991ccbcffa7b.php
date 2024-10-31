@@ -275,6 +275,7 @@
                         <?php echo method_field('PUT'); ?>
                         <p class="text-center">Are you sure you want to update status?</p>
                     </div>
+                    <h1></h1>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-sm btn-danger">update</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
