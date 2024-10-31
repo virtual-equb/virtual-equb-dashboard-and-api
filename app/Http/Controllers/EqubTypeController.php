@@ -189,17 +189,12 @@ class EqubTypeController extends Controller
     }
     public function create()
     {   
-        
         try {
-            $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
-                $data['title'] = $this->title;
-                $data['mainEqubs'] = $this->mainEqubRepository->all();
+            
+            $data['title'] = $this->title;
+            $data['mainEqubs'] = $this->mainEqubRepository->all();
                 
-                return view('admin/equbType/addEqubType', $data);
-            // } else {
-            //     return back();
-            // }
+            return view('admin/equbType/addEqubType', $data);
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -211,9 +206,9 @@ class EqubTypeController extends Controller
     {
         // dd($request);
         try {
-            $userData = Auth::user();
+                $userData = Auth::user();
             
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
+            
                 $this->validate($request, [
                     'name' => 'required',
                     'round' => 'required',
