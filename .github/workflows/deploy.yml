@@ -24,7 +24,7 @@ jobs:
 
       - name: Create Storage Directories
         run: |
-          mkdir -p storage/framework/cache/data
+          mkdir -p storage/framework/cache/data/44
           mkdir -p storage/framework/sessions
           mkdir -p storage/framework/views
 
