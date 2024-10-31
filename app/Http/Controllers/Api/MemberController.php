@@ -59,7 +59,7 @@ class MemberController extends Controller
          $this->middleware('permission:update member', ['only' => ['update', 'edit', 'updateStatus', 'rate']]);
          $this->middleware('permission:delete member', ['only' => ['destroy']]);
          $this->middleware('permission:view member', ['only' => ['index', 'searchMember', 'create', 'show', 'getPaidEqubs']]);
-         $this->middleware('permission:create member', ['only' => ['store', 'create', 'register']]);
+         $this->middleware('permission:create member', ['only' => ['create']]);
     }
     /**
      * Clear search entry

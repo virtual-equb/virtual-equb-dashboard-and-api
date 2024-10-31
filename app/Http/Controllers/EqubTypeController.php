@@ -704,13 +704,10 @@ class EqubTypeController extends Controller
     public function edit(EqubType $equbType)
     {
         try {
-            $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
-                $data['equbType'] = $this->equbTypeRepository->getById($equbType);
-                return view('admin/equbType/updateEqubType', $data);
-            // } else {
-            //     return view('auth/login');
-            // }
+            $data['equbType'] = $this->equbTypeRepository->getById($equbType);
+
+            return view('admin/equbType/updateEqubType', $data);
+
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -765,7 +762,6 @@ class EqubTypeController extends Controller
     {
         try {
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
                 $status = $this->equbTypeRepository->getStatusById($id)->status;
                 if ($status == "Deactive") {
                     $status = "Active";
