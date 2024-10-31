@@ -151,7 +151,7 @@ class EqubTypeController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -186,7 +186,7 @@ class EqubTypeController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -220,7 +220,7 @@ class EqubTypeController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -254,7 +254,7 @@ class EqubTypeController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -271,7 +271,7 @@ class EqubTypeController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -367,7 +367,7 @@ class EqubTypeController extends Controller
             $userData = Auth::user();
             $data = EqubType::where('id', $id)->with('mainEqub')->first();
             return response([
-                'data' => EqubTypeResource::collection($data)
+                'data' => new EqubTypeResource($data)
             ]);
         } catch (Exception $ex) {
             return response()->json([
@@ -389,7 +389,7 @@ class EqubTypeController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -544,7 +544,7 @@ class EqubTypeController extends Controller
                     return response()->json([
                         'code' => 200,
                         'message' => 'Equb type updated successfully!',
-                        'data' => $updated
+                        'data' => new EqubTypeResource($updated)
                     ]);
                 } else {
                     return response()->json([
