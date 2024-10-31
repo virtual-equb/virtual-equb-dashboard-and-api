@@ -56,7 +56,7 @@ class MemberController extends Controller
         $this->title = "Virtual Equb - Member";
 
          // Guard Permissions
-         $this->middleware('permission:update member', ['only' => ['update', 'edit', 'updateStatus', 'rate']]);
+         $this->middleware('permission:update member', ['only' => ['update', 'edit', 'updateStatus', 'rate', 'updateProfile']]);
          $this->middleware('permission:delete member', ['only' => ['destroy']]);
          $this->middleware('permission:view member', ['only' => ['index', 'searchMember', 'create', 'show', 'getPaidEqubs']]);
          $this->middleware('permission:create member', ['only' => ['create']]);
@@ -1133,7 +1133,7 @@ class MemberController extends Controller
         // dd($request);
         try {
             $userData = Auth::user();
-            if (($userData['role'] == "member")) {
+            // if (($userData['role'] == "member")) {
                 $name = $request->input('full_name');
                 $phone = $request->input('phone');
                 $gender = $request->input('gender');
@@ -1208,17 +1208,11 @@ class MemberController extends Controller
                         "error" => "Unknown error occurred, Please try again!"
                     ]);
                 }
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
