@@ -64,7 +64,7 @@
                                             <tr>
                                                 <th>#</th>
                                                 <th>Image</th>
-                                                <th>Main s Name</th>
+                                                <th>Main Equbs</th>
                                                 <th>Status</th>
                                                 <th>Actions</th>
                                             </tr>

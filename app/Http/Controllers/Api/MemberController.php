@@ -1087,7 +1087,7 @@ class MemberController extends Controller
                 return response()->json([
                     'code' => 200,
                     'message' => "Member has registered successfully!",
-                    'data' => $create
+                    'data' => new MemberResource($create)
                 ]);
             } else {
                 return response()->json([
@@ -1125,28 +1125,13 @@ class MemberController extends Controller
     // }
     public function getProfilePicture($userId)
     {
-        // return Member::where('id', $userId)->get();
         try {
-            // Locate the user and profile image path
-            $user = Member::findOrFail($userId);
-            $path = 'public/' . $user->profile_photo_path;
-    
-            // Check if file exists in storage
-            if (!Storage::exists($path)) {
-                return response()->json([
-                    'code' => 404,
-                    'message' => 'Image not found',
-                    'error' => 'The specified profile image does not exist in storage.'
-                ], 404);
-            }
-    
-            // Fetch file contents and mime type
-            $file = Storage::get($path);
-            $type = Storage::mimeType($path);
-    
-            // Return file response with correct content type
-            return response($file, 200)->header('Content-Type', $type);
-    
+            // Retrieve the member data
+            $member = Member::findOrFail($userId);
+
+            // Return the member resource, which includes the profile picture information
+            return new MemberResource($member);
+
         } catch (\Exception $ex) {
             // Handle exceptions and return a JSON error response
             return response()->json([
