@@ -15,5 +15,5 @@ yarn-error.log
 *.rest
 .htaccess
 /storage/*
-/samisasm
+/storage/
 !/storage/.gitignore

@@ -148,47 +148,76 @@
     });
 
     function openEditModal(equbId) {
-        $.ajax({
-            type: 'GET',
-            url: '/main-equbs/' + equbId, // Adjust URL to fetch the specific equb data
-            success: function(data) {
-                $('#edit_equb_id').val(data.id);
-                $('#edit_name').val(data.name);
-                $('#edit_remark').val(data.remark);
-                $('#edit_status').val(data.active); // Set the status dropdown
-                $('#editMainEqubModal').modal('show'); // Open the modal
-            },
-            error: function(xhr) {
-                console.error('Error fetching data:', xhr);
-            }
-        });
+    $.ajax({
+        type: 'GET',
+        url: '/main-equbs/' + equbId, // Adjust URL to fetch the specific equb data
+        success: function(data) {
+            $('#edit_equb_id').val(data.id);
+            $('#edit_name').val(data.name);
+            $('#edit_remark').val(data.remark);
+            $('#edit_status').val(data.active); // Set the status dropdown
+            
+            // Set current image source
+            const currentImage = $('#currentImage');
+            currentImage.attr('src', '{{ asset('storage/' . $equb->image) }}'); // Assuming 'data.image' holds the image filename
+            currentImage.show(); // Show the image if URL is present
+
+            $('#editMainEqubModal').modal('show'); // Open the modal
+        },
+        error: function(xhr) {
+            console.error('Error fetching data:', xhr);
+        }
+    });
+}
+
+$('#image').change(function() {
+    const file = this.files[0];
+    const currentImage = $('#currentImage');
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            currentImage.attr('src', e.target.result); // Update the image source with the new file
+            currentImage.show(); // Show the new image
+        }
+        reader.readAsDataURL(file); // Read the file as a data URL
+    } else {
+        currentImage.attr('src', ''); // Clear the image if no file is selected
+        currentImage.hide(); // Hide the image if no file is selected
+    }
+});
+
+$('#saveChanges').click(function() {
+    const id = $('#edit_equb_id').val();
+    const name = $('#edit_name').val();
+    const remark = $('#edit_remark').val();
+    const status = $('#edit_status').val();
+    const imageFile = $('#image')[0].files[0]; // Get the selected file
+
+    // Prepare FormData to handle file upload
+    const formData = new FormData();
+    formData.append('_token', '{{ csrf_token() }}');
+    formData.append('name', name);
+    formData.append('remark', remark);
+    formData.append('status', status);
+    if (imageFile) {
+        formData.append('image', imageFile); // Append image only if a new file is selected
     }
 
-    $('#saveChanges').click(function() {
-        const id = $('#edit_equb_id').val();
-        const name = $('#edit_name').val();
-        const remark = $('#edit_remark').val();
-        const status = $('#edit_status').val();
-        const imageFile = $('#image')[0].files[0]; // Get the selected file
-
-        $.ajax({
-            type: 'PUT',
-            url: '/main-equbs/' + id,
-            data: {
-                _token: '{{ csrf_token() }}',
-                name: name,
-                remark: remark,
-                status: status, // Include status in the data sent
-                image:imageFile
-            },
-            success: function(result) {
-                location.reload(); // Refresh the equb table after saving
-            },
-            error: function(xhr) {
-                console.log(xhr.responseText); // Corrected here
-                alert('Error updating equb: ' + xhr.responseText);
-            }
-        });
+    $.ajax({
+        type: 'PUT',
+        url: '/main-equbs/' + id,
+        data: formData,
+        contentType: false, // Important for file uploads
+        processData: false, // Important for file uploads
+        success: function(result) {
+            location.reload(); // Refresh the equb table after saving
+        },
+        error: function(xhr) {
+            console.log(xhr.responseText); // Corrected here
+            alert('Error updating equb: ' + xhr.responseText);
+        }
     });
+});
 </script>
 @endsection
