@@ -4,7 +4,7 @@
             </h1>
         </section>
         <form role="form" method="post" class="form-horizontal form-group"
-            action="{{ route('createUser') }}" enctype="multipart/form-data"
+            action="{{ route('registerUser') }}" enctype="multipart/form-data"
             id="addUserForm">
             {{ csrf_field() }}
             <div class="card-body">
@@ -59,13 +59,13 @@
                         </select>
                     </div>
                 </div>
-                <div class="form-group row">
+                {{-- <div class="form-group row">
                     <label for="email" class="control-label col-md-2 ">Password  <i class="fa fa-asterisk text-danger" style="font-size: 8px"></i></label>
                     <div class="form-group required col-md-10">
                         <input type="password" class="form-control" id="email"
                             name="password" placeholder="Password" required>
                     </div>
-                </div>
+                </div> --}}
             </div>
             <div class="d-flex justify-content-end mr-5">
                 <button type="submit" id="submit" class="btn btn-outline-primary mr-3">Submit</button>

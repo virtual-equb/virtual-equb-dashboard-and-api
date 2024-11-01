@@ -63,6 +63,7 @@
                                         <thead>
                                             <tr>
                                                 <th>#</th>
+                                                <th>Image</th>
                                                 <th>Main s Name</th>
                                                 <th>Status</th>
                                                 <th>Actions</th>
@@ -72,6 +73,9 @@
                                             @foreach ($mainEqubs as $key => $equb)
                                                 <tr>
                                                     <td>{{ $key + 1 }}</td>
+                                                    <td>
+                                                        <img src="{{ Storage::url($equb->image) }}" alt="{{ $equb->name }}" style="width: 50px; height: auto;">
+                                                    </td>
                                                     <td>{{ $equb->name }}</td>
                                                     <td>
                                                         <span class="badge {{ $equb->active == 1 ? 'badge-success' : 'badge-danger' }}">

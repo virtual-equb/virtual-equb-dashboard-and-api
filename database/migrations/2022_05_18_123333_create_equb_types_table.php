@@ -22,6 +22,9 @@ return new class extends Migration
             $table->foreignIdFor(MainEqub::class, 'main_equb_id');
             // $table->string('image');
             $table->integer('round');
+            $table->string('amount');
+            $table->string('total_members');
+            $table->string('expected_members');
             $table->enum('status', ['Active', 'Deactive',])->default('Active');
             $table->boolean('active')->default(false);
             $table->softDeletes();

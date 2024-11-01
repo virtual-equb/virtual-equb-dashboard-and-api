@@ -164,7 +164,9 @@ class MemberController extends Controller
             $userData = Auth::user();
             // dd($userData);
                 $data['member'] = $this->memberRepository->getMemberById($id);
-                return response()->json($data);
+                return response()->json([
+                    'member' => new MemberResource($data['member'])
+                ]);
            
         } catch (Exception $ex) {
             // dd($ex);
@@ -979,6 +981,7 @@ class MemberController extends Controller
      */
     public function register(Request $request)
     {
+        $shortcode = config('key.SHORT_CODE');
         try {
             // Validation rules
             $this->validate(
@@ -1070,6 +1073,17 @@ class MemberController extends Controller
             $user->assignRole($memberRoleAPI);
 
             if ($create && $user) {
+                try {
+                    $message = "Welcome to Virtual Equb! You have registered succesfully. Use the phone number " . $phone . " and password " . $password . " to log in." . " For further information please call " . $shortcode;
+                    // dd($message);
+                    $this->sendSms($request->phone, $message);
+                } catch (Exception $ex) {
+                    return response()->json([
+                        'code' => 400,
+                        'message' => 'Failed to send SMS',
+                        "error" => "Failed to send SMS"
+                    ]);
+                };
                 return response()->json([
                     'code' => 200,
                     'message' => "Member has registered successfully!",
@@ -1090,24 +1104,57 @@ class MemberController extends Controller
             ]);
         }
     }
+    // public function getProfilePicture($userId)
+    // {
+    //     $user = Member::findOrFail($userId);
+    //     $path = 'public/' . $user->profile_photo_path;
+    //     // dd($path);
+    //     if (Storage::exists($path)) {
+    //         $file = Storage::get($path);
+    //         $type = Storage::mimeType($path);
+
+    //         return response($file, 200)->header('Content-Type', $type);
+    //     } else {
+    //         return null;
+    //     }
+    //     return response()->json([
+    //         'code' => 400,
+    //         'message' => 'Image not found',
+    //         "error" => "Image not found"
+    //     ]);
+    // }
     public function getProfilePicture($userId)
     {
-        $user = Member::findOrFail($userId);
-        $path = 'public/' . $user->profile_photo_path;
-        // dd($path);
-        if (Storage::exists($path)) {
+        // return Member::where('id', $userId)->get();
+        try {
+            // Locate the user and profile image path
+            $user = Member::findOrFail($userId);
+            $path = 'public/' . $user->profile_photo_path;
+    
+            // Check if file exists in storage
+            if (!Storage::exists($path)) {
+                return response()->json([
+                    'code' => 404,
+                    'message' => 'Image not found',
+                    'error' => 'The specified profile image does not exist in storage.'
+                ], 404);
+            }
+    
+            // Fetch file contents and mime type
             $file = Storage::get($path);
             $type = Storage::mimeType($path);
-
+    
+            // Return file response with correct content type
             return response($file, 200)->header('Content-Type', $type);
-        } else {
-            return null;
+    
+        } catch (\Exception $ex) {
+            // Handle exceptions and return a JSON error response
+            return response()->json([
+                'code' => 500,
+                'message' => 'Failed to retrieve profile picture',
+                'error' => $ex->getMessage()
+            ], 500);
         }
-        return response()->json([
-            'code' => 400,
-            'message' => 'Image not found',
-            "error" => "Image not found"
-        ]);
     }
     /**
      * Update profile
