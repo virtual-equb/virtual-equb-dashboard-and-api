@@ -159,7 +159,7 @@
             
             // Set current image source
             const currentImage = $('#currentImage');
-            currentImage.attr('src', '{{ asset('storage/' . $equb->image) }}'); // Assuming 'data.image' holds the image filename
+            currentImage.attr('src', '{{ asset('storage/' . $equb->image) }}' + data.image); // Assuming 'data.image' holds the image filename
             currentImage.show(); // Show the image if URL is present
 
             $('#editMainEqubModal').modal('show'); // Open the modal
