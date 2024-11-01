@@ -74,7 +74,7 @@
                                                 <tr>
                                                     <td>{{ $key + 1 }}</td>
                                                     <td>
-                                                        <img src="{{ Storage::url($equb->image) }}" alt="{{ $equb->name }}" style="width: 50px; height: auto;">
+                                                        <img src="{{ asset('storage/' . $equb->image) }}" alt="{{ $equb->name }}" style="width: 50px; height: auto;">
                                                     </td>
                                                     <td>{{ $equb->name }}</td>
                                                     <td>
