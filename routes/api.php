@@ -49,7 +49,8 @@ use App\Models\User;
 
 Route::get('/registrationCity', [CityController::class, 'index'])->name('registrationCity');
 Route::post('member/registerMember', [MemberController::class, 'register'])->name('storeMember');
-Route::post('member/updateProfile/{id}', [MemberController::class, 'updateProfile'])->name('updateProfile');
+// Route::post('member/updateProfile/{id}', [MemberController::class, 'updateProfile'])->name('updateProfile'); // old update
+Route::put('member/updateProfile/{id}', [MemberController::class, 'updateProfile'])->name('updateProfile'); // new update
 Route::post('/checkMemberPhoneExist', [MemberController::class, 'checkMemberPhoneExist'])->name('check_member_phone_exist');
 Route::post('/checkUserPhoneExist', [UserController::class, 'checkPhone'])->name('check_user_phone_exist');
 Route::post('/resetPassword', [UserController::class, 'resetPasswordUser']);
@@ -143,7 +144,6 @@ Route::prefix('equb')->group(function () {
     Route::get('/equb-register', [EqubController::class, 'create'])->name('creatEqub');
     Route::get('/show-equb/{id}', [EqubController::class, 'show'])->name('showAllEkub');
     Route::post('/equb-register', [EqubController::class, 'store'])->name('registerEqub');
-    // Route::get('/draw-equb', [EqubController::class, 'draw'])->name('draw');
     Route::post('/equb-update/{id}', [EqubController::class, 'update'])->name('updateEqub');
     Route::put('/equbStatus-update/{id}', [EqubController::class, 'updateStatus'])->name('updateEqubStatus');
     Route::delete('/equb-delete/{id}', [EqubController::class, 'destroy'])->name('deleteEqub');
@@ -158,9 +158,7 @@ Route::prefix('member')->group(function () {
     Route::get('/get-paid-equbs/{id}', [MemberController::class, 'getPaidEqubs'])->name('getPaidEqub');
     Route::get('/search-member/{searchInput}/{offset}/{pageNumber?}', [MemberController::class, 'searchMember'])->name('searchMember');
     Route::get('/get-allEqubs', [MemberController::class, 'getAllEqubs'])->name('getAllEqub');
-    //Route::get('/show-member/{id}', [MemberController::class, 'show'])->name('showAllMember');
     Route::get('/create-member', [MemberController::class, 'create'])->name('createMember');
-    // Route::get('/register',[MemberController::class, 'create'])->name('createMember');
     Route::post('/register', [MemberController::class, 'store'])->name('registerMember');
     Route::get('/edit/{id}', [MemberController::class, 'edit'])->name('editMember');
     Route::put('/update/{id}', [MemberController::class, 'update'])->name('updateMember');
