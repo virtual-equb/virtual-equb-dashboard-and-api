@@ -64,7 +64,7 @@
                                             <tr>
                                                 <th>#</th>
                                                 <th>Image</th>
-                                                <th>Main Equbs Name</th>
+                                                <th>Main Equbs</th>
                                                 <th>Status</th>
                                                 <th>Actions</th>
                                             </tr>
@@ -74,13 +74,12 @@
                                                 <tr>
                                                     <td>{{ $key + 1 }}</td>
                                                     <td>
-    <img src="{{ asset('storage/' . $equb->image) }}" alt="{{ $equb->name }}" style="width: 50px; height: auto;">
-</td>
-
+                                                        <img src="{{ asset('storage/' . $equb->image) }}" alt="{{ $equb->name }}" style="width: 50px; height: auto;">
+                                                    </td>
                                                     <td>{{ $equb->name }}</td>
                                                     <td>
-                                                        <span class="badge {{ $equb->active == 1 ? 'badge-success' : 'badge-danger' }}">
-                                                            {{ $equb->active == 1 ? 'Active' : 'Inactive' }}
+                                                        <span class="badge {{ $equb->active ? 'badge-success' : 'badge-danger' }}">
+                                                            {{ $equb->active ? 'Active' : 'Inactive' }}
                                                         </span>
                                                     </td>
                                                     @if (Auth::user()->role != 'assistant')
@@ -132,10 +131,14 @@
             $.ajax({
                 url: '/main-equbs/' + equbId,
                 type: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Include CSRF token
+                },
                 success: function(result) {
                     location.reload(); // Refresh the equb table
                 },
                 error: function(xhr) {
+                    console.error('Error deleting equb:', xhr); // Log error details to console
                     alert('Error deleting equb: ' + xhr.responseText);
                 }
             });
@@ -146,61 +149,64 @@
         $('#equbSearchText').val('');
         // Optionally refresh the table or apply a filter reset
     });
+
     function openEditModal(equbId) {
-    $.ajax({
-        type: 'GET',
-        url: '/main-equbs/' + equbId, // Adjust URL to fetch the specific equb data
-        success: function(data) {
-            $('#edit_equb_id').val(data.id);
-            $('#edit_name').val(data.name);
-            $('#edit_remark').val(data.remark);
-            $('#edit_status').val(data.active); // Set the status dropdown
+        $.ajax({
+            type: 'GET',
+            url: '/main-equbs/' + equbId, // Fetch specific equb data
+            success: function(data) {
+                $('#edit_equb_id').val(data.id);
+                $('#edit_name').val(data.name);
+                $('#edit_remark').val(data.remark);
+                $('#edit_status').val(data.active); // Set the status dropdown
 
-            // Display current image if it exists
-            if (data.image) { // Assuming your response has an 'image' field
-                $('#currentImage').attr('src', '{{ asset("storage/") }}/' + data.image).show();
-            } else {
-                $('#currentImage').hide(); // Hide if no image
+                // Display current image if it exists
+                if (data.image) {
+                    $('#currentImage').attr('src', '{{ asset("storage/") }}/' + data.image).show();
+                } else {
+                    $('#currentImage').hide(); // Hide if no image
+                }
+
+                $('#editMainEqubModal').modal('show'); // Open the modal
+            },
+            error: function(xhr) {
+                console.error('Error fetching data:', xhr); // Log error details to console
             }
-
-            $('#editMainEqubModal').modal('show'); // Open the modal
-        },
-        error: function(xhr) {
-            console.error('Error fetching data:', xhr);
-        }
-    });
-}
-
-$('#saveChanges').click(function() {
-    const id = $('#edit_equb_id').val();
-    const name = $('#edit_name').val();
-    const remark = $('#edit_remark').val();
-    const status = $('#edit_status').val();
-    const imageFile = $('#image')[0].files[0]; // Get the selected file
-
-    const formData = new FormData();
-    formData.append('_token', '{{ csrf_token() }}');
-    formData.append('name', name);
-    formData.append('remark', remark);
-    formData.append('status', status);
-    if (imageFile) {
-        formData.append('image', imageFile); // Include image file only if selected
+        });
     }
 
-    $.ajax({
-        type: 'PUT',
-        url: '/main-equbs/' + id,
-        data: formData,
-        processData: false, // Important for FormData
-        contentType: false, // Important for FormData
-        success: function(result) {
-            location.reload(); // Refresh the equb table after saving
-        },
-        error: function(xhr) {
-            console.log(xhr.responseText);
-            alert('Error updating equb: ' + xhr.responseText);
-        }
+    $(document).ready(function() {
+        $('#saveChanges').click(function() {
+            const id = $('#edit_equb_id').val();
+            const name = $('#edit_name').val();
+            const remark = $('#edit_remark').val();
+            const status = $('#edit_status').val();
+            const imageFile = $('#image')[0].files[0]; // Get the selected file
+
+            const formData = new FormData();
+            formData.append('_token', $('meta[name="csrf-token"]').attr('content')); // Include CSRF token
+            formData.append('name', name);
+            formData.append('remark', remark);
+            formData.append('status', status);
+            if (imageFile) {
+                formData.append('image', imageFile); // Include image file if selected
+            }
+
+            $.ajax({
+                type: 'PUT',
+                url: '/main-equbs/' + id,
+                data: formData,
+                processData: false, // Important for FormData
+                contentType: false, // Important for FormData
+                success: function(result) {
+                    location.reload(); // Refresh the equb table after saving
+                },
+                error: function(xhr) {
+                    console.error('Error updating equb:', xhr); // Log error details to console
+                    alert('Error updating equb: ' + xhr.responseText);
+                }
+            });
+        });
     });
-});
 </script>
 @endsection
