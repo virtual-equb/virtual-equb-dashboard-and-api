@@ -52,10 +52,10 @@ class EqubTypeController extends Controller
         $this->title = "Virtual Equb - Equb Type";
         $this->mainEqubRepository = $mainEqubRepository;
         // Guards
-        $this->middleware('permission:update equb_type', ['only' => ['update', 'edit', 'updateStatus']]);
-        $this->middleware('permission:delete equb_type', ['only' => ['destroy', 'dateInterval']]);
-        $this->middleware('permission:view equb_type', ['only' => ['index', 'show']]);
-        $this->middleware('permission:create equb_type', ['only' => ['store', 'create']]);
+        $this->middleware('permission_check_logout:update equb_type', ['only' => ['update', 'edit', 'updateStatus']]);
+        $this->middleware('permission_check_logout:delete equb_type', ['only' => ['destroy', 'dateInterval']]);
+        $this->middleware('permission_check_logout:view equb_type', ['only' => ['index', 'show']]);
+        $this->middleware('permission_check_logout:create equb_type', ['only' => ['store', 'create']]);
     }
     public function index()
     {

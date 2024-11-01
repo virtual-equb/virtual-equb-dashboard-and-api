@@ -56,10 +56,10 @@ class MemberController extends Controller
         $this->title = "Virtual Equb - Member";
 
          // Guard Permissions
-         $this->middleware('permission:update member', ['only' => ['update', 'edit', 'updateStatus', 'rate', 'updateProfile']]);
-         $this->middleware('permission:delete member', ['only' => ['destroy']]);
-         $this->middleware('permission:view member', ['only' => ['index', 'searchMember', 'create', 'show', 'getPaidEqubs']]);
-         $this->middleware('permission:create member', ['only' => ['create']]);
+         $this->middleware('api_permission_check:update member', ['only' => ['update', 'edit', 'updateStatus', 'rate', 'updateProfile']]);
+         $this->middleware('api_permission_check:delete member', ['only' => ['destroy']]);
+         $this->middleware('api_permission_check:view member', ['only' => ['index', 'searchMember', 'create', 'show', 'getPaidEqubs']]);
+         $this->middleware('api_permission_check:create member', ['only' => ['create']]);
     }
     /**
      * Clear search entry

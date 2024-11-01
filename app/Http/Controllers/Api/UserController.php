@@ -53,10 +53,10 @@ class UserController extends Controller
         $this->afroType = config('key.AFRO_OTP_TYPE');
 
         // Permission Guard
-        $this->middleware('permission:update user', ['only' => ['update', 'edit', 'activeUser', 'deactiveStatus']]);
-        $this->middleware('permission:delete user', ['only' => ['destroy']]);
-        $this->middleware('permission:view user', ['only' => ['index', 'show', 'user', 'deactiveUser']]);
-        $this->middleware('permission:create user', ['only' => ['store', 'create', 'resetPassword']]);
+        $this->middleware('api_permission_check:update user', ['only' => ['update', 'edit', 'activeUser', 'deactiveStatus']]);
+        $this->middleware('api_permission_check:delete user', ['only' => ['destroy']]);
+        $this->middleware('api_permission_check:view user', ['only' => ['index', 'show', 'user', 'deactiveUser']]);
+        $this->middleware('api_permission_check:create user', ['only' => ['store', 'create', 'resetPassword']]);
     }
     /**
      * Sent OTP

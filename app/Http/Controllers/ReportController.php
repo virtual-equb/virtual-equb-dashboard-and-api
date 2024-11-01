@@ -39,7 +39,7 @@ class ReportController extends Controller
         // Permission Guard
         // $this->middleware('permission:update report', ['only' => ['update', 'edit']]);
         // $this->middleware('permission:delete report', ['only' => ['destroy']]);
-        $this->middleware('permission:view report', ['only' => [
+        $this->middleware('permission_check_logout:view report', ['only' => [
             'index', 
             'show', 
             'memberFilter', 

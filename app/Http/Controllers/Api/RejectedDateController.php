@@ -28,10 +28,10 @@ class RejectedDateController extends Controller
         $this->title = "Virtual Equb - Off Dates";
 
         // Guard Permission
-        $this->middleware('permission:update rejected_date', ['only' => ['update', 'edit']]);
-        $this->middleware('permission:delete rejected_date', ['only' => ['destroy']]);
-        $this->middleware('permission:view rejected_date', ['only' => ['index', 'show', 'offDateCheck']]);
-        $this->middleware('permission:create rejected_date', ['only' => ['store', 'create']]);
+        $this->middleware('api_permission_check:update rejected_date', ['only' => ['update', 'edit']]);
+        $this->middleware('api_permission_check:delete rejected_date', ['only' => ['destroy']]);
+        $this->middleware('api_permission_check:view rejected_date', ['only' => ['index', 'show', 'offDateCheck']]);
+        $this->middleware('api_permission_check:create rejected_date', ['only' => ['store', 'create']]);
     }
     /**
      * Get all rejected dates
