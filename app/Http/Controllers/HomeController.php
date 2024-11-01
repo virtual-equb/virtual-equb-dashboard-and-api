@@ -37,14 +37,16 @@ class HomeController extends Controller
         $this->mainEqubRepository = $mainEqubRepository;
 
         // Permission Guard
-        $this->middleware('permission:view dashboard', ['only' => ['index', 'show', 'equbTypeIndex']]);
+        // $this->middleware('permission:view dashboard', ['only' => ['index', 'show', 'equbTypeIndex']]);
+        $this->middleware('permission_check_logout:view dashboard', ['only' => ['index', 'show', 'equbTypeIndex']]);
     }
     //Projection chart updated here
     public function index()
     {
         try {
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "finance" || $userData['role'] == "marketing_manager" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
+            $roles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance', 'marketing_manager', 'call_center', 'it', 'assistant'];
+            // if ($userData && $userData->hasAnyRole($roles)) {
                 $profile = Auth::user();
                 $title = $this->title;
                 $totalEqubAmount = $this->equbRepository->getExpectedTotal();
@@ -261,6 +263,12 @@ class HomeController extends Controller
                     }
                 }
                 return view('admin/home', compact('automaticMembersArray',  'title', 'lables', 'fullPaidAmount', 'fullUnPaidAmount', 'Expected', 'daylyPaidAmount', 'daylyUnpaidAmount', 'daylyExpected', 'weeklyPaidAmount', 'weeklyUnpaidAmount', 'weeklyExpected', 'monthlyPaidAmount', 'monthlyUnpaidAmount', 'monthlyExpected', 'yearlyPaidAmount', 'yearlyUnpaidAmount', 'yearlyExpected', 'totalMember', 'tudayPaidMember', 'activeMember', 'totalUser', 'totalEqubPayment'));
+            // } else {
+            //     return response()->json([
+            //         'code' => 400,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             // dd($ex);
             $msg = "Unable to process your request, Please try again!";
