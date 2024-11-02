@@ -17,7 +17,7 @@ class SubCityController extends Controller
      */
     public function index()
     {
-        try {
+      /*  try {
             $user = Auth::user();
 
             // Optional: Check user authorization here
@@ -28,9 +28,9 @@ class SubCityController extends Controller
 
             return view('admin.subCity.subCityList', compact('title', 'subCities','cities'));
         } catch (\Exception $e) {
-            \Log::error($e->getMessage());
             return Response::json(['error' => 'Failed to retrieve sub cities: ' . $e->getMessage()], 500);
-        }
+        }*/
+        return "hello";
     }
 
     /**
