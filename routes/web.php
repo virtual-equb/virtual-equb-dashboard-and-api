@@ -18,6 +18,8 @@ use App\Http\Controllers\MainEqubController;
 use App\Http\Controllers\WebPermissionController;
 use App\Http\Controllers\WebRoleController;
 use App\Http\Controllers\SubController;
+use App\Http\Controllers\TermsAndConditionsController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -40,6 +42,8 @@ Route::group(['middleware' => ['role:Super Admin|admin']], function() {
         // ->middleware('permission:delete');
     Route::get('/roles/{roleId}/assign-permission', [WebRoleController::class, 'assignPermission']);
     Route::put('/roles/{roleId}/assign-permission', [WebRoleController::class, 'updateRolePermission']);
+    Route::put('/main-equbs/{id}', [EqubController::class, 'update'])->name('updateMainEqub');
+
 });
 
 
@@ -323,11 +327,11 @@ Route::middleware([
           Route::get('{id}', [MainEqubController::class, 'show'])->name('mainEqubs.show');
       
           // Update an existing main equb
-          Route::put('{id}', [MainEqubController::class, 'update'])->name('mainEqubs.update');
+         // Route::put('{id}', [MainEqubController::class, 'update'])->name('mainEqubs.update');
         
           // Delete a main equb
           Route::delete('{id}', [MainEqubController::class, 'delete'])->name('mainEqubs.destroy');
     });
 
-   
+    Route::get('/terms-and-conditions', [TermsAndConditionsController::class, 'termsCondition'])->name('mainEqubs.index');
 });

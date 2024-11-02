@@ -25,13 +25,12 @@
                             <option value="0">Inactive</option>
                         </select>
                     </div>
+
                     <div class="form-group">
-    <label for="image" class="control-label">Image</label>
-    <input type="file" class="form-control" id="image" name="image" accept="image/*">
-    <img id="currentImage" src="{{ asset('storage/' . $equb->image) }}" alt="{{ $equb->name }}" class="img-thumbnail" style="max-width: 100px; max-height: 100px; display: block;">
-</div>
-
-
+                        <label for="image" class="control-label">Image</label>
+                        <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                        <img id="currentImage" src="" alt="Current Image" class="img-thumbnail" style="max-width: 100px; max-height: 100px; display: none;">
+                    </div>
 
                     <div class="form-group">
                         <label for="edit_remark">Remark</label>

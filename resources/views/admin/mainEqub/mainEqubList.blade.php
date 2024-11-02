@@ -176,37 +176,37 @@
     }
 
     $(document).ready(function() {
-        $('#saveChanges').click(function() {
-            const id = $('#edit_equb_id').val();
-            const name = $('#edit_name').val();
-            const remark = $('#edit_remark').val();
-            const status = $('#edit_status').val();
-            const imageFile = $('#image')[0].files[0]; // Get the selected file
+    $('#saveChanges').click(function() {
+        const id = $('#edit_equb_id').val();
+        const name = $('#edit_name').val();
+        const remark = $('#edit_remark').val();
+        const status = $('#edit_status').val();
+        const imageFile = $('#image')[0].files[0]; // Get the selected file
 
-            const formData = new FormData();
-            formData.append('_token', $('meta[name="csrf-token"]').attr('content')); // Include CSRF token
-            formData.append('name', name);
-            formData.append('remark', remark);
-            formData.append('status', status);
-            if (imageFile) {
-                formData.append('image', imageFile); // Include image file if selected
+        const formData = new FormData();
+        formData.append('_token', $('meta[name="csrf-token"]').attr('content')); // Include CSRF token
+        formData.append('name', name);
+        formData.append('remark', remark);
+        formData.append('status', status);
+        if (imageFile) {
+            formData.append('image', imageFile); // Include image file if selected
+        }
+
+        $.ajax({
+            type: 'PUT',
+            url: '/main-equbs/' + id,
+            data: formData,
+            processData: false, // Important for FormData
+            contentType: false, // Important for FormData
+            success: function(result) {
+                location.reload(); // Refresh the equb table after saving
+            },
+            error: function(xhr) {
+                console.error('Error updating equb:', xhr); // Log error details to console
+                alert('Error updating equb: ' + xhr.responseText);
             }
-
-            $.ajax({
-                type: 'PUT',
-                url: '/main-equbs/' + id,
-                data: formData,
-                processData: false, // Important for FormData
-                contentType: false, // Important for FormData
-                success: function(result) {
-                    location.reload(); // Refresh the equb table after saving
-                },
-                error: function(xhr) {
-                    console.error('Error updating equb:', xhr); // Log error details to console
-                    alert('Error updating equb: ' + xhr.responseText);
-                }
-            });
         });
     });
+});
 </script>
 @endsection
