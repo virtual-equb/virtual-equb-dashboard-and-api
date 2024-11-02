@@ -334,5 +334,5 @@ Route::middleware([
           Route::delete('{id}', [MainEqubController::class, 'delete'])->name('mainEqubs.destroy');
     });
 
-    Route::get('/terms-and-conditions', [TermsAndConditionsController::class, 'termsCondition'])->name('mainEqubs.index');
+    Route::get('/terms-and-conditions', [TermsAndConditionsController::class, 'termsCondition'])->name('terms.condition');
 });
