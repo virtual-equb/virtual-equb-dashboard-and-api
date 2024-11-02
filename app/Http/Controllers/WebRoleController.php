@@ -26,17 +26,12 @@ class WebRoleController extends Controller
         $this->activityLogRepository = $activityLogRepository;
         $this->userRepository = $userRepository;
         $this->title = "Virtual Equb - User";
+
         // Guard Permission
         $this->middleware('permission_check_logout:edit role', ['only' => ['update', 'edit', 'updatePermissionToRole']]);
         $this->middleware('permission_check_logout:delete role', ['only' => ['destroy']]);
         $this->middleware('permission_check_logout:view role', ['only' => ['index', 'show']]);
         $this->middleware('permission_check_logout:create role', ['only' => ['store', 'create', 'addPermissionToRole']]);
-
-        // // Guard Permission
-        // $this->middleware('permission:edit role', ['only' => ['update', 'edit', 'updatePermissionToRole']]);
-        // $this->middleware('permission:delete role', ['only' => ['destroy']]);
-        // $this->middleware('permission:view role', ['only' => ['index', 'show']]);
-        // $this->middleware('permission:create role', ['only' => ['store', 'create', 'addPermissionToRole']]);
     }
     public function index()
     {
