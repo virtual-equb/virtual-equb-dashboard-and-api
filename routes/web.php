@@ -300,19 +300,19 @@ Route::middleware([
         Route::get('/', [BoleController::class, 'index'])->name('subcities.index');
     
         // Get a sub-city by ID
-        Route::get('{id}', [SubCityController::class, 'show'])->name('subcities.show');
+        Route::get('{id}', [BoleController::class, 'show'])->name('subcities.show');
     
         // Create a new sub-city
-        Route::post('/', [SubCityController::class, 'store'])->name('subcities.store');
+        Route::post('/', [BoleController::class, 'store'])->name('subcities.store');
     
         // Update an existing sub-city
-        Route::put('{id}', [SubCityController::class, 'update'])->name('subcities.update');
+        Route::put('{id}', [BoleController::class, 'update'])->name('subcities.update');
     
         // Delete a sub-city
-        Route::delete('{id}', [SubCityController::class, 'destroy'])->name('subcities.destroy');
+        Route::delete('{id}', [BoleController::class, 'destroy'])->name('subcities.destroy');
     
         // Get sub-cities by city ID
-        Route::get('city/{cityId}', [SubCityController::class, 'getSubCitiesByCityId'])->name('subcities.byCityId');
+        Route::get('city/{cityId}', [BoleController::class, 'getSubCitiesByCityId'])->name('subcities.byCityId');
         
     });
     Route::prefix('main-equbs')->group(function () {
