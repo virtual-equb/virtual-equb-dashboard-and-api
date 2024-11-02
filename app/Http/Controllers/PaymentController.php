@@ -44,14 +44,17 @@ class PaymentController extends Controller
         /** @var App\Models\User */
         try {
             $userData = Auth::user();
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it'];
+            $collector = ['equb_collector'];
+            $member = ['member'];
             if ($userData) {
-                if ($userData->hasAnyRole(['Super Admin', 'General manager', 'Operation manager', 'it'])) {
+                if ($userData->hasAnyRole($adminRoles)) {
                     $data['title'] = $this->title;
                     return view('admin/payment/addPayment', $data);
-                } if ($userData->hasRole('Equb Collector')) {
+                } if ($userData->hasRole($collector)) {
                     $data['title'] = $this->title;
                     return view('equbCollecter/payment/addPayment', $data);
-                } if ($userData->hasRole('Member')) {
+                } if ($userData->hasRole($member)) {
                     $data['title'] = $this->title;
                     return view('member/payment/addPayment', $data);
                 } 
@@ -67,7 +70,10 @@ class PaymentController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData->hasAnyRole(['Super Admin', 'General manager', 'Equb collector'])) {
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'equb_collector'];
+            $collector = ['equb_collector'];
+            $member = ['member'];
+            if ($userData->hasAnyRole($adminRoles)) {
                 $this->validate($request, [
                     'payment_type' => 'required',
                     'amount' => 'required',
@@ -240,7 +246,9 @@ class PaymentController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'equb_collector'];
+            $member = ['member'];
+            if ($userData && $userData->hasAnyRole($adminRoles)) {
                 $this->validate($request, [
                     // 'payment_type' => 'required',
                     'amount' => 'required',
@@ -400,8 +408,12 @@ class PaymentController extends Controller
             $limit = 10;
             $pageNumber = 1;
             $userData = Auth::user();
+            
             if ($userData) {
-                if ($userData->hasAnyRole(['Super Admin', 'General manager', 'Operation manager', 'it', 'Finance'])) {
+                $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance'];
+                $member = ['member'];
+                $collector = ['equb_collector'];
+                if ($userData->hasAnyRole($adminRoles)) {
                     $paymentData['member'] = $this->memberRepository->getMemberById($member_id);
                     $paymentData['equb'] = $this->equbRepository->geteEubById($equb_id);
                     $paymentData['payments'] = $this->paymentRepository->getSinglePayment($member_id, $equb_id, $offset);
@@ -412,7 +424,7 @@ class PaymentController extends Controller
                     $paymentData['limit'] = $limit;
                     $paymentData['pageNumber'] = $pageNumber;
                     return view('admin/payment.paymentList', $paymentData);
-                } elseif ($userData->hasRole('Equb collector')) {
+                } elseif ($userData->hasRole($collector)) {
                     $paymentData['member'] = $this->memberRepository->getMemberById($member_id);
                     $paymentData['equb'] = $this->equbRepository->geteEubById($equb_id);
                     $paymentData['payments'] = $this->paymentRepository->getSinglePayment($member_id, $equb_id, $offset);
@@ -423,7 +435,7 @@ class PaymentController extends Controller
                     $paymentData['limit'] = $limit;
                     $paymentData['pageNumber'] = $pageNumber;
                     return view('equbCollecter/payment.paymentList', $paymentData);
-                } elseif ($userData->hasRole('Member')) {
+                } elseif ($userData->hasRole($member)) {
                     $paymentData['member'] = $this->memberRepository->getMemberById($member_id);
                     $paymentData['equb'] = $this->equbRepository->geteEubById($equb_id);
                     $paymentData['payments'] = $this->paymentRepository->getSinglePayment($member_id, $equb_id, $offset);
@@ -450,7 +462,9 @@ class PaymentController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData->hasAnyRole(['Super Admin', 'General manager', 'Operation manager', 'it', 'Finance'])) {
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'equb_collector'];
+            $member = ['member'];
+            if ($userData->hasAnyRole($adminRoles)) {
                 $this->middleware('auth');
                 $data['title'] = $this->title;
                 return view('admin/payment.pendingPaymentList', $data);
@@ -523,7 +537,10 @@ class PaymentController extends Controller
         // dd($searchInput);
         try {
             $userData = Auth::user();
-            if ($userData->hasAnyRole(['Super Admin', 'General manager', 'Operation manger', 'IT', 'Call center'])) {
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'equb_collector', 'call_center'];
+            $member = ['member'];
+            $collector = ['equb_collector'];
+            if ($userData->hasAnyRole($adminRoles)) {
                 $data['offset'] = $offset;
                 $limit = 50;
                 $data['limit'] = $limit;
@@ -537,7 +554,7 @@ class PaymentController extends Controller
                 $data['payments'] = $this->paymentRepository->searchPendingPayment($offset, $searchInput);
                 // dd($data);
                 return view('admin/payment.searchPendingPaymentTable', $data);
-            } elseif ($userData->hasRole('Equb collector')) {
+            } elseif ($userData->hasRole($collector)) {
                 $data['offset'] = $offset;
                 $limit = 50;
                 $data['limit'] = $limit;
@@ -565,7 +582,10 @@ class PaymentController extends Controller
             $limit = 10;
             $pageNumber = 1;
             $userData = Auth::user();
-            if ($userData->hasAnyRole(['Super Admin', 'Assistant' ,'General manager', 'Operation manager', 'IT', 'Finance', 'Call center'])) {
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'equb_collector', 'assistant', 'call_center'];
+            $member = ['member'];
+            $collector = ['equb_collector'];
+            if ($userData->hasAnyRole($adminRoles)) {
                 $data['payments']  = $this->paymentRepository->getAllPendingByPaginate($offset);
                 $data['totalPayments']  = $this->paymentRepository->countPendingPayments();
                 $data['pageNumber'] = $pageNumber;
@@ -590,7 +610,10 @@ class PaymentController extends Controller
             $offset = $offsetVal;
             $pageNumber = $pageNumberVal;
             $userData = Auth::user();
-            if ($userData->hasAnyRole(['Super Admin', 'General Manager', 'Operation manager', 'IT', 'Finance', 'Call center'])) {
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'equb_collector', 'finance', 'call_center'];
+            $member = ['member'];
+            $collector = ['equb_collector'];
+            if ($userData->hasAnyRole($adminRoles)) {
                 // $totalMember = $this->memberRepository->getPendingMembers();
                 $payments = $this->paymentRepository->getAllPendingByPaginate($offset);
                 // $totalPaid = $this->paymentRepository->getTotalPaid($equb_id);
@@ -600,7 +623,7 @@ class PaymentController extends Controller
                 $title = $this->title;
                 return view('admin/payment.pendingPaymentTable', compact('title', 'payments', 'pageNumber', 'offset', 'limit', 'totalPayments'));
                 // return view('admin/payment.pendingPaymentList', compact('title', 'equbTypes', 'members', 'equbs', 'payments', 'pageNumber', 'offset', 'limit', 'totalPayments'));
-            } elseif ($userData->hasRole('Equb collector')) {
+            } elseif ($userData->hasRole($collector)) {
                 // $totalMember = $this->memberRepository->getPendingMembers();
                 $members = $this->memberRepository->getAllPendingByPaginate($offset);
                 // $totalPaid = $this->paymentRepository->getTotalPaid($equb_id);
@@ -627,7 +650,10 @@ class PaymentController extends Controller
             $offset = $offsetVal;
             $pageNumber = $pageNumberVal;
             $userData = Auth::user();
-            if ($userData->hasAnyRole(['Super Admin', 'Operation manager', 'General manager', 'IT'])) {
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'equb_collector'];
+            $member = ['member'];
+            $collector = ['equb_collector'];
+            if ($userData->hasAnyRole($adminRoles)) {
                 $paymentData['member'] = $this->memberRepository->getMemberById($member_id);
                 $paymentData['equb'] = $this->equbRepository->geteEubById($equb_id);
                 $paymentData['payments'] = $this->paymentRepository->getSinglePayment($member_id, $equb_id, $offset);
@@ -638,7 +664,7 @@ class PaymentController extends Controller
                 $paymentData['limit'] = $limit;
                 $paymentData['pageNumber'] = $pageNumber;
                 return view('admin/payment.paymentList', $paymentData);
-            } elseif ($userData->hasRole('Equb collector')) {
+            } elseif ($userData->hasRole($collector)) {
                 $paymentData['member'] = $this->memberRepository->getMemberById($member_id);
                 $paymentData['equb'] = $this->equbRepository->geteEubById($equb_id);
                 $paymentData['payments'] = $this->paymentRepository->getSinglePayment($member_id, $equb_id, $offset);
@@ -649,7 +675,7 @@ class PaymentController extends Controller
                 $paymentData['limit'] = $limit;
                 $paymentData['pageNumber'] = $pageNumber;
                 return view('equbCollecter/payment.paymentList', $paymentData);
-            } elseif ($userData->hasRole('Member')) {
+            } elseif ($userData->hasRole($member)) {
                 $paymentData['member'] = $this->memberRepository->getMemberById($member_id);
                 $paymentData['equb'] = $this->equbRepository->geteEubById($equb_id);
                 $paymentData['payments'] = $this->paymentRepository->getSinglePayment($member_id, $equb_id, $offset);
@@ -674,7 +700,10 @@ class PaymentController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData->hasAnyRole(['Super Admin', 'Equb collector'])) {
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'equb_collector'];
+            $member = ['member'];
+            $collector = ['equb_collector'];
+            if ($userData->hasAnyRole($adminRoles)) {
                 $paymentType = $request->input('update_payment_type');
                 $amount = $request->input('update_amount');
                 $credit = $request->input('update_creadit');
@@ -768,7 +797,10 @@ class PaymentController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData->hasAnyRole(['Super Admin', 'Equb collector'])) {
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'equb_collector'];
+            $member = ['member'];
+            $collector = ['equb_collector'];
+            if ($userData->hasAnyRole($adminRoles)) {
                 $paymentType = $request->input('update_payment_type');
                 $amount = $request->input('update_amount');
                 $credit = $request->input('update_creadit');
@@ -862,7 +894,10 @@ class PaymentController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData->hasAnyRole(['Super Admin', 'Equb collector'])) {
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'equb_collector'];
+            $member = ['member'];
+            $collector = ['equb_collector'];
+            if ($userData->hasAnyRole($adminRoles)) {
                 $payment = $this->paymentRepository->getById($id);
                 if ($payment != null) {
                     $deleted = $this->paymentRepository->delete($id);
@@ -903,7 +938,10 @@ class PaymentController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData->hasAnyRole(['Super Admin', 'Equb collector'])) {
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'equb_collector'];
+            $member = ['member'];
+            $collector = ['equb_collector'];
+            if ($userData->hasAnyRole($adminRoles)) {
                 $payment = $this->paymentRepository->getByMemberId($member_id, $equb_id);
                 if ($payment != null) {
                     $deleted = $this->paymentRepository->deleteAll($member_id, $equb_id);
@@ -944,7 +982,10 @@ class PaymentController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData->hasAnyRole(['Super Admin', 'Equb collector'])) {
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'equb_collector'];
+            $member = ['member'];
+            $collector = ['equb_collector'];
+            if ($userData->hasAnyRole($adminRoles)) {
                 $payment = $this->paymentRepository->getById($id);
                 if ($payment != null) {
                     $deleted = $this->paymentRepository->forceDelete($id);
@@ -985,7 +1026,10 @@ class PaymentController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData->hasAnyRole(['Super Admin', 'Equb collector'])) {
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'equb_collector'];
+            $member = ['member'];
+            $collector = ['equb_collector'];
+            if ($userData->hasAnyRole($adminRoles)) {
                 $payment = $this->paymentRepository->getById($id);
                 if ($payment != null) {
                     $deleted = $this->paymentRepository->forceDelete($id);
@@ -1028,7 +1072,10 @@ class PaymentController extends Controller
         try {
             // return response()->json($request);
             $userData = Auth::user();
-            if ($userData->hasAnyRole(['Super Admin', 'Equb collector'])) {
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'equb_collector'];
+            $member = ['member'];
+            $collector = ['equb_collector'];
+            if ($userData->hasAnyRole($adminRoles)) {
                 $payment = $this->paymentRepository->getById($id);
                 // dd($payment);
                 $updated = [
@@ -1098,7 +1145,10 @@ class PaymentController extends Controller
         try {
             // return response()->json($request);
             $userData = Auth::user();
-            if ($userData->hasAnyRole(['Super Admin', 'Equb collector'])) {
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'equb_collector'];
+            $member = ['member'];
+            $collector = ['equb_collector'];
+            if ($userData->hasAnyRole($adminRoles)) {
                 $payment = $this->paymentRepository->getById($id);
                 // dd($payment);
                 $updated = [
@@ -1166,7 +1216,10 @@ class PaymentController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData->hasAnyRole(['Super Admin', 'Equb collector'])) {
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'equb_collector'];
+            $member = ['member'];
+            $collector = ['equb_collector'];
+            if ($userData->hasAnyRole($adminRoles)) {
                 $payment = $this->paymentRepository->getById($id);
                 $updated = [
                     'status' => 'unpaid',
@@ -1214,7 +1267,10 @@ class PaymentController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData->hasAnyRole(['Super Admin', 'Equb collector'])) {
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'equb_collector'];
+            $member = ['member'];
+            $collector = ['equb_collector'];
+            if ($userData->hasAnyRole($adminRoles)) {
                 $payment = $this->paymentRepository->getById($id);
                 $updated = [
                     'status' => 'unpaid',

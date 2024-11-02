@@ -216,6 +216,7 @@ class UserController extends Controller
     }
     public function store(Request $request)
     {
+        
         try {
             $userData = Auth::user();
                 $this->validate(
@@ -226,7 +227,7 @@ class UserController extends Controller
                         'phone_number' => 'required',
                         'gender' => 'required',
                         'role' => 'required|array',
-                        'password' => 'required'
+                        // 'password' => 'required'
                     ]
                 );
                 $fullName = $request->input('name');
@@ -234,9 +235,9 @@ class UserController extends Controller
                 $phone_number = $request->input('phone_number');
                 $gender = $request->input('gender');
                 $roles = $request->input('role');
-                $password = $request->input('password');
+                // $password = $request->input('password');
                 // $password = '123456';
-                // $password = rand(100000, 999999);
+                $password = rand(100000, 999999);
                 $userData = [
                     'name' => $fullName,
                     'email' => $email,
@@ -245,14 +246,20 @@ class UserController extends Controller
                     'gender' => $gender,
                 ];
                 $create = $this->userRepository->createUser($userData);
-                foreach($roles as $role) {
-                    $create->assignRole([$role, 'guard_name' => 'web']);
-                    $create->assignRole([$role, 'guard_name' => 'api']);
-                }
+                
                 // $create->syncRoles([$role]);
                 
                 // dd($create);
                 if ($create) {
+                    foreach ($roles as $roleName) {
+                        // First, ensure the roles exist for each guard
+                        $roleForWeb = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web']);
+                        $roleForApi = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'api']);
+        
+                        // Assign the roles to the user for both guards
+                        $create->assignRole($roleForWeb);
+                        $create->assignRole($roleForApi);
+                    }
                     $userData = Auth::user();
                     $activityLog = [
                         'type' => 'users',
@@ -281,7 +288,7 @@ class UserController extends Controller
                     redirect('/user');
                 }
         } catch (Exception $ex) {
-            $msg = "Unknown Error Occurred, Please try again!";
+            $msg = $ex->getMessage();
             $type = 'error';
             // dd($ex);
             Session::flash($type, $msg);
@@ -290,41 +297,92 @@ class UserController extends Controller
     }
 
     public function storeUser(Request $request) {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required',
-            'gender' => 'required',
-            'role' => 'required|array'
-        ]);
-        $roles = $request->input('role');
-        $password = rand(100000, 999999);
+        $shortcode = config('key.SHORT_CODE');
+        try {
+            $request->validate([
+                'name' => 'required',
+                'email' => 'required',
+                'gender' => 'required',
+                'role' => 'required|array'
+            ]);
+            $roles = $request->input('role');
+            $otp = random_int(100000, 999999);
+    
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'gender' => $request->gender,
+                'phone_number' => $request->phone_number,
+                'password' => Hash::make($otp),
+            ]);
+            if ($user) {
+    
+                // Assign each role separately for both guards
+                foreach ($roles as $roleName) {
+                    // First, ensure the roles exist for each guard
+                    $roleForWeb = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web']);
+                    $roleForApi = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'api']);
+    
+                    // Assign the roles to the user for both guards
+                    $user->assignRole($roleForWeb);
+                    $user->assignRole($roleForApi);
+                }
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'gender' => $request->gender,
-            'phone_number' => $request->phone_number,
-            'password' => Hash::make($password),
-        ]);
-        if ($user) {
-
-            // Assign each role separately for both guards
-            foreach ($roles as $roleName) {
-                // First, ensure the roles exist for each guard
-                $roleForWeb = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web']);
-                $roleForApi = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'api']);
-
-                // Assign the roles to the user for both guards
-                $user->assignRole($roleForWeb);
-                $user->assignRole($roleForApi);
+                $userData = Auth::user();
+                    $activityLog = [
+                        'type' => 'users',
+                        'type_id' => $userData->id,
+                        'action' => 'created',
+                        'user_id' => $userData->id,
+                        'username' => $userData->name,
+                        'role' => $userData->role,
+                    ];
+                    $this->activityLogRepository->createActivityLog($activityLog);
+                    try {
+                        $message = "Welcome to Virtual Equb! You have registered succesfully. Use the email address " . $request->phone . " and password " . $otp . " to log in." . " For further information please call " . $shortcode;
+                        // dd($message);
+                        $this->sendSms($request->phone, $message);
+                    } catch (Exception $ex) {
+                        // return redirect()->back()->with('error', 'Failed to send SMS', $ex->getMessage());
+                        return redirect()->back()->with('error', $ex->getMessage());
+                    };
             }
+    
+            $msg = "User has been registered successfully!";
+            $type = 'success';
+            Session::flash($type, $msg);
+            return redirect('/user');
+        } catch (Exception $ex) {
+            $msg = $ex->getMessage();
+            $type = 'error';
+            // dd($ex);
+            Session::flash($type, $msg);
+            return back();
         }
-
-        $msg = "User has been registered successfully!";
-        $type = 'success';
-        Session::flash($type, $msg);
-        return redirect('/user');
+        
     }
+    // public function verifyOTP(Request $request)
+    // {
+    //     $request->validate([
+    //         'otp' => 'required|integer',
+    //         'phone_number' => 'required'
+    //     ]);
+
+    //     // Fetch user by phone number
+    //     $user = User::where('phone_number', $request->phone_number)->first();
+
+    //     if (!$user) {
+    //         return response()->json(['message' => 'User not found.'], 404);
+    //     }
+
+    //     // Verify OTP
+    //     if (Hash::check($request->otp, $user->password)) {
+    //         // OTP is valid
+    //         return response()->json(['message' => 'OTP verified successfully.']);
+    //     } else {
+    //         return response()->json(['message' => 'Invalid OTP.'], 422);
+    //     }
+    // }
 
     public function deactiveStatus($id, Request $request)
     {

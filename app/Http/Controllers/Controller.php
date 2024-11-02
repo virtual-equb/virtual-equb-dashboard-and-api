@@ -23,6 +23,29 @@ class Controller extends BaseController
     //         return redirect()->back()->with('error', 'Unknown error occured');
     //     }
     // }
+    private $afroApiKey;
+    private $afroSenderId;
+    private $afroSenderName;
+    private $afroBaseUrl;
+    private $afroSpaceBefore;
+    private $afroSpaceAfter;
+    private $afroExpiresIn;
+    private $afroLength;
+    private $afroType;
+
+    public function __construct()
+    {
+        $this->afroApiKey = config('key.AFRO_API_KEY');
+        $this->afroSenderId = config('key.AFRO_IDENTIFIER_ID');
+        $this->afroSenderName = config('key.AFRO_SENDER_NAME');
+        $this->afroBaseUrl = config('key.AFRO_BASE_URL');
+
+        $this->afroSpaceBefore = config('key.AFRO_SPACE_BEFORE_OTP');
+        $this->afroSpaceAfter = config('key.AFRO_SPACE_AFTER_OTP');
+        $this->afroExpiresIn = config('key.AFRO_OTP_EXPIRES_IN_SECONDS');
+        $this->afroLength = config('key.AFRO_OPT_LENGTH');
+        $this->afroType = config('key.AFRO_OTP_TYPE');
+    }
     public function sendSms($phoneNumber, $message)
     {
         $afroApiKey = config('key.AFRO_API_KEY');
@@ -34,6 +57,7 @@ class Controller extends BaseController
             'Authorization' => 'Bearer ' . $afroApiKey,
         ])
             ->baseUrl($afroBaseUrl)
+            ->withOptions(['verify' => false])
             ->post('/send', [
                 'from' => $afroSenderId,
                 'sender' => $afroSenderName,
@@ -43,5 +67,54 @@ class Controller extends BaseController
         $responseData = $response->json();
         // dd($responseData);
         return $responseData;
+    }
+
+    public function sendOtp($phone)
+    {
+        $prefixMessage = "Your Verification Code is";
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $this->afroApiKey,
+        ])
+        ->baseUrl($this->afroBaseUrl)
+        ->withOptions(['verify' => false])
+        // ->withOptions(['verify' => base_path('C:/wamp64/cacert.pem')])  
+        ->get('/challenge', [
+            'from' => $this->afroSenderId,
+            'sender' => $this->afroSenderName,
+            'to' => $phone,
+            'pr' => $prefixMessage,
+            'sb' => $this->afroSpaceBefore,
+            'sa' => $this->afroSpaceAfter,
+            'ttl' => $this->afroExpiresIn,
+            'len' => $this->afroLength,
+            't' => $this->afroType
+        ]);
+
+        $responseData = $response->json();
+        if ($responseData['acknowledge'] == 'success') {
+            return ['acknowledge' => $responseData['acknowledge']];
+        }
+        return [
+            'acknowledge' => $responseData['acknowledge'],
+            'message' => $responseData['response']['errors']
+        ];
+    }
+
+    public function verifyOtp($code, $phone)
+    {
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $this->afroApiKey,
+        ])
+            ->baseUrl($this->afroBaseUrl)
+            ->withOptions(['verify' => false])
+            ->get('/verify?&to=' . $phone . '&code=' . $code);
+        $responseData = $response->json();
+        if ($responseData['acknowledge'] == 'success') {
+            return ['acknowledge' => $responseData['acknowledge']];
+        }
+        return [
+            'acknowledge' => $responseData['acknowledge'],
+            'message' => $responseData['response']['errors']
+        ];
     }
 }

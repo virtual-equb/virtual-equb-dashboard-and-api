@@ -34,12 +34,12 @@ use App\Http\Controllers\TermsAndConditionsController;
 
 
 
-Route::group(['middleware' => ['role:Super Admin|admin']], function() {
+Route::group(['middleware' => ['role:admin']], function() {
     Route::resource('/permission', WebPermissionController::class);
     Route::get('/permission/{permissionId}/delete',[ WebPermissionController::class, 'destroy']);
     Route::resource('/roles', WebRoleController::class);
     Route::get('/roles/{roleId}/delete', [WebRoleController::class, 'destroy']);
-        // ->middleware('permission:delete');
+        // ->middleware('permission:delete role');
     Route::get('/roles/{roleId}/assign-permission', [WebRoleController::class, 'assignPermission']);
     Route::put('/roles/{roleId}/assign-permission', [WebRoleController::class, 'updateRolePermission']);
     Route::put('/main-equbs/{id}', [EqubController::class, 'update'])->name('updateMainEqub');
