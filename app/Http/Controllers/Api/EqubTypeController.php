@@ -47,10 +47,10 @@ class EqubTypeController extends Controller
         $this->title = "Virtual Equb - Equb Type";
 
         // Guard Permission
-        $this->middleware('permission:update equb_type', ['only' => ['update', 'edit', 'nameEqubTypeCheckForUpdate', 'updateStatus']]);
-        $this->middleware('permission:delete equb_type', ['only' => ['destroy']]);
-        $this->middleware('permission:view equb_type', ['only' => ['index', 'show', 'create', 'getIcon']]);
-        $this->middleware('permission:create equb_type', ['only' => ['store', 'create']]);
+        $this->middleware('api_permission_check:update equb_type', ['only' => ['update', 'edit', 'nameEqubTypeCheckForUpdate', 'updateStatus']]);
+        $this->middleware('api_permission_check:delete equb_type', ['only' => ['destroy']]);
+        $this->middleware('api_permission_check:view equb_type', ['only' => ['index', 'show', 'create', 'getIcon']]);
+        $this->middleware('api_permission_check:create equb_type', ['only' => ['store', 'create']]);
 
     }
     public function getIcon($equbTypeId)

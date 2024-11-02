@@ -44,10 +44,10 @@ class EqubTakerController extends Controller
         $this->paymentRepository = $paymentRepository;
         $this->title = "Virtual Equb - Equb Taker";
 
-        $this->middleware('permission:update equb_taker', ['only' => ['update', 'edit', 'updateLottery']]);
-        $this->middleware('permission:delete equb_taker', ['only' => ['destroy']]);
-        $this->middleware('permission:view equb_taker', ['only' => ['index', 'show']]);
-        $this->middleware('permission:create equb_taker', ['only' => ['store']]);
+        $this->middleware('api_permission_check:update equb_taker', ['only' => ['update', 'edit', 'updateLottery']]);
+        $this->middleware('api_permission_check:delete equb_taker', ['only' => ['destroy']]);
+        $this->middleware('api_permission_check:view equb_taker', ['only' => ['index', 'show']]);
+        $this->middleware('api_permission_check:create equb_taker', ['only' => ['store']]);
     }
     /**
      * Get All Equb Takers

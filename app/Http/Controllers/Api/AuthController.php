@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Models\Member;
-use App\Models\User;
-use Illuminate\Http\Request;
 use Exception;
+use App\Models\User;
+use App\Models\Member;
+use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
 {
@@ -113,6 +114,7 @@ class AuthController extends Controller
     {
         try {
             auth()->logout();
+            Session::flush();
             return response()->json([
                 'message' => "Successfully logged out",
                 'code' => 200

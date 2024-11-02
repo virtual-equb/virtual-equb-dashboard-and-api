@@ -37,7 +37,8 @@ class HomeController extends Controller
         $this->title = "Virtual Equb - Dashboard";
 
         // Guard Permission
-        $this->middleware('permission: view dashboard', ['only' => ['index', 'equbTypeIndex']]);
+        // $this->middleware('permission: view dashboard', ['only' => ['index', 'equbTypeIndex']]);
+        $this->middleware('api_permission_check:view dashboard', ['only' => ['index', 'equbTypeIndex']]);
     }
     /**
      * Get all dashboard info
@@ -50,8 +51,8 @@ class HomeController extends Controller
     {
         try {
             $userData = Auth::user();
-
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")){
+                $adminRole = ['admin', 'general_manager', 'operation_manager', 'it'];
+            // if ($userData && $userData->hasAnyRole($adminRole)){
                 $profile = Auth::user();
                 $title = $this->title;
                 $totalEqubAmount = $this->equbRepository->getExpectedTotal();

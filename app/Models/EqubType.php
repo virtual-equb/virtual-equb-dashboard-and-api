@@ -12,7 +12,7 @@ class EqubType extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'name', 'round', 'status', 'remark', 'lottery_date',
+        'name', 'round', 'amount', 'total_members', 'expected_members', 'status', 'remark', 'lottery_date',
         'rote', 'type', 'terms', 'quota', 'start_date', 'end_date', 'remaining_quota', 'image', 'main_equb_id'
     ];
 

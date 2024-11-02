@@ -37,14 +37,15 @@ class HomeController extends Controller
         $this->mainEqubRepository = $mainEqubRepository;
 
         // Permission Guard
-        $this->middleware('permission:view dashboard', ['only' => ['index', 'show', 'equbTypeIndex']]);
+        // $this->middleware('permission:view dashboard', ['only' => ['index', 'show', 'equbTypeIndex']]);
+        $this->middleware('permission_check_logout:view dashboard', ['only' => ['index', 'show', 'equbTypeIndex']]);
     }
     //Projection chart updated here
     public function index()
     {
         try {
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "finance" || $userData['role'] == "marketing_manager" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
+            $roles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance', 'marketing_manager', 'call_center', 'it', 'assistant'];
                 $profile = Auth::user();
                 $title = $this->title;
                 $totalEqubAmount = $this->equbRepository->getExpectedTotal();
