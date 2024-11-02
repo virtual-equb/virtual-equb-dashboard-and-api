@@ -10,6 +10,7 @@ use App\Http\Controllers\RejectedDateController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\BoleController;
 use App\Http\Controllers\FrontMainEqubController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\CityController;
@@ -296,7 +297,7 @@ Route::middleware([
     });
     Route::prefix('subcities')->group(function () {
         // Get all sub-cities
-        Route::get('/', [SubCityController::class, 'index'])->name('subcities.index');
+        Route::get('/', [BoleController::class, 'index'])->name('subcities.index');
     
         // Get a sub-city by ID
         Route::get('{id}', [SubCityController::class, 'show'])->name('subcities.show');
