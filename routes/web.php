@@ -32,7 +32,7 @@ use App\Http\Controllers\SubController;
 
 
 
-Route::group(['middleware' => ['role:admin']], function() {
+// Route::group(['middleware' => ['role:admin']], function() {
     Route::resource('/permission', WebPermissionController::class);
     Route::get('/permission/{permissionId}/delete',[ WebPermissionController::class, 'destroy']);
     Route::resource('/roles', WebRoleController::class);
@@ -40,7 +40,7 @@ Route::group(['middleware' => ['role:admin']], function() {
         // ->middleware('permission:delete role');
     Route::get('/roles/{roleId}/assign-permission', [WebRoleController::class, 'assignPermission']);
     Route::put('/roles/{roleId}/assign-permission', [WebRoleController::class, 'updateRolePermission']);
-});
+// });
 
 
 

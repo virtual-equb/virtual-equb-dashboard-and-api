@@ -50,7 +50,7 @@ use App\Models\User;
 Route::get('/registrationCity', [CityController::class, 'index'])->name('registrationCity');
 Route::post('member/registerMember', [MemberController::class, 'register'])->name('storeMember');
 // Route::post('member/updateProfile/{id}', [MemberController::class, 'updateProfile'])->name('updateProfile'); // old update
-Route::put('member/updateProfile/{id}', [MemberController::class, 'updateProfile'])->name('updateProfile'); // new update
+Route::middleware(['auth:api'])->put('member/updateProfile/{id}', [MemberController::class, 'updateProfile'])->name('updateProfile'); // new update
 Route::post('/checkMemberPhoneExist', [MemberController::class, 'checkMemberPhoneExist'])->name('check_member_phone_exist');
 Route::post('/checkUserPhoneExist', [UserController::class, 'checkPhone'])->name('check_user_phone_exist');
 Route::post('/resetPassword', [UserController::class, 'resetPasswordUser']);

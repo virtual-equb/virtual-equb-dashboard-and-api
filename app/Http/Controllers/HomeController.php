@@ -46,7 +46,6 @@ class HomeController extends Controller
         try {
             $userData = Auth::user();
             $roles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance', 'marketing_manager', 'call_center', 'it', 'assistant'];
-            // if ($userData && $userData->hasAnyRole($roles)) {
                 $profile = Auth::user();
                 $title = $this->title;
                 $totalEqubAmount = $this->equbRepository->getExpectedTotal();
@@ -263,12 +262,6 @@ class HomeController extends Controller
                     }
                 }
                 return view('admin/home', compact('automaticMembersArray',  'title', 'lables', 'fullPaidAmount', 'fullUnPaidAmount', 'Expected', 'daylyPaidAmount', 'daylyUnpaidAmount', 'daylyExpected', 'weeklyPaidAmount', 'weeklyUnpaidAmount', 'weeklyExpected', 'monthlyPaidAmount', 'monthlyUnpaidAmount', 'monthlyExpected', 'yearlyPaidAmount', 'yearlyUnpaidAmount', 'yearlyExpected', 'totalMember', 'tudayPaidMember', 'activeMember', 'totalUser', 'totalEqubPayment'));
-            // } else {
-            //     return response()->json([
-            //         'code' => 400,
-            //         'message' => 'You can\'t perform this action!'
-            //     ]);
-            // }
         } catch (Exception $ex) {
             // dd($ex);
             $msg = "Unable to process your request, Please try again!";

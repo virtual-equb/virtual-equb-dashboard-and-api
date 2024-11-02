@@ -52,7 +52,7 @@ class HomeController extends Controller
         try {
             $userData = Auth::user();
                 $adminRole = ['admin', 'general_manager', 'operation_manager', 'it'];
-            if ($userData && $userData->hasAnyRole($adminRole)){
+            // if ($userData && $userData->hasAnyRole($adminRole)){
                 $profile = Auth::user();
                 $title = $this->title;
                 $totalEqubAmount = $this->equbRepository->getExpectedTotal();
@@ -236,12 +236,12 @@ class HomeController extends Controller
                 $totalUser = $this->userRepository->getUser();
                 $tudayPaidMember = $this->equbRepository->tudayPaidMember();
                 return  response()->json(compact('title', 'lables', 'fullPaidAmount', 'Expected', 'daylyPaidAmount', 'daylyUnpaidAmount', 'daylyExpected', 'weeklyPaidAmount', 'weeklyExpected', 'monthlyPaidAmount', 'monthlyExpected', 'yearlyPaidAmount', 'yearlyExpected', 'totalMember', 'tudayPaidMember', 'activeMember', 'totalEqubPayment'), 200);
-            } else {
-                return response()->json([
-                    'code' => 400,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 400,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
