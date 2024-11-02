@@ -43,6 +43,7 @@ Route::group(['middleware' => ['role:admin']], function() {
         // ->middleware('permission:delete role');
     Route::get('/roles/{roleId}/assign-permission', [WebRoleController::class, 'assignPermission']);
     Route::put('/roles/{roleId}/assign-permission', [WebRoleController::class, 'updateRolePermission']);
+    
     Route::put('/main-equbs/{id}', [EqubController::class, 'update'])->name('updateMainEqub');
 
 });
