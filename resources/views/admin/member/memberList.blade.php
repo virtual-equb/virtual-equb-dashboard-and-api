@@ -680,6 +680,7 @@
                 enddate = moment(enddate);
                 enddate = enddate.format("YYYY-MM-DD");
                 $('#update_total_amount').val(equb.total_amount);
+                $('#update_amount').val(equb.amount);
                 $('#update_start_date').val(startdate);
                 $('#update_end_date').val(enddate);
                 var lottery_date = new Date(equb.lottery_date);

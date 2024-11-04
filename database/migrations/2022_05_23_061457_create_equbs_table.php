@@ -25,6 +25,7 @@ return new class extends Migration
             $table->enum('status', ['Active', 'Deactive',])->default('Active');
             $table->foreign('member_id')->references('id')->on('members');
             $table->foreign('equb_type_id')->references('id')->on('equb_types');
+            $table->enum('notified', ['Yes', 'No'])->default('No');
             $table->softDeletes();
             $table->timestamps();
         });

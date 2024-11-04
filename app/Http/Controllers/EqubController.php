@@ -2,24 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Equb;
-use App\Models\RejectedDate;
-use App\Http\Controllers\Controller;
-use App\Models\EqubType;
-use App\Models\Member;
 use Exception;
+use Carbon\Carbon;
+use App\Models\Equb;
+use App\Models\Member;
+use App\Models\EqubType;
+use App\Models\RejectedDate;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Session;
+use App\Repositories\Equb\IEqubRepository;
 use App\Repositories\Member\IMemberRepository;
 use App\Repositories\Payment\IPaymentRepository;
 use App\Repositories\EqubType\IEqubTypeRepository;
-use App\Repositories\Equb\IEqubRepository;
 use App\Repositories\EqubTaker\IEqubTakerRepository;
 use App\Repositories\ActivityLog\IActivityLogRepository;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Session;
 
 class EqubController extends Controller
 {
@@ -83,6 +84,106 @@ class EqubController extends Controller
             return back();
         }
     }
+    // public function sendStartNotifications() {
+        
+    //     try {
+
+    //         $now = Carbon::now();
+    //         $next24Hours = $now->copy()->addHours(24);
+
+    //         // Retrieve Equbs where start_date is within the next 24 hours and not yet notified
+    //         $dueEqubs = Equb::whereBetween('start_date', [$now, $next24Hours])
+    //                             ->where('notified', 'No')
+    //                             ->get();
+    //         $count = 0;
+    //         foreach ($dueEqubs as $equb) {
+    //             $member = Member::find($equb->member_id);
+                
+    //             if ($member && $member->phone_number) {
+    //                 $shortcode = config('key.SHORT_CODE');
+    //                 $message = "Reminder: Your Equb will start on " . $equb->start_date->format('Y-m-d H:i') . ". Please be prepared. For further informations please call $shortcode";
+    //                 $this->sendSms($member->phone_number, $message);
+    //                 $count++;
+
+    //                 // Update the Equb notified field
+    //                 $equb->update(['notified' => 'Yes']);
+    //             }
+    //         }
+
+    //         return response()->json([
+    //             'message' => 'Notification sent for due Equbs.',
+    //             'code' => 200,
+    //             'count' => $count
+    //         ]);
+    //         // return $count;
+
+    //     } catch (Exception $ex) {
+    //         $msg = "Unable to process your request, Please try again!" + $ex->getMessage();
+    //         $type = 'error';
+    //         Session::flash($type, $msg);
+    //         return back();
+    //     }
+    // }
+    public function sendStartNotifications()
+    {
+        try {
+            $now = Carbon::now();
+            $next24Hours = $now->copy()->addHours(24);
+
+            // Retrieve Equbs where start_date is within the next 24 hours and not yet notified
+            $dueEqubs = Equb::whereBetween('start_date', [$now, $next24Hours])
+                            ->where('notified', 'No')
+                            ->get();
+            // dd($dueEqubs);
+            // Debugging: Log due Equbs and the time range
+            if ($dueEqubs->isEmpty()) {
+                return response()->json([
+                    'message' => 'No Equbs found within the due range.',
+                    'code' => 200,
+                    'count' => 0,
+                    'debug' => [
+                        'start_date_from' => $now->toDateTimeString(),
+                        'start_date_to' => $next24Hours->toDateTimeString(),
+                        'equbs_found' => $dueEqubs->toArray()
+                    ]
+                ]);
+            }
+            $count = 0;
+            foreach ($dueEqubs as $equb) {
+                $member = Member::find($equb->member_id);
+
+                if ($member && $member->phone) {
+                    
+                        $startDate = Carbon::parse($equb->start_date);
+                        $shortcode = config('key.SHORT_CODE');
+                        $message = "Reminder: Your Equb will start on " . $startDate->format('Y-m-d H:i') . ". Please be prepared. For further information, call $shortcode";
+                        
+                
+                        if ($this->sendSms($member->phone, $message)) {
+                            $count++;
+                            // Update the Equb notified field
+                            $equb->update(['notified' => 'Yes']);
+                        } else {
+                            Log::error("Failed to send SMS to {$member->phone}");
+                        }
+                    
+                }
+            }
+
+            return response()->json([
+                'message' => 'Notification sent for due Equbs.',
+                'code' => 200,
+                'count' => $count
+            ]);
+
+        } catch (Exception $ex) {
+            return response()->json([
+                'message' => 'Unable to process your request, Please try again!',
+                'code' => 500,
+                'error' => $ex->getMessage(),
+            ]);
+        }
+    }
     public function getReservedLotteryDate($lottery_date)
     {
         try {
@@ -107,11 +208,6 @@ class EqubController extends Controller
                     array_push($ExpectedTotal, $value . "______________" . $Expected->expected);
                 }
             }
-            // foreach ($equbId as $equb_id) {
-            //     $equb = Equb::where('id', $equb_id)->with('member')->first();
-            //     array_push($equbDetail, $equb);
-            // }
-            // return view('admin/equb/lotteryDetail', compact('equbDetail', 'ExpectedTotal'));
 
             $data['equbDetail'] = Equb::whereRaw('FIND_IN_SET("' . $c . '",lottery_date)')->with('member')->get();
             return view('admin/equb/lotteryDetail', compact('ExpectedTotal'), $data);
@@ -375,80 +471,6 @@ class EqubController extends Controller
             return back();
         }
     }
-    // /**
-    //  * Draw random winner.
-    //  *
-    //  * @return \Illuminate\Http\Response
-    //  */
-    // public function draw()
-    // {
-    //     try {
-    //         $now = Carbon::now();
-    //         $members = [];
-    //         $equbTypes = DB::table('equb_types')
-    //             ->whereDate('lottery_date', '=', $now)
-    //             ->where("deleted_at", "=", null)
-    //             ->get();
-    //         foreach ($equbTypes as $equbType) {
-    //             $equbs = DB::table('equbs')->where('equb_type_id', $equbType->id)->pluck('member_id')->toArray();
-    //             foreach ($equbs as $equb) {
-    //                 if (!in_array($equb, $members)) {
-    //                     array_push($members, $equb);
-    //                 }
-    //             }
-    //         }
-    //         $winner = $this->drawRandomId($members);
-    //         $user = Member::where('id', $winner)->first();
-    //         foreach ($equbTypes as $equbType) {
-    //             $daysToBeAdded = 0;
-    //             if ($equbType->rote === "Daily") {
-    //                 $daysToBeAdded = 1;
-    //             } elseif ($equbType->rote === "Weekly") {
-    //                 $daysToBeAdded = 7;
-    //             } elseif ($equbType->rote === "Biweekly") {
-    //                 $daysToBeAdded = 14;
-    //             } elseif ($equbType->rote === "Monthly") {
-    //                 $daysToBeAdded = 30;
-    //             }
-    //             // dd($daysToBeAdded);
-    //             $updatedLotterDate = $now->copy()->addDays($daysToBeAdded)->format('Y-m-d');
-    //             EqubType::where('id', $equbType->id)->update(['lottery_date' => $updatedLotterDate]);
-    //         }
-    //         // dd([
-    //         //     "MemberId"=> $user->id,
-    //         //     "UserName"=> $user->full_name
-    //         // ]);
-    //         return [
-    //             "MemberId" => $user->id,
-    //             "UserName" => $user->full_name
-    //         ];
-    //     } catch (Exception $ex) {
-    //         $msg = "Unable to process your request, Please try again!";
-    //         $type = 'error';
-    //         Session::flash($type, $msg);
-    //         return back();
-    //     }
-    // }
-    // function drawRandomId(array $ids)
-    // {
-    //     // Shuffle the array of IDs
-    //     shuffle($ids);
-
-    //     // Store the shuffled IDs in cache for ten seconds
-    //     Cache::put('shuffled_ids', $ids, now()->addSeconds(10));
-
-    //     // Wait for a few seconds to allow shuffling
-    //     sleep(3); // You can adjust the duration as needed
-
-    //     // Get the shuffled IDs from cache
-    //     $shuffledIds = Cache::get('shuffled_ids');
-
-    //     // Pick a random index and return the corresponding ID
-    //     $randomIndex = array_rand($shuffledIds);
-    //     $randomId = $shuffledIds[$randomIndex];
-
-    //     return $randomId;
-    // }
     /**
      * Store a newly created resource in storage.
      *
@@ -749,20 +771,6 @@ class EqubController extends Controller
                     $carbonDate = Carbon::createFromFormat('m/d/Y', $endDate);
                     $formattedEndDate = $carbonDate->format('Y-m-d');
                 }
-
-
-                // // Parse the dates using Carbon
-                // $carbonDate1 = Carbon::parse($oldEqub->end_date);
-                // $carbonDate2 = Carbon::parse($endDate);
-                // // Get the formats of the two dates
-                // $format1 = $carbonDate1->format('Y-m-d');
-                // $format2 = $carbonDate2->format('Y-m-d');
-                // $formattedEndDate = $endDate;
-                // // Compare the formats
-                // if ($format1 != $format2) {
-                //     $carbonDate = Carbon::createFromFormat('m/d/Y', $endDate);
-                //     $formattedEndDate = $carbonDate->format('Y-m-d');
-                // }
 
                 $updated = [
                     'equb_type_id' => $equbType,

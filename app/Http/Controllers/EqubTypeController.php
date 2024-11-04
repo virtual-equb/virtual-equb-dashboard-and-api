@@ -832,6 +832,8 @@ class EqubTypeController extends Controller
                 $lottery_date = $request->input('update_lottery_date');
                 $start_date = $request->input('start_date');
                 $end_date = $request->input('end_date');
+                $amount = $request->input('amount');
+                $expected_members = $request->input('expected_members');
                 if ($start_date) {
                     $startDateCheck = $this->isDateInYMDFormat($start_date);
                     $formattedStartDate = $start_date;
@@ -875,6 +877,8 @@ class EqubTypeController extends Controller
                     'quota' => $quota,
                     'remaining_quota' => $remainingQuota,
                     'terms' => $terms,
+                    'amount' => $amount,
+                    'expected_members' => $expected_members
                 ];
                 
                 if ($request->file('icon_update')) {

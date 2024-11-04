@@ -87,6 +87,58 @@ class EqubController extends Controller
             ]);
         }
     }
+
+    public function sendStartNotifications()
+    {
+        try {
+            $now = Carbon::now();
+            $next24Hours = $now->copy()->addHours(24);
+
+            $dueEqubs = Equb::whereBetween('start_date', [$now, $next24Hours])
+                                ->where('notified', 'No')
+                                ->get();
+            if ($dueEqubs->isEmpty()) {
+                return response()->json([
+                    'message' => 'No Equbs found within the due range.',
+                    'code' => 200,
+                    'count' => 0,
+                    'debug' => [
+                        'start_date_from' => $now->toDateTimeString(),
+                        'start_date_to' => $next24Hours->toDateTimeString(),
+                        'equbs_found' => $dueEqubs->toArray()
+                    ]
+                    ]);
+            }
+            $count = 0;
+            foreach ($dueEqubs as $equb) {
+                $member = Member::find($equb->member_id);
+
+                if ($member && $member->phone) {
+                    $startDate = Carbon::parse($equb->start_date);
+                    $shortcode = config('key.SHORT_CODE');
+                    $message = "Reminder: Your Equb will start on " . $startDate->format('Y-m-d H:i') . ". Please be prepared. For further information, call $shortcode";
+
+                    $this->sendSms($member->phone, $message);
+                    $count++;
+
+                    // Update the Equb notified field
+                    $equb->update(['notified' => 'Yes']);
+                }
+
+                return response()->json([
+                    'message' => 'Notification sent for due Equbs',
+                    'code' => 200,
+                    'count' => $count
+                ]);
+            }
+        } catch (Exception $ex) {
+            return response()->json([
+                'message' => 'Unable to process your request, Please try again!',
+                'code' => 500,
+                'error' => $ex->getMessage(),
+            ]);
+        }
+    }
     public function getReservedLotteryDate($lottery_date)
     {
         try {

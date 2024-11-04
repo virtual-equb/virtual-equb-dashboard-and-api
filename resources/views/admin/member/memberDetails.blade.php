@@ -179,7 +179,7 @@
                                         onclick="addUnpaid({{ $equb }})" id="addUnpaidButton"><i
                                             class="fas fa-plus-circle"></i> Add Unpaid</a>
                                 </li> --}}
-                                    @if (Auth::user()->role != 'finance')
+                                    {{-- @if (Auth::user()->role != 'finance') --}}
                                         <li>
                                             <a href="javascript:void(0);"
                                                 class="text-secondary btn btn-flat {{ $member->status == 'Deactive' ? 'disabled' : ($equb->status == 'Deactive' ? 'disabled' : ($sum >= $expectedTotal ? 'disabled' : '')) }}"
@@ -233,7 +233,7 @@
                                                 ?>
                                             </a>
                                         </li>
-                                    @endif
+                                    {{-- @endif --}}
                                 </ul>
                             </div>
                         </td>

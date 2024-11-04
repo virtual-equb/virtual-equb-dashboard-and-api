@@ -12,7 +12,17 @@ class Equb extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'member_id', 'equb_type_id', 'amount', 'total_amount', 'start_date', 'end_date', 'lottery_date', 'status', 'timeline', 'check_for_draw'
+        'member_id', 
+        'equb_type_id', 
+        'amount', 
+        'total_amount', 
+        'start_date', 
+        'end_date', 
+        'lottery_date', 
+        'status', 
+        'timeline', 
+        'check_for_draw', 
+        'notified'
     ];
 
 

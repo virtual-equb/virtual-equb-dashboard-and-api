@@ -112,6 +112,10 @@
                                                             <th>Type</th>
                                                             <th>Space Left</th>
                                                             <th>Lottery Date</th>
+                                                            <th>Expected Amount (Birr)</th>
+                                                            <th>Total Amount (Birr)</th>
+                                                            <th>Expected Members</th>
+                                                            <th>Total Members</th>
                                                             <th>Remark</th>
                                                             <th>Status</th>
                                                             <th>Registered At </th>
@@ -138,6 +142,10 @@
                                                                         echo '';
                                                                     } ?>
                                                                 </td>
+                                                                <td>{{ $item->amount }}</td>
+                                                                <td>{{ $item->total_amount }}</td>
+                                                                <td>{{ $item->expected_members }}</td>
+                                                                <td>{{ $item->total_members }}</td>
                                                                 <td>{{ $item->remark }}</td>
                                                                 <td>{{ $item->status }}</td>
                                                                 <td>
@@ -290,6 +298,8 @@
                 const endDate = document.getElementById("end_date_div");
                 const quota = document.getElementById("quota_div");
                 const rote = document.getElementById("rote");
+                const amount = document.getElementById("amount_div");
+                const members = document.getElementById('members_div');
                 const options = rote.options;
                 $("#type").on("change", function() {
                     var type = $(this).find("option:selected").val();
@@ -298,6 +308,8 @@
                         startDate.classList.remove("d-none");
                         endDate.classList.remove("d-none");
                         quota.classList.remove("d-none");
+                        amount.classList.remove("d-none");
+                        members.classList.remove("d-none");
                         //for (var i = 1; i < options.length; i++) {
                         //    options[i].disabled = false;
                         //    if (options[i].value !== "Weekly") {
@@ -308,6 +320,8 @@
                         startDate.required = true;
                         endDate.required = true;
                         quota.required = true;
+                        amount.required = true;
+                        members.required = true;
                     } else {
                         lotteryDate.classList.add("d-none");
                         startDate.classList.add("d-none");
@@ -323,6 +337,8 @@
                         startDate.required = false;
                         endDate.required = false;
                         quota.required = false;
+                        amount.required = false;
+                        members.required = false;
                     }
                 });
             });
@@ -350,6 +366,8 @@
                 const endDate = document.getElementById("update_end_date_div");
                 const quota = document.getElementById("update_quota_div");
                 const update_rote = document.getElementById("update_rote");
+                const amount = document.getElementById("update_amount_div");
+                const members = document.getElementById("update_members_div");
                 const update_options = update_rote.options;
                 $("#update_type").on("change", function() {
                     var type = $(this).find("option:selected").val();
@@ -358,6 +376,8 @@
                         startDate.classList.remove("d-none");
                         endDate.classList.remove("d-none");
                         quota.classList.remove("d-none");
+                        amount.classList.remove("d-none");
+                        members.classList.remove("d-none");
                         //for (var i = 1; i < update_options.length; i++) {
                         //    update_options[i].disabled = false;
                         //   if (update_options[i].value !== "Weekly") {
@@ -368,6 +388,8 @@
                         startDate.required = true;
                         endDate.required = true;
                         quota.required = true;
+                        amount.required = true;
+                        members.required = true;
                     } else {
                         lotteryDate.classList.add("d-none");
                         startDate.classList.add("d-none");
@@ -383,6 +405,8 @@
                         startDate.required = false;
                         endDate.required = false;
                         quota.required = false;
+                        amount.required = false;
+                        members.required = false;
                     }
                 });
                 $("#start_date").datetimepicker({
@@ -447,6 +471,8 @@
                 $('#update_rote').val(item.rote);
                 $('#update_type').val(item.type);
                 $('#update_remark').val(item.remark);
+                $('#update_amount_div').val(item.amount);
+                $('#update_members_div').val(item.expected_members);
                 $('#update_lottery_date').val(item.lottery_date);
                 $('#update_start_date').datepicker('setDate', new Date(item.start_date));
                 $('#update_start_date').datepicker('destroy');
@@ -459,12 +485,16 @@
                 const endDate = document.getElementById("update_end_date_div");
                 const quota = document.getElementById("update_quota_div");
                 const update_rotes = document.getElementById("update_rote");
+                const amount = document.getElementById("update_amount_div");
+                const members = document.getElementById("update_members_div");
                 const update_option = update_rotes.options;
                 if (item.type === "Automatic") {
                     lotteryDate.classList.remove("d-none");
                     startDate.classList.remove("d-none");
                     endDate.classList.remove("d-none");
                     quota.classList.remove("d-none");
+                    amount.classList.remove("d-none");
+                    members.classList.remove("d-none");
                     // for (var i = 1; i < update_option.length; i++) {
                     //     update_option[i].disabled = false;
                     //     if (update_option[i].value !== "Weekly") {
@@ -475,11 +505,15 @@
                     startDate.required = true;
                     endDate.required = true;
                     quota.required = true;
+                    amount.required = true;
+                    members.required = true;
                 } else {
                     lotteryDate.classList.add("d-none");
                     startDate.classList.add("d-none");
                     endDate.classList.add("d-none");
                     quota.classList.add("d-none");
+                    amount.classList.add("d-none");
+                    members.classList.add("d-none");
                     // for (var i = 1; i < update_option.length; i++) {
                     //     update_option[i].disabled = false;
                     //     if (update_option[i].value !== "Daily") {
@@ -490,6 +524,8 @@
                     startDate.required = false;
                     endDate.required = false;
                     quota.required = false;
+                    amount.required = true;
+                    members.required = true;
                 }
                 $('#updateEqubType').attr('action', 'equbType/update/' + $('#did').val())
             }
