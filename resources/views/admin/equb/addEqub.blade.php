@@ -1,4 +1,4 @@
-{{--  @if (Auth::user()->role == 'admin' ||
+{{-- @if (Auth::user()->role == 'admin' ||
         Auth::user()->role == 'general_manager' ||
         Auth::user()->role == 'operation_manager' ||
         Auth::user()->role == 'customer_service' ||
