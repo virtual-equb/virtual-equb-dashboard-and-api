@@ -23,6 +23,7 @@ return new class extends Migration
             // $table->string('image');
             $table->integer('round');
             $table->string('amount');
+            $table->string('total_amount');
             $table->string('total_members');
             $table->string('expected_members');
             $table->enum('status', ['Active', 'Deactive',])->default('Active');

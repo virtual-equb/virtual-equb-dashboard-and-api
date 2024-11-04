@@ -214,6 +214,8 @@ class EqubTypeController extends Controller
                     'round' => 'required',
                     'rote' => 'required',
                     'type' => 'required',
+                    // 'amount' => 'required',
+                    // 'expected_members' => 'required',
                     'main_equb_id' => 'required'
                 ]);
                 $name = $request->input('name');
@@ -227,6 +229,9 @@ class EqubTypeController extends Controller
                 $quota = $request->input('quota');
                 $terms = $request->input('terms');
                 $main_equb = $request->input('main_equb_id');
+                $amount = $request->input('amount');
+                $expected_members= $request->input('expected_members');
+                
 
 
                 // dd($end_date);
@@ -250,7 +255,9 @@ class EqubTypeController extends Controller
                     'quota' => $quota,
                     'remaining_quota' => $quota,
                     'terms' => $terms,
-                    'main_equb_id' => $main_equb
+                    'main_equb_id' => $main_equb,
+                    'amount' => $amount,
+                    'expected_members' => $expected_members
                 ];
                 if ($request->file('icon')) {
                     $image = $request->file('icon');

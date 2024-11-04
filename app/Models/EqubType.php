@@ -12,8 +12,23 @@ class EqubType extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'name', 'round', 'amount', 'total_members', 'expected_members', 'status', 'remark', 'lottery_date',
-        'rote', 'type', 'terms', 'quota', 'start_date', 'end_date', 'remaining_quota', 'image', 'main_equb_id'
+        'name', 
+        'round', 
+        'amount', 
+        'total_members', 
+        'expected_members', 
+        'status', 
+        'remark', 
+        'lottery_date',
+        'rote', 
+        'type', 
+        'terms', 
+        'quota', 
+        'start_date', 
+        'end_date', 
+        'remaining_quota', 
+        'image', 
+        'main_equb_id'
     ];
 
     public function equbs()
@@ -34,8 +49,5 @@ class EqubType extends Model
         return $this->belongsTo(MainEqub::class, 'main_equb_id');
     }
     
-    //   public function equbType(){
-    //     return $this->belongsTo(Member::class);
-    // }
 
 }
