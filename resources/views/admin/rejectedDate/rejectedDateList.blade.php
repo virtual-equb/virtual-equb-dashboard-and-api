@@ -4,7 +4,52 @@
         Auth::user()->role == 'assistant' ||
         Auth::user()->role == 'it') --}}
     @extends('layouts.app')
- 
+    @section('styles')
+        <style type="text/css">
+            div.dataTables_wrapper div.dataTables_info {
+                padding-top: 0.85em;
+                display: none;
+            }
+
+            @media (max-width: 575.98px) {
+                #offDate-list-table {
+                    display: block;
+                    width: 100%;
+                    overflow-x: auto;
+                    -webkit-overflow-scrolling: touch;
+                }
+
+                .table-responsive-sm>.table-bordered {
+                    border: 0;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .addOffDate {
+                    margin-bottom: 20px;
+                    width: 100%;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .addOffDateTab {
+                    width: 100%;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .col-md-6 {
+                    margin-bottom: 20px;
+                    width: 100%;
+                    padding-left: 0px;
+                    padding-right: 0px;
+                    float: left;
+                }
+            }
+        </style>
+    @endsection
+    @section('styles')
+    @endsection
     @section('content')
         <div class="wrapper">
             <div class="content-wrapper">
