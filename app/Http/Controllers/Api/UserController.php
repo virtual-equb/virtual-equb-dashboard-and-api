@@ -164,8 +164,12 @@ class UserController extends Controller
             $userData = Auth::user();
             $this->middleware('auth');
             $data['title'] = $this->title;
-
-            return response()->json($data);
+            $users = User::get();
+            
+            return response()->json([
+                'title' => $data['title'],
+                'users' => UserResource::collection($users)
+            ]);
 
         } catch (Exception $ex) {
             return response()->json([
