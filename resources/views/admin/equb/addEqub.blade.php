@@ -2,7 +2,7 @@
         Auth::user()->role == 'general_manager' ||
         Auth::user()->role == 'operation_manager' ||
         Auth::user()->role == 'customer_service' ||
-        Auth::user()->role == 'it')  --}}
+        Auth::user()->role == 'it') --}}
     <div class="modal fade" id="addEqubModal" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
