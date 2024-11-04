@@ -84,46 +84,6 @@ class EqubController extends Controller
             return back();
         }
     }
-    // public function sendStartNotifications() {
-        
-    //     try {
-
-    //         $now = Carbon::now();
-    //         $next24Hours = $now->copy()->addHours(24);
-
-    //         // Retrieve Equbs where start_date is within the next 24 hours and not yet notified
-    //         $dueEqubs = Equb::whereBetween('start_date', [$now, $next24Hours])
-    //                             ->where('notified', 'No')
-    //                             ->get();
-    //         $count = 0;
-    //         foreach ($dueEqubs as $equb) {
-    //             $member = Member::find($equb->member_id);
-                
-    //             if ($member && $member->phone_number) {
-    //                 $shortcode = config('key.SHORT_CODE');
-    //                 $message = "Reminder: Your Equb will start on " . $equb->start_date->format('Y-m-d H:i') . ". Please be prepared. For further informations please call $shortcode";
-    //                 $this->sendSms($member->phone_number, $message);
-    //                 $count++;
-
-    //                 // Update the Equb notified field
-    //                 $equb->update(['notified' => 'Yes']);
-    //             }
-    //         }
-
-    //         return response()->json([
-    //             'message' => 'Notification sent for due Equbs.',
-    //             'code' => 200,
-    //             'count' => $count
-    //         ]);
-    //         // return $count;
-
-    //     } catch (Exception $ex) {
-    //         $msg = "Unable to process your request, Please try again!" + $ex->getMessage();
-    //         $type = 'error';
-    //         Session::flash($type, $msg);
-    //         return back();
-    //     }
-    // }
     public function sendStartNotifications()
     {
         try {
@@ -134,8 +94,7 @@ class EqubController extends Controller
             $dueEqubs = Equb::whereBetween('start_date', [$now, $next24Hours])
                             ->where('notified', 'No')
                             ->get();
-            // dd($dueEqubs);
-            // Debugging: Log due Equbs and the time range
+
             if ($dueEqubs->isEmpty()) {
                 return response()->json([
                     'message' => 'No Equbs found within the due range.',
@@ -176,6 +135,56 @@ class EqubController extends Controller
                 'count' => $count
             ]);
 
+        } catch (Exception $ex) {
+            return response()->json([
+                'message' => 'Unable to process your request, Please try again!',
+                'code' => 500,
+                'error' => $ex->getMessage(),
+            ]);
+        }
+    }
+
+    public function sendEndNotifications() 
+    {
+        try {
+            $now = Carbon::now();
+            $next24Hours = $now->copy()->addHours(24);
+
+            $dueEqubs = Equb::whereBetween('end_date', [$now, $next24Hours])->get();
+
+            if ($dueEqubs->isEmpty()) {
+                return response()->json([
+                    'message' => 'No Equbs found within the due range.',
+                    'code' => 200,
+                    'count' => 0,
+                    'debug' => [
+                        'end_date_from' => $now->toDateTimeString(),
+                        'end_date_to' => $next24Hours->toDateTimeString(),
+                        'equbs_found' => $dueEqubs->toArray()
+                    ]
+                    ]);
+            }
+            $count = 0;
+            foreach($dueEqubs as $equb) {
+                $member = Member::find($equb->member_id);
+
+                if ($member && $member->phone) {
+                    $endDate = Carbon::parse($equb->end_date);
+                    $shortcode = config('key.SHORT_CODE');
+                    $message = "Reminder: Your Equb will end on " . $endDate->format('Y-m-d H:i') . ". For further information, call $shortcode";
+                    
+                    $this->sendSms($member->phone, $message);
+                    $count++;
+                }
+
+                return response()->json([
+                    'message' => 'Notification sent for Ending Equbs',
+                    'code' => 200,
+                    'count' => $count
+                ]);
+
+            }
+                                
         } catch (Exception $ex) {
             return response()->json([
                 'message' => 'Unable to process your request, Please try again!',
