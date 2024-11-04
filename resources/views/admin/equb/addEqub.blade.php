@@ -38,6 +38,11 @@
                                 <input type="text" onchange="getExpectedTotal()" class="form-control" id="start_date"
                                     name="start_date"placeholder="Start date" autocomplete="off">
                             </div>
+                            {{-- <div class="form-group required">
+                                <label class="control-label">Start Date</label>
+                                <input type="text" onchange="getExpectedTotal()" class="form-control" id="start_date2"
+                                    name="start_date"placeholder="Start date" readonly autocomplete="off">
+                            </div> --}}
                             <div id="timeline_div" class="form-group required">
                                 <label class="control-label">Timeline</label>
                                 <select class="form-control select2" id="timeline" name="timeline"

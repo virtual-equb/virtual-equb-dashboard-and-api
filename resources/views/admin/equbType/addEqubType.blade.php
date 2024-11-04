@@ -48,6 +48,16 @@
                                         <input type="number" class="form-control" id="round"
                                             name="round"placeholder="Round" min="1" required>
                                     </div>
+                                    <div id="amount_div" class="form-group d-none">
+                                        <label class="control-label">Amount</label>
+                                        <input type="number" class="form-control" id="amount"
+                                            name="amount" placeholder="Round" min="1" required>
+                                    </div>
+                                    <div id="members_div" class="form-group d-none">
+                                        <label class="control-label">Expected Members</label>
+                                        <input type="number" class="form-control" id="member"
+                                            name="expected_members" placeholder="Members" min="1" required>
+                                    </div>
                                     <div class="form-group required">
                                         <label class="control-label">Rote</label>
                                         <select class="custom-select form-control" id="rote" name="rote">

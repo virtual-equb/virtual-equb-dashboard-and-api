@@ -46,7 +46,7 @@
                                                   type='button' data-toggle='dropdown'>Menu<span
                                                       class='caret'></span></button>
                                               <ul class='dropdown-menu p-4'>
-                                                  @if (Auth::user()->role != 'finance')
+                                                  {{-- @if (Auth::user()->role != 'finance') --}}
                                                       <li>
                                                           <button href="javascript:void(0);"
                                                               class="text-secondary btn btn-flat {{ $item->status != 'Active' ? 'disabled' : '' }}"
@@ -92,7 +92,7 @@
                                                               ?>
                                                           </a>
                                                       </li>
-                                                  @endif
+                                                  {{-- @endif --}}
                                                   <li>
                                                       <button href="javascript:void(0);"
                                                           class="text-secondary btn btn-flat"

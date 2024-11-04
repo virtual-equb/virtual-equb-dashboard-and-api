@@ -48,6 +48,16 @@
                                 <input type="number" class="form-control" id="update_round"
                                     name="update_round"placeholder="Round" min="1" required>
                             </div>
+                            <div id="update_amount_div" class="form-group d-none">
+                                <label class="control-label">Amount</label>
+                                <input type="number" class="form-control" id="amount"
+                                    name="update_amount" placeholder="Amount" min="1" required>
+                            </div>
+                            <div id="update_members_div" class="form-group d-none">
+                                <label class="control-label">Expected Members</label>
+                                <input type="number" class="form-control" id="member"
+                                    name="update_expected_members" placeholder="Members" min="1" required>
+                            </div>
                             <div class="form-group required">
                                 <label class="control-label">Rote</label>
                                 <select class="custom-select form-control" id="update_rote" name="update_rote">

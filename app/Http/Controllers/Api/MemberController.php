@@ -1210,7 +1210,9 @@ class MemberController extends Controller
                         ]);
                     }
                 }
+                
                 $updated = $this->memberRepository->update($id, $updated);
+                // dd($id);
                 $updateUser = [
                     'name' => $name,
                     'phone_number' => $phone,

@@ -28,6 +28,7 @@ use App\Http\Controllers\Api\PermissionController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\SubcityController as ApiSubcityController;
 use App\Http\Controllers\CodeController;
+use App\Http\Controllers\EqubController as ControllersEqubController;
 use App\Http\Controllers\SubcityController;
 use App\Models\Roles;
 use App\Models\User;
@@ -46,7 +47,7 @@ use App\Models\User;
 
 
 
-
+Route::post('/notify-equb-start', [ControllersEqubController::class, 'sendStartNotifications']);
 Route::get('/registrationCity', [CityController::class, 'index'])->name('registrationCity');
 Route::post('member/registerMember', [MemberController::class, 'register'])->name('storeMember');
 Route::post('member/updateProfile/{id}', [MemberController::class, 'updateProfile'])->name('updateProfile'); // old update

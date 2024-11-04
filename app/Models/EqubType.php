@@ -15,6 +15,7 @@ class EqubType extends Model
         'name', 
         'round', 
         'amount', 
+        'total_amount',
         'total_members', 
         'expected_members', 
         'status', 
