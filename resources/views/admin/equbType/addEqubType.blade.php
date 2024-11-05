@@ -58,6 +58,15 @@
                                         <input type="number" class="form-control" id="member"
                                             name="expected_members" placeholder="Members" min="1" required>
                                     </div>
+                                    <div class="form-group">
+    <label class="control-label">Total Amount (Birr)</label>
+    <input type="text" class="form-control" id="total_amount" name="total_amount" value="88" readonly>
+</div>
+
+<div class="form-group">
+    <label class="control-label">Total Members</label>
+    <input type="text" class="form-control" id="total_members" name="total_members" value="888" readonly>
+</div>
                                     <div class="form-group required">
                                         <label class="control-label">Rote</label>
                                         <select class="custom-select form-control" id="rote" name="rote">
