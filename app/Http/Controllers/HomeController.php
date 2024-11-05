@@ -146,12 +146,7 @@ class HomeController extends Controller
                     $start_date = $weeklyExpected1[$i]->start_date;
                     $start_date = \Carbon\Carbon::parse($start_date);
                     $currunt_date = \Carbon\Carbon::today()->subDays(7);
-                    // if ($end_date >= $currunt_date) {
-                    // if ($start_date >= $currunt_date) {
-                    //     $difference = $start_date->diffInDays($end_date, false);
-                    // } else {
-                    //     $difference = $currunt_date->diffInDays($end_date, false);
-                    // }
+                    
                     if ($start_date <= $currunt_date && $end_date >= $currunt_date) {
                         $difference = $currunt_date->diffInDays($end_date, false);
                     } else {
@@ -183,12 +178,7 @@ class HomeController extends Controller
                     $start_date = $monthlyExpected[$i]->start_date;
                     $start_date = \Carbon\Carbon::parse($start_date);
                     $currunt_date = \Carbon\Carbon::today();
-                    // if ($end_date >= $currunt_date) {
-                    // if ($start_date >= $currunt_date) {
-                    //     $difference = $start_date->diffInDays($end_date, false);
-                    // } else {
-                    //     $difference = $currunt_date->diffInDays($end_date, false);
-                    // }
+                    
                     if ($start_date <= $currunt_date && $end_date >= $currunt_date) {
                         $difference = $currunt_date->diffInDays($end_date, false);
                     } else {
@@ -204,8 +194,7 @@ class HomeController extends Controller
                         $wE = $wE * $difference;
                         $sum2 = $sum2 + $wE;
                     }
-                    // dd($sum2);
-                    // }
+                    
                 }
                 $monthlyExpected = $sum2;
                 $monthlyUnpaidAmount = $monthlyExpected - $monthlyPaidAmount;

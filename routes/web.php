@@ -30,7 +30,9 @@ use App\Http\Controllers\SubController;
 |
 */
 
-
+Route::get('/unauthorized', function () {
+    return view('errorPages.authorization'); // Replace with your unauthorized view
+})->name('unauthorized');
 
 // Route::group(['middleware' => ['role:admin']], function() {
     Route::resource('/permission', WebPermissionController::class);

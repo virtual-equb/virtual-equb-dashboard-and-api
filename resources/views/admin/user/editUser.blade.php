@@ -1,7 +1,3 @@
-  {{-- @if (Auth::user()->role == 'admin' ||
-          Auth::user()->role == 'general_manager' ||
-          Auth::user()->role == 'operation_manager' ||
-          Auth::user()->role == 'it') --}}
      <section class="content-header">
          <h1>
              <small>Update User</small><br>
@@ -83,5 +79,4 @@
              <button type="submit" onclick="edit()" class="btn btn-outline-primary mr-3">Submit</button>
              <button type="reset" class="btn btn-warning text-white">Clear</button>
          </div>
-     </form>
- {{-- @endif --}}
+</form>
