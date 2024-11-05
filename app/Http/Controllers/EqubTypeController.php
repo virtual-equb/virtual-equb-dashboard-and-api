@@ -230,10 +230,8 @@ class EqubTypeController extends Controller
                 $terms = $request->input('terms');
                 $main_equb = $request->input('main_equb_id');
                 $amount = $request->input('amount');
-                $expected_members= $request->input('expected_members');
-                
-
-
+                $total_amount = $request->input('total_amount');
+                $expected_members= $request->input('quota');
                 // dd($end_date);
                 if ($end_date) {
                     $endDateCheck = $this->isDateInYMDFormat($end_date);
@@ -257,7 +255,8 @@ class EqubTypeController extends Controller
                     'terms' => $terms,
                     'main_equb_id' => $main_equb,
                     'amount' => $amount,
-                    'expected_members' => $expected_members
+                    'expected_members' => $expected_members,
+                    'total_amount' => $total_amount,
                 ];
                 if ($request->file('icon')) {
                     $image = $request->file('icon');
@@ -818,11 +817,9 @@ class EqubTypeController extends Controller
     {
         // dd($request);
         try {
-            $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
+                $userData = Auth::user();
                 $equbTypeDetail = EqubType::where('id', $id)->first();
-                // dd($request);
-                // $validated = $this->validate($request, []);
+
                 $main_equb = $request->input('update_main_equb');
                 $name = $request->input('update_name');
                 $round = $request->input('update_round');
@@ -833,7 +830,7 @@ class EqubTypeController extends Controller
                 $start_date = $request->input('start_date');
                 $end_date = $request->input('end_date');
                 $amount = $request->input('amount');
-                $expected_members = $request->input('expected_members');
+                $total_amount = $request->input('total_amount');
                 if ($start_date) {
                     $startDateCheck = $this->isDateInYMDFormat($start_date);
                     $formattedStartDate = $start_date;
@@ -878,7 +875,7 @@ class EqubTypeController extends Controller
                     'remaining_quota' => $remainingQuota,
                     'terms' => $terms,
                     'amount' => $amount,
-                    'expected_members' => $expected_members
+                    'total_amount' => $total_amount
                 ];
                 
                 if ($request->file('icon_update')) {

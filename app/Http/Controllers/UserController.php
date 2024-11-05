@@ -463,7 +463,7 @@ class UserController extends Controller
                 if ($userData) {
                     $user = User::find($id);
                     $data['user'] = $this->userRepository->getById($id);
-                    $data['roles'] = Role::all();
+                    $data['roles'] = Role::where('guard_name', 'web')->get();
                     $data['userRoles'] = $user->roles->where('guard_name', 'web')->pluck('name')->toArray();
                     return view('admin/user/editUser', $data);
                 } else {

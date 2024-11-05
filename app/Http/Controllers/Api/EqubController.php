@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 use App\Http\Resources\Api\EqubResource;
 use App\Models\Payment;
+use App\Models\User;
 use App\Repositories\Equb\EqubRepository;
 use App\Repositories\Equb\IEqubRepository;
 use App\Repositories\Member\IMemberRepository;
@@ -195,41 +196,52 @@ class EqubController extends Controller
             $today = Carbon::today();
             $count = 0;
 
+            // Retrieve all active Equbs with 'Automatic' type and 'Daily' rote
             $equbs = Equb::whereHas('equbType', function ($query) {
-                        $query->where('type', 'Automatic')
-                              ->where('rote', 'Daily');
-                 })
-                 ->where('status', 'Active')
-                 ->with(['member', 'equbType'])
-                 ->get();
+                            $query->where('type', 'Automatic')
+                                ->where('rote', 'Daily');
+                    })
+                    ->where('status', 'Active')
+                    ->with(['member', 'equbType'])
+                    ->get();
 
             foreach($equbs as $equb) {
-                foreach ($equb->member as $member) {
+                $member = $equb->member;
 
-                    if (!$member || !$member->phone) {
+                    // Skip if member or phone number is invalid
+                    if (!$member || !isset($member->phone) || empty($member->phone)) {
+                        Log::info("Skipping Equb {$equb->equbType->name} due to missing member or phone");
                         continue;
                     }
 
-                    // check if payment is recorded for today for specific member
+                    // Check if payment is recorded for today for the specific member
                     $paymentExists = Payment::where('equb_id', $equb->id)
-                                        ->where('member_id', $member->id)
-                                        ->whereDate('created_at', $today)
-                                        ->exists();
+                                            ->where('member_id', $member->id)
+                                            ->whereDate('created_at', $today)
+                                            ->exists();
+                    
                     if (!$paymentExists) {
                         $amount = $equb->amount;
-                        $message = "Reminder: Your daily payment of $amount is due today for Equb {$equb->id}. Please make your payment. For further information, call $shortcode";
+                        $shortcode = config('key.SHORT_CODE'); 
+                        $message = "Reminder: Your daily payment of $amount is due today for Equb {$equb->equbType->name}. Please make your payment. For further information, call $shortcode";
+                        
+                        // Send SMS
                         $this->sendSms($member->phone, $message);
-                        $count ++;
+                        $count++;
+                    } else {
+                        return "Payment already exists for Member ID {$member->id} on Equb ID {$equb->equbType->name}";
                     }
-                }
-                return response()->json([
-                    'message' => 'Daily payment notifications sent successfully.',
-                    'code' => 200,
-                    'count' => $count
-                ]);
             }
 
+            // Return success response with total notifications sent
+            return response()->json([
+                'message' => 'Daily payment notifications sent successfully.',
+                'code' => 200,
+                'count' => $count
+            ]);
+
         } catch (Exception $ex) {
+            // Return error response with exception message
             return response()->json([
                 'message' => 'Unable to process your request, Please try again!',
                 'code' => 500,
@@ -237,6 +249,7 @@ class EqubController extends Controller
             ]);
         }
     }
+
     public function sendLotteryNotification()
     {
         $today = Carbon::today();
@@ -257,7 +270,7 @@ class EqubController extends Controller
                 continue;
             }
             $shortcode = config('key.SHORT_CODE');
-            $message = "Reminder: Weekly lottery draw for Equb {$equb->id} is scheduled today. Stay tuned!. For more information call $shortcode";
+            $message = "Reminder: Weekly lottery draw for Equb {$equb->equbType->name} is scheduled today. Stay tuned!. For more information call $shortcode";
             $this->sendSms($member->phone, $message);
             $count++;
 
@@ -683,7 +696,7 @@ class EqubController extends Controller
                 'amount' => 'required',
                 'total_amount' => 'required',
                 'start_date' => 'required|date_format:Y-m-d',
-                'timeline' => 'required',
+                // 'timeline' => 'required',
             ]);
 
             // Collecting request inputs
@@ -773,6 +786,32 @@ class EqubController extends Controller
                 ];
                 $this->activityLogRepository->createActivityLog($activityLog);
 
+                // Sending SMS notification
+                // memeber notification
+                $shortcode = config('key.SHORT_CODE');
+                $member = Member::find($member);
+                if ($member && $member->phone) {
+                    $memberMessage = "Dear {$member->full_name}, Your Equb has been successfully registered. Our customer service will contact you soon. For more information call {$shortcode}";
+                    $this->sendSms($member->phone, $memberMessage);
+                }
+
+                // Finance Sms
+                $finances = User::role('finance')->get();
+                foreach($finances as $finance) {
+                    if ($finance->phone_number) {
+                        $financeMessage = "Finance Alert: A new Equb with name {$create->name} has been registered. Please review the details.";
+                        $this->sendSms($finance->phone_number, $financeMessage);
+                    }
+                }
+
+                // Call center sms
+                $call_centers = User::role('call_center')->get();
+                foreach($call_centers as $finance) {
+                    if ($finance->phone_number) {
+                        $financeMessage = "Call Center Alert: A new Equb with name {$create->name} has been registered. Please review the details.";
+                        $this->sendSms($finance->phone_number, $financeMessage);
+                    }
+                }
                 return response()->json([
                     'code' => 200,
                     'message' => 'Equb has been registered successfully!',

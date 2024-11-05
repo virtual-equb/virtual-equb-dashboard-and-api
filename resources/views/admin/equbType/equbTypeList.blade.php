@@ -1,9 +1,3 @@
-{{-- @if (Auth::user()->role == 'admin' ||
-        Auth::user()->role == 'general_manager' ||
-        Auth::user()->role == 'operation_manager' ||
-        Auth::user()->role == 'customer_service' ||
-        Auth::user()->role == 'assistant' ||
-        Auth::user()->role == 'it') --}}
     @extends('layouts.app')
     @section('styles')
         <style type="text/css">
@@ -66,14 +60,7 @@
                 }
             }
 
-            /*@media (max-width: 768px) {
-                                                                                                                              .col-md-6 {
-                                                                                                                               width: 100%;
-                                                                                                                               padding-left: 0px;
-                                                                                                                               padding-right: 0px;
-                                                                                                                               float: left;
-                                                                                                                              }
-                                                                                                                            }*/
+            /*@media (max-width: 768px) {                                                                                                              }*/
         </style>
     @endsection
     @section('content')
@@ -100,7 +87,6 @@
                                             <div class="tab-pane fade show active" id="custom-tabs-two-member"
                                                 role="tabpanel" aria-labelledby="custom-tabs-two-member-tab">
                                                 @include('admin/equbType.addEqubType')
-                                                {{-- {{$equbTypes}} --}}
                                                 <table id="equbType-list-table" class="table table-bordered table-striped">
                                                     <thead>
                                                         <tr>
@@ -110,12 +96,9 @@
                                                             <th>Round</th>
                                                             <th>Rote</th>
                                                             <th>Type</th>
-                                                            <th>Space Left</th>
+                                                            <th>Space Left (Quota)</th>
                                                             <th>Lottery Date</th>
-                                                            <th>Expected Amount (Birr)</th>
                                                             <th>Total Amount (Birr)</th>
-                                                            <th>Expected Members</th>
-                                                            <th>Total Members</th>
                                                             <th>Remark</th>
                                                             <th>Status</th>
                                                             <th>Registered At </th>
@@ -143,9 +126,6 @@
                                                                     } ?>
                                                                 </td>
                                                                 <td>{{ $item->amount }}</td>
-                                                                <td>{{ $item->total_amount }}</td>
-                                                                <td>{{ $item->expected_members }}</td>
-                                                                <td>{{ $item->total_members }}</td>
                                                                 <td>{{ $item->remark }}</td>
                                                                 <td>{{ $item->status }}</td>
                                                                 <td>
@@ -1005,5 +985,4 @@
                 }).buttons().container().appendTo('#DeactiveEqubType-list-table_wrapper .col-md-6:eq(0)')
             });
         </script>
-    @endSection
-{{-- @endif --}}
+@endSection

@@ -311,6 +311,9 @@ class EqubTypeController extends Controller
                 $start_date = $request->input('start_date');
                 $end_date = $request->input('end_date');
                 $quota = $request->input('quota');
+                $amount = $request->input('amount');
+                $total_amount = $request->input('total_amount');
+                $expected_members = $request->input('quota');
                 $equbTypeData = [
                     'name' => $name,
                     'round' => $round,
@@ -321,7 +324,10 @@ class EqubTypeController extends Controller
                     'start_date' => $start_date,
                     'end_date' => $end_date,
                     'quota' => $quota,
-                    'main_equb_id' => $main_equb_id
+                    'main_equb_id' => $main_equb_id,
+                    'amount' => $amount,
+                    'total_amount' => $total_amount,
+                    'expected_members' => $expected_members
                 ];
                 $name_count = EqubType::where('name', $name)->where('round', $round)->where('rote', $rote)->where('type', $type)->count();
                 if ($name_count > 0) {
@@ -519,6 +525,8 @@ class EqubTypeController extends Controller
                 $quota = $request->input('update_quota');
                 $start_date = $request->input('update_start_date');
                 $end_date = $request->input('update_end_date');
+                $amount = $request->input('amount');
+                $total_amount = $request->input('total_amount');
                 $updated = [
                     'name' => $name,
                     'round' => $round,
@@ -529,6 +537,8 @@ class EqubTypeController extends Controller
                     'start_date' => $start_date,
                     'end_date' => $end_date,
                     'quota' => $quota,
+                    'amount' => $amount,
+                    'total_amount' => $total_amount
                 ];
                 $updated = $this->equbTypeRepository->update($id, $updated);
                 if ($updated) {
