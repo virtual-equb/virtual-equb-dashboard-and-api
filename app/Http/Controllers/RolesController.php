@@ -109,6 +109,7 @@ class RolesController extends Controller
         // Find the role by ID
         $role = Role::findOrFail($id);
         $role->name = $formFields['name'];
+        dd( $role->name);
         $role->save();
     
         // Filter and sync permissions
