@@ -142,7 +142,7 @@
                             <div class="modal-footer">
                                 <button type="submit" class="btn btn-primary"
                                     onclick="drawAutoWinners()">Draw</button>
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Closes</button>
                             </div>
                         </form>
                     </div>
