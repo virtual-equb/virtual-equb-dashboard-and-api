@@ -41,6 +41,7 @@
                         @endforeach
                     </ul>
                 </li>
+                @can('view member')
                 <li class="nav-item" id="settingNavm">
                     <a href="#" class="nav-link" id="mem">
                         <i class="nav-icon fas fa-users"></i>
@@ -64,6 +65,8 @@
                         </li>
                     </ul>
                 </li>
+                @endcan
+                @can('view payment')
                 <li class="nav-item" id="settingNavp">
                     <a href="#" class="nav-link" id="pay">
                         <i class="nav-icon fas fa-users"></i>
@@ -81,42 +84,55 @@
                         </li>
                     </ul>
                 </li>
+                @endcan
+                @can('view main_equb')
                 <li class="nav-item" id="nav-ety">
                     <a href="{{ route('mainEqubs.index') }}" class="nav-link" id="city">
                         <i class="nav-icon fa fa-server"></i>
                         <p>Main Equbs</p>
                     </a>
                 </li>
+                @endcan
+                @can('view equb_type')
                 <li class="nav-item" id="nav-ety">
                     <a href="{{ route('showEqubType') }}" class="nav-link" id="city">
                         <i class="nav-icon fa fa-network-wired"></i>
                         <p>Equb Type</p>
                     </a>
                 </li>
+                @endcan
+                @can('view rejected_date ')
                 <li class="nav-item" id="nav-ety">
                     <a href="{{ route('showRejectedDate') }}" class="nav-link" id="offDate">
                         <i class="nav-icon fas fa-calendar-minus"></i>
                         <p>Off Date</p>
                     </a>
                 </li>
+                @endcan
+                @can('view notification')
                 <li class="nav-item" id="nav-ety">
                     <a href="{{ route('showNotifations') }}" class="nav-link" id="notification">
                         <i class="nav-icon fa fa-bell"></i>
                         <p>Notification</p>
                     </a>
                 </li>
+                @endcan
+                @can('view city')
                 <li class="nav-item" id="nav-ety">
                     <a href="{{ route('cities.index') }}" class="nav-link" id="city">
                         <i class="nav-icon fas fa-calendar-minus"></i>
                         <p>City</p>
                     </a>
                 </li>
+                @endcan
+                @can('view user')
                 <li class="nav-item" id="nav-ety">
                     <a href="{{ route('user') }}" class="nav-link" id="adminNav">
                         <i class="nav-icon far fa-user"></i>
                         <p>User</p>
                     </a>
                 </li>
+                @endcan
                 <li class="nav-item" id="settingNavm">
                     <a href="#" class="nav-link" id="settingsLink">
                         <i class="nav-icon fas fa-cog"></i>

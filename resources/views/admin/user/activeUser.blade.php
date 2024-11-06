@@ -49,15 +49,20 @@
                             <button class='btn btn-secondary btn-sm btn-flat dropdown-toggle' type='button'
                                 data-toggle='dropdown'>Menu<span class='caret'></span></button>
                             <ul class='dropdown-menu p-4'>
+                                @can('update user')
                                 <li><button href='javascript:void(0);'
                                         class="text-secondary btn btn-flat"
                                         onclick="openEditTab({{ $item }})">
                                         <span class="fas fa-edit "></span> Edit</button>
                                 </li>
+                                @endcan
+                                @can('reset user_password')
                                 <li><button href='javascript:void(0);' class="text-secondary btn btn-flat"
                                         {{-- > --}} onclick="resetPassword({{ $item }})">
                                         <span class="fas fa-edit "></span> Reset Password</button>
                                 </li>
+                                @endcan
+                                @can('delete user')
                                 <li>
                                     <a href="javascript:void(0);"
                                         class="text-secondary btn btn-flat"
@@ -65,12 +70,15 @@
                                             class="fas fa-trash-alt"></i>
                                         Delete</a>
                                 </li>
+                                @endcan
+                                @can('deactivate user')
                                 <li>
                                     <a href="javascript:void(0);"
                                         class="text-secondary btn btn-flat"
                                         onclick="openDeactivatedModal({{ $item }})" id="statuss"
                                         name="statuss"><i class="fab fa-shopware"></i> Deactivate</a>
                                 </li>
+                                @endcan
                             </ul>
                         </div>
                     </td>
@@ -179,7 +187,7 @@
         </ul>
     </nav>
 </div>
-<script type="text/javascript">
+{{-- <script type="text/javascript">
     $("#updateDeactivatedUser").submit(function() {
         $.LoadingOverlay("show");
     });
@@ -196,5 +204,29 @@
             },
             "buttons": ["excel", "pdf", "print", "colvis"]
         }).buttons().container().appendTo('#activeUser-list-table_wrapper .col-md-6:eq(0)')
+    });
+</script> --}}
+
+<script type="text/javascript">
+    $("#updateDeactivatedUser").submit(function() {
+        $.LoadingOverlay("show");
+    });
+    $(function() {
+        $("#activeUser-list-table").DataTable({
+            "responsive": false,
+            "lengthChange": false,
+            "searching": false,
+            "paging": false,
+            "autoWidth": false,
+            language: {
+                search: "",
+                searchPlaceholder: "Search",
+            },
+            @can('export user_data')
+            "buttons": ["excel", "pdf", "print", "colvis"]
+            @else
+            "buttons": []
+            @endcan
+        }).buttons().container().appendTo('#activeUser-list-table_wrapper .col-md-6:eq(0)');
     });
 </script>

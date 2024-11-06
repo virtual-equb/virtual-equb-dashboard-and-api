@@ -1,8 +1,4 @@
-  @if (Auth::user()->role == 'admin' ||
-          Auth::user()->role == 'general_manager' ||
-          Auth::user()->role == 'operation_manager' ||
-          Auth::user()->role == 'assistant' ||
-          Auth::user()->role == 'it')
+
       <table id="deactiveUser-list-table" class="table table-bordered table-striped ">
           <thead>
               <tr>
@@ -33,37 +29,38 @@
                           $createdDate = $toCreatedAt->format('M-j-Y');
                           echo $createdDate; ?>
                       </td>
-                      @if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant')
                           <td>
 
                               <div class='dropdown'>
                                   <button class='btn btn-secondary btn-sm btn-flat dropdown-toggle' type='button'
                                       data-toggle='dropdown'>Menu<span class='caret'></span></button>
                                   <ul class='dropdown-menu p-4'>
+                                    @can('update user')
                                       <li><button href='javascript:void(0);'
                                               class="text-secondary btn btn-link {{ $item->role == 'member' ? 'disabled' : '' }}"
                                               onclick="openEditTab({{ $item }})">
                                               <span class="fas fa-edit "></span> Edit</button>
                                       </li>
-                                      <!--    <li>
-                                  <a href="javascript:void(0);" class="btn-sm btn btn-link" onclick="openDeleteModal({{ $item }})"><i class="fas fa-plus-circle"></i>delet</a>
-                                </li>  -->
+                                      @endcan
+                                    @can('delete user')
                                       <li>
                                           <a href="javascript:void(0);"
                                               class="text-secondary btn btn-link {{ $item->role == 'member' ? 'disabled' : '' }}"
                                               onclick="openDeleteUserModal({{ $item }})"><i
                                                   class="fas fa-trash-alt"></i> Delete</a>
                                       </li>
+                                      @endcan
+                                      @can('activate user')
                                       <li>
                                           <a href="javascript:void(0);"
                                               class="text-secondary btn btn-link {{ $item->role == 'member' ? 'disabled' : '' }}"
                                               onclick="openActivatedModal({{ $item }})" id="statuss"
                                               name="statuss"><i class="fab fa-shopware"></i> Activate</a>
                                       </li>
+                                      @endcan
                                   </ul>
                               </div>
                           </td>
-                      @endif
                   </tr>
               @endforeach
           </tbody>
@@ -186,8 +183,11 @@
                       search: "",
                       searchPlaceholder: "Search",
                   },
+                  @can('export user_data')
                   "buttons": ["excel", "pdf", "print", "colvis"]
+                  @else
+                  "buttons": []
+                  @endcan
               }).buttons().container().appendTo('#deactiveUser-list-table_wrapper .col-md-6:eq(0)')
           });
       </script>
-  @endif

@@ -42,11 +42,11 @@
                                     </li>
                                 </ul>
                                 <div class="float-right">
-                                    @if (!in_array(Auth::user()->role, ['assistant', 'finance']))
+                                    @can('create main_equb')
                                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addMainEqubModal" style="margin-right: 30px;">
                                             <span class="fa fa-plus-circle"></span> Add Main Equb
                                         </button>
-                                    @endif
+                                    @endcan
                                 </div>
                             </div>
                             <div class="card-body">
@@ -82,27 +82,27 @@
                                                             {{ $equb->active == 1 ? 'Active' : 'Inactive' }}
                                                         </span>
                                                     </td>
-                                                    @if (Auth::user()->role != 'assistant')
                                                         <td>
                                                             <div class='dropdown'>
                                                                 <button class='btn btn-secondary btn-sm btn-flat dropdown-toggle' type='button' data-toggle='dropdown'>Menu<span class='caret'></span></button>
                                                                 <ul class='dropdown-menu p-4'>
-                                                                    @if (Auth::user()->role != 'finance')
+                                                                    @can('update main_equb')
                                                                         <li>
                                                                             <button class="text-secondary btn btn-flat" onclick="openEditModal({{ $equb->id }})">
                                                                                 <span class="fa fa-edit"></span> Edit
                                                                             </button>
                                                                         </li>
+                                                                    @endcan
+                                                                    @can('delete main_equb')
                                                                         <li>
                                                                             <button class="text-secondary btn btn-flat delete-equb" data-id="{{ $equb->id }}">
                                                                                 <i class="fas fa-trash-alt"></i> Delete
                                                                             </button>
                                                                         </li>
-                                                                    @endif
+                                                                    @endcan
                                                                 </ul>
                                                             </div>
                                                         </td>
-                                                    @endif
                                                 </tr>
                                             @endforeach
                                         </tbody>

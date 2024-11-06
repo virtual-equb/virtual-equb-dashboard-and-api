@@ -1,8 +1,3 @@
-{{-- @if (Auth::user()->role == 'admin' ||
-        Auth::user()->role == 'general_manager' ||
-        Auth::user()->role == 'operation_manager' ||
-        Auth::user()->role == 'assistant' ||
-        Auth::user()->role == 'it') --}}
     @extends('layouts.app')
     @section('styles')
         <style type="text/css">
@@ -126,7 +121,7 @@
                                                     onclick="removeTabs();"><span class="fa fa-list"> </span>Deactivated
                                                     User</a>
                                             </li>
-                                            {{-- @if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant') --}}
+                                            @can('create user')
                                                 <li class="nav-item addUser">
                                                     <a class="nav-link" id="custom-tabs-two-settings-tab" data-toggle="pill"
                                                         href="#custom-tabs-two-settings" role="tab"
@@ -134,15 +129,12 @@
                                                         onclick="removeTabs();"> <span class="fa fa-plus-circle"></span> Add
                                                         User</a>
                                                 </li>
-                                                {{-- {{$roles}} --}}
-                                            {{-- @endif --}}
-                                            {{-- @if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant') --}}
+                                            @endcan
+                                            
                                             <div class="float-right">
                                                 @include('rolePermission.nav-links')
                                             </div>
                                             
-                                                {{-- {{$roles}} --}}
-                                            {{-- @endif --}}
                                             <li class="nav-item updateUser" id="update-equb_taker-div"
                                                 style="display: none;">
                                                 <a class="nav-link" id="custom-tabs-two-profile-tab" data-toggle="pill"
@@ -177,10 +169,12 @@
 
                                                 </div>
                                             </div>
+                                            @can('create user')
                                             <div class="tab-pane fade" id="custom-tabs-two-settings" role="tabpanel"
                                                 aria-labelledby="custom-tabs-two-settings-tab">
                                                 @include('admin/user.addUser')
                                             </div>
+                                            @endcan
                                             <div class="tab-pane fade " id="update-equb_taker" role="tabpanel"
                                                 aria-labelledby="update-equb_taker-tab">
                                             </div>
@@ -621,5 +615,4 @@
                 }).buttons().container().appendTo('#deactiveUser-list-table_wrapper .col-md-6:eq(0)')
             });
         </script>
-    @endsection
-{{-- @endif --}}
+@endsection
