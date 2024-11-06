@@ -150,17 +150,21 @@
                                                 @include('admin/equb.addEqub')
                                                 @include('admin/member.addMember')
                                                 <div class="float-left checkLotteryandAddMember" id="member_table_filter">
-                                                    {{-- @if (Auth::user()->role != 'assistant' && Auth::user()->role != 'finance') --}}
-                                                        <button type="button" class=" btn btn-primary checkLottery"
-                                                            id="lotteryDatec" data-toggle="modal"
-                                                            data-target="#lotteryDateCheckModal"
-                                                            style="margin-right: 30px;"> <i class="fa fa-check-square"></i>
-                                                            Check Lottery Date</button>
-                                                        <button type="button" class=" btn btn-primary addMember"
-                                                            id="register" data-toggle="modal" data-target="#myModal"
-                                                            style="margin-right: 30px;"> <span class="fa fa-plus-circle">
-                                                            </span> Add member</button>
-                                                    {{-- @endif --}}
+                                                        @can('check member_lottery_date')
+                                                            <button type="button" class=" btn btn-primary checkLottery"
+                                                                id="lotteryDatec" data-toggle="modal"
+                                                                data-target="#lotteryDateCheckModal"
+                                                                style="margin-right: 30px;"> <i class="fa fa-check-square"></i>
+                                                                Check Lottery Date
+                                                            </button>
+                                                        @endcan
+                                                        @can('create member')
+                                                            <button type="button" class=" btn btn-primary addMember"
+                                                                id="register" data-toggle="modal" data-target="#myModal"
+                                                                style="margin-right: 30px;"> <span class="fa fa-plus-circle">
+                                                                </span> Add member
+                                                            </button>
+                                                        @endcan
                                                 </div>
                                                 <div class="row">
                                                     <div class="float-right searchEqubandClear col-4"
@@ -1724,5 +1728,4 @@
                 });
             });
         </script>
-    @endSection
-{{-- @endif --}}
+@endSection
