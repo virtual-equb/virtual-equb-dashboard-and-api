@@ -51,7 +51,7 @@
                                     </label>
                                     <input class="form-control" type="text" placeholder="{{ get_label('please_enter_role_name', 'Please enter role name') }}" id="name" name="name" value="{{ $role->name }}" required>
                                     @error('name')
-                                    <p class="text-danger text-xs mt-1">{{ $message }}</p>
+                                    <p class="text-danger text-xs mt-1">{{ $messages }}</p>
                                     @enderror
                                 </div>
                               
