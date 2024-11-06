@@ -35,6 +35,9 @@ class PermissionCheckAndLogout
 
         if (!$user || !$user->can($permission)) {
             // Redirect to an unauthorized page if the user doesn't have the required permission
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
             return redirect()->route('unauthorized')->with('error', 'You do not have permission to access this resource.');
         }
 

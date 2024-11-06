@@ -179,13 +179,15 @@
                                         onclick="addUnpaid({{ $equb }})" id="addUnpaidButton"><i
                                             class="fas fa-plus-circle"></i> Add Unpaid</a>
                                 </li> --}}
-                                    {{-- @if (Auth::user()->role != 'finance') --}}
+                                        @can('add equb_payment')
                                         <li>
                                             <a href="javascript:void(0);"
                                                 class="text-secondary btn btn-flat {{ $member->status == 'Deactive' ? 'disabled' : ($equb->status == 'Deactive' ? 'disabled' : ($sum >= $expectedTotal ? 'disabled' : '')) }}"
                                                 onclick="openPaymentModal({{ $equb }})" id="paymentButton"><i
                                                     class="fas fa-plus-circle"></i> Payment</a>
                                         </li>
+                                        @endcan
+                                        @can('add equb_lottery')
                                         <li>
                                             <a href="javascript:void(0);"
                                                 class="text-secondary btn btn-flat {{ $member->status == 'Deactive' ? 'disabled' : ($equb->status == 'Deactive' ? 'disabled' : ($remainingAmount == 0 ? 'disabled' : '')) }}"
@@ -193,6 +195,8 @@
                                                 onclick="openLotteryModal({{ $equb }})"><i
                                                     class="fas fa-plus-circle"></i> Lottery</a>
                                         </li>
+                                        @endcan
+                                        @can('update equb')
                                         <li>
                                             <a href="javascript:void(0);"
                                                 class="text-secondary btn btn-flat {{ $member->status == 'Deactive' ? 'disabled' : ($equb->status == 'Deactive' ? 'disabled' : ($remainingAmount == 0 && $sum == $expectedTotal ? 'disabled' : '')) }}"
@@ -201,12 +205,16 @@
                                                 </span>
                                                 Edit</a>
                                         </li>
+                                        @endcan
+                                        @can('delete equb')
                                         <li>
                                             <a href="javascript:void(0);"
                                                 class="text-secondary btn btn-flat {{ $member->status == 'Deactive' ? 'disabled' : ($equb->status == 'Deactive' ? 'disabled' : ($remainingAmount == 0 && $sum == $expectedTotal ? 'disabled' : '')) }}"
                                                 onclick="openEqubDeleteModal({{ $equb }})"
                                                 id="paymentDelete"><i class="fas fa-trash-alt"></i> Delete</a>
                                         </li>
+                                        @endcan
+                                        @can('deactivate equb')
                                         <li>
                                             <a href="javascript:void(0);" class="text-secondary btn btn-flat"
                                                 onclick="equbStatusChange({{ $equb }})"
@@ -220,6 +228,8 @@
                                                 ?>
                                             </a>
                                         </li>
+                                        @endcan
+                                        @can('deactivate equb_for_draw')
                                         <li>
                                             <a href="javascript:void(0);" class="text-secondary btn btn-flat"
                                                 onclick="equbDrawCheckChange({{ $equb }})"
@@ -233,7 +243,7 @@
                                                 ?>
                                             </a>
                                         </li>
-                                    {{-- @endif --}}
+                                        @endcan
                                 </ul>
                             </div>
                         </td>

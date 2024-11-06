@@ -29,10 +29,10 @@ class FrontMainEqubController extends Controller
         $this->title = "Virtual Equb - Dashboard";
 
         // Permission Guard
-        $this->middleware('permission:update main_equb', ['only' => ['update', 'edit']]);
-        $this->middleware('permission:delete main_equb', ['only' => ['destroy']]);
-        $this->middleware('permission:view main_equb', ['only' => ['index', 'show']]);
-        $this->middleware('permission:create main_equb', ['only' => ['store', 'create']]);
+        // $this->middleware('permission:update main_equb', ['only' => ['update', 'edit']]);
+        // $this->middleware('permission:delete main_equb', ['only' => ['destroy']]);
+        // $this->middleware('permission:view main_equb', ['only' => ['index', 'show']]);
+        // $this->middleware('permission:create main_equb', ['only' => ['store', 'create']]);
     }
 
     public function index() {

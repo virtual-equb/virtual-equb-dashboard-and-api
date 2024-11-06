@@ -49,10 +49,10 @@ class EqubController extends Controller
         $this->title = "Virtual Equb - Equb";
 
         // Permission guard
-        $this->middleware('permission_check_logout:update equb', ['only' => ['update', 'edit', 'updateStatus']]);
-        $this->middleware('permission_check_logout:delete equb', ['only' => ['destroy']]);
-        $this->middleware('permission_check_logout:view equb', ['only' => ['index', 'show', 'getReservedLotteryDate']]);
-        $this->middleware('permission_check_logout:create equb', ['only' => ['store', 'create', 'addUnpaid']]);
+        // $this->middleware('permission_check_logout:update equb', ['only' => ['update', 'edit', 'updateStatus']]);
+        // $this->middleware('permission_check_logout:delete equb', ['only' => ['destroy']]);
+        // $this->middleware('permission_check_logout:view equb', ['only' => ['index', 'show', 'getReservedLotteryDate']]);
+        // $this->middleware('permission_check_logout:create equb', ['only' => ['store', 'create', 'addUnpaid']]);
     }
     /**
      * Display a listing of the resource.
