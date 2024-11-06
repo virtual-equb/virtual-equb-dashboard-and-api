@@ -28,6 +28,7 @@ use App\Http\Controllers\Api\PermissionController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\SubcityController as ApiSubcityController;
 use App\Http\Controllers\CodeController;
+use App\Http\Controllers\EqubController as ControllersEqubController;
 use App\Http\Controllers\SubcityController;
 use App\Models\Roles;
 use App\Models\User;
@@ -46,10 +47,15 @@ use App\Models\User;
 
 
 
+Route::post('/notify-equb-start', [EqubController::class, 'sendStartNotifications']);
+Route::post('/notify-equb-ends', [EqubController::class, 'sendEndNotifications']);
+Route::post('/daily-payment-notification', [EqubController::class, 'sendDailyPaymentNotification']);
+Route::post('/lottery-notification', [EqubController::class, 'sendLotteryNotification']);
 
 Route::get('/registrationCity', [CityController::class, 'index'])->name('registrationCity');
 Route::post('member/registerMember', [MemberController::class, 'register'])->name('storeMember');
-Route::post('member/updateProfile/{id}', [MemberController::class, 'updateProfile'])->name('updateProfile');
+Route::post('member/updateProfile/{id}', [MemberController::class, 'updateProfile'])->name('updateProfile'); // old update
+// Route::middleware(['auth:api'])->put('member/updateProfile/{id}', [MemberController::class, 'updateProfile'])->name('updateProfile'); // new update
 Route::post('/checkMemberPhoneExist', [MemberController::class, 'checkMemberPhoneExist'])->name('check_member_phone_exist');
 Route::post('/checkUserPhoneExist', [UserController::class, 'checkPhone'])->name('check_user_phone_exist');
 Route::post('/resetPassword', [UserController::class, 'resetPasswordUser']);
@@ -97,9 +103,12 @@ Route::get('/getDailyPaidAmount/{equb_id}', [EqubController::class, 'getDailyPai
 Route::post('/changePassword/{id}', [UserController::class, 'changePassword'])->name('changePassword');
 
 // New Apis CBE Gatway 1
-Route::get('/encrypt-data', [PaymentGatewayController::class, 'encryptData']);
+Route::middleware(['auth:api'])->group(function () {
+    
+});
+// Transaction Status EncVal
 Route::post('/transaction-status', [PaymentGatewayController::class, 'transactionStatus']);
-// Route::post('/check-transaction-status', [PaymentGatewayController::class, 'checkTransactionStatus']);
+Route::post('/cbegateway', [PaymentGatewayController::class, 'generateUrl']);
 
 // Main Equb
 Route::middleware(['auth:api'])->group(function () {
@@ -113,9 +122,8 @@ Route::middleware(['auth:api'])->group(function () {
     Route::resource('/permissions', PermissionController::class);
     Route::get('/roles/{roleId}/give-permissions', [RoleController::class, 'addPermissionToRole']);
     Route::put('/roles/{roleId}/give-permissions', [RoleController::class, 'updatePermissionToRole']);
-    // Route::post('/createuser', [UserController::class, 'store']);
-    
 });
+
 
 // Route::get('/testequb', [MainEqubController::class, 'getTypes']);
 
@@ -141,7 +149,6 @@ Route::prefix('equb')->group(function () {
     Route::get('/equb-register', [EqubController::class, 'create'])->name('creatEqub');
     Route::get('/show-equb/{id}', [EqubController::class, 'show'])->name('showAllEkub');
     Route::post('/equb-register', [EqubController::class, 'store'])->name('registerEqub');
-    // Route::get('/draw-equb', [EqubController::class, 'draw'])->name('draw');
     Route::post('/equb-update/{id}', [EqubController::class, 'update'])->name('updateEqub');
     Route::put('/equbStatus-update/{id}', [EqubController::class, 'updateStatus'])->name('updateEqubStatus');
     Route::delete('/equb-delete/{id}', [EqubController::class, 'destroy'])->name('deleteEqub');
@@ -156,9 +163,7 @@ Route::prefix('member')->group(function () {
     Route::get('/get-paid-equbs/{id}', [MemberController::class, 'getPaidEqubs'])->name('getPaidEqub');
     Route::get('/search-member/{searchInput}/{offset}/{pageNumber?}', [MemberController::class, 'searchMember'])->name('searchMember');
     Route::get('/get-allEqubs', [MemberController::class, 'getAllEqubs'])->name('getAllEqub');
-    //Route::get('/show-member/{id}', [MemberController::class, 'show'])->name('showAllMember');
     Route::get('/create-member', [MemberController::class, 'create'])->name('createMember');
-    // Route::get('/register',[MemberController::class, 'create'])->name('createMember');
     Route::post('/register', [MemberController::class, 'store'])->name('registerMember');
     Route::get('/edit/{id}', [MemberController::class, 'edit'])->name('editMember');
     Route::put('/update/{id}', [MemberController::class, 'update'])->name('updateMember');

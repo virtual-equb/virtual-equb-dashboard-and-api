@@ -1,9 +1,3 @@
-{{-- @if (Auth::user()->role == 'admin' ||
-        Auth::user()->role == 'general_manager' ||
-        Auth::user()->role == 'operation_manager' ||
-        Auth::user()->role == 'customer_service' ||
-        Auth::user()->role == 'assistant' ||
-        Auth::user()->role == 'it') --}}
     @extends('layouts.app')
     @section('styles')
         <style type="text/css">
@@ -66,14 +60,7 @@
                 }
             }
 
-            /*@media (max-width: 768px) {
-                                                                                                                              .col-md-6 {
-                                                                                                                               width: 100%;
-                                                                                                                               padding-left: 0px;
-                                                                                                                               padding-right: 0px;
-                                                                                                                               float: left;
-                                                                                                                              }
-                                                                                                                            }*/
+            /*@media (max-width: 768px) {                                                                                                              }*/
         </style>
     @endsection
     @section('content')
@@ -100,18 +87,19 @@
                                             <div class="tab-pane fade show active" id="custom-tabs-two-member"
                                                 role="tabpanel" aria-labelledby="custom-tabs-two-member-tab">
                                                 @include('admin/equbType.addEqubType')
-                                                {{-- {{$equbTypes}} --}}
                                                 <table id="equbType-list-table" class="table table-bordered table-striped">
                                                     <thead>
                                                         <tr>
                                                             <th>No</th>
+                                                            <td>Image</td>
                                                             <th>Equb</th>
                                                             <th>Name</th>
                                                             <th>Round</th>
                                                             <th>Rote</th>
                                                             <th>Type</th>
-                                                            <th>Space Left</th>
+                                                            <th>Space Left (Quota)</th>
                                                             <th>Lottery Date</th>
+                                                            <th>Total Amount (Birr)</th>
                                                             <th>Remark</th>
                                                             <th>Status</th>
                                                             <th>Registered At </th>
@@ -122,6 +110,9 @@
                                                         @foreach ($equbTypes as $key => $item)
                                                             <tr>
                                                                 <td>{{ $key + 1 }}</td>
+                                                                <td>
+                                                        <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}" style="width: 50px; height: auto;">
+                                                    </td>
                                                                 <td>{{ $item->main_equb->name ?? 'N/A'}}</td>
                                                                 <td>{{ $item->name }}</td>
                                                                 <td>{{ $item->round }}</td>
@@ -138,6 +129,7 @@
                                                                         echo '';
                                                                     } ?>
                                                                 </td>
+                                                                <td>{{ $item->amount }}</td>
                                                                 <td>{{ $item->remark }}</td>
                                                                 <td>{{ $item->status }}</td>
                                                                 <td>
@@ -290,6 +282,8 @@
                 const endDate = document.getElementById("end_date_div");
                 const quota = document.getElementById("quota_div");
                 const rote = document.getElementById("rote");
+                const amount = document.getElementById("amount_div");
+                const members = document.getElementById('members_div');
                 const options = rote.options;
                 $("#type").on("change", function() {
                     var type = $(this).find("option:selected").val();
@@ -298,6 +292,8 @@
                         startDate.classList.remove("d-none");
                         endDate.classList.remove("d-none");
                         quota.classList.remove("d-none");
+                        amount.classList.remove("d-none");
+                        members.classList.remove("d-none");
                         //for (var i = 1; i < options.length; i++) {
                         //    options[i].disabled = false;
                         //    if (options[i].value !== "Weekly") {
@@ -308,6 +304,8 @@
                         startDate.required = true;
                         endDate.required = true;
                         quota.required = true;
+                        amount.required = true;
+                        members.required = true;
                     } else {
                         lotteryDate.classList.add("d-none");
                         startDate.classList.add("d-none");
@@ -323,6 +321,8 @@
                         startDate.required = false;
                         endDate.required = false;
                         quota.required = false;
+                        amount.required = false;
+                        members.required = false;
                     }
                 });
             });
@@ -350,6 +350,10 @@
                 const endDate = document.getElementById("update_end_date_div");
                 const quota = document.getElementById("update_quota_div");
                 const update_rote = document.getElementById("update_rote");
+                const amount = document.getElementById("update_amount_div");
+                const members = document.getElementById("update_members_div");
+                const total_amount = document.getElementById("update_total_amount_div");
+                const total_members = document.getElementById("update_total_members_div");
                 const update_options = update_rote.options;
                 $("#update_type").on("change", function() {
                     var type = $(this).find("option:selected").val();
@@ -358,6 +362,8 @@
                         startDate.classList.remove("d-none");
                         endDate.classList.remove("d-none");
                         quota.classList.remove("d-none");
+                        amount.classList.remove("d-none");
+                        members.classList.remove("d-none");
                         //for (var i = 1; i < update_options.length; i++) {
                         //    update_options[i].disabled = false;
                         //   if (update_options[i].value !== "Weekly") {
@@ -368,6 +374,8 @@
                         startDate.required = true;
                         endDate.required = true;
                         quota.required = true;
+                        amount.required = true;
+                        members.required = true;
                     } else {
                         lotteryDate.classList.add("d-none");
                         startDate.classList.add("d-none");
@@ -383,6 +391,8 @@
                         startDate.required = false;
                         endDate.required = false;
                         quota.required = false;
+                        amount.required = false;
+                        members.required = false;
                     }
                 });
                 $("#start_date").datetimepicker({
@@ -435,64 +445,78 @@
                 $('#updateStatus').attr('action', "{{ url('equbType/updateStatus') }}" + '/' + $('#equbType_id').val());
 
             }
+  function openEditModal(item) {
+    $('#did').val(item.id);
+    $('#editEqubTypeModal').modal('show');
+    $('#update_main_equb').val(item.main_equb);
+    $('#update_name').val(item.name);
+    $('#update_round').val(item.round);
+    $('#update_status').val(item.status);
+    $('#update_rote').val(item.rote);
+    $('#update_type').val(item.type);
+    $('#update_remark').val(item.remark);
+    $('#amount').val(item.amount); // Ensure this field is populated
+    $('#member').val(item.expected_members); // Ensure this field is populated
 
-            function openEditModal(item) {
-                // console.log(item)
-                $('#did').val(item.id);
-                $('#editEqubTypeModal').modal('show');
-                $('#update_main_equb').val(item.main_equb);
-                $('#update_name').val(item.name);
-                $('#update_round').val(item.round);
-                $('#update_status').val(item.status);
-                $('#update_rote').val(item.rote);
-                $('#update_type').val(item.type);
-                $('#update_remark').val(item.remark);
-                $('#update_lottery_date').val(item.lottery_date);
-                $('#update_start_date').datepicker('setDate', new Date(item.start_date));
-                $('#update_start_date').datepicker('destroy');
-                $('#update_end_date').datepicker('setDate', new Date(item.end_date));
-                $('#update_end_date').datepicker('destroy');
-                $('#update_quota').val(item.quota);
-                $('#update_terms').summernote('code', item.terms);
-                const lotteryDate = document.getElementById("update_lottery_date_div");
-                const startDate = document.getElementById("update_start_date_div");
-                const endDate = document.getElementById("update_end_date_div");
-                const quota = document.getElementById("update_quota_div");
-                const update_rotes = document.getElementById("update_rote");
-                const update_option = update_rotes.options;
-                if (item.type === "Automatic") {
-                    lotteryDate.classList.remove("d-none");
-                    startDate.classList.remove("d-none");
-                    endDate.classList.remove("d-none");
-                    quota.classList.remove("d-none");
-                    // for (var i = 1; i < update_option.length; i++) {
-                    //     update_option[i].disabled = false;
-                    //     if (update_option[i].value !== "Weekly") {
-                    //         update_option[i].disabled = true;
-                    //     }
-                    // }
-                    lotteryDate.required = true;
-                    startDate.required = true;
-                    endDate.required = true;
-                    quota.required = true;
-                } else {
-                    lotteryDate.classList.add("d-none");
-                    startDate.classList.add("d-none");
-                    endDate.classList.add("d-none");
-                    quota.classList.add("d-none");
-                    // for (var i = 1; i < update_option.length; i++) {
-                    //     update_option[i].disabled = false;
-                    //     if (update_option[i].value !== "Daily") {
-                    //         update_option[i].disabled = true;
-                    //     }
-                    // }
-                    lotteryDate.required = false;
-                    startDate.required = false;
-                    endDate.required = false;
-                    quota.required = false;
-                }
-                $('#updateEqubType').attr('action', 'equbType/update/' + $('#did').val())
-            }
+    // Populate total_amount and total_members fields
+    $('#total_amount').val(item.total_amount); // Set total amount from item
+    $('#total_members').val(item.total_expected_members); // Set total members from item
+
+    $('#update_lottery_date').val(item.lottery_date);
+    $('#update_start_date').datepicker('setDate', new Date(item.start_date));
+    $('#update_end_date').datepicker('setDate', new Date(item.end_date));
+    $('#update_quota').val(item.quota);
+    $('#update_terms').summernote('code', item.terms);
+
+    // Handle visibility and required fields based on type
+    const lotteryDate = document.getElementById("update_lottery_date_div");
+    const startDate = document.getElementById("update_start_date_div");
+    const endDate = document.getElementById("update_end_date_div");
+    const quota = document.getElementById("update_quota_div");
+    const amount = document.getElementById("update_amount_div");
+    const members = document.getElementById("update_members_div");
+    const total_amount = document.getElementById("update_total_amount_div");
+    const total_members = document.getElementById("update_total_members_div");
+
+    if (item.type === "Automatic") {
+        lotteryDate.classList.remove("d-none");
+        startDate.classList.remove("d-none");
+        endDate.classList.remove("d-none");
+        quota.classList.remove("d-none");
+        amount.classList.remove("d-none");
+        members.classList.remove("d-none");
+        total_amount.classList.remove("d-none"); // Show total amount field
+        total_members.classList.remove("d-none"); // Show total members field
+
+        lotteryDate.required = true;
+        startDate.required = true;
+        endDate.required = true;
+        quota.required = true;
+        amount.required = true;
+        members.required = true;
+        total_amount.required = true; // Make total amount required
+        total_members.required = true; // Make total members required
+    } else {
+        lotteryDate.classList.add("d-none");
+        startDate.classList.add("d-none");
+        endDate.classList.add("d-none");
+        quota.classList.add("d-none");
+        amount.classList.add("d-none");
+        members.classList.add("d-none");
+        total_amount.classList.add("d-none"); // Hide total amount
+        total_members.classList.add("d-none"); // Hide total members
+
+        lotteryDate.required = false;
+        startDate.required = false;
+        endDate.required = false;
+        quota.required = false;
+        amount.required = true;
+        members.required = true;
+    }
+
+    // Set the action for the form
+    $('#updateEqubType').attr('action', 'equbType/update/' + $('#did').val());
+}
 
 
             function editEqubTypeValidation() {
@@ -969,5 +993,4 @@
                 }).buttons().container().appendTo('#DeactiveEqubType-list-table_wrapper .col-md-6:eq(0)')
             });
         </script>
-    @endSection
-{{-- @endif --}}
+@endSection

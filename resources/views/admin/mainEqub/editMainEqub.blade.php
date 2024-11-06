@@ -9,7 +9,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="editMainEqubForm">
+                <form id="editMainEqubForm" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" id="edit_equb_id" name="equb_id">
                     
@@ -25,7 +25,13 @@
                             <option value="0">Inactive</option>
                         </select>
                     </div>
-                    
+
+                    <div class="form-group">
+                        <label for="image" class="control-label">Image</label>
+                        <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                        <img id="currentImage" src="" alt="Current Image" class="img-thumbnail" style="max-width: 100px; max-height: 100px; display: none;">
+                    </div>
+
                     <div class="form-group">
                         <label for="edit_remark">Remark</label>
                         <textarea class="form-control" id="edit_remark" name="remark"></textarea>

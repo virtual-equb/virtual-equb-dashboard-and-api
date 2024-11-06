@@ -27,10 +27,10 @@ class MainEqubController extends Controller
         $this->activityLogRepository = $activityLogRepository;
 
         // Permission Guard
-        $this->middleware('permission:update main_equb', ['only' => ['update', 'edit']]);
-        $this->middleware('permission:delete main_equb', ['only' => ['destroy']]);
-        $this->middleware('permission:view main_equb', ['only' => ['index', 'show']]);
-        $this->middleware('permission:create main_equb', ['only' => ['store', 'create']]);
+        // $this->middleware('permission_check_logout:update main_equb', ['only' => ['update', 'edit']]);
+        // $this->middleware('permission_check_logout:delete main_equb', ['only' => ['destroy']]);
+        // $this->middleware('permission_check_logout:view main_equb', ['only' => ['index', 'show']]);
+        // $this->middleware('permission_check_logout:create main_equb', ['only' => ['store', 'create']]);
     }
 
     public function index()
@@ -99,8 +99,14 @@ class MainEqubController extends Controller
             'name' => 'required|string|max:255',
             'remark' => 'nullable|string|max:500',
             'status' => 'required|boolean',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', 
+
         ]);
-    
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('images/equbs', 'public'); // Store the image
+            $data['image'] = $imagePath; // Add the image path to the data array
+        }
+
         $equb = MainEqub::findOrFail($id);
         $equb->name = $request->input('name');
         $equb->remark = $request->input('remark');

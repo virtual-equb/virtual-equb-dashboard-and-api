@@ -11,6 +11,9 @@ use App\Repositories\EqubType\IEqubTypeRepository;
 use App\Repositories\Equb\IEqubRepository;
 use App\Repositories\ActivityLog\IActivityLogRepository;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Api\EqubResource;
+use App\Http\Resources\Api\EqubTakerResource;
+use App\Http\Resources\Api\MemberResource;
 use Illuminate\Support\Facades\Auth;
 /**
  * @group Equb Takers
@@ -40,6 +43,11 @@ class EqubTakerController extends Controller
         $this->equbTypeRepository = $equbTypeRepository;
         $this->paymentRepository = $paymentRepository;
         $this->title = "Virtual Equb - Equb Taker";
+
+        $this->middleware('api_permission_check:update equb_taker', ['only' => ['update', 'edit', 'updateLottery']]);
+        $this->middleware('api_permission_check:delete equb_taker', ['only' => ['destroy']]);
+        $this->middleware('api_permission_check:view equb_taker', ['only' => ['index', 'show']]);
+        $this->middleware('api_permission_check:create equb_taker', ['only' => ['store']]);
     }
     /**
      * Get All Equb Takers
@@ -52,12 +60,18 @@ class EqubTakerController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "equb_collector")) {
+            $roles = ['admin', 'equb_collector'];
+            if ($userData && $userData->hasAnyRole($roles)) {
                 $data['equbTakers']  = $this->equbTakerRepository->getAll();
                 $data['equbs']  = $this->equbRepository->getAll();
                 $data['members']  = $this->memberRepository->getMemberWithEqub();
                 $data['title']  = $this->title;
-                return response()->json($data);
+                return response()->json([
+                    'code' => 200,
+                    'equbTakers' => EqubTakerResource::collection($data['equbTakers']),
+                    'equbs' => EqubResource::collection($data['equbs']),
+                    'members' => MemberResource::collection($data['members'])
+                ]);
             } else {
                 return response()->json([
                     'code' => 400,
@@ -68,7 +82,7 @@ class EqubTakerController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -117,7 +131,8 @@ class EqubTakerController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+            $roles = ['admin', 'equb_collector'];
+            if ($userData && $userData->hasAnyRole($roles)) {
                 $this->validate($request, [
                     'payment_type' => 'required',
                     'amount' => 'required',
@@ -186,7 +201,7 @@ class EqubTakerController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -210,18 +225,18 @@ class EqubTakerController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "equb_collector")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "equb_collector")) {
                 $data['equbTaker'] = $this->equbTakerRepository->getAllEqubTaker($id);
                 $data['members'] = $this->memberRepository->getAll();
                 $data['equbs'] = $this->equbRepository->getAll();
                 $data['equbTypes'] = $this->equbTypeRepository->getAll();
                 return response()->json($data);
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -252,7 +267,7 @@ class EqubTakerController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+            // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $paymentType = $request->input('update_lottery_payment_type');
                 $amount = $request->input('update_lottery_amount');
                 $status = $request->input('update_lottery_status');
@@ -299,12 +314,12 @@ class EqubTakerController extends Controller
                         "error" => "Unknown error occurred, Please try again!"
                     ]);
                 }
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -326,7 +341,7 @@ class EqubTakerController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+            // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $equbTaker = $this->equbTakerRepository->getById($id);
                 if ($equbTaker != null) {
                     $deleted = $this->equbTakerRepository->delete($id);
@@ -354,12 +369,12 @@ class EqubTakerController extends Controller
                 } else {
                     return false;
                 }
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,

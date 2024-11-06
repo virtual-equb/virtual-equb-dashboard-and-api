@@ -1,9 +1,4 @@
-{{-- @if (Auth::user()->role == 'admin' ||
-        Auth::user()->role == 'general_manager' ||
-        Auth::user()->role == 'operation_manager' ||
-        Auth::user()->role == 'finance' ||
-        Auth::user()->role == 'assistant' ||
-        Auth::user()->role == 'it') --}}
+
     @extends('layouts.app')
     @section('content')
         <div class="content-wrapper">
@@ -26,6 +21,7 @@
             <section class="content">
                 <div class="container-fluid">
                     <div class="row">
+                        @can('view dashboard_members')
                         <div class="col-md-4">
                             <!-- small box -->
                             <div class="small-box bg-info">
@@ -40,20 +36,24 @@
                                         class="fas fa-arrow-circle-right"></i></a>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <!-- small box -->
-                            <div class="small-box bg-warning">
-                                <div class="inner">
-                                    <h3>{{ $activeMember }}</h3>
-                                    <p>Active Members</p>
+                        @endcan
+                        @can('view dashboard_members')
+                            <div class="col-md-4">
+                                <!-- small box -->
+                                <div class="small-box bg-warning">
+                                    <div class="inner">
+                                        <h3>{{ $activeMember }}</h3>
+                                        <p>Active Members</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="ion ion-pie-graph"></i>
+                                    </div>
+                                    <a href="{{ route('showMember') }}" class="small-box-footer">More info <i
+                                            class="fas fa-arrow-circle-right"></i></a>
                                 </div>
-                                <div class="icon">
-                                    <i class="ion ion-pie-graph"></i>
-                                </div>
-                                <a href="{{ route('showMember') }}" class="small-box-footer">More info <i
-                                        class="fas fa-arrow-circle-right"></i></a>
                             </div>
-                        </div>
+                        @endcan
+                        @can('view dashboard_summary')
                         <div class="col-md-4">
                             <!-- small box -->
                             <div class="small-box bg-success">
@@ -67,9 +67,11 @@
                                 <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
                             </div>
                         </div>
+                        @endcan
                     </div>
                     <div class="row">
                         <div class="col-md-6">
+                            @can('view dashboard_daily_summary')
                             <!-- PIE CHART -->
                             <div class="card card-info">
                                 <div class="card-header">
@@ -88,6 +90,8 @@
                                         style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
                                 </div>
                             </div>
+                            @endcan
+                            @can('view dashboard_projection_equb_type')
                             <div class="card card-success">
                                 <div class="card-header">
                                     <h3 class="card-title">Projection for each equb type</h3>
@@ -107,8 +111,10 @@
                                     </div>
                                 </div>
                             </div>
+                            @endcan
                         </div>
                         <div class="col-md-6">
+                            @can('view dashboard_all_projection')
                             <div class="card card-danger">
                                 <div class="card-header">
                                     <h3 class="card-title">Projection </h3>
@@ -128,6 +134,8 @@
                                     </div>
                                 </div>
                             </div>
+                            @endcan
+                            @can('view dashboard_lottery_winner')
                             <div class="card card-secondary">
                                 <div class="card-header">
                                     <h3 class="card-title">Today's Lottery Winning Members</h3>
@@ -238,6 +246,7 @@
                                     </table>
                                 </div>
                             </div>
+                            @endcan
                         </div>
                     </div>
                 </div>
@@ -415,5 +424,4 @@
                 })
             })
         </script>
-    @endSection
-{{-- @endif --}}
+@endSection

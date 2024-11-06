@@ -12,7 +12,19 @@ class EqubTaker extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'member_id', 'equb_id', 'payment_type', 'amount', 'remaining_amount', 'status', 'paid_by', 'total_payment', 'remaining_payment', 'cheque_amount', 'cheque_bank_name', 'cheque_description', 'remark',
+        'member_id', 
+        'equb_id', 
+        'payment_type', 
+        'amount', 
+        'remaining_amount', 
+        'status', 
+        'paid_by', 
+        'total_payment', 
+        'remaining_payment', 
+        'cheque_amount', 
+        'cheque_bank_name', 
+        'cheque_description', 
+        'remark',
         'transaction_number',
         'paid_date'
     ];

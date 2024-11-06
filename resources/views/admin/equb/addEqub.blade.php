@@ -1,8 +1,8 @@
-@if (Auth::user()->role == 'admin' ||
+{{-- @if (Auth::user()->role == 'admin' ||
         Auth::user()->role == 'general_manager' ||
         Auth::user()->role == 'operation_manager' ||
         Auth::user()->role == 'customer_service' ||
-        Auth::user()->role == 'it')
+        Auth::user()->role == 'it') --}}
     <div class="modal fade" id="addEqubModal" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -38,6 +38,11 @@
                                 <input type="text" onchange="getExpectedTotal()" class="form-control" id="start_date"
                                     name="start_date"placeholder="Start date" autocomplete="off">
                             </div>
+                            {{-- <div class="form-group required">
+                                <label class="control-label">Start Date</label>
+                                <input type="text" onchange="getExpectedTotal()" class="form-control" id="start_date2"
+                                    name="start_date"placeholder="Start date" readonly autocomplete="off">
+                            </div> --}}
                             <div id="timeline_div" class="form-group required">
                                 <label class="control-label">Timeline</label>
                                 <select class="form-control select2" id="timeline" name="timeline"
@@ -99,4 +104,4 @@
 
         </div>
     </div>
-@endif
+{{-- @endif --}}

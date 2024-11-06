@@ -14,3 +14,6 @@ yarn-error.log
 /.vscode
 *.rest
 .htaccess
+/storage/*
+/storage/
+!/storage/.gitignore

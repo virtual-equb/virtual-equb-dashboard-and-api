@@ -37,14 +37,15 @@ class HomeController extends Controller
         $this->mainEqubRepository = $mainEqubRepository;
 
         // Permission Guard
-        $this->middleware('permission:view dashboard', ['only' => ['index', 'show', 'equbTypeIndex']]);
+        // $this->middleware('permission:view dashboard', ['only' => ['index', 'show', 'equbTypeIndex']]);
+        // $this->middleware('permission_check_logout:view dashboard', ['only' => ['index', 'show', 'equbTypeIndex']]);
     }
     //Projection chart updated here
     public function index()
     {
         try {
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "finance" || $userData['role'] == "marketing_manager" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
+            $roles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance', 'marketing_manager', 'call_center', 'it', 'assistant'];
                 $profile = Auth::user();
                 $title = $this->title;
                 $totalEqubAmount = $this->equbRepository->getExpectedTotal();
@@ -145,12 +146,7 @@ class HomeController extends Controller
                     $start_date = $weeklyExpected1[$i]->start_date;
                     $start_date = \Carbon\Carbon::parse($start_date);
                     $currunt_date = \Carbon\Carbon::today()->subDays(7);
-                    // if ($end_date >= $currunt_date) {
-                    // if ($start_date >= $currunt_date) {
-                    //     $difference = $start_date->diffInDays($end_date, false);
-                    // } else {
-                    //     $difference = $currunt_date->diffInDays($end_date, false);
-                    // }
+                    
                     if ($start_date <= $currunt_date && $end_date >= $currunt_date) {
                         $difference = $currunt_date->diffInDays($end_date, false);
                     } else {
@@ -182,12 +178,7 @@ class HomeController extends Controller
                     $start_date = $monthlyExpected[$i]->start_date;
                     $start_date = \Carbon\Carbon::parse($start_date);
                     $currunt_date = \Carbon\Carbon::today();
-                    // if ($end_date >= $currunt_date) {
-                    // if ($start_date >= $currunt_date) {
-                    //     $difference = $start_date->diffInDays($end_date, false);
-                    // } else {
-                    //     $difference = $currunt_date->diffInDays($end_date, false);
-                    // }
+                    
                     if ($start_date <= $currunt_date && $end_date >= $currunt_date) {
                         $difference = $currunt_date->diffInDays($end_date, false);
                     } else {
@@ -203,8 +194,7 @@ class HomeController extends Controller
                         $wE = $wE * $difference;
                         $sum2 = $sum2 + $wE;
                     }
-                    // dd($sum2);
-                    // }
+                    
                 }
                 $monthlyExpected = $sum2;
                 $monthlyUnpaidAmount = $monthlyExpected - $monthlyPaidAmount;
@@ -261,13 +251,6 @@ class HomeController extends Controller
                     }
                 }
                 return view('admin/home', compact('automaticMembersArray',  'title', 'lables', 'fullPaidAmount', 'fullUnPaidAmount', 'Expected', 'daylyPaidAmount', 'daylyUnpaidAmount', 'daylyExpected', 'weeklyPaidAmount', 'weeklyUnpaidAmount', 'weeklyExpected', 'monthlyPaidAmount', 'monthlyUnpaidAmount', 'monthlyExpected', 'yearlyPaidAmount', 'yearlyUnpaidAmount', 'yearlyExpected', 'totalMember', 'tudayPaidMember', 'activeMember', 'totalUser', 'totalEqubPayment'));
-            // } elseif ($userData && ($userData['role'] == "equb_collector")) {
-            //     return redirect('/member/');
-            // } elseif ($userData && ($userData['role'] == "member")) {
-            //     return redirect('/member/');
-            // } else {
-            //     return view('auth/login');
-            // }
         } catch (Exception $ex) {
             // dd($ex);
             $msg = "Unable to process your request, Please try again!";

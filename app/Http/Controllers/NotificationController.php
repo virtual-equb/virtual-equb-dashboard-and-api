@@ -32,11 +32,11 @@ class NotificationController extends Controller
         $this->memberRepository = $memberRepository;
         $this->title = "Virtual Equb - Notification";
 
-        // Permission guard
-        $this->middleware('permission:update notification', ['only' => ['update', 'edit', 'approve', 'updatePending']]);
-        $this->middleware('permission:delete notification', ['only' => ['destroy']]);
-        $this->middleware('permission:view notification', ['only' => ['index', 'show']]);
-        $this->middleware('permission:create notification', ['only' => ['store', 'create', 'sendToIndividual']]);
+        // // Permission guard
+        // $this->middleware('permission_check_logout:update notification', ['only' => ['update', 'edit', 'approve', 'updatePending']]);
+        // $this->middleware('permission_check_logout:delete notification', ['only' => ['destroy']]);
+        // $this->middleware('permission_check_logout:view notification', ['only' => ['index', 'show']]);
+        // $this->middleware('permission_check_logout:create notification', ['only' => ['store', 'create', 'sendToIndividual']]);
     }
     /**
      * Display a listing of the resource.

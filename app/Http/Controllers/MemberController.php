@@ -56,10 +56,10 @@ class MemberController extends Controller
         $this->title = "Virtual Equb - Member";
 
         // Guard Permission
-        $this->middleware('permission:update member', ['only' => ['update', 'updateStatus', 'updatePendingStatus', 'rate', 'edit']]);
-        $this->middleware('permission:delete member', ['only' => ['destroy']]);
-        $this->middleware('permission:view member', ['only' => ['index', 'show', 'indexPending', 'searchPendingMember', 'member', 'searchMember', 'searchEqub', 'searchStatus']]);
-        $this->middleware('permission:create member', ['only' => ['store', 'create', 'register']]);
+        // $this->middleware('permission_check_logout:update member', ['only' => ['update', 'updateStatus', 'updatePendingStatus', 'rate', 'edit']]);
+        // $this->middleware('permission_check_logout:delete member', ['only' => ['destroy']]);
+        // $this->middleware('permission_check_logout:view member', ['only' => ['index', 'show', 'indexPending', 'searchPendingMember', 'member', 'searchMember', 'searchEqub', 'searchStatus']]);
+        // $this->middleware('permission_check_logout:create member', ['only' => ['store', 'create', 'register']]);
     }
     public function clearSearchEntry()
     {
@@ -610,10 +610,14 @@ class MemberController extends Controller
                 ];
                 $user = $this->userRepository->createUser($user);
                 // Find or create the "member" role
-                $memberRole = Role::firstOrCreate(['name' => 'Member']);
+                // $memberRole = Role::firstOrCreate(['name' => 'Member']);
+                $memberRoleAPI = Role::firstOrCreate(['name' => 'member', 'guard_name' => 'api']);
+                $memberRoleWEB = Role::firstOrCreate(['name' => 'member', 'guard_name' => 'web']);
+                $user->assignRole($memberRoleWEB);
+                $user->assignRole($memberRoleAPI);
 
                 // Assign the role to the user
-                $user->assignRole($memberRole);
+                $user->assignRole($memberRoleWEB);
                 $roleName = $user->getRoleNames()->first();
                 if ($create && $user) {
                     
@@ -737,22 +741,25 @@ class MemberController extends Controller
     {
         try {
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "customer_service" || $userData['role'] == "finance")) {
+            $Adminroles = ['admin', 'general_manager', 'operation_manager', 'it', 'call_center', 'finance'];
+            $collector = ['equb_collector'];
+            $member = ['member'];
+            if ($userData && $userData->hasAnyRole($Adminroles)) {
                 $data['member'] = $this->memberRepository->getByIdNested($id);
                 $data['data'] = $this->memberRepository->getByIdNested($id)->equbs->pluck('lottery_date')->first();
                 return view('admin/member.memberDetails', $data);
-            // } elseif ($userData && ($userData['role'] == "equb_collector")) {
+            } elseif ($userData && $userData->hasAnyRole($collector)) {
                 $totalPayment = $this->paymentRepository->getTotalPaid($id);
                 $data['member'] = $this->memberRepository->getByIdNested($id);
                 $data['data'] = $this->memberRepository->getByIdNested($id)->equbs->pluck('lottery_date')->first();
                 return view('equbCollecter/member.memberDetails', $data);
-            // } elseif ($userData && ($userData['role'] == "member")) {
+            } elseif ($userData && $userData->hasAnyRole($member)) {
                 $data['member'] = $this->memberRepository->getByIdNested($id);
                 $data['data'] = $this->memberRepository->getByIdNested($id)->equbs->pluck('lottery_date')->first();
                 return view('member/member.memberDetails', $data);
-            // } else {
-            //     return view('auth/login');
-            // }
+            } else {
+                return view('auth/login');
+            }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -764,7 +771,6 @@ class MemberController extends Controller
     {
         try {
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $status = $this->memberRepository->getStatusById($id)->status;
                 $member_phone = $this->memberRepository->getPhone($id);
                 $member_phone = $member_phone->phone;
@@ -821,9 +827,6 @@ class MemberController extends Controller
                     Session::flash($type, $msg);
                     return back();
                 }
-            // } else {
-            //     return view('auth/login');
-            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';

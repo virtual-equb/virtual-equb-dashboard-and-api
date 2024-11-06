@@ -41,10 +41,10 @@ class EqubTakerController extends Controller
         $this->title = "Virtual Equb - Equb Taker";
 
         // Permission Gurad
-        $this->middleware('permission:update equb_taker', ['only' => ['update', 'edit', 'changeStatus', 'updateLottery']]);
-        $this->middleware('permission:delete equb_taker', ['only' => ['destroy']]);
-        $this->middleware('permission:view equb_taker', ['only' => ['index', 'show']]);
-        $this->middleware('permission:create equb_taker', ['only' => ['store', 'create']]);
+        // $this->middleware('permission_check_logout:update equb_taker', ['only' => ['update', 'edit', 'changeStatus', 'updateLottery']]);
+        // $this->middleware('permission_check_logout:delete equb_taker', ['only' => ['destroy']]);
+        // $this->middleware('permission_check_logout:view equb_taker', ['only' => ['index', 'show']]);
+        // $this->middleware('permission_check_logout:create equb_taker', ['only' => ['store', 'create']]);
     }
     /**
      * Display a listing of the resource.

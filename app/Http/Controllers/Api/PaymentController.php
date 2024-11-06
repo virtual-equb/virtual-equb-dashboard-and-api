@@ -55,6 +55,12 @@ class PaymentController extends Controller
         $this->equbRepository = $equbRepository;
         $this->equbTakerRepository = $equbTakerRepository;
         $this->title = "Virtual Equb - Payment";
+
+        // Permission Guard
+        $this->middleware('api_permission_check:update payment', ['only' => ['update', 'edit', 'updatePayment']]);
+        $this->middleware('api_permission_check:delete payment', ['only' => ['destroy', 'deleteAllPayment', 'deletePayment']]);
+        $this->middleware('api_permission_check:view payment', ['only' => ['index', 'show']]);
+        $this->middleware('api_permission_check:create payment', ['only' => ['store', 'storeForAdmin', 'create', 'initialize']]);
     }
     /**
      * Get all payments of members
@@ -73,7 +79,9 @@ class PaymentController extends Controller
             $limit = 50;
             $pageNumber = 1;
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it'];
+            $memberRoles = ['member', 'equb_collector'];
+            if ($userData && $userData->hasAnyRole($adminRoles)) {
                 $paymentData['member'] = $this->memberRepository->getMemberWithPayment($member_id);
                 $paymentData['totalCredit'] = $this->paymentRepository->getTotalCredit($equb_id);
                 $paymentData['totalPaid'] = $this->paymentRepository->getTotalPaid($equb_id);
@@ -82,7 +90,7 @@ class PaymentController extends Controller
                 $paymentData['limit'] = $limit;
                 $paymentData['pageNumber'] = $pageNumber;
                 return response()->json($paymentData);
-            } elseif ($userData && ($userData['role'] == "equb_collector" || $userData['role'] == "equb_collector")) {
+            } elseif ($userData && $userData->hasAnyRole($memberRoles)) {
                 $paymentData['member'] = $this->memberRepository->getMemberById($member_id);
                 $paymentData['equb'] = $this->equbRepository->geteEubById($equb_id);
                 $paymentData['payments'] = $this->paymentRepository->getSinglePayment($member_id, $equb_id, $offset);
@@ -135,7 +143,6 @@ class PaymentController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector") || ($userData['role'] == "member")) {
                 $this->validate($request, [
                     'payment_type' => 'required',
                     'amount' => 'required',
@@ -286,25 +293,18 @@ class PaymentController extends Controller
                         'message' => 'Unkown Error Occurred! Please try again!'
                     ]);
                 }
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
     public function storeForAdmin(Request $request)
     {
         try {
-            $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+                $userData = Auth::user();
                 $this->validate($request, [
                     'payment_type' => 'required',
                     'amount' => 'required',
@@ -466,17 +466,11 @@ class PaymentController extends Controller
                         'message' => 'Unknown Error Occurred, Please try again!',
                     ]);
                 }
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -494,8 +488,8 @@ class PaymentController extends Controller
             $offset = $offsetVal;
             $pageNumber = $pageNumberVal;
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "equb_collector" ||
-                $userData['role'] == "member")) {
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "equb_collector" ||
+            //     $userData['role'] == "member")) {
                 $paymentData['member'] = $this->memberRepository->getMemberById($member_id);
                 $paymentData['equb'] = $this->equbRepository->geteEubById($equb_id);
                 $paymentData['payments'] = $this->paymentRepository->getSinglePayment($member_id, $equb_id, $offset);
@@ -506,12 +500,12 @@ class PaymentController extends Controller
                 $paymentData['limit'] = $limit;
                 $paymentData['pageNumber'] = $pageNumber;
                 return response()->json($paymentData);
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            };
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // };
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -538,7 +532,7 @@ class PaymentController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+            // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $paymentType = $request->input('update_payment_type');
                 $amount = $request->input('update_amount');
                 $credit = $request->input('update_creadit');
@@ -607,12 +601,12 @@ class PaymentController extends Controller
                         'message' => 'Unkown Error! Please try again!'
                     ]);
                 }
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -635,7 +629,7 @@ class PaymentController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+            // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $payment = $this->paymentRepository->getByMemberId($member_id, $equb_id);
                 if ($payment != null) {
                     $deleted = $this->paymentRepository->deleteAll($member_id, $equb_id);
@@ -662,12 +656,12 @@ class PaymentController extends Controller
                 } else {
                     return false;
                 }
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -689,7 +683,7 @@ class PaymentController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+            // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $payment = $this->paymentRepository->getById($id);
                 if ($payment != null) {
                     $deleted = $this->paymentRepository->delete($id);
@@ -716,12 +710,12 @@ class PaymentController extends Controller
                 } else {
                     return false;
                 }
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -877,7 +871,7 @@ class PaymentController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $error
+                "error" => $error->getMessage()
             ], 500);
         }
     }
@@ -963,7 +957,7 @@ class PaymentController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $error
+                "error" => $error->getMessage()
             ]);
         }
     }

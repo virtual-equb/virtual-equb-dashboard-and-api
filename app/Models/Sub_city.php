@@ -15,7 +15,6 @@ class Sub_city extends Model
         'city_id',
         'name',
         'active',
-        'remark'
     ];
 
     public function city() {

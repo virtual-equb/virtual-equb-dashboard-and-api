@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Mail;
 use App\Models\User;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Api\UserResource;
 use App\Models\Permission;
 use App\Models\Roles;
 use Exception;
@@ -50,6 +51,12 @@ class UserController extends Controller
         $this->afroExpiresIn = config('key.AFRO_OTP_EXPIRES_IN_SECONDS');
         $this->afroLength = config('key.AFRO_OPT_LENGTH');
         $this->afroType = config('key.AFRO_OTP_TYPE');
+
+        // Permission Guard
+        $this->middleware('api_permission_check:update user', ['only' => ['update', 'edit', 'activeUser', 'deactiveStatus']]);
+        $this->middleware('api_permission_check:delete user', ['only' => ['destroy']]);
+        $this->middleware('api_permission_check:view user', ['only' => ['index', 'show', 'user', 'deactiveUser']]);
+        $this->middleware('api_permission_check:create user', ['only' => ['store', 'create', 'resetPassword']]);
     }
     /**
      * Sent OTP
@@ -60,23 +67,53 @@ class UserController extends Controller
      *
      * @return JsonResponse
      */
+    // public function sendOtp($phone)
+    // {
+
+    //     $prefixMessage = "Your Verification Code is";
+    //     $response = Http::withHeaders([
+    //         'Authorization' => 'Bearer ' . $this->afroApiKey,
+    //     ])
+    //         ->baseUrl($this->afroBaseUrl)
+    //         ->get('/challenge?from=' . $this->afroSenderId .
+    //             '&sender=' . $this->afroSenderName .
+    //             '&to=' . $phone .
+    //             '&pr=' . $prefixMessage .
+    //             '&sb=' . $this->afroSpaceBefore .
+    //             '&sa=' . $this->afroSpaceAfter .
+    //             '&ttl=' . $this->afroExpiresIn .
+    //             '&len=' . $this->afroLength .
+    //             '&t=' . $this->afroType);
+    //     $responseData = $response->json();
+    //     if ($responseData['acknowledge'] == 'success') {
+    //         return ['acknowledge' => $responseData['acknowledge']];
+    //     }
+    //     return [
+    //         'acknowledge' => $responseData['acknowledge'],
+    //         'message' => $responseData['response']['errors']
+    //     ];
+    // }
     public function sendOtp($phone)
     {
-
         $prefixMessage = "Your Verification Code is";
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $this->afroApiKey,
         ])
-            ->baseUrl($this->afroBaseUrl)
-            ->get('/challenge?from=' . $this->afroSenderId .
-                '&sender=' . $this->afroSenderName .
-                '&to=' . $phone .
-                '&pr=' . $prefixMessage .
-                '&sb=' . $this->afroSpaceBefore .
-                '&sa=' . $this->afroSpaceAfter .
-                '&ttl=' . $this->afroExpiresIn .
-                '&len=' . $this->afroLength .
-                '&t=' . $this->afroType);
+        ->baseUrl($this->afroBaseUrl)
+        ->withOptions(['verify' => false])
+        // ->withOptions(['verify' => base_path('C:/wamp64/cacert.pem')])  
+        ->get('/challenge', [
+            'from' => $this->afroSenderId,
+            'sender' => $this->afroSenderName,
+            'to' => $phone,
+            'pr' => $prefixMessage,
+            'sb' => $this->afroSpaceBefore,
+            'sa' => $this->afroSpaceAfter,
+            'ttl' => $this->afroExpiresIn,
+            'len' => $this->afroLength,
+            't' => $this->afroType
+        ]);
+
         $responseData = $response->json();
         if ($responseData['acknowledge'] == 'success') {
             return ['acknowledge' => $responseData['acknowledge']];
@@ -86,6 +123,7 @@ class UserController extends Controller
             'message' => $responseData['response']['errors']
         ];
     }
+
     /**
      * Verify OTP
      *
@@ -122,44 +160,39 @@ class UserController extends Controller
     public function index()
     {
         try {
+
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
-                $this->middleware('auth');
-                $data['title'] = $this->title;
-                return response()->json($data);
-            } else {
-                return response()->json([
-                    'code' => 400,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            $this->middleware('auth');
+            $data['title'] = $this->title;
+            $users = User::get();
+            
+            return response()->json([
+                'title' => $data['title'],
+                'users' => UserResource::collection($users)
+            ]);
+
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
     public function indexForDeactivated()
     {
         try {
-            $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
-                $this->middleware('auth');
-                $data['title'] = $this->title;
-                return response()->json($data);
-            } else {
-                return response()->json([
-                    'code' => 400,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+
+            $this->middleware('auth');
+            $data['title'] = $this->title;
+
+            return response()->json($data);
+
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -178,28 +211,20 @@ class UserController extends Controller
         try {
             $offset = $offsetVal;
             $pageNumber = $pageNumberVal;
-            $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
-                $this->middleware('auth');
-                $data['title'] = $this->title;
-                $data['totalUser'] = $this->userRepository->getUser();;
-                $data['pageNumber'] = $pageNumber;
-                $data['offset'] = $offset;
-                $data['limit'] = 50;
-                $data['deactivatedUsers']  = $this->userRepository->getDeactive($offset);
-                $data['activeUsers']  = $this->userRepository->getActive($offset);
-                return response()->json($data);
-            } else {
-                return response()->json([
-                    'code' => 400,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            $this->middleware('auth');
+            $data['title'] = $this->title;
+            $data['totalUser'] = $this->userRepository->getUser();;
+            $data['pageNumber'] = $pageNumber;
+            $data['offset'] = $offset;
+            $data['limit'] = 50;
+            $data['deactivatedUsers']  = $this->userRepository->getDeactive($offset);
+            $data['activeUsers']  = $this->userRepository->getActive($offset);
+            return response()->json($data);
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -218,28 +243,21 @@ class UserController extends Controller
         try {
             $offset = $offsetVal;
             $pageNumber = $pageNumberVal;
-            $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
-                $this->middleware('auth');
-                $data['title'] = $this->title;
-                $data['totalDeacivatedUser'] = $this->userRepository->getDeactivatedUser();;
-                $data['pageNumber'] = $pageNumber;
-                $data['offset'] = $offset;
-                $data['limit'] = 50;
-                $data['deactivatedUsers']  = $this->userRepository->getDeactive($offset);
-                $data['activeUsers']  = $this->userRepository->getActive($offset);
-                return response()->json($data);
-            } else {
-                return response()->json([
-                    'code' => 400,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            $this->middleware('auth');
+            $data['title'] = $this->title;
+            $data['totalDeacivatedUser'] = $this->userRepository->getDeactivatedUser();;
+            $data['pageNumber'] = $pageNumber;
+            $data['offset'] = $offset;
+            $data['limit'] = 50;
+            $data['deactivatedUsers']  = $this->userRepository->getDeactive($offset);
+            $data['activeUsers']  = $this->userRepository->getActive($offset);
+            return response()->json($data);
+
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -262,7 +280,7 @@ class UserController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -298,7 +316,7 @@ class UserController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -331,7 +349,7 @@ class UserController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -350,8 +368,6 @@ class UserController extends Controller
         try {
             $u_id = $request->input('u_id');
             $password = $request->input('reset_password');
-            $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
                 $updated = [
                     'password' => Hash::make($password),
                 ];
@@ -360,7 +376,7 @@ class UserController extends Controller
                     return response()->json([
                         'code' => 200,
                         'message' => 'Reset password successfully',
-                        'data' => $updated
+                        'data' => new UserResource($updated)
                     ]);
                 } else {
                     return response()->json([
@@ -369,17 +385,11 @@ class UserController extends Controller
                         "error" => "Unknown error occurred, Please try again!"
                     ]);
                 }
-            } else {
-                return response()->json([
-                    'code' => 400,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -424,7 +434,7 @@ class UserController extends Controller
                 return response()->json([
                     'code' => 200,
                     'message' => 'Reset password successfully',
-                    'data' => $updated
+                    'data' => new UserResource($updated)
                 ]);
             } else {
                 return response()->json([
@@ -437,7 +447,7 @@ class UserController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -455,11 +465,9 @@ class UserController extends Controller
     public function changePassword(Request $request, $id)
     {
         try {
-            $oldPasswordFromDatabase = User::where('id', $id)->pluck('password')->first();
-            $oldPasswordFromView = $request->input('old_password');
-            $newPassword = $request->input('new_password');
-            $userData = Auth::user();
-            if ($userData && (($userData['role'] == "admin") || ($userData['role'] == "member") || ($userData['role'] == "equb_collector"))) {
+                $oldPasswordFromDatabase = User::where('id', $id)->pluck('password')->first();
+                $oldPasswordFromView = $request->input('old_password');
+                $newPassword = $request->input('new_password');
                 if (Hash::check($oldPasswordFromView, $oldPasswordFromDatabase)) {
                     $updated = [
                         'password' => Hash::make($newPassword),
@@ -469,7 +477,7 @@ class UserController extends Controller
                         return response()->json([
                             'code' => 200,
                             'message' => 'Password has been changed successfully',
-                            'data' => $updated
+                            'data' => new UserResource($updated)
                         ]);
                     } else {
                         return response()->json([
@@ -484,17 +492,11 @@ class UserController extends Controller
                         'message' => 'Please enter correct old password'
                     ]);
                 }
-            } else {
-                return response()->json([
-                    'code' => 400,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -527,7 +529,7 @@ class UserController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -548,7 +550,6 @@ class UserController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && in_array($userData['role'], ["admin", "general_manager", "operation_manager", "it", "member"])) {
                 $this->validate(
                     $request,
                     [
@@ -588,7 +589,7 @@ class UserController extends Controller
                     return response()->json([
                         'code' => 200,
                         'message' => "User has been registered successfully! User password is " . $password,
-                        'data' => $create
+                        'data' => new UserResource($create)
                     ]);
                 } else {
                     return response()->json([
@@ -597,17 +598,11 @@ class UserController extends Controller
                         "error" => "Unknown error occurred, Please try again!"
                     ]);
                 }
-            } else {
-                return response()->json([
-                    'code' => 400,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -624,7 +619,6 @@ class UserController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
                 $enabled = 0;
                 $updated = [
                     'enabled' => $enabled,
@@ -652,17 +646,11 @@ class UserController extends Controller
                         "error" => "Unknown error occurred, Please try again!"
                     ]);
                 }
-            } else {
-                return response()->json([
-                    'code' => 400,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -678,8 +666,7 @@ class UserController extends Controller
     public function activeUser($id, Request $request)
     {
         try {
-            $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
+                $userData = Auth::user();
                 $enabled = 1;
                 $updated = [
                     'enabled' => $enabled,
@@ -698,7 +685,7 @@ class UserController extends Controller
                     return response()->json([
                         'code' => 200,
                         'message' => 'Use has been activated successfully!',
-                        'data' => $updated
+                        'data' => new UserResource($updated)
                     ]);
                 } else {
                     return response()->json([
@@ -707,38 +694,26 @@ class UserController extends Controller
                         "error" => "Unknown error occurred, Please try again!"
                     ]);
                 }
-            } else {
-                return response()->json([
-                    'code' => 400,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
     public function edit($id)
     {
         try {
-            $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
-                $data['user'] = $this->userRepository->getById($id);
-                return response()->json($data);
-            } else {
-                return response()->json([
-                    'code' => 400,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            $data['user'] = $this->userRepository->getById($id);
+            return response()->json([
+                'user' => new UserResource($data['user'])
+            ]);
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -760,7 +735,6 @@ class UserController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
 
                 $this->validate(
                     $request,
@@ -783,7 +757,6 @@ class UserController extends Controller
                     'phone_number' => $phone,
                     'gender' => $gender,
                     'role' => $role,
-
                 ];
                 $updated = $this->userRepository->updateUser($id, $updated);
                 if ($updated) {
@@ -800,7 +773,7 @@ class UserController extends Controller
                     return response()->json([
                         'code' => 200,
                         'message' => 'User detail has been updated successfully!',
-                        'data' => $updated
+                        'data' => new UserResource($updated)
                     ]);
                 } else {
                     return response()->json([
@@ -809,17 +782,11 @@ class UserController extends Controller
                         "error" => "Unknown error occurred, Please try again!"
                     ]);
                 }
-            } else {
-                return response()->json([
-                    'code' => 400,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -835,8 +802,7 @@ class UserController extends Controller
     public function destroy($id)
     {
         try {
-            $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
+                $userData = Auth::user();
                 $user = $this->userRepository->getById($id);
                 if ($user != null) {
                     $deleted = $this->userRepository->deleteUser($id);
@@ -864,44 +830,38 @@ class UserController extends Controller
                 } else {
                     return false;
                 }
-            } else {
-                return response()->json([
-                    'code' => 400,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
 
-    public function assignRole(Request $request, User $user) {
-        $role = Roles::find($request->role_id);
-        if ($role) {
-            $user->assignRole($role->id);
-            return response()->json([
-                'message' => 'Role assigned successfully'
-            ]);
-        }
-        return response()->json([
-            'message' => 'Role not found'
-        ], 400);
-    }
+    // public function assignRole(Request $request, User $user) {
+    //     $role = Roles::find($request->role_id);
+    //     if ($role) {
+    //         $user->assignRole($role->id);
+    //         return response()->json([
+    //             'message' => 'Role assigned successfully'
+    //         ]);
+    //     }
+    //     return response()->json([
+    //         'message' => 'Role not found'
+    //     ], 400);
+    // }
 
-    public function assignPermission(Request $request, Roles $role)
-    {
-        $permission = Permission::find($request->permission_id);
-        if ($permission) {
-            $role->permissions()->attach($permission->id);
-            return response()->json([
-                'message' => 'Permission assigned successfully'
-            ]);
-        }
-        return response()->json(['message' => 'Permission not found'], 404);
-    }
+    // public function assignPermission(Request $request, Roles $role)
+    // {
+    //     $permission = Permission::find($request->permission_id);
+    //     if ($permission) {
+    //         $role->permissions()->attach($permission->id);
+    //         return response()->json([
+    //             'message' => 'Permission assigned successfully'
+    //         ]);
+    //     }
+    //     return response()->json(['message' => 'Permission not found'], 404);
+    // }
 
 }

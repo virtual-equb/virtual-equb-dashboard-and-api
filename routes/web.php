@@ -10,6 +10,7 @@ use App\Http\Controllers\RejectedDateController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\BoleController;
 use App\Http\Controllers\FrontMainEqubController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\CityController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\MainEqubController;
 use App\Http\Controllers\WebPermissionController;
 use App\Http\Controllers\WebRoleController;
 use App\Http\Controllers\SubController;
+use App\Http\Controllers\RolesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,18 +32,21 @@ use App\Http\Controllers\SubController;
 |
 */
 
+Route::get('/unauthorized', function () {
+    return view('errorPages.authorization'); // Replace with your unauthorized view
+})->name('unauthorized');
 
-
-Route::group(['middleware' => ['role:Super Admin|admin']], function() {
+// Route::group(['middleware' => ['role:admin']], function() {
     Route::resource('/permission', WebPermissionController::class);
     Route::get('/permission/{permissionId}/delete',[ WebPermissionController::class, 'destroy']);
     Route::resource('/roles', WebRoleController::class);
     Route::get('/roles/{roleId}/delete', [WebRoleController::class, 'destroy']);
-        // ->middleware('permission:delete');
+        // ->middleware('permission:delete role');
     Route::get('/roles/{roleId}/assign-permission', [WebRoleController::class, 'assignPermission']);
     Route::put('/roles/{roleId}/assign-permission', [WebRoleController::class, 'updateRolePermission']);
+// });
 
-});
+
 
 
 Route::get('/register', function () {
@@ -291,22 +296,22 @@ Route::middleware([
     });
     Route::prefix('subcities')->group(function () {
         // Get all sub-cities
-        Route::get('/', [SubCityController::class, 'index'])->name('subcities.index');
+        Route::get('/', [BoleController::class, 'index'])->name('subcities.index');
     
         // Get a sub-city by ID
-        Route::get('{id}', [SubCityController::class, 'show'])->name('subcities.show');
+        Route::get('{id}', [BoleController::class, 'show'])->name('subcities.show');
     
         // Create a new sub-city
-        Route::post('/', [SubCityController::class, 'store'])->name('subcities.store');
+        Route::post('/', [BoleController::class, 'store'])->name('subcities.store');
     
         // Update an existing sub-city
-        Route::put('{id}', [SubCityController::class, 'update'])->name('subcities.update');
+        Route::put('{id}', [BoleController::class, 'update'])->name('subcities.update');
     
         // Delete a sub-city
         Route::delete('{id}', [SubCityController::class, 'destroy'])->name('subcities.destroy');
     
         // Get sub-cities by city ID
-        Route::get('city/{cityId}', [SubCityController::class, 'getSubCitiesByCityId'])->name('subcities.byCityId');
+        Route::get('city/{cityId}', [BoleController::class, 'getSubCitiesByCityId'])->name('subcities.byCityId');
         
     });
     Route::prefix('main-equbs')->group(function () {
@@ -327,6 +332,34 @@ Route::middleware([
           // Delete a main equb
           Route::delete('{id}', [MainEqubController::class, 'delete'])->name('mainEqubs.destroy');
     });
+  Route::middleware(['web','api','auth'])->group(function () {
+    // Route to create a new permission
+    Route::get('/settings/permission/create', [RolesController::class, 'create_permission'])
+        ->name('permissions.create'); // Add permission check
 
-   
+    // Route to view all permissions
+    Route::get('/settings/permission', [RolesController::class, 'index'])
+        ->name('permissions.index'); // Add permission check
+
+    // Route to delete a role
+    Route::delete('/roles/destroy/{id}', [RolesController::class, 'destroy'])
+        ->name('roles.destroy')
+        ->middleware(['demo_restriction', 'permission:delete roles']); // Example permission check
+
+    // Route to create a new role
+    Route::get('/roles/create', [RolesController::class, 'create'])
+        ->name('roles.create'); // Add permission check
+
+    // Route to store a new role
+    Route::post('/roles/store', [RolesController::class, 'store'])
+        ->name('roles.store');
+
+    // Route to edit a specific role
+    Route::get('/roles/edit/{id}', [RolesController::class, 'edit'])
+        ->name('roles.edit');
+
+    // Route to update a specific role
+    Route::put('/roles/update/{id}', [RolesController::class, 'update'])
+        ->name('roles.update');
+});
 });

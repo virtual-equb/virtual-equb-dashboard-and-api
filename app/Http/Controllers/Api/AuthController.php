@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Models\Member;
-use App\Models\User;
-use Illuminate\Http\Request;
 use Exception;
+use App\Models\User;
+use App\Models\Member;
+use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
 {
@@ -72,7 +73,8 @@ class AuthController extends Controller
                 "email" => $user->email,
                 "phone_number" => $user->phone_number,
                 "gender" => $user->gender,
-                "role" => $user->role,
+                "role" => $user->getRoleNames()->first(),
+                // "roles" => $user->getRoleNames()->toArray(),
                 "enabled" => $user->enabled,
                 "member_id" => $memberId
             ];
@@ -90,7 +92,7 @@ class AuthController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request,Please try again!',
-                "error" => $error
+                "error" => $error->getMessage()
             ]);
         }
     }
@@ -112,6 +114,7 @@ class AuthController extends Controller
     {
         try {
             auth()->logout();
+            Session::flush();
             return response()->json([
                 'message' => "Successfully logged out",
                 'code' => 200
@@ -120,7 +123,7 @@ class AuthController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Logout failed',
-                "error" => $error
+                "error" => $error->getMessage()
             ]);
         }
     }

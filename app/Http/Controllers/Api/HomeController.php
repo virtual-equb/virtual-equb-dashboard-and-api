@@ -35,6 +35,10 @@ class HomeController extends Controller
         $this->memberRepository = $memberRepository;
         $this->userRepository = $userRepository;
         $this->title = "Virtual Equb - Dashboard";
+
+        // Guard Permission
+        // $this->middleware('permission: view dashboard', ['only' => ['index', 'equbTypeIndex']]);
+        $this->middleware('api_permission_check:view dashboard', ['only' => ['index', 'equbTypeIndex']]);
     }
     /**
      * Get all dashboard info
@@ -47,8 +51,8 @@ class HomeController extends Controller
     {
         try {
             $userData = Auth::user();
-
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")){
+                $adminRole = ['admin', 'general_manager', 'operation_manager', 'it'];
+            // if ($userData && $userData->hasAnyRole($adminRole)){
                 $profile = Auth::user();
                 $title = $this->title;
                 $totalEqubAmount = $this->equbRepository->getExpectedTotal();
@@ -232,12 +236,12 @@ class HomeController extends Controller
                 $totalUser = $this->userRepository->getUser();
                 $tudayPaidMember = $this->equbRepository->tudayPaidMember();
                 return  response()->json(compact('title', 'lables', 'fullPaidAmount', 'Expected', 'daylyPaidAmount', 'daylyUnpaidAmount', 'daylyExpected', 'weeklyPaidAmount', 'weeklyExpected', 'monthlyPaidAmount', 'monthlyExpected', 'yearlyPaidAmount', 'yearlyExpected', 'totalMember', 'tudayPaidMember', 'activeMember', 'totalEqubPayment'), 200);
-            } else {
-                return response()->json([
-                    'code' => 400,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 400,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -250,7 +254,7 @@ class HomeController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")){
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")){
                 $profile = Auth::user();
                 $title = $this->title;
                 $totalEqubAmount = $this->equbRepository->getEqubTypeExpectedTotal($equb_type_id);
@@ -478,24 +482,24 @@ class HomeController extends Controller
                 }
                 return  response()->json(compact('title', 'lables', 'fullPaidAmount', 'Expected', 'daylyPaidAmount', 'daylyUnpaidAmount', 'daylyExpected', 'weeklyPaidAmount', 'weeklyExpected', 'monthlyPaidAmount', 'monthlyExpected', 'yearlyPaidAmount', 'yearlyExpected', 'totalMember', 'tudayPaidMember', 'activeMember', 'totalEqubPayment'), 200);
                 // return view('admin/equbtype-dashboard', compact('equb_type_id', 'automaticMembersArray', 'title', 'lables', 'fullPaidAmount', 'fullUnPaidAmount', 'Expected', 'daylyPaidAmount', 'daylyUnpaidAmount', 'daylyExpected', 'weeklyPaidAmount', 'weeklyUnpaidAmount', 'weeklyExpected', 'monthlyPaidAmount', 'monthlyUnpaidAmount', 'monthlyExpected', 'yearlyPaidAmount', 'yearlyUnpaidAmount', 'yearlyExpected', 'totalMember', 'tudayPaidMember', 'activeMember', 'totalUser', 'totalEqubPayment'));
-            } elseif ($userData && ($userData['role'] == "equb_collector")) {
-                // return redirect('/member/');
-                return response()->json([
-                    'code' => 400,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            } elseif ($userData && ($userData['role'] == "member")) {
-                // return redirect('/member/');
-                return response()->json([
-                    'code' => 400,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            } else {
-                return response()->json([
-                    'code' => 400,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } elseif ($userData && ($userData['role'] == "equb_collector")) {
+            //     // return redirect('/member/');
+            //     return response()->json([
+            //         'code' => 400,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // } elseif ($userData && ($userData['role'] == "member")) {
+            //     // return redirect('/member/');
+            //     return response()->json([
+            //         'code' => 400,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // } else {
+            //     return response()->json([
+            //         'code' => 400,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             // dd($ex);
             return response()->json([

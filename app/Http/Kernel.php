@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -22,6 +23,13 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
     ];
+
+    protected function schedule(Schedule $schedule)
+    {
+        $schedule->command('equb:notify-due-starts')->hourly();
+        $schedule->command('equb:notify-due-ends')->hourly();
+        $schedule->comand('equb:send-notifications')->daily();
+    }
 
     /**
      * The application's route middleware groups.
@@ -68,5 +76,7 @@ class Kernel extends HttpKernel
         'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
         'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
         'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+        'permission_check_logout' => \App\Http\Middleware\PermissionCheckAndLogout::class,
+        'api_permission_check' => \App\Http\Middleware\ApiPermissionCheck::class,
     ];
 }

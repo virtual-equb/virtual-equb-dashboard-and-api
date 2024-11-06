@@ -51,11 +51,11 @@ class EqubTypeController extends Controller
         $this->memberRepository = $memberRepository;
         $this->title = "Virtual Equb - Equb Type";
         $this->mainEqubRepository = $mainEqubRepository;
-        // Guards
-        $this->middleware('permission:update equb_type', ['only' => ['update', 'edit', 'updateStatus']]);
-        $this->middleware('permission:delete equb_type', ['only' => ['destroy', 'dateInterval']]);
-        $this->middleware('permission:view equb_type', ['only' => ['index', 'show']]);
-        $this->middleware('permission:create equb_type', ['only' => ['store', 'create']]);
+        // // Guards
+        // $this->middleware('permission_check_logout:update equb_type', ['only' => ['update', 'edit', 'updateStatus']]);
+        // $this->middleware('permission_check_logout:delete equb_type', ['only' => ['destroy', 'dateInterval']]);
+        // $this->middleware('permission_check_logout:view equb_type', ['only' => ['index', 'show']]);
+        // $this->middleware('permission_check_logout:create equb_type', ['only' => ['store', 'create']]);
     }
     public function index()
     {
@@ -189,17 +189,12 @@ class EqubTypeController extends Controller
     }
     public function create()
     {   
-        
         try {
-            $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
-                $data['title'] = $this->title;
-                $data['mainEqubs'] = $this->mainEqubRepository->all();
+            
+            $data['title'] = $this->title;
+            $data['mainEqubs'] = $this->mainEqubRepository->all();
                 
-                return view('admin/equbType/addEqubType', $data);
-            // } else {
-            //     return back();
-            // }
+            return view('admin/equbType/addEqubType', $data);
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -211,15 +206,16 @@ class EqubTypeController extends Controller
     {
         // dd($request);
         try {
-            $userData = Auth::user();
+                $userData = Auth::user();
             
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
+            
                 $this->validate($request, [
                     'name' => 'required',
                     'round' => 'required',
                     'rote' => 'required',
                     'type' => 'required',
-                    'main_equb_id' => 'required'
+                    'main_equb_id' => 'required',
+                    'start_date' => 'required|date'
                 ]);
                 $name = $request->input('name');
                 $round = $request->input('round');
@@ -232,9 +228,19 @@ class EqubTypeController extends Controller
                 $quota = $request->input('quota');
                 $terms = $request->input('terms');
                 $main_equb = $request->input('main_equb_id');
+                $amount = $request->input('amount');
+                $total_amount = $request->input('total_amount');
+                $expected_members= $request->input('quota');
+                
+                // Ensure start_date is in YMD format
+                $formattedStartDate = Carbon::parse($start_date)->format('Y-m-d');
 
-
-                // dd($end_date);
+                // check if type is 'Automatic' and set lottery_date to 7 days after start_date
+                $lottery_date = $request->input('lottery_date');
+                if ($type === 'Automatic' && !$lottery_date) {
+                    $lottery_date = Carbon::parse($formattedStartDate)->addDays(7)->format('Y-m-d');
+                }
+                
                 if ($end_date) {
                     $endDateCheck = $this->isDateInYMDFormat($end_date);
                     $formattedEndDate = $end_date;
@@ -255,7 +261,10 @@ class EqubTypeController extends Controller
                     'quota' => $quota,
                     'remaining_quota' => $quota,
                     'terms' => $terms,
-                    'main_equb_id' => $main_equb
+                    'main_equb_id' => $main_equb,
+                    'amount' => $amount,
+                    'expected_members' => $expected_members,
+                    'total_amount' => $total_amount,
                 ];
                 if ($request->file('icon')) {
                     $image = $request->file('icon');
@@ -709,13 +718,10 @@ class EqubTypeController extends Controller
     public function edit(EqubType $equbType)
     {
         try {
-            $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
-                $data['equbType'] = $this->equbTypeRepository->getById($equbType);
-                return view('admin/equbType/updateEqubType', $data);
-            // } else {
-            //     return view('auth/login');
-            // }
+            $data['equbType'] = $this->equbTypeRepository->getById($equbType);
+
+            return view('admin/equbType/updateEqubType', $data);
+
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -770,7 +776,6 @@ class EqubTypeController extends Controller
     {
         try {
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
                 $status = $this->equbTypeRepository->getStatusById($id)->status;
                 if ($status == "Deactive") {
                     $status = "Active";
@@ -820,11 +825,9 @@ class EqubTypeController extends Controller
     {
         // dd($request);
         try {
-            $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
+                $userData = Auth::user();
                 $equbTypeDetail = EqubType::where('id', $id)->first();
-                // dd($request);
-                // $validated = $this->validate($request, []);
+
                 $main_equb = $request->input('update_main_equb');
                 $name = $request->input('update_name');
                 $round = $request->input('update_round');
@@ -834,6 +837,8 @@ class EqubTypeController extends Controller
                 $lottery_date = $request->input('update_lottery_date');
                 $start_date = $request->input('start_date');
                 $end_date = $request->input('end_date');
+                $amount = $request->input('amount');
+                $total_amount = $request->input('total_amount');
                 if ($start_date) {
                     $startDateCheck = $this->isDateInYMDFormat($start_date);
                     $formattedStartDate = $start_date;
@@ -877,6 +882,8 @@ class EqubTypeController extends Controller
                     'quota' => $quota,
                     'remaining_quota' => $remainingQuota,
                     'terms' => $terms,
+                    'amount' => $amount,
+                    'total_amount' => $total_amount
                 ];
                 
                 if ($request->file('icon_update')) {

@@ -52,6 +52,7 @@
                                                                   class="fas fa-plus-circle"></i> Add equb</button>
 
                                                       </li> --}}
+                                                      @can('send member_notification')
                                                       <li>
                                                           <button href="javascript:void(0);"
                                                               class="text-secondary btn btn-flat"
@@ -60,6 +61,7 @@
                                                               Notification</button>
 
                                                       </li>
+                                                      @endcan
                                                       {{-- <li>
                                                           <button href="javascript:void(0);"
                                                               class="text-secondary btn btn-flat"
@@ -74,6 +76,7 @@
 
                                                       </li> --}}
                                                       @if ($item->status == 'Pending')
+                                                       @can('approve member')
                                                           <li>
                                                               <a href="javascript:void(0);"
                                                                   class="text-secondary btn btn-flat"
@@ -83,6 +86,8 @@
                                                                   Approve
                                                               </a>
                                                           </li>
+                                                        @endcan
+                                                        @can('reject member')
                                                           <li>
                                                               <a href="javascript:void(0);"
                                                                   class="text-secondary btn btn-flat"
@@ -92,6 +97,7 @@
                                                                   Reject
                                                               </a>
                                                           </li>
+                                                        @endcan
                                                       @endif
                                                       {{-- <li>
                                                           <a href="javascript:void(0);"

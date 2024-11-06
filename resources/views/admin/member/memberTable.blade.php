@@ -28,8 +28,8 @@
                                   <th>{{ $item->full_name }}</th>
                                   <th>{{ $item->phone }}</th>
                                   <td>{{ $item->gender }}</td>
-                                  <td>{{ $item->city }}</td>
-                                  <td>{{ $item->subcity }}</td>
+                                  <td>{{ $item->memberCity ? $item->memberCity->name : 'N/A' }}</td>
+                                  <td>{{ $item->memberSubcity ? $item->memberSubcity->name : 'N/A' }}</td>
                                   <td>{{ $item->specific_location }}</td>
                                   <td>{{ $item->status }}</td>
                                   <td>{{ $item->rating }}</td>
@@ -39,22 +39,23 @@
                                       $createdDate = $toCreatedAt->format('M-j-Y');
                                       echo $createdDate; ?>
                                   </td>
-                                  {{-- @if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant') --}}
                                       <td>
                                           <div class='dropdown'>
                                               <button class='btn btn-secondary btn-sm btn-flat dropdown-toggle'
                                                   type='button' data-toggle='dropdown'>Menu<span
                                                       class='caret'></span></button>
                                               <ul class='dropdown-menu p-4'>
-                                                  @if (Auth::user()->role != 'finance')
+                                                    @can('add member_equb')
                                                       <li>
                                                           <button href="javascript:void(0);"
                                                               class="text-secondary btn btn-flat {{ $item->status != 'Active' ? 'disabled' : '' }}"
                                                               onclick="{{ $item->status == 'Active' ? 'openEqubAddModal(' . $item . ')' : 'return false;' }}"
                                                               ><i
-                                                                  class="fas fa-plus-circle"></i> Add equb</button>
-
+                                                                  class="fas fa-plus-circle"></i> Add equb
+                                                           </button>
                                                       </li>
+                                                      @endcan
+                                                      @can('send member_notification')
                                                       <li>
                                                           <button href="javascript:void(0);"
                                                               class="text-secondary btn btn-flat"
@@ -63,12 +64,16 @@
                                                               Notification</button>
 
                                                       </li>
+                                                      @endcan
+                                                      @can('update memeber')
                                                       <li>
                                                           <button href="javascript:void(0);"
                                                               class="text-secondary btn btn-flat"
                                                               onclick="openEditModal({{ $item }})"><span
                                                                   class="fa fa-edit"> </span> Edit</button>
                                                       </li>
+                                                      @endcan
+                                                      @can('delete member')
                                                       <li>
                                                           <button href="javascript:void(0);"
                                                               class="text-secondary btn btn-flat {{ $item->status != 'Active' ? 'disabled' : '' }}"
@@ -78,6 +83,8 @@
                                                                   class="fas fa-trash-alt"></i> Delete</button>
 
                                                       </li>
+                                                      @endcan
+                                                      @can('deactivate member')
                                                       <li>
                                                           <a href="javascript:void(0);"
                                                               class="text-secondary btn btn-flat"
@@ -92,18 +99,20 @@
                                                               ?>
                                                           </a>
                                                       </li>
-                                                  @endif
-                                                  <li>
-                                                      <button href="javascript:void(0);"
-                                                          class="text-secondary btn btn-flat"
-                                                          onclick="openRateModal({{ $item }})"><i
-                                                              class="fas fa-trash-alt"></i> Rate Member</button>
+                                                      @endcan
+                                                      @can('rate member')
+                                                        <li>
+                                                            <button href="javascript:void(0);"
+                                                                class="text-secondary btn btn-flat"
+                                                                onclick="openRateModal({{ $item }})"><i
+                                                                    class="fas fa-trash-alt"></i> Rate Member
+                                                                </button>
 
-                                                  </li>
+                                                        </li>
+                                                       @endcan
                                               </ul>
                                           </div>
                                       </td>
-                                  {{-- @endif --}}
                               </tr>
                           @endforeach
                       </tbody>

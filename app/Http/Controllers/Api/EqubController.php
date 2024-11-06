@@ -2,24 +2,29 @@
 
 namespace App\Http\Controllers\api;
 
-use Illuminate\Http\Request;
-use App\Models\Equb;
-use App\Models\RejectedDate;
-use App\Http\Controllers\Controller;
-use App\Models\EqubType;
-use App\Models\Member;
 use Exception;
+use Carbon\Carbon;
+use App\Models\Equb;
+use App\Models\Member;
+use App\Models\EqubType;
+use App\Models\RejectedDate;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Session;
+use App\Http\Resources\Api\EqubResource;
+use App\Models\Payment;
+use App\Models\User;
+use App\Repositories\Equb\EqubRepository;
+use App\Repositories\Equb\IEqubRepository;
 use App\Repositories\Member\IMemberRepository;
 use App\Repositories\Payment\IPaymentRepository;
 use App\Repositories\EqubType\IEqubTypeRepository;
-use App\Repositories\Equb\IEqubRepository;
 use App\Repositories\EqubTaker\IEqubTakerRepository;
 use App\Repositories\ActivityLog\IActivityLogRepository;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Session;
 
 /**
  * @group Equbs
@@ -49,6 +54,12 @@ class EqubController extends Controller
         $this->equbRepository = $equbRepository;
         $this->equbTakerRepository = $equbTakerRepository;
         $this->title = "Virtual Equb - Equb";
+
+        // Guard Permissions
+        $this->middleware('api_permission_check:update equb', ['only' => ['update', 'edit', 'updateStatus']]);
+        $this->middleware('api_permission_check:delete equb', ['only' => ['destroy']]);
+        $this->middleware('api_permission_check:view equb', ['only' => ['index', 'show', 'create']]);
+        $this->middleware('api_permission_check:create equb', ['only' => ['store', 'create']]);
     }
     /**
      * Get All Equbs
@@ -61,24 +72,218 @@ class EqubController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" ||
-                $userData['role'] == "equb_collector" || $userData['role'] == "member")) {
-                $userData = Auth::user();
-                $data['equbs'] = $this->equbRepository->getAll();
-                return response()->json($data);
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+
+            $data['equbs'] = $this->equbRepository->getAll();
+
+            return response([
+                'code' => 200,
+                'data' => EqubResource::collection($data['equbs'])
+            ]);
+
+
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
+    }
+
+    public function sendStartNotifications()
+    {
+        try {
+            $now = Carbon::now();
+            $next24Hours = $now->copy()->addHours(24);
+
+            $dueEqubs = Equb::whereBetween('start_date', [$now, $next24Hours])
+                                ->where('notified', 'No')
+                                ->get();
+            if ($dueEqubs->isEmpty()) {
+                return response()->json([
+                    'message' => 'No Equbs found within the due range.',
+                    'code' => 200,
+                    'count' => 0,
+                    'debug' => [
+                        'start_date_from' => $now->toDateTimeString(),
+                        'start_date_to' => $next24Hours->toDateTimeString(),
+                        'equbs_found' => $dueEqubs->toArray()
+                    ]
+                    ]);
+            }
+            $count = 0;
+            foreach ($dueEqubs as $equb) {
+                $member = Member::find($equb->member_id);
+
+                if ($member && $member->phone) {
+                    $startDate = Carbon::parse($equb->start_date);
+                    $shortcode = config('key.SHORT_CODE');
+                    $message = "Reminder: Your Equb will start on " . $startDate->format('Y-m-d H:i') . ". Please be prepared. For further information, call $shortcode";
+
+                    $this->sendSms($member->phone, $message);
+                    $count++;
+
+                    // Update the Equb notified field
+                    $equb->update(['notified' => 'Yes']);
+                }
+
+                return response()->json([
+                    'message' => 'Notification sent for due Equbs',
+                    'code' => 200,
+                    'count' => $count
+                ]);
+            }
+        } catch (Exception $ex) {
+            return response()->json([
+                'message' => 'Unable to process your request, Please try again!',
+                'code' => 500,
+                'error' => $ex->getMessage(),
+            ]);
+        }
+    }
+    public function sendEndNotifications() 
+    {
+        try {
+            $now = Carbon::now();
+            $next24Hours = $now->copy()->addHours(24);
+
+            $dueEqubs = Equb::whereBetween('end_date', [$now, $next24Hours])->get();
+
+            if ($dueEqubs->isEmpty()) {
+                return response()->json([
+                    'message' => 'No Equbs found within the due range.',
+                    'code' => 200,
+                    'count' => 0,
+                    'debug' => [
+                        'end_date_from' => $now->toDateTimeString(),
+                        'end_date_to' => $next24Hours->toDateTimeString(),
+                        'equbs_found' => $dueEqubs->toArray()
+                    ]
+                    ]);
+            }
+            $count = 0;
+            foreach($dueEqubs as $equb) {
+                $member = Member::find($equb->member_id);
+
+                if ($member && $member->phone) {
+                    $endDate = Carbon::parse($equb->end_date);
+                    $shortcode = config('key.SHORT_CODE');
+                    $message = "Reminder: Your Equb will end on " . $endDate->format('Y-m-d H:i') . ". For further information, call $shortcode";
+                    
+                    $this->sendSms($member->phone, $message);
+                    $count++;
+                }
+
+                return response()->json([
+                    'message' => 'Notification sent for Ending Equbs',
+                    'code' => 200,
+                    'count' => $count
+                ]);
+
+            }
+                                
+        } catch (Exception $ex) {
+            return response()->json([
+                'message' => 'Unable to process your request, Please try again!',
+                'code' => 500,
+                'error' => $ex->getMessage(),
+            ]);
+        }
+    }
+    public function sendDailyPaymentNotification()
+    {
+        try {
+            $today = Carbon::today();
+            $count = 0;
+
+            // Retrieve all active Equbs with 'Automatic' type and 'Daily' rote
+            $equbs = Equb::whereHas('equbType', function ($query) {
+                            $query->where('type', 'Automatic')
+                                ->where('rote', 'Daily');
+                    })
+                    ->where('status', 'Active')
+                    ->with(['member', 'equbType'])
+                    ->get();
+
+            foreach($equbs as $equb) {
+                $member = $equb->member;
+
+                    // Skip if member or phone number is invalid
+                    if (!$member || !isset($member->phone) || empty($member->phone)) {
+                        Log::info("Skipping Equb {$equb->equbType->name} due to missing member or phone");
+                        continue;
+                    }
+
+                    // Check if payment is recorded for today for the specific member
+                    $paymentExists = Payment::where('equb_id', $equb->id)
+                                            ->where('member_id', $member->id)
+                                            ->whereDate('created_at', $today)
+                                            ->exists();
+                    
+                    if (!$paymentExists) {
+                        $amount = $equb->amount;
+                        $shortcode = config('key.SHORT_CODE'); 
+                        $message = "Reminder: Your daily payment of $amount is due today for Equb {$equb->equbType->name}. Please make your payment. For further information, call $shortcode";
+                        
+                        // Send SMS
+                        $this->sendSms($member->phone, $message);
+                        $count++;
+                    } else {
+                        return "Payment already exists for Member ID {$member->id} on Equb ID {$equb->equbType->name}";
+                    }
+            }
+
+            // Return success response with total notifications sent
+            return response()->json([
+                'message' => 'Daily payment notifications sent successfully.',
+                'code' => 200,
+                'count' => $count
+            ]);
+
+        } catch (Exception $ex) {
+            // Return error response with exception message
+            return response()->json([
+                'message' => 'Unable to process your request, Please try again!',
+                'code' => 500,
+                'error' => $ex->getMessage(),
+            ]);
+        }
+    }
+
+    public function sendLotteryNotification()
+    {
+        $today = Carbon::today();
+        $count = 0;
+
+        // Retrieve equbs where the lottery date is today
+        $equbs = Equb::whereDate('lottery_date', $today)
+                       ->where('status', 'Active')
+                       ->with('equbType')
+                       ->get();
+                    //    dd($equbs);
+        foreach ($equbs as $equb) {
+            // dd($equb->equbType);
+            $member = Member::find($equb->member_id);
+
+            // Check for a valid member and phone
+            if (!$member || !$member->phone) {
+                continue;
+            }
+            $shortcode = config('key.SHORT_CODE');
+            $message = "Reminder: Weekly lottery draw for Equb {$equb->equbType->name} is scheduled today. Stay tuned!. For more information call $shortcode";
+            $this->sendSms($member->phone, $message);
+            $count++;
+
+            // Optionally, set the next lottery date but for now (7 days) difference
+            // $equb->update(['lottery_date' => $today->addDays(7)]);
+            // $equb->equbType->update(['lottery_date' => $today->addDays(7)]);
+        }
+
+        return response()->json([
+            'message' => 'Lottery notifications sent successfully.',
+            'code' => 200,
+            'count' => $count
+        ]);
     }
     public function getReservedLotteryDate($lottery_date)
     {
@@ -194,7 +399,7 @@ class EqubController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -211,12 +416,16 @@ class EqubController extends Controller
     {
         try {
             $data['daily_paid_amount'] = $this->equbRepository->getDailyPaid($equb_id);
-            return response()->json($data);
+
+            return response([
+                'code' => 200,
+                'data' => new EqubRepository($data['daily_paid_amoun'])
+            ]);
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -248,7 +457,7 @@ class EqubController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -283,7 +492,7 @@ class EqubController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -319,7 +528,7 @@ class EqubController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -355,7 +564,7 @@ class EqubController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -387,7 +596,7 @@ class EqubController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -400,16 +609,25 @@ class EqubController extends Controller
      */
     public function show($id)
     {
+        
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")){
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it'];
+            $memberRoles = ['equb_collector', 'member'];
+            if ($userData && $userData->hasAnyRole($adminRoles)){
+
                 $equbTakerData['equb'] = $this->equbRepository->getByIdNestedForLottery($id);
                 $equbTakerData['total'] = $this->paymentRepository->getTotal($id);
+
                 return response()->json($equbTakerData);
-            } elseif ($userData && ($userData['role'] == "equb_collector" || $userData['role'] == "member")) {
+
+            } elseif ($userData && $userData->hasAnyRole($memberRoles)) {
+
                 $equbTakerData['equb'] = $this->equbRepository->getByIdNested($id);
                 $equbTakerData['total'] = $this->paymentRepository->getTotal($id);
+
                 return response()->json($equbTakerData);
+
             } else {
                 return response()->json([
                     'code' => 403,
@@ -442,16 +660,11 @@ class EqubController extends Controller
     public function create()
     {
         try {
+
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "equb_collector")) {
-                $data['title'] = $this->title;
-                return response()->json($data);
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            $data['title'] = $this->title;
+            return response()->json($data);
+
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -460,88 +673,6 @@ class EqubController extends Controller
             ]);
         }
     }
-    // /**
-    //  * Draw random winner.
-    //  *
-    //  * @return \Illuminate\Http\Response
-    //  */
-    // public function draw()
-    // {
-    //     try {
-    //         $now = Carbon::now();
-    //         $members = [];
-    //         $equbTypes = DB::table('equb_types')
-    //             ->whereDate('lottery_date', '=', $now)
-    //             ->where("deleted_at", "=", null)
-    //             ->get();
-    //         foreach ($equbTypes as $equbType) {
-    //             $equbs = DB::table('equbs')->where('equb_type_id', $equbType->id)->pluck('member_id')->toArray();
-    //             foreach ($equbs as $equb) {
-    //                 if (!in_array($equb, $members)) {
-    //                     array_push($members, $equb);
-    //                 }
-    //             }
-    //         }
-    //         $winner = $this->drawRandomId($members);
-    //         $user = Member::where('id', $winner)->first();
-    //         foreach ($equbTypes as $equbType) {
-    //             $daysToBeAdded = 0;
-    //             if ($equbType->rote === "Daily") {
-    //                 $daysToBeAdded = 1;
-    //             } elseif ($equbType->rote === "Weekly") {
-    //                 $daysToBeAdded = 7;
-    //             } elseif ($equbType->rote === "Biweekly") {
-    //                 $daysToBeAdded = 14;
-    //             } elseif ($equbType->rote === "Monthly") {
-    //                 $daysToBeAdded = 30;
-    //             }
-    //             // dd($daysToBeAdded);
-    //             $updatedLotterDate = $now->copy()->addDays($daysToBeAdded)->format('Y-m-d');
-    //             EqubType::where('id', $equbType->id)->update(['lottery_date' => $updatedLotterDate]);
-    //         }
-    //         // dd([
-    //         //     "MemberId"=> $user->id,
-    //         //     "UserName"=> $user->full_name
-    //         // ]);
-    //         return response()->json([
-    //             'code' => 200,
-    //             'message' => 'Winner has been selected',
-    //             'data' => [
-    //                 "MemberId" => $user->id,
-    //                 "UserName" => $user->full_name
-    //             ]
-    //         ]);
-    //         // return [
-    //         //     "MemberId" => $user->id,
-    //         //     "UserName" => $user->full_name
-    //         // ];
-    //     } catch (Exception $ex) {
-    //         $msg = "Unable to process your request, Please try again!";
-    //         $type = 'error';
-    //         Session::flash($type, $msg);
-    //         return back();
-    //     }
-    // }
-    // function drawRandomId(array $ids)
-    // {
-    //     // Shuffle the array of IDs
-    //     shuffle($ids);
-
-    //     // Store the shuffled IDs in cache for ten seconds
-    //     Cache::put('shuffled_ids', $ids, now()->addSeconds(10));
-
-    //     // Wait for a few seconds to allow shuffling
-    //     sleep(3); // You can adjust the duration as needed
-
-    //     // Get the shuffled IDs from cache
-    //     $shuffledIds = Cache::get('shuffled_ids');
-
-    //     // Pick a random index and return the corresponding ID
-    //     $randomIndex = array_rand($shuffledIds);
-    //     $randomId = $shuffledIds[$randomIndex];
-
-    //     return $randomId;
-    // }
     /**
      * Create equb
      *
@@ -558,62 +689,76 @@ class EqubController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector") || ($userData['role'] == "member")) {
-                $this->validate($request, [
-                    'equb_type_id' => 'required',
-                    'amount' => 'required',
-                    'total_amount' => 'required',
-                    'start_date' => 'required',
-                    'timeline' => 'required',
-                    // 'end_date' => 'required',
-                    // 'lottery_date' => 'required',
-                ]);
-                $member = $request->input('member_id');
-                $equbType = $request->input('equb_type_id');
-                $amount = $request->input('amount');
-                $totalAmount = $request->input('total_amount');
-                $startDate = $request->input('start_date');
-                $endDate = $request->input('end_date');
-                $timeline = $request->input('timeline');
-                $lotteryDate = $request->input('lottery_date');
-                $endDateCheck = $this->isDateInYMDFormat($endDate);
-                $formattedEndDate = $endDate;
-                if (!$endDateCheck) {
+
+            // Validate required fields
+            $this->validate($request, [
+                'equb_type_id' => 'required',
+                'amount' => 'required',
+                'total_amount' => 'required',
+                'start_date' => 'required|date_format:Y-m-d',
+                // 'timeline' => 'required',
+            ]);
+
+            // Collecting request inputs
+            $member = $request->input('member_id');
+            $equbType = $request->input('equb_type_id');
+            $amount = $request->input('amount');
+            $totalAmount = $request->input('total_amount');
+            $startDate = $request->input('start_date');
+            $endDate = $request->input('end_date');
+            $timeline = $request->input('timeline');
+            $lotteryDate = $request->input('lottery_date');
+
+            // Parse endDate if it doesn't match expected format
+            $formattedEndDate = $endDate;
+            if (!$this->isDateInYMDFormat($endDate)) {
+                try {
                     $carbonDate = Carbon::createFromFormat('m/d/Y', $endDate);
                     $formattedEndDate = $carbonDate->format('Y-m-d');
+                } catch (\Exception $e) {
+                    Log::error("Date parsing error for endDate: " . $e->getMessage());
+                    return response()->json([
+                        'code' => 400,
+                        'message' => 'Invalid date format for end date.'
+                    ]);
                 }
-                // $carbonDate = Carbon::createFromFormat('m/d/Y', $endDate);
+            }
 
-                // Format the date to "Y-m-d" format
-                // $formattedEndDate = $carbonDate->format('Y-m-d');
-                // dd($formattedEndDate);
-                if (!empty($equbType)) {
-                    $equbs_count = Equb::where('equb_type_id', $equbType)->where('member_id', '=', $member)->count();
-                    if ($equbs_count > 0) {
-                        return response()->json([
-                            'code' => 400,
-                            'message' => 'Equb already exist!'
-                        ]);
-                    }
+            // Check if the equb already exists for the member
+            if (!empty($equbType)) {
+                $equbs_count = Equb::where('equb_type_id', $equbType)
+                                    ->where('member_id', $member)
+                                    ->count();
+                if ($equbs_count > 0) {
+                    return response()->json([
+                        'code' => 400,
+                        'message' => 'Equb already exists!'
+                    ]);
                 }
-                $equbData = [
-                    'member_id' => $member,
-                    'equb_type_id' => $equbType,
-                    'amount' => $amount,
-                    'total_amount' => $totalAmount,
-                    'start_date' => $startDate,
-                    'timeline' => $timeline,
-                    'end_date' => $formattedEndDate,
-                    'lottery_date' => $lotteryDate,
-                ];
-                $create = $this->equbRepository->create($equbData);
-                if ($create) {
-                    $equbTypes = EqubType::where('id', $equbType)->first();
-                    if ($equbTypes->type == 'Automatic') {
-                        $equbTypes->remaining_quota -= 1;
-                        $equbTypes->save();
-                    }
+            }
+
+            // Prepare data for new Equb
+            $equbData = [
+                'member_id' => $member,
+                'equb_type_id' => $equbType,
+                'amount' => $amount,
+                'total_amount' => $totalAmount,
+                'start_date' => $startDate,
+                'timeline' => $timeline,
+                'end_date' => $formattedEndDate,
+                'lottery_date' => $lotteryDate,
+            ];
+
+            // Create the Equb
+            $create = $this->equbRepository->create($equbData);
+            if ($create) {
+                // Update remaining quota for Automatic type Equb
+                $equbTypes = EqubType::find($equbType);
+                if ($equbTypes && $equbTypes->type == 'Automatic') {
+                    $equbTypes->decrement('remaining_quota', 1);
                 }
+
+                // Prepare data for Equb Taker
                 $equbTakerData = [
                     'member_id' => $member,
                     'equb_id' => $create->id,
@@ -629,43 +774,65 @@ class EqubController extends Controller
                     'cheque_description' => '',
                 ];
                 $createEkubTaker = $this->equbTakerRepository->create($equbTakerData);
-                // dd($equbTakerData, $createEkubTaker);
-                if ($create) {
-                    $activityLog = [
-                        'type' => 'equbs',
-                        'type_id' => $create->id,
-                        'action' => 'created',
-                        'user_id' => $userData->id,
-                        'username' => $userData->name,
-                        'role' => $userData->role,
-                    ];
-                    $this->activityLogRepository->createActivityLog($activityLog);
-                    return response()->json([
-                        'code' => 200,
-                        'message' => 'Equb has been registerd successfully!',
-                        'data' => $create
-                    ]);
-                } else {
-                    return response()->json([
-                        'code' => 400,
-                        'message' => 'Unkown Error Occurred! Please try again!'
-                    ]);
+
+                // Create activity log
+                $activityLog = [
+                    'type' => 'equbs',
+                    'type_id' => $create->id,
+                    'action' => 'created',
+                    'user_id' => $userData->id,
+                    'username' => $userData->name,
+                    'role' => $userData->role,
+                ];
+                $this->activityLogRepository->createActivityLog($activityLog);
+
+                // Sending SMS notification
+                // memeber notification
+                $shortcode = config('key.SHORT_CODE');
+                $member = Member::find($member);
+                if ($member && $member->phone) {
+                    $memberMessage = "Dear {$member->full_name}, Your Equb has been successfully registered. Our customer service will contact you soon. For more information call {$shortcode}";
+                    $this->sendSms($member->phone, $memberMessage);
                 }
+
+                // Finance Sms
+                $finances = User::role('finance')->get();
+                foreach($finances as $finance) {
+                    if ($finance->phone_number) {
+                        $financeMessage = "Finance Alert: A new Equb with name {$create->name} has been registered. Please review the details.";
+                        $this->sendSms($finance->phone_number, $financeMessage);
+                    }
+                }
+
+                // Call center sms
+                $call_centers = User::role('call_center')->get();
+                foreach($call_centers as $finance) {
+                    if ($finance->phone_number) {
+                        $financeMessage = "Call Center Alert: A new Equb with name {$create->name} has been registered. Please review the details.";
+                        $this->sendSms($finance->phone_number, $financeMessage);
+                    }
+                }
+                return response()->json([
+                    'code' => 200,
+                    'message' => 'Equb has been registered successfully!',
+                    'data' => $create
+                ]);
             } else {
                 return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
+                    'code' => 400,
+                    'message' => 'Unknown error occurred! Please try again.'
                 ]);
             }
-        } catch (Exception $ex) {
-            // dd($ex);
+        } catch (\Exception $ex) {
+            Log::error("Store method error: " . $ex->getMessage());
             return response()->json([
                 'code' => 500,
-                'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                'message' => 'Unable to process your request, please try again!',
+                'error' => $ex->getMessage()
             ]);
         }
     }
+
     public function isDateInYMDFormat($dateString)
     {
         try {
@@ -689,8 +856,7 @@ class EqubController extends Controller
     public function updateStatus($id, Request $request)
     {
         try {
-            $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+                $userData = Auth::user();
                 $status = $this->equbRepository->getStatusById($id)->status;
                 if ($status == "Deactive") {
                     $status = "Active";
@@ -727,12 +893,6 @@ class EqubController extends Controller
                         'message' => 'Unkown Error Occurred! Please try again!'
                     ]);
                 }
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -756,8 +916,7 @@ class EqubController extends Controller
     public function update($id, Request $request)
     {
         try {
-            $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+                $userData = Auth::user();
                 $oldEqub = Equb::where('id', $id)->first();
                 $member = Member::where('id', $oldEqub->member_id)->first();
                 $oldEqubTypeData = EqubType::where('id', $oldEqub->equb_type_id)->first();
@@ -770,17 +929,6 @@ class EqubController extends Controller
                 $endDate = $request->input('end_date');
                 $lotteryDate = $request->input('lottery_date');
 
-                // $carbonDate1 = Carbon::parse($oldEqub->end_date);
-                // $carbonDate2 = Carbon::parse($endDate);
-                // // Get the formats of the two dates
-                // $format1 = $carbonDate1->format('Y-m-d');
-                // $format2 = $carbonDate2->format('Y-m-d');
-                // $formattedEndDate = $endDate;
-                // // Compare the formats
-                // if ($format1 != $format2) {
-                //     $carbonDate = Carbon::createFromFormat('m/d/Y', $endDate);
-                //     $formattedEndDate = $carbonDate->format('Y-m-d');
-                // }
                 $updated = [
                     'equb_type_id' => $equbType,
                     'amount' => $amount,
@@ -808,7 +956,7 @@ class EqubController extends Controller
                     return response()->json([
                         'code' => 200,
                         'message' => 'Equb has been updated successfully!',
-                        'data' => $updated
+                        'data' => new EqubResource($updated)
                     ]);
                 } else {
                     return response()->json([
@@ -816,12 +964,6 @@ class EqubController extends Controller
                         'message' => 'Unkown Error occurred! Please try again!'
                     ]);
                 }
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
         } catch (Exception $ex) {
             // dd($ex);
             return response()->json([
@@ -841,9 +983,7 @@ class EqubController extends Controller
     public function destroy($id)
     {
         try {
-            $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector") || ($userData['role'] == "member")) {
-                // dd("hello");
+                $userData = Auth::user();
                 $equbP = $this->paymentRepository->getEqubForDelete($id);
                 // dd($equb);
                 if ($equbP) {
@@ -904,12 +1044,6 @@ class EqubController extends Controller
                         'message' => 'Equb not found'
                     ]);
                 }
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
         } catch (Exception $ex) {
             // dd($ex);
             return response()->json([

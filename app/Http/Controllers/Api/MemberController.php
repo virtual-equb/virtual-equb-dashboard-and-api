@@ -9,6 +9,7 @@ use App\Models\Equb;
 use App\Models\Member;
 use App\Models\User;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Api\MemberResource;
 use App\Models\EqubType;
 use Exception;
 use App\Repositories\User\IUserRepository;
@@ -53,6 +54,12 @@ class MemberController extends Controller
         $this->equbRepository = $equbRepository;
         $this->userRepository = $userRepository;
         $this->title = "Virtual Equb - Member";
+
+         // Guard Permissions
+         $this->middleware('api_permission_check:update member', ['only' => ['update', 'edit', 'updateStatus', 'rate', 'updateProfile']]);
+         $this->middleware('api_permission_check:delete member', ['only' => ['destroy']]);
+         $this->middleware('api_permission_check:view member', ['only' => ['index', 'searchMember', 'create', 'show', 'getPaidEqubs']]);
+         $this->middleware('api_permission_check:create member', ['only' => ['create']]);
     }
     /**
      * Clear search entry
@@ -68,7 +75,9 @@ class MemberController extends Controller
             $limit = 50;
             $pageNumber = 1;
             $userData = Auth::user();
-            if ($userData['role'] == "admin") {
+            $roles = ['admin'];
+
+            if ($userData && $userData->hasAnyRole($roles)) {
                 $data['totalMember'] = $this->memberRepository->getMember();
                 $data['members'] = $this->memberRepository->getAllByPaginate($offset);
                 $data['equbTypes'] = $this->equbTypeRepository->getActive();
@@ -77,6 +86,7 @@ class MemberController extends Controller
                 $data['title'] = $this->title;
                 $data['limit'] = $limit;
                 $data['pageNumber'] = $pageNumber;
+
                 return response()->json($data);
             }
         } catch (Exception $ex) {
@@ -101,7 +111,9 @@ class MemberController extends Controller
             $limit = 50;
             $pageNumber = 1;
             $userData = Auth::user();
-            if ($userData['role'] == "admin" || $userData['role'] == "equb_collector") {
+            $adminRoles = ['admin', 'equb_collector'];
+            $memberRoles = ['member'];
+            if ($userData->hasAnyRole($adminRoles)) {
                 $data['totalMember'] = $this->memberRepository->getMember();
                 $data['members'] = $this->memberRepository->getAllByPaginate($offset);
                 // $data['equbTypes'] = $this->equbTypeRepository->getActive();
@@ -110,8 +122,13 @@ class MemberController extends Controller
                 $data['title'] = $this->title;
                 $data['limit'] = $limit;
                 $data['pageNumber'] = $pageNumber;
-                return response()->json($data);
-            } elseif ($userData['role'] == "member") {
+                return response()->json([
+                    'totalmembers' => $data['totalMember'],
+                    'pageNumber' => $data['pageNumber'],
+                    'limit' => $data['limit'],
+                    'members' => MemberResource::collection($data['members'])
+                ]);
+            } elseif ($userData->hasAnyRole($memberRoles)) {
                 $data['members'] = $this->memberRepository->getByPhone($userData['phone_number']);
                 $data['equbTypes'] = $this->equbTypeRepository->getActive();
                 $data['equbs'] = $this->equbRepository->getAll();
@@ -130,7 +147,7 @@ class MemberController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -146,21 +163,17 @@ class MemberController extends Controller
         try {
             $userData = Auth::user();
             // dd($userData);
-            if ($userData['role'] == "member" || $userData['role'] == "admin"  || $userData['role'] == "equb_collector") {
                 $data['member'] = $this->memberRepository->getMemberById($id);
-                return response()->json($data);
-            } else {
                 return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
+                    'member' => new MemberResource($data['member'])
                 ]);
-            }
+           
         } catch (Exception $ex) {
             // dd($ex);
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -182,7 +195,7 @@ class MemberController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -203,17 +216,20 @@ class MemberController extends Controller
             $offset = $offsetVal;
             $pageNumber = $pageNumberVal;
             $userData = Auth::user();
-            if ($userData['role'] == "admin" || $userData['role'] == "equb_collector") {
+            $adminRoles = ['admin', 'equb_collector'];
+            $memberRole = ['member'];
+            if ($userData->hasAnyRole($adminRoles)) {
+
                 $data['totalMember'] = $this->memberRepository->getMember();
                 $data['members'] = $this->memberRepository->getAllByPaginate($offset);
-                // $data['equbTypes'] = $this->equbTypeRepository->getActive();
-                // $data['equbs'] = $this->equbRepository->getAll();
-                // $data['payments'] = $this->paymentRepository->getAllPayment();
                 $data['title'] = $this->title;
                 $data['limit'] = $limit;
                 $data['pageNumber'] = $pageNumber;
+
                 return response()->json($data);
-            } elseif ($userData['role'] == "member") {
+
+            } elseif ($userData->hasAnyRole($memberRole)) {
+
                 $data['members'] = $this->memberRepository->getByPhone($userData['phone_number']);
                 $data['equbTypes'] = $this->equbTypeRepository->getActive();
                 $data['equbs'] = $this->equbRepository->getAll();
@@ -222,6 +238,7 @@ class MemberController extends Controller
                 $data['limit'] = $limit;
                 $data['pageNumber'] = $pageNumber;
                 return response()->json($data);
+
             } else {
                 return response()->json([
                     'code' => 403,
@@ -232,7 +249,7 @@ class MemberController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -266,7 +283,7 @@ class MemberController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -298,7 +315,7 @@ class MemberController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -319,7 +336,7 @@ class MemberController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -338,7 +355,7 @@ class MemberController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -346,17 +363,10 @@ class MemberController extends Controller
     {
         try {
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "equb_collector" ||
-                $userData['role'] == "member")) {
-                $data['payment'] = $this->paymentRepository->getAll();
-                $data['equb'] = $this->equbRepository->getAll();
-                return response()->json($data);
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            $data['payment'] = $this->paymentRepository->getAll();
+            $data['equb'] = $this->equbRepository->getAll();
+            return response()->json($data);
+            
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -377,8 +387,6 @@ class MemberController extends Controller
     public function searchMember($searchInput, $offset, $pageNumber = null)
     {
         try {
-            $userData = Auth::user();
-            if ($userData['role'] == "admin" || $userData['role'] == "equb_collector") {
                 $data['offset'] = $offset;
                 $limit = 50;
                 $data['limit'] = $limit;
@@ -391,17 +399,12 @@ class MemberController extends Controller
                 $data['searchInput'] = $searchInput;
                 $data['members'] = $this->memberRepository->searchMember($offset, $searchInput);
                 return response()->json($data);
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -424,8 +427,7 @@ class MemberController extends Controller
     {
         $shortcode = config('key.SHORT_CODE');
         try {
-            $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+                $userData = Auth::user();
                 $this->validate(
                     $request,
                     [
@@ -482,7 +484,7 @@ class MemberController extends Controller
                 $user = $this->userRepository->createUser($user);
                 $memberRole = Role::firstOrCreate(['name' => 'Member']);
                 // $user->assignRole($memberRole);
-                $user->syncRoles([$memberRole->name]);
+                $user->assignRole($memberRole->name);
 
                 $roleName = $create->getRoleNames()->first();
                 if ($create && $user) {
@@ -509,8 +511,7 @@ class MemberController extends Controller
                     return response()->json([
                         'code' => 200,
                         'message' => "Member has been registered successfully!",
-                        'data' => $create,
-                        'user' => $user
+                        'data' => new MemberResource($create),
                     ]);
                 } else {
                     return response()->json([
@@ -519,17 +520,11 @@ class MemberController extends Controller
                         "error" => "Unknown error occurred, Please try again!"
                     ]);
                 }
-            // } else {
-            //     return response()->json([
-            //         'code' => 403,
-            //         'message' => 'You can\'t perform this action!'
-            //     ]);
-            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -545,11 +540,6 @@ class MemberController extends Controller
     public function show($id)
     {
         try {
-            $userData = Auth::user();
-            if (
-                $userData['role'] == "admin" || $userData['role'] == "equb_collector"
-                || $userData['role'] == "member"
-            ) {
                 $data['totalPayment'] = $this->paymentRepository->getTotalPaid($id);
                 $data['member'] = $this->memberRepository->getByIdNested($id);
                 $member = $data['member'];
@@ -591,28 +581,17 @@ class MemberController extends Controller
                     }
                 }
                 return response()->json($equbsArray);
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
     public function getPaidEqubs($id)
     {
         try {
-            $userData = Auth::user();
-            if (
-                $userData['role'] == "admin" || $userData['role'] == "equb_collector"
-                || $userData['role'] == "member"
-            ) {
                 $data['totalPayment'] = $this->paymentRepository->getTotalPaid($id);
                 $data['member'] = $this->memberRepository->getByIdNested($id);
                 $member = $data['member'];
@@ -657,17 +636,11 @@ class MemberController extends Controller
                 }
                 // dd($equbs);
                 return response()->json($equbsArray);
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -683,9 +656,10 @@ class MemberController extends Controller
     public function updateStatus($id, Request $request)
     {
         try {
-            return response()->json($request);
+            // return response()->json($request);
             $userData = Auth::user();
-            if (($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+            $Roles = ['admin', 'equb_collector'];
+            if ($userData && $userData->hasAnyRole($Roles)) {
                 $status = $this->memberRepository->getStatusById($id)->status;
                 if ($status == "Deactive") {
                     $status = "Active";
@@ -718,7 +692,7 @@ class MemberController extends Controller
                     return response()->json([
                         'code' => 200,
                         'message' => "Status has been updated seccessfully",
-                        'data' => $updated
+                        'data' => new MemberResource($updated)
                     ]);
                 } else {
                     return response()->json([
@@ -764,8 +738,7 @@ class MemberController extends Controller
     {
         // dd($request);
         try {
-            $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+                $userData = Auth::user();
                 $name = $request->input('full_name');
                 $phone = $request->input('phone');
                 $gender = $request->input('gender');
@@ -779,13 +752,7 @@ class MemberController extends Controller
                 $member_phone = $member_phone->phone;
                 $user_id = $this->userRepository->getUserId($member_phone);
                 $user_id = $user_id->id;
-                // $address = [
-                //     'City' => $city,
-                //     'SubCity' => $subcity,
-                //     'Woreda' => $woreda,
-                //     'House_Number' => $housenumber,
-                //     'Specific_Location' => $location
-                // ];
+                
                 $updated = [
                     'full_name' => $name,
                     'phone' => $phone,
@@ -795,8 +762,7 @@ class MemberController extends Controller
                     'subcity' => $subcity,
                     'woreda' => $woreda,
                     'house_number' => $housenumber,
-                    'specific_location' => $location,
-                    // 'address' => json_encode($address),
+                    'specific_location' => $location
 
                 ];
                 if (!empty($phone)) {
@@ -838,7 +804,7 @@ class MemberController extends Controller
                     return response()->json([
                         'code' => 200,
                         'message' => 'Member has been updated successfully!',
-                        'data' => $updated
+                        'data' => new MemberResource($updated)
                     ]);
                 } else {
                     return response()->json([
@@ -847,17 +813,11 @@ class MemberController extends Controller
                         "error" => "Unknown error occurred, Please try again!"
                     ]);
                 }
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -865,8 +825,9 @@ class MemberController extends Controller
     {
         // dd($id);
         try {
+            $roles = ['admin', 'equb_collector'];
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+            if ($userData && $userData->hasAnyRole($roles)) {
                 $this->validate(
                     $request,
                     [
@@ -928,7 +889,8 @@ class MemberController extends Controller
     {
         try {
             $userData = Auth::user();
-            if (($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+            $roles = ['admin', 'equb_collector'];
+            if ($userData && $userData->hasAnyRole($roles)) {
                 $member = $this->equbRepository->getMember($id);
                 if (!$member->isEmpty()) {
                     return response()->json([
@@ -981,7 +943,7 @@ class MemberController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
@@ -1019,6 +981,7 @@ class MemberController extends Controller
      */
     public function register(Request $request)
     {
+        $shortcode = config('key.SHORT_CODE');
         try {
             // Validation rules
             $this->validate(
@@ -1100,16 +1063,31 @@ class MemberController extends Controller
                 'email' => $email,
                 'password' => Hash::make($password),
                 'phone_number' => $phone,
-                'gender' => $gender,
-                'role' => "member",
+                'gender' => $gender
             ];
             $user = $this->userRepository->createUser($user);
 
+            $memberRoleAPI = Role::firstOrCreate(['name' => 'member', 'guard_name' => 'api']);
+            $memberRoleWEB = Role::firstOrCreate(['name' => 'member', 'guard_name' => 'web']);
+            $user->assignRole($memberRoleWEB);
+            $user->assignRole($memberRoleAPI);
+
             if ($create && $user) {
+                try {
+                    $message = "Welcome to Virtual Equb! You have registered succesfully. Use the phone number " . $phone . " and password " . $password . " to log in." . " For further information please call " . $shortcode;
+                    // dd($message);
+                    $this->sendSms($request->phone, $message);
+                } catch (Exception $ex) {
+                    return response()->json([
+                        'code' => 400,
+                        'message' => 'Failed to send SMS',
+                        "error" => "Failed to send SMS"
+                    ]);
+                };
                 return response()->json([
                     'code' => 200,
                     'message' => "Member has registered successfully!",
-                    'data' => $create
+                    'data' => new MemberResource($create)
                 ]);
             } else {
                 return response()->json([
@@ -1126,24 +1104,42 @@ class MemberController extends Controller
             ]);
         }
     }
+    // public function getProfilePicture($userId)
+    // {
+    //     $user = Member::findOrFail($userId);
+    //     $path = 'public/' . $user->profile_photo_path;
+    //     // dd($path);
+    //     if (Storage::exists($path)) {
+    //         $file = Storage::get($path);
+    //         $type = Storage::mimeType($path);
+
+    //         return response($file, 200)->header('Content-Type', $type);
+    //     } else {
+    //         return null;
+    //     }
+    //     return response()->json([
+    //         'code' => 400,
+    //         'message' => 'Image not found',
+    //         "error" => "Image not found"
+    //     ]);
+    // }
     public function getProfilePicture($userId)
     {
-        $user = Member::findOrFail($userId);
-        $path = 'public/' . $user->profile_photo_path;
-        // dd($path);
-        if (Storage::exists($path)) {
-            $file = Storage::get($path);
-            $type = Storage::mimeType($path);
+        try {
+            // Retrieve the member data
+            $member = Member::findOrFail($userId);
 
-            return response($file, 200)->header('Content-Type', $type);
-        } else {
-            return null;
+            // Return the member resource, which includes the profile picture information
+            return new MemberResource($member);
+
+        } catch (\Exception $ex) {
+            // Handle exceptions and return a JSON error response
+            return response()->json([
+                'code' => 500,
+                'message' => 'Failed to retrieve profile picture',
+                'error' => $ex->getMessage()
+            ], 500);
         }
-        return response()->json([
-            'code' => 400,
-            'message' => 'Image not found',
-            "error" => "Image not found"
-        ]);
     }
     /**
      * Update profile
@@ -1168,8 +1164,7 @@ class MemberController extends Controller
     {
         // dd($request);
         try {
-            $userData = Auth::user();
-            if (($userData['role'] == "member")) {
+                $userData = Auth::user();
                 $name = $request->input('full_name');
                 $phone = $request->input('phone');
                 $gender = $request->input('gender');
@@ -1179,13 +1174,6 @@ class MemberController extends Controller
                 $housenumber = $request->input('housenumber');
                 $location = $request->input('location');
                 $email = $request->input('email');
-                // $address = [
-                //     'City' => $city,
-                //     'SubCity' => $subcity,
-                //     'Woreda' => $woreda,
-                //     'House_Number' => $housenumber,
-                //     'Specific_Location' => $location
-                // ];
                 // dd($address);
                 $updated = [
                     'full_name' => $name,
@@ -1196,8 +1184,7 @@ class MemberController extends Controller
                     'subcity' => $subcity,
                     'woreda' => $woreda,
                     'house_number' => $housenumber,
-                    'specific_location' => $location,
-                    // 'address' => json_encode($address),
+                    'specific_location' => $location
                 ];
                 if ($request->file('profile_picture')) {
                     $image = $request->file('profile_picture');
@@ -1223,7 +1210,9 @@ class MemberController extends Controller
                         ]);
                     }
                 }
+                
                 $updated = $this->memberRepository->update($id, $updated);
+                // dd($id);
                 $updateUser = [
                     'name' => $name,
                     'phone_number' => $phone,
@@ -1244,18 +1233,78 @@ class MemberController extends Controller
                         "error" => "Unknown error occurred, Please try again!"
                     ]);
                 }
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
+    // public function updateProfile($id, Request $request)
+    // {
+    //     try {
+    //         // Authenticate user
+    //         $userData = Auth::user();
+            
+    //         // Validation rules
+    //         $this->validate($request, [
+    //             'full_name' => 'nullable|string',
+    //             'phone' => 'nullable|string|unique:members,phone,' . $id,
+    //             'email' => 'nullable|email|unique:members,email,' . $id,
+    //             'gender' => 'nullable|in:male,female,other',
+    //             'city' => 'nullable|string',
+    //             'subcity' => 'nullable|string',
+    //             'woreda' => 'nullable|string',
+    //             'housenumber' => 'nullable|string',
+    //             'location' => 'nullable|string',
+    //             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+    //         ]);
+
+    //         // Collect updates from request
+    //         $updatedData = $request->only([
+    //             'full_name', 'phone', 'gender', 'email', 'city', 'subcity', 
+    //             'woreda', 'housenumber', 'location'
+    //         ]);
+
+    //         // Handle profile picture upload
+    //         if ($request->hasFile('profile_picture')) {
+    //             $image = $request->file('profile_picture');
+    //             $imageName = time() . '.' . $image->getClientOriginalExtension();
+    //             $image->storeAs('public/profile_pictures', $imageName);
+    //             $updatedData['profile_photo_path'] = 'profile_pictures/' . $imageName;
+    //         }
+
+    //         // Update member and user records
+    //         $this->memberRepository->update($id, array_filter($updatedData));
+
+    //         $userUpdates = [
+    //             'name' => $request->input('full_name', $userData->name),
+    //             'phone_number' => $request->input('phone', $userData->phone_number),
+    //             'gender' => $request->input('gender', $userData->gender),
+    //             'email' => $request->input('email', $userData->email)
+    //         ];
+    //         $this->userRepository->updateUser($userData->id, array_filter($userUpdates));
+
+    //         // Return success response
+    //         return response()->json([
+    //             'code' => 200,
+    //             'message' => 'Profile has been updated successfully!',
+    //             'data' => array_filter($updatedData) // Only send updated fields
+    //         ]);
+
+    //     } catch (\Illuminate\Database\QueryException $ex) {
+    //         return response()->json([
+    //             'code' => 500,
+    //             'message' => 'Unable to process your request, Please try again!',
+    //             'error' => $ex->getMessage()
+    //         ]);
+    //     } catch (Exception $ex) {
+    //         return response()->json([
+    //             'code' => 500,
+    //             'message' => 'An error occurred, Please try again!',
+    //             'error' => $ex->getMessage()
+    //         ]);
+    //     }
+    // }
 }
