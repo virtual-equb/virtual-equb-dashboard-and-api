@@ -1,38 +1,42 @@
 @extends('layouts.app')
 
 @section('title')
-    {{ get_label('update_role', 'Update role') }}
+    {{ get_label('create_role', 'Create Role') }}
 @endsection
 
-<?php use Spatie\Permission\Models\Permission; ?>
+<?php
+use Spatie\Permission\Models\Permission;
+?>
 
 @section('content')
-<div class="wrapper">
-    <div class="content-wrapper">
-        <section class="content">
-            <div class="container-fluid">
-                <div class="d-flex justify-content-between mb-2 mt-4">
-                    <div>
-                        <nav aria-label="breadcrumb">
-                            <ol class="breadcrumb breadcrumb-style1">
-                                <li class="breadcrumb-item">
-                                    <a href="{{ url('/home') }}">{{ get_label('home', 'Home') }}</a>
-                                </li>
-                                <li class="breadcrumb-item">
-                                    {{ get_label('settings', 'Settings') }}
-                                </li>
-                                <li class="breadcrumb-item">
-                                    <a href="{{ url('/settings/permission') }}">{{ get_label('permissions', 'Permissions') }}</a>
-                                </li>
-                                <li class="breadcrumb-item active">
-                                    {{ get_label('update_role', 'Update role') }}
-                                </li>
-                            </ol>
-                        </nav>
-                    </div>
-                </div>
+    <div class="wrapper">
+        <div class="content-wrapper">
+            <section class="content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="d-flex justify-content-between mb-2 mt-4">
+                                    <div>
+                                        <nav aria-label="breadcrumb">
+                                            <ol class="breadcrumb breadcrumb-style1">
+                                                <li class="breadcrumb-item">
+                                                    <a href="{{ url('/home') }}">{{ get_label('home', 'Home') }}</a>
+                                                </li>
+                                                <li class="breadcrumb-item">
+                                                    {{ get_label('settings', 'Settings') }}
+                                                </li>
+                                                <li class="breadcrumb-item active">
+                                                    {{ get_label('permission', 'permission') }}
+                                                </li>
+                                            </ol>
+                                        </nav>
+                                    </div>
+                               
+                                </div>
 
-                <div class="card">
+                                <div class="card">
+                                <div class="card">
                     <div class="card-body">
                         <div class="alert alert-primary alert-dismissible" role="alert">
                             <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#permission_instuction_modal">
@@ -105,18 +109,51 @@
                         </form>
                     </div>
                 </div>
-            </div>
-        </section>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
     </div>
-</div>
 
 @section('scripts')
 <script>
-    document.getElementById('selectAllColumnPermissions').addEventListener('change', function() {
-        const checked = this.checked;
-        document.querySelectorAll('.permission-checkbox').forEach(function(checkbox) {
-            checkbox.checked = checked;
+    document.addEventListener('DOMContentLoaded', function () {
+        const selectAllCheckbox = document.getElementById('selectAllColumnPermissions');
+        const permissionCheckboxes = document.querySelectorAll('.permission-checkbox');
+        const rowCheckboxes = document.querySelectorAll('.row-permission-checkbox');
+
+        // Select/Deselect all permission checkboxes
+        selectAllCheckbox.addEventListener('change', function () {
+            const isChecked = selectAllCheckbox.checked;
+            permissionCheckboxes.forEach(checkbox => {
+                checkbox.checked = isChecked;
+            });
+            rowCheckboxes.forEach(rowCheckbox => {
+                rowCheckbox.checked = isChecked;
+            });
+        });
+
+        // Update "Select All" checkbox based on individual checkboxes
+        permissionCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                selectAllCheckbox.checked = Array.from(permissionCheckboxes).every(cb => cb.checked);
+            });
+        });
+
+        // Handle row checkbox clicks to select/deselect all permissions in that row
+        rowCheckboxes.forEach(rowCheckbox => {
+            rowCheckbox.addEventListener('change', function () {
+                const permissionsInRow = rowCheckbox.closest('tr').querySelectorAll('.permission-checkbox');
+                permissionsInRow.forEach(permissionCheckbox => {
+                    permissionCheckbox.checked = rowCheckbox.checked;
+                });
+            });
         });
     });
 </script>
+@endsection
+
 @endsection

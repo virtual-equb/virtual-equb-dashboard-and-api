@@ -105,7 +105,7 @@ class RolesController extends Controller
         // Find the role by ID
         $role = Role::findOrFail($id);
         $role->name = $formFields['name'];
-        dd( $role->name);
+
         $role->save();
     
         // Filter and sync permissions
@@ -113,7 +113,7 @@ class RolesController extends Controller
             return $permission != 0;
         });
         $role->permissions()->sync($filteredPermissions);
-    
+       // dd( $filteredPermissions);
         // Clear cache
         Artisan::call('cache:clear');
     
