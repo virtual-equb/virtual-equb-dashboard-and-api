@@ -149,5 +149,4 @@
 
                 </div>
             </div>
-
             @endcan
