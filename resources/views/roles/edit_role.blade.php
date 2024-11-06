@@ -54,19 +54,6 @@
                                     <p class="text-danger text-xs mt-1">{{ $message }}</p>
                                     @enderror
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">
-                                        {{ get_label('data_access', 'Data Access') }} 
-                                        (<small class="text-muted mt-2">{{ get_label('all_data_access_info', 'If All Data Access Is Selected, Users Under This Role Will Have Unrestricted Access to All Data, Irrespective of Any Specific Assignments or Restrictions') }}</small>)
-                                    </label>
-                                    <div class="btn-group d-flex justify-content-center" role="group">
-                                        <input type="radio" class="btn-check" name="permissions[]" id="access_all_data" value="{{ optional(Permission::where('name', 'access_all_data')->where('guard_name', 'web')->first())->id }}" {{ $role_permissions->contains('name', 'access_all_data') ? 'checked' : '' }}>
-                                        <label class="btn btn-outline-primary" for="access_all_data">{{ get_label('all_data_access', 'All Data Access') }}</label>
-
-                                        <input type="radio" class="btn-check" name="permissions[]" id="access_allocated_data" value="0" {{ !$role_permissions->contains('name', 'access_all_data') ? 'checked' : '' }}>
-                                        <label class="btn btn-outline-primary" for="access_allocated_data">{{ get_label('allocated_data_access', 'Allocated Data Access') }}</label>
-                                    </div>
-                                </div>
                             </div>
 
                             <hr class="mb-2" />
