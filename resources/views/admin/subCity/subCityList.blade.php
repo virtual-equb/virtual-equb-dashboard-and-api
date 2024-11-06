@@ -1,10 +1,4 @@
-{{-- @if (Auth::user()->role == 'admin' ||
-    Auth::user()->role == 'general_manager' ||
-    Auth::user()->role == 'operation_manager' ||
-    Auth::user()->role == 'finance' ||
-    Auth::user()->role == 'customer_service' ||
-    Auth::user()->role == 'assistant' ||
-    Auth::user()->role == 'it') --}}
+@can('view sub_city')
 
 @extends('layouts.app')
 
@@ -56,7 +50,7 @@
                                         </li>
                                     </ul>
                                     <div class="float-right">
-                                        @if (Auth::user()->role != 'assistant' && Auth::user()->role != 'finance')
+                                        @can ('create sub_city')
                                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addSubCityModal" style="margin-right: 30px;">
                                                 <span class="fa fa-plus-circle"></span> Add Sub City
                                             </button>
@@ -95,27 +89,27 @@
                                                                 {{ $subCity->active == 1 ? 'Active' : 'Inactive' }}
                                                             </span>
                                                         </th>
-                                                        @if (Auth::user()->role != 'assistant')
                                                             <td>
                                                                 <div class='dropdown'>
                                                                     <button class='btn btn-secondary btn-sm btn-flat dropdown-toggle' type='button' data-toggle='dropdown'>Menu<span class='caret'></span></button>
                                                                     <ul class='dropdown-menu p-4'>
-                                                                        @if (Auth::user()->role != 'finance')
+                                                                        @can('update sub_city')
                                                                             <li>
                                                                                 <button class="text-secondary btn btn-flat" onclick="openEditModal({{ $subCity->id }})">
                                                                                     <span class="fa fa-edit"></span> Edit
                                                                                 </button>
                                                                             </li>
+                                                                        @endcan
+                                                                        @can('delete sub_city')
                                                                             <li>
                                                                                 <button class="text-secondary btn btn-flat delete-sub-city" data-id="{{ $subCity->id }}">
                                                                                     <i class="fas fa-trash-alt"></i> Delete
                                                                                 </button>
                                                                             </li>
-                                                                        @endif
+                                                                        @endcan
                                                                     </ul>
                                                                 </div>
                                                             </td>
-                                                        @endif
                                                     </tr>
                                                 @endforeach
                                             </tbody>
@@ -231,4 +225,4 @@
         });
     </script>
 @endsection
-{{-- @endif --}}
+@endcan

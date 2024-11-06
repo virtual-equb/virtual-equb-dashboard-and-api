@@ -86,7 +86,9 @@
                                         <div class="tab-content" id="custom-tabs-two-tabContent">
                                             <div class="tab-pane fade show active" id="custom-tabs-two-member"
                                                 role="tabpanel" aria-labelledby="custom-tabs-two-member-tab">
+                                               @can('create equb_type') 
                                                 @include('admin/equbType.addEqubType')
+                                               @endcan
                                                 <table id="equbType-list-table" class="table table-bordered table-striped">
                                                     <thead>
                                                         <tr>
@@ -148,6 +150,7 @@
                                                                                 data-toggle='dropdown'>Menu<span
                                                                                     class='caret'></span></button>
                                                                             <ul class='dropdown-menu p-4'>
+                                                                                @can('update equb_type')
                                                                                 <li>
                                                                                     <a href="javascript:void(0);"
                                                                                         class="text-secondary btn btn-flat"
@@ -155,6 +158,8 @@
                                                                                             class="fa fa-edit"> </span>
                                                                                         Edit</a>
                                                                                 </li>
+                                                                                @endcan
+                                                                                @can('delete equb_type')
                                                                                 <li>
                                                                                     <a href="javascript:void(0);"
                                                                                         class="text-secondary btn btn-flat"
@@ -162,6 +167,8 @@
                                                                                             class="fas fa-trash-alt"></i>
                                                                                         Delete</a>
                                                                                 </li>
+                                                                                @endcan
+                                                                                @can('deactivate equb_type')
                                                                                 <li>
                                                                                     <a href="javascript:void(0);"
                                                                                         class="text-secondary btn btn-flat"
@@ -177,6 +184,7 @@
                                                                                         ?>
                                                                                     </a>
                                                                                 </li>
+                                                                                @endcan
                                                                                 <li>
                                                                                     <a href="javascript:void(0);"
                                                                                         class="text-secondary btn btn-flat view-icon"
@@ -972,12 +980,10 @@
                     //"buttons": ["excel", "pdf", "print", "colvis"]
                 }).buttons().container().appendTo('#equbType-list-table_wrapper .col-md-6:eq(0)')
                 $('#equbType-list-table_filter').prepend(
-                    `@if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant')<button type="button" class=" btn btn-primary addEqub" id="register" data-toggle="modal" data-target="#myModal" style="margin-right: 20px;"> <span class="fa fa-plus-circle"> </span> Add </button>@endif`
+                    `<button type="button" class=" btn btn-primary addEqub" id="register" data-toggle="modal" data-target="#myModal" style="margin-right: 20px;"> <span class="fa fa-plus-circle"> </span> Add </button>`
                 )
                 $('#equbType-list-table_filter').prepend(
-                    `@if (Auth::user()->role != 'operation_manager' &&
-                            Auth::user()->role != 'assistant' &&
-                            Auth::user()->role != 'customer_service')<button type="button" class=" btn btn-primary addEqub" id="draw" data-toggle="modal" data-target="#drawModal" style="margin-right: 20px;"> <span class="fa fa-random"> </span> Draw Todays Winner</button>@endif`
+                    `<button type="button" class=" btn btn-primary addEqub" id="draw" data-toggle="modal" data-target="#drawModal" style="margin-right: 20px;"> <span class="fa fa-random"> </span> Draw Todays Winner</button>`
                 )
 
                 $("#DeactiveEqubType-list-table").DataTable({

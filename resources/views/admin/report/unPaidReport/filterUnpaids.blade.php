@@ -139,7 +139,11 @@
                       search: "",
                       searchPlaceholder: "Search",
                   },
+                  @can('export reports_date')
                   "buttons": ["excel", "pdf", "print", "colvis"]
+                  @else 
+                  "buttons": []
+                  @endcan
               }).buttons().container().appendTo('#equb-table_wrapper .col-md-6:eq(0)');
           });
       </script>

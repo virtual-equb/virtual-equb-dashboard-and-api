@@ -43,42 +43,63 @@
                     Reports
                 </a>
                 <div class="text-dark bg-light dropdown-menu dropdown-menu-lg dropdown-menu-right" style="width: 500px">
+                    @can('view member_report')
                     <a class="nav-link dropdown-item" href="{{ url('reports/memberFilter') }}">
                         <i class="fas fa-chart-bar"></i> Member Report
                     </a>
+                    @endcan
+                    @can('view member_report_by_equb_type')
                     <a class="nav-link dropdown-item" href="{{ url('reports/memberFilterByEqubType') }}">
                         <i class="fas fa-chart-bar"></i> Member Report By Equb Type
                     </a>
-
-                    @if (!optional(Auth::user()->roles)->contains('name', 'marketing_manager'))
+                    @endcan
+                    {{-- @if (!optional(Auth::user()->roles)->contains('name', 'marketing_manager')) --}}
+                    @can('view collected_by_report')
                         <a class="nav-link dropdown-item" href="{{ url('reports/collectedByFilter') }}">
                             <i class="fas fa-chart-bar"></i> Collected by Report
                         </a>
+                    @endcan
+                    @can('view equb_report')
                         <a class="nav-link dropdown-item" href="{{ url('reports/equbFilter') }}">
                             <i class="fas fa-chart-bar"></i> Equb Report
                         </a>
+                    @endcan
+                    @can('view paid_lottories_report ')
                         <a class="nav-link dropdown-item" href="{{ url('reports/lotteryFilter') }}">
                             <i class="fas fa-chart-bar"></i> Paid Lotteries Report
                         </a>
+                    @endcan
+                    @can('view unpaid_lottories_report')
                         <a class="nav-link dropdown-item" href="{{ url('reports/unPaidLotteryFilter') }}">
                             <i class="fas fa-chart-bar"></i> UnPaid Lotteries Report
                         </a>
+                    @endcan
+                    @can('view unpaid_lottories_by_date_report')
                         <a class="nav-link dropdown-item" href="{{ url('reports/unPaidLotteryByDateFilter') }}">
                             <i class="fas fa-chart-bar"></i> UnPaid Lotteries By Lottery Date Report
                         </a>
+                    @endcan
+                    @can('view reserved_lottery_date_report')
                         <a class="nav-link dropdown-item" href="{{ url('reports/reservedLotteryDatesFilter') }}">
                             <i class="fas fa-chart-bar"></i> Reserved Lottery Dates Report
                         </a>
+                    @endcan
+                    @can('view payment_report')
                         <a class="nav-link dropdown-item" href="{{ url('reports/paymentFilter') }}">
                             <i class="fas fa-chart-bar"></i> Payments Report
                         </a>
+                    @endcan
+                    @can('view unpaid_payment_report')
                         <a class="nav-link dropdown-item" href="{{ url('reports/unPaidFilter') }}">
                             <i class="fas fa-chart-bar"></i> Unpaid Payment Report
                         </a>
+                    @endcan
+                    @can('view filter_equb_by_end_date_reports')
                         <a class="nav-link dropdown-item" href="{{ url('reports/filterEqubEndDates') }}">
                             <i class="fas fa-chart-bar"></i> Filter Equbs By End Date Report
                         </a>
-                    @endif
+                    @endcan
+                    {{-- @endif --}}
                 </div>
             </li>
         {{-- @endif --}}

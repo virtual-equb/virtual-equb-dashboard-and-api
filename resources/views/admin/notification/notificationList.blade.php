@@ -1,8 +1,4 @@
-{{-- @if (Auth::user()->role == 'admin' ||
-        Auth::user()->role == 'general_manager' ||
-        Auth::user()->role == 'operation_manager' ||
-        Auth::user()->role == 'assistant' ||
-        Auth::user()->role == 'it') --}}
+@can('view notification')
     @extends('layouts.app')
     @section('styles')
         <style type="text/css">
@@ -72,7 +68,9 @@
                                         <div class="tab-content" id="custom-tabs-two-tabContent">
                                             <div class="tab-pane fade show active" id="custom-tabs-two-member"
                                                 role="tabpanel" aria-labelledby="custom-tabs-two-member-tab">
-                                                @include('admin/notification.sendNotification')
+                                                @can('create notification')
+                                                    @include('admin/notification.sendNotification')
+                                                @endcan
                                                 <table id="offDate-list-table" class="table table-bordered table-striped">
                                                     <thead>
                                                         <tr>
@@ -118,7 +116,6 @@
                                                                     $createdDate = $toCreatedAt->format('M-j-Y');
                                                                     echo $createdDate; ?>
                                                                 </td>
-                                                                @if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant')
                                                                     <td>
                                                                         <div class='dropdown'>
                                                                             <button
@@ -128,6 +125,7 @@
                                                                                     class='caret'></span></button>
                                                                             <ul class='dropdown-menu p-4'>
                                                                                 @if ($item->status === 'pending')
+                                                                                    @can('approve notification')
                                                                                     <li>
                                                                                         <a href="javascript:void(0);"
                                                                                             class="btn-sm btn btn-flat"
@@ -136,6 +134,8 @@
                                                                                                 class="fa fa-check"> </span>
                                                                                             Approve</a>
                                                                                     </li>
+                                                                                    @endcan
+                                                                                    @can('update notification')
                                                                                     <li>
                                                                                         <a href="javascript:void(0);"
                                                                                             class="btn-sm btn btn-flat"
@@ -144,7 +144,9 @@
                                                                                                 class="fa fa-edit"> </span>
                                                                                             Edit</a>
                                                                                     </li>
+                                                                                    @endcan
                                                                                 @endif
+                                                                                @can('resend notification')
                                                                                 <li>
                                                                                     <a href="javascript:void(0);"
                                                                                         class="btn-sm btn btn-flat"
@@ -153,7 +155,9 @@
                                                                                             class="fa fa-edit"> </span>
                                                                                         Resend</a>
                                                                                 </li>
+                                                                                @endcan
                                                                                 @if ($item->status === 'pending')
+                                                                                @can('delete notification')
                                                                                     <li>
                                                                                         <a href="javascript:void(0);"
                                                                                             class="btn-sm btn btn-flat"
@@ -161,11 +165,11 @@
                                                                                                 class="fas fa-trash-alt"></i>
                                                                                             Delete</a>
                                                                                     </li>
+                                                                                @endcan
                                                                                 @endif
                                                                             </ul>
                                                                         </div>
                                                                     </td>
-                                                                @endif
                                                             </tr>
                                                         @endforeach
                                                     </tbody>
@@ -374,12 +378,16 @@
                         search: "",
                         searchPlaceholder: "Search",
                     },
+                    @can('export notification_data')
                     "buttons": ["excel", "pdf", "print", "colvis"]
+                    @else
+                    "buttons": []
+                    @endcan
                 }).buttons().container().appendTo('#offDate-list-table_wrapper .col-md-6:eq(0)')
                 $('#offDate-list-table_filter').prepend(
-                    `@if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant')<button type="button" class=" btn btn-primary addNotification" id="register" data-toggle="modal" data-target="#addNotificationModal" style="margin-right: 30px;"> <span class="fa fa-plus-circle"> </span> Send Notification</button>@endif`
+                    `<button type="button" class=" btn btn-primary addNotification" id="register" data-toggle="modal" data-target="#addNotificationModal" style="margin-right: 30px;"> <span class="fa fa-plus-circle"> </span> Send Notification</button>`
                 )
             });
         </script>
     @endSection
-{{-- @endif --}}
+@endcan
