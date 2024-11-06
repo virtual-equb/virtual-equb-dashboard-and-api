@@ -24,10 +24,10 @@ class RejectedDateController extends Controller
         $this->title = "Virtual Equb - Off Date";
 
         // Permission Guard
-        $this->middleware('permission_check_logout:update rejected_date', ['only' => ['update', 'edit']]);
-        $this->middleware('permission_check_logout:delete rejected_date', ['only' => ['destroy']]);
-        $this->middleware('permission_check_logout:view rejected_date', ['only' => ['index', 'show', 'offDateCheck']]);
-        $this->middleware('permission_check_logout:create rejected_date', ['only' => ['store', 'create']]);
+        // $this->middleware('permission_check_logout:update rejected_date', ['only' => ['update', 'edit']]);
+        // $this->middleware('permission_check_logout:delete rejected_date', ['only' => ['destroy']]);
+        // $this->middleware('permission_check_logout:view rejected_date', ['only' => ['index', 'show', 'offDateCheck']]);
+        // $this->middleware('permission_check_logout:create rejected_date', ['only' => ['store', 'create']]);
     }
     public function index()
     {

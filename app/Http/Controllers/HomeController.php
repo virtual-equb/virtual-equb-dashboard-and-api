@@ -38,7 +38,7 @@ class HomeController extends Controller
 
         // Permission Guard
         // $this->middleware('permission:view dashboard', ['only' => ['index', 'show', 'equbTypeIndex']]);
-        $this->middleware('permission_check_logout:view dashboard', ['only' => ['index', 'show', 'equbTypeIndex']]);
+        // $this->middleware('permission_check_logout:view dashboard', ['only' => ['index', 'show', 'equbTypeIndex']]);
     }
     //Projection chart updated here
     public function index()

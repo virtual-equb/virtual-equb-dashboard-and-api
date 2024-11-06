@@ -19,10 +19,10 @@ class ActivityLogController extends Controller
         $this->limit = 10;
 
         // Permission guard
-        $this->middleware('permission:update activity_log', ['only' => ['update', 'edit']]);
-        $this->middleware('permission:delete activity_log', ['only' => ['destroy']]);
-        $this->middleware('permission:view activity_log', ['only' => ['index', 'show', 'searchActivity', 'paginateActivityLog', 'clearSearchEntry', 'logDetail', 'logDetailPaginate']]);
-        $this->middleware('permission:create activity_log', ['only' => ['store', 'create']]);
+        // $this->middleware('permission:update activity_log', ['only' => ['update', 'edit']]);
+        // $this->middleware('permission:delete activity_log', ['only' => ['destroy']]);
+        // $this->middleware('permission:view activity_log', ['only' => ['index', 'show', 'searchActivity', 'paginateActivityLog', 'clearSearchEntry', 'logDetail', 'logDetailPaginate']]);
+        // $this->middleware('permission:create activity_log', ['only' => ['store', 'create']]);
     }
     /**
      * Display a listing of the resource.
