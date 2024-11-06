@@ -7,7 +7,7 @@
     <h1 class="display-1">404</h1>
     <h2>Oops! Page Not Found</h2>
     <p>The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.</p>
-    <a href="{{ url('/') }}" class="btn btn-primary">Go to Home</a>
+    <a href="{{ url('/dashboard') }}" class="btn btn-primary">Go to Home</a>
     <br>
     <br>
     <p><a href="{{ url()->previous() }}">Go Back</a></p>

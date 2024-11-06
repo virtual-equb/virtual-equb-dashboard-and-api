@@ -663,7 +663,7 @@ class PaymentController extends Controller
                 $paymentData['offset'] = $offset;
                 $paymentData['limit'] = $limit;
                 $paymentData['pageNumber'] = $pageNumber;
-                return view('admin/payment.paymentList', $paymentData);
+        //    /     return view('admin/payment.paymentList', $paymentData);
             } elseif ($userData->hasRole($collector)) {
                 $paymentData['member'] = $this->memberRepository->getMemberById($member_id);
                 $paymentData['equb'] = $this->equbRepository->geteEubById($equb_id);

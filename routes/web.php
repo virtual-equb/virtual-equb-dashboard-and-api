@@ -18,6 +18,7 @@ use App\Http\Controllers\MainEqubController;
 use App\Http\Controllers\WebPermissionController;
 use App\Http\Controllers\WebRoleController;
 use App\Http\Controllers\SubController;
+use App\Http\Controllers\RolesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -328,6 +329,34 @@ Route::middleware([
           // Delete a main equb
           Route::delete('{id}', [MainEqubController::class, 'delete'])->name('mainEqubs.destroy');
     });
+  Route::middleware(['web','api','auth'])->group(function () {
+    // Route to create a new permission
+    Route::get('/settings/permission/create', [RolesController::class, 'create_permission'])
+        ->name('permissions.create'); // Add permission check
 
-   
+    // Route to view all permissions
+    Route::get('/settings/permission', [RolesController::class, 'index'])
+        ->name('permissions.index'); // Add permission check
+
+    // Route to delete a role
+    Route::delete('/roles/destroy/{id}', [RolesController::class, 'destroy'])
+        ->name('roles.destroy')
+        ->middleware(['demo_restriction', 'permission:delete roles']); // Example permission check
+
+    // Route to create a new role
+    Route::get('/roles/create', [RolesController::class, 'create'])
+        ->name('roles.create'); // Add permission check
+
+    // Route to store a new role
+    Route::post('/roles/store', [RolesController::class, 'store'])
+        ->name('roles.store');
+
+    // Route to edit a specific role
+    Route::get('/roles/edit/{id}', [RolesController::class, 'edit'])
+        ->name('roles.edit');
+
+    // Route to update a specific role
+    Route::put('/roles/update/{id}', [RolesController::class, 'update'])
+        ->name('roles.update');
+});
 });

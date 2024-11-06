@@ -155,7 +155,7 @@
     </a>
     <ul class="nav nav-treeview ml-2" style="{{ request()->is('permission') || request()->is('roles') ? 'display: block;' : 'display: none;' }}">
         <li class="nav-item">
-            <a href="{{ url('permission') }}" class="nav-link {{ request()->is('permission') ? 'active' : '' }}" id="nav-permissions" onclick="setActive('nav-permissions')">
+            <a href="{{ url('settings/permission') }}" class="nav-link {{ request()->is('permission') ? 'active' : '' }}" id="nav-permissions" onclick="setActive('nav-permissions')">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Permissions</p>
             </a>
