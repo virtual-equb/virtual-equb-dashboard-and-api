@@ -35,14 +35,10 @@ class RolesController extends Controller
      */
     public function create()
     {
-        $inventories = Permission::where('name', 'like', '%inventories%')->get()->sortBy('name');
-        $projects = Permission::where('name', 'like', '%projects%')->get()->sortBy('name');
-        $tasks = Permission::where('name', 'like', '%tasks%')->get()->sortBy('name');
-        $users = Permission::where('name', 'like', '%users%')->get()->sortBy('name');
-        $clients = Permission::where('name', 'like', '%clients%')->get()->sortBy('name');
+        $equb = Permission::where('name', 'like', '%equb%')->get()->sortBy('name');
         $title = "Permission";
         
-        return view('roles.create_role', [ 'title' => $title,'projects' => $projects, 'tasks' => $tasks, 'users' => $users, 'clients' => $clients]);
+        return view('roles.create_role', [ 'title' => $title,'equb' => $equb,]);
     }
 
     /**
@@ -88,7 +84,7 @@ class RolesController extends Controller
         $title = "Permission";
         $role = Role::findOrFail($id);
         $role_permissions = $role->permissions;
-        $guard = $role->guard_name == 'client' ? 'client' : 'web';
+        $guard = $role->guard_name == 'api' ? 'api' : 'web';
         return view('roles.edit_role', ['role' => $role, 'role_permissions' => $role_permissions, 'guard' => $guard, 'user' => getAuthenticatedUser()]);
     }
 
@@ -142,7 +138,6 @@ class RolesController extends Controller
 
     public function create_permission()
     {
-        // $createProjectsPermission = Permission::findOrCreate('create_tasks', 'client');
-        Permission::create(['name' => 'edit_projects', 'guard_name' => 'client']);
+        Permission::create(['name' => 'edit_equb', 'guard_name' => 'web']);
     }
 }

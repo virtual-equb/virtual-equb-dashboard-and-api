@@ -106,7 +106,7 @@ use Spatie\Permission\Models\Permission;
             </tr>
         </thead>
         <tbody>
-            @foreach(config("taskhub.permissions") as $module => $permissions)
+            @foreach(config("roles.permissions") as $module => $permissions)
             <tr>
                 <td>
                     <div class="form-check">

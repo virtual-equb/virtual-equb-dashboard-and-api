@@ -1,6 +1,6 @@
 <?php
 
-/** custom taskhub config */
+/** custom    config */
 return [
     /*
     |--------------------------------------------------------------------------
@@ -15,12 +15,6 @@ return [
         "member" => "warning",
         'default' => "dark"
     ],
-    'priority_labels' => [
-        'low' => "success",
-        "high" => "danger",
-        "medium" => "warning"
-    ],
-
 'permissions' => [
     'Main Equb' => ['create main_equb', 'view main_equb', 'update main_equb', 'delete main_equb'],
     'Equb Type' => ['create equb_type', 'view equb_type', 'update equb_type', 'delete equb_type'],

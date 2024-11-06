@@ -16,8 +16,8 @@ if (!function_exists('getAuthenticatedUser')) {
         }
 
         // Check the 'clients' guard (clients)
-        if (Auth::guard('client')->check()) {
-            return Auth::guard('client')->user();
+        if (Auth::guard('api')->check()) {
+            return Auth::guard('api')->user();
         }
 
         // No user is authenticated
