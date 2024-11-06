@@ -1,8 +1,4 @@
-{{-- @if (Auth::user()->role == 'admin' ||
-                Auth::user()->role == 'general_manager' ||
-                Auth::user()->role == 'operation_manager' ||
-                Auth::user()->role == 'customer_service' ||
-                Auth::user()->role == 'it') --}}
+@can('create equb_type')
             <div class="modal fade" id="myModal" role="dialog">
                 <div class="modal-dialog">
 
@@ -108,6 +104,8 @@
 
                 </div>
             </div>
+            @endcan
+            @can('draw equb_type_winner')
             <div class="modal fade" id="drawModal" role="dialog">
                 <div class="modal-dialog">
 
@@ -151,4 +149,4 @@
 
                 </div>
             </div>
-        {{-- @endif --}}
+            @endcan
