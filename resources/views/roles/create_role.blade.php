@@ -27,21 +27,12 @@ use Spatie\Permission\Models\Permission;
                                                     {{ get_label('settings', 'Settings') }}
                                                 </li>
                                                 <li class="breadcrumb-item active">
-                                                    {{ get_label('permissions', 'Permissions') }}
+                                                    {{ get_label('role', 'Role') }}
                                                 </li>
                                             </ol>
                                         </nav>
                                     </div>
-                                    <div>
-                                        <a href="{{ url('/roles/create') }}">
-                                            <button type="button" class="btn btn-sm btn-primary" 
-                                                    data-bs-toggle="tooltip" 
-                                                    data-bs-placement="left" 
-                                                    title="{{ get_label('create_role', 'Create Role') }}">
-                                                Create Role <i class='bx bx-plus'></i>
-                                            </button>
-                                        </a>
-                                    </div>
+                               
                                 </div>
 
                                 <div class="card">
