@@ -771,7 +771,6 @@ class MemberController extends Controller
     {
         try {
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $status = $this->memberRepository->getStatusById($id)->status;
                 $member_phone = $this->memberRepository->getPhone($id);
                 $member_phone = $member_phone->phone;
@@ -828,9 +827,6 @@ class MemberController extends Controller
                     Session::flash($type, $msg);
                     return back();
                 }
-            // } else {
-            //     return view('auth/login');
-            // }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';

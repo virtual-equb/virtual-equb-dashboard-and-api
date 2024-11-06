@@ -47,7 +47,11 @@ use App\Models\User;
 
 
 
-Route::post('/notify-equb-start', [ControllersEqubController::class, 'sendStartNotifications']);
+Route::post('/notify-equb-start', [EqubController::class, 'sendStartNotifications']);
+Route::post('/notify-equb-ends', [EqubController::class, 'sendEndNotifications']);
+Route::post('/daily-payment-notification', [EqubController::class, 'sendDailyPaymentNotification']);
+Route::post('/lottery-notification', [EqubController::class, 'sendLotteryNotification']);
+
 Route::get('/registrationCity', [CityController::class, 'index'])->name('registrationCity');
 Route::post('member/registerMember', [MemberController::class, 'register'])->name('storeMember');
 Route::post('member/updateProfile/{id}', [MemberController::class, 'updateProfile'])->name('updateProfile'); // old update

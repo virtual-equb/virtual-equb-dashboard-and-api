@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 use App\Http\Resources\Api\EqubResource;
+use App\Models\Payment;
+use App\Models\User;
 use App\Repositories\Equb\EqubRepository;
 use App\Repositories\Equb\IEqubRepository;
 use App\Repositories\Member\IMemberRepository;
@@ -138,6 +140,150 @@ class EqubController extends Controller
                 'error' => $ex->getMessage(),
             ]);
         }
+    }
+    public function sendEndNotifications() 
+    {
+        try {
+            $now = Carbon::now();
+            $next24Hours = $now->copy()->addHours(24);
+
+            $dueEqubs = Equb::whereBetween('end_date', [$now, $next24Hours])->get();
+
+            if ($dueEqubs->isEmpty()) {
+                return response()->json([
+                    'message' => 'No Equbs found within the due range.',
+                    'code' => 200,
+                    'count' => 0,
+                    'debug' => [
+                        'end_date_from' => $now->toDateTimeString(),
+                        'end_date_to' => $next24Hours->toDateTimeString(),
+                        'equbs_found' => $dueEqubs->toArray()
+                    ]
+                    ]);
+            }
+            $count = 0;
+            foreach($dueEqubs as $equb) {
+                $member = Member::find($equb->member_id);
+
+                if ($member && $member->phone) {
+                    $endDate = Carbon::parse($equb->end_date);
+                    $shortcode = config('key.SHORT_CODE');
+                    $message = "Reminder: Your Equb will end on " . $endDate->format('Y-m-d H:i') . ". For further information, call $shortcode";
+                    
+                    $this->sendSms($member->phone, $message);
+                    $count++;
+                }
+
+                return response()->json([
+                    'message' => 'Notification sent for Ending Equbs',
+                    'code' => 200,
+                    'count' => $count
+                ]);
+
+            }
+                                
+        } catch (Exception $ex) {
+            return response()->json([
+                'message' => 'Unable to process your request, Please try again!',
+                'code' => 500,
+                'error' => $ex->getMessage(),
+            ]);
+        }
+    }
+    public function sendDailyPaymentNotification()
+    {
+        try {
+            $today = Carbon::today();
+            $count = 0;
+
+            // Retrieve all active Equbs with 'Automatic' type and 'Daily' rote
+            $equbs = Equb::whereHas('equbType', function ($query) {
+                            $query->where('type', 'Automatic')
+                                ->where('rote', 'Daily');
+                    })
+                    ->where('status', 'Active')
+                    ->with(['member', 'equbType'])
+                    ->get();
+
+            foreach($equbs as $equb) {
+                $member = $equb->member;
+
+                    // Skip if member or phone number is invalid
+                    if (!$member || !isset($member->phone) || empty($member->phone)) {
+                        Log::info("Skipping Equb {$equb->equbType->name} due to missing member or phone");
+                        continue;
+                    }
+
+                    // Check if payment is recorded for today for the specific member
+                    $paymentExists = Payment::where('equb_id', $equb->id)
+                                            ->where('member_id', $member->id)
+                                            ->whereDate('created_at', $today)
+                                            ->exists();
+                    
+                    if (!$paymentExists) {
+                        $amount = $equb->amount;
+                        $shortcode = config('key.SHORT_CODE'); 
+                        $message = "Reminder: Your daily payment of $amount is due today for Equb {$equb->equbType->name}. Please make your payment. For further information, call $shortcode";
+                        
+                        // Send SMS
+                        $this->sendSms($member->phone, $message);
+                        $count++;
+                    } else {
+                        return "Payment already exists for Member ID {$member->id} on Equb ID {$equb->equbType->name}";
+                    }
+            }
+
+            // Return success response with total notifications sent
+            return response()->json([
+                'message' => 'Daily payment notifications sent successfully.',
+                'code' => 200,
+                'count' => $count
+            ]);
+
+        } catch (Exception $ex) {
+            // Return error response with exception message
+            return response()->json([
+                'message' => 'Unable to process your request, Please try again!',
+                'code' => 500,
+                'error' => $ex->getMessage(),
+            ]);
+        }
+    }
+
+    public function sendLotteryNotification()
+    {
+        $today = Carbon::today();
+        $count = 0;
+
+        // Retrieve equbs where the lottery date is today
+        $equbs = Equb::whereDate('lottery_date', $today)
+                       ->where('status', 'Active')
+                       ->with('equbType')
+                       ->get();
+                    //    dd($equbs);
+        foreach ($equbs as $equb) {
+            // dd($equb->equbType);
+            $member = Member::find($equb->member_id);
+
+            // Check for a valid member and phone
+            if (!$member || !$member->phone) {
+                continue;
+            }
+            $shortcode = config('key.SHORT_CODE');
+            $message = "Reminder: Weekly lottery draw for Equb {$equb->equbType->name} is scheduled today. Stay tuned!. For more information call $shortcode";
+            $this->sendSms($member->phone, $message);
+            $count++;
+
+            // Optionally, set the next lottery date but for now (7 days) difference
+            // $equb->update(['lottery_date' => $today->addDays(7)]);
+            // $equb->equbType->update(['lottery_date' => $today->addDays(7)]);
+        }
+
+        return response()->json([
+            'message' => 'Lottery notifications sent successfully.',
+            'code' => 200,
+            'count' => $count
+        ]);
     }
     public function getReservedLotteryDate($lottery_date)
     {
@@ -550,7 +696,7 @@ class EqubController extends Controller
                 'amount' => 'required',
                 'total_amount' => 'required',
                 'start_date' => 'required|date_format:Y-m-d',
-                'timeline' => 'required',
+                // 'timeline' => 'required',
             ]);
 
             // Collecting request inputs
@@ -640,6 +786,32 @@ class EqubController extends Controller
                 ];
                 $this->activityLogRepository->createActivityLog($activityLog);
 
+                // Sending SMS notification
+                // memeber notification
+                $shortcode = config('key.SHORT_CODE');
+                $member = Member::find($member);
+                if ($member && $member->phone) {
+                    $memberMessage = "Dear {$member->full_name}, Your Equb has been successfully registered. Our customer service will contact you soon. For more information call {$shortcode}";
+                    $this->sendSms($member->phone, $memberMessage);
+                }
+
+                // Finance Sms
+                $finances = User::role('finance')->get();
+                foreach($finances as $finance) {
+                    if ($finance->phone_number) {
+                        $financeMessage = "Finance Alert: A new Equb with name {$create->name} has been registered. Please review the details.";
+                        $this->sendSms($finance->phone_number, $financeMessage);
+                    }
+                }
+
+                // Call center sms
+                $call_centers = User::role('call_center')->get();
+                foreach($call_centers as $finance) {
+                    if ($finance->phone_number) {
+                        $financeMessage = "Call Center Alert: A new Equb with name {$create->name} has been registered. Please review the details.";
+                        $this->sendSms($finance->phone_number, $financeMessage);
+                    }
+                }
                 return response()->json([
                     'code' => 200,
                     'message' => 'Equb has been registered successfully!',
