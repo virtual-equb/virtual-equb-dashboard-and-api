@@ -17,6 +17,23 @@
                                 <?= get_label('permission_settings', 'Permission settings') ?>
                                 @endsection    
 
+                                <!-- Flash Message Section -->
+                                @if (session('success'))
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        {{ session('success') }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                @elseif (session('error'))
+                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        {{ session('error') }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                @endif
+
                                 <div class="d-flex justify-content-between mb-2 mt-4">
                                     <div>
                                         <nav aria-label="breadcrumb">

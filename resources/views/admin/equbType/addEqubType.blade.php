@@ -1,4 +1,4 @@
-        {{-- @if (Auth::user()->role == 'admin' ||
+{{-- @if (Auth::user()->role == 'admin' ||
                 Auth::user()->role == 'general_manager' ||
                 Auth::user()->role == 'operation_manager' ||
                 Auth::user()->role == 'customer_service' ||
@@ -53,20 +53,6 @@
                                         <input type="number" class="form-control" id="amount"
                                             name="amount" placeholder="Round" min="1" required>
                                     </div>
-                                    <div id="members_div" class="form-group d-none">
-                                        <label class="control-label">Expected Members</label>
-                                        <input type="number" class="form-control" id="member"
-                                            name="expected_members" placeholder="Members" min="1" required>
-                                    </div>
-                                    <div class="form-group">
-    <label class="control-label">Total Amount (Birr)</label>
-    <input type="text" class="form-control" id="total_amount" name="total_amount" value="" readonly>
-</div>
-
-<div class="form-group">
-    <label class="control-label">Total Members</label>
-    <input type="text" class="form-control" id="total_members" name="total_members" value="" readonly>
-</div>
                                     <div class="form-group required">
                                         <label class="control-label">Rote</label>
                                         <select class="custom-select form-control" id="rote" name="rote">
