@@ -56,10 +56,10 @@ class MemberController extends Controller
         $this->title = "Virtual Equb - Member";
 
         // Guard Permission
-        $this->middleware('permission_check_logout:update member', ['only' => ['update', 'updateStatus', 'updatePendingStatus', 'rate', 'edit']]);
-        $this->middleware('permission_check_logout:delete member', ['only' => ['destroy']]);
-        $this->middleware('permission_check_logout:view member', ['only' => ['index', 'show', 'indexPending', 'searchPendingMember', 'member', 'searchMember', 'searchEqub', 'searchStatus']]);
-        $this->middleware('permission_check_logout:create member', ['only' => ['store', 'create', 'register']]);
+        // $this->middleware('permission_check_logout:update member', ['only' => ['update', 'updateStatus', 'updatePendingStatus', 'rate', 'edit']]);
+        // $this->middleware('permission_check_logout:delete member', ['only' => ['destroy']]);
+        // $this->middleware('permission_check_logout:view member', ['only' => ['index', 'show', 'indexPending', 'searchPendingMember', 'member', 'searchMember', 'searchEqub', 'searchStatus']]);
+        // $this->middleware('permission_check_logout:create member', ['only' => ['store', 'create', 'register']]);
     }
     public function clearSearchEntry()
     {

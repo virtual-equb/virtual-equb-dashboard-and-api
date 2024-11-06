@@ -51,11 +51,11 @@ class EqubTypeController extends Controller
         $this->memberRepository = $memberRepository;
         $this->title = "Virtual Equb - Equb Type";
         $this->mainEqubRepository = $mainEqubRepository;
-        // Guards
-        $this->middleware('permission_check_logout:update equb_type', ['only' => ['update', 'edit', 'updateStatus']]);
-        $this->middleware('permission_check_logout:delete equb_type', ['only' => ['destroy', 'dateInterval']]);
-        $this->middleware('permission_check_logout:view equb_type', ['only' => ['index', 'show']]);
-        $this->middleware('permission_check_logout:create equb_type', ['only' => ['store', 'create']]);
+        // // Guards
+        // $this->middleware('permission_check_logout:update equb_type', ['only' => ['update', 'edit', 'updateStatus']]);
+        // $this->middleware('permission_check_logout:delete equb_type', ['only' => ['destroy', 'dateInterval']]);
+        // $this->middleware('permission_check_logout:view equb_type', ['only' => ['index', 'show']]);
+        // $this->middleware('permission_check_logout:create equb_type', ['only' => ['store', 'create']]);
     }
     public function index()
     {
@@ -214,9 +214,8 @@ class EqubTypeController extends Controller
                     'round' => 'required',
                     'rote' => 'required',
                     'type' => 'required',
-                    // 'amount' => 'required',
-                    // 'expected_members' => 'required',
-                    'main_equb_id' => 'required'
+                    'main_equb_id' => 'required',
+                    'start_date' => 'required|date'
                 ]);
                 $name = $request->input('name');
                 $round = $request->input('round');
@@ -232,7 +231,16 @@ class EqubTypeController extends Controller
                 $amount = $request->input('amount');
                 $total_amount = $request->input('total_amount');
                 $expected_members= $request->input('quota');
-                // dd($end_date);
+                
+                // Ensure start_date is in YMD format
+                $formattedStartDate = Carbon::parse($start_date)->format('Y-m-d');
+
+                // check if type is 'Automatic' and set lottery_date to 7 days after start_date
+                $lottery_date = $request->input('lottery_date');
+                if ($type === 'Automatic' && !$lottery_date) {
+                    $lottery_date = Carbon::parse($formattedStartDate)->addDays(7)->format('Y-m-d');
+                }
+                
                 if ($end_date) {
                     $endDateCheck = $this->isDateInYMDFormat($end_date);
                     $formattedEndDate = $end_date;
