@@ -82,7 +82,6 @@
                                                 </div>
                                             </th>
                                             <th><?= get_label('permissions', 'Permissions') ?></th>
-                                            <th><?= get_label('select_role', 'Select Role') ?></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -103,12 +102,6 @@
                                                                 <label class="form-check-label text-capitalize">{{ $permissionModel ? substr($permissionModel->name, 0, strpos($permissionModel->name, "_")) : '' }}</label>
                                                             </div>
                                                         @endforeach
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="form-check">
-                                                        <input type="checkbox" id="roleSelectable{{ $module }}" class="form-check-input role-selectable" disabled>
-                                                        <label class="form-check-label" for="roleSelectable{{ $module }}">{{ get_label('select_role', 'Select Role') }}</label>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -144,18 +137,8 @@
             const permissionCheckboxes = document.querySelectorAll(`.permission-checkbox[data-module="${module}"]`);
             const allChecked = Array.from(permissionCheckboxes).every(checkbox => checkbox.checked);
             document.getElementById(`selectRow${module}`).checked = allChecked;
-
-            // Enable or disable the role selectable checkbox based on permission checkboxes
-            const roleSelectable = document.getElementById(`roleSelectable${module}`);
-            roleSelectable.disabled = !allChecked;
         });
-    });
-
-    // Check initial state of role selectable checkboxes
-    document.querySelectorAll('.row-permission-checkbox').forEach(function(rowCheckbox) {
-        rowCheckbox.dispatchEvent(new Event('change'));
     });
 </script>
 @endsection
-
 @endsection
