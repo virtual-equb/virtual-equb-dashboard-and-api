@@ -1,10 +1,3 @@
-{{-- @if (Auth::user()->role == 'admin' ||
-    Auth::user()->role == 'general_manager' ||
-    Auth::user()->role == 'operation_manager' ||
-    Auth::user()->role == 'finance' ||
-    Auth::user()->role == 'customer_service' ||
-    Auth::user()->role == 'assistant' ||
-    Auth::user()->role == 'it') --}}
 
 @extends('layouts.app')
 
@@ -56,11 +49,11 @@
                                         </li>
                                     </ul>
                                     <div class="float-right">
-                                        @if (Auth::user()->role != 'assistant' && Auth::user()->role != 'finance')
+                                        @can ('create city')
                                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addCityModal" style="margin-right: 30px;">
                                                 <span class="fa fa-plus-circle"></span> Add City
                                             </button>
-                                        @endif
+                                        @endcan
                                     </div>
                                 </div>
                                 
@@ -96,27 +89,27 @@
                                                                 {{ $city->active == 1 ? 'Active' : 'Inactive' }}
                                                             </span>
                                                         </td>
-                                                        @if (Auth::user()->role != 'assistant')
                                                             <td>
                                                                 <div class='dropdown'>
                                                                     <button class='btn btn-secondary btn-sm btn-flat dropdown-toggle' type='button' data-toggle='dropdown'>Menu<span class='caret'></span></button>
                                                                     <ul class='dropdown-menu p-4'>
-                                                                        @if (Auth::user()->role != 'finance')
+                                                                        @can('update city')
                                                                             <li>
                                                                                 <button class="text-secondary btn btn-flat" onclick="openEditModal({{ $city->id }})">
                                                                                     <span class="fa fa-edit"></span> Edit
                                                                                 </button>
                                                                             </li>
+                                                                        @endcan
+                                                                        @can('delete city')
                                                                             <li>
                                                                                 <button class="text-secondary btn btn-flat delete-city" data-id="{{ $city->id }}">
                                                                                     <i class="fas fa-trash-alt"></i> Delete
                                                                                 </button>
                                                                             </li>
-                                                                        @endif
+                                                                        @endcan
                                                                     </ul>
                                                                 </div>
                                                             </td>
-                                                        @endif
                                                     </tr>
                                                 @endforeach
                                             </tbody>
@@ -183,4 +176,3 @@
         });
     </script>
 @endsection
-{{-- @endif --}}

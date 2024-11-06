@@ -1,7 +1,4 @@
-{{-- @if (Auth::user()->role == 'admin' ||
-        Auth::user()->role == 'general_manager' ||
-        Auth::user()->role == 'operation_manager' ||
-        Auth::user()->role == 'it') --}}
+@can('create rejected_date')
     <div class="modal fade" id="addOffDateModal" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -35,4 +32,4 @@
 
         </div>
     </div>
-{{-- @endif --}}
+@endcan

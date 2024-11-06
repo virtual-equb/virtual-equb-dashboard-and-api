@@ -1,9 +1,4 @@
-    @if (Auth::user()->role == 'admin' ||
-            Auth::user()->role == 'general_manager' ||
-            Auth::user()->role == 'operation_manager' ||
-            Auth::user()->role == 'finance' ||
-            Auth::user()->role == 'assistant' ||
-            Auth::user()->role == 'it')
+
         <table id="equbType-table" class="table table-bordered table-striped ">
             <thead>
                 <tr>
@@ -44,8 +39,11 @@
                         search: "",
                         searchPlaceholder: "Search",
                     },
-                    // "buttons": ["excel", "pdf", "print", "colvis"]
+                    @can('export reports_data')
+                    "buttons": ["excel", "pdf", "print", "colvis"]
+                    @else 
+                    "buttons": []
+                    @endcan
                 }).buttons().container().appendTo('#equbType-table_wrapper .col-md-6:eq(0)');
             });
         </script>
-    @endif

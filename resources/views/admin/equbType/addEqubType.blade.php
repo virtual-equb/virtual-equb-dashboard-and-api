@@ -75,4 +75,8 @@
             </div>
         </div>
     </div>
+<<<<<<< HEAD
 @endcan
+=======
+@endcan
+>>>>>>> a32d669ea7de7f11882030acb9013af77afd3730

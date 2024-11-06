@@ -1,9 +1,4 @@
-{{-- @if (Auth::user()->role == 'admin' ||
-        Auth::user()->role == 'general_manager' ||
-        Auth::user()->role == 'operation_manager' ||
-        Auth::user()->role == 'assistant' ||
-        Auth::user()->role == 'finance' ||
-        Auth::user()->role == 'it') --}}
+
     <?php
     $total_amount = 0;
     $total_credit = 0;
@@ -205,7 +200,11 @@
                 search: "",
                 searchPlaceholder: "Search",
             },
+            @can('export payment_data')
             "buttons": ["excel", "pdf", "print", "colvis"]
+            @else 
+            "buttons": []
+            @endcan
         });
         table.buttons().container().appendTo('#payment-list-table_in_tab_wrapper .col-md-6:eq(0)');
         $("#payment-list-table_in_tab_filter").prepend(
@@ -213,4 +212,3 @@
         )
     });
 </script>
-{{-- @endif --}}

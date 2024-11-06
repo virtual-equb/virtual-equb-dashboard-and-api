@@ -429,8 +429,7 @@ class HomeController extends Controller
                         $wE = $wE * $difference;
                         $sum2 = $sum2 + $wE;
                     }
-                    // dd($sum2);
-                    // }
+                    
                 }
                 $monthlyExpected = $sum2;
                 $monthlyUnpaidAmount = $monthlyExpected - $monthlyPaidAmount;

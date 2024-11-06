@@ -1,8 +1,4 @@
-{{-- @if (Auth::user()->role == 'admin' ||
-        Auth::user()->role == 'general_manager' ||
-        Auth::user()->role == 'operation_manager' ||
-        Auth::user()->role == 'assistant' ||
-        Auth::user()->role == 'it') --}}
+@can('view rejected_date')
     @extends('layouts.app')
     @section('styles')
         <style type="text/css">
@@ -72,7 +68,9 @@
                                         <div class="tab-content" id="custom-tabs-two-tabContent">
                                             <div class="tab-pane fade show active" id="custom-tabs-two-member"
                                                 role="tabpanel" aria-labelledby="custom-tabs-two-member-tab">
-                                                @include('admin/rejectedDate.addRejectedDate')
+                                                @can('create rejected_date')
+                                                    @include('admin/rejectedDate.addRejectedDate')
+                                                @endcan
                                                 <table id="offDate-list-table" class="table table-bordered table-striped">
                                                     <thead>
                                                         <tr>
@@ -109,6 +107,7 @@
                                                                                 data-toggle='dropdown'>Menu<span
                                                                                     class='caret'></span></button>
                                                                             <ul class='dropdown-menu p-4'>
+                                                                                @can('update rejected_date')
                                                                                 <li>
                                                                                     <a href="javascript:void(0);"
                                                                                         class="btn-sm btn btn-flat"
@@ -117,6 +116,8 @@
                                                                                             class="fa fa-edit"> </span>
                                                                                         Edit</a>
                                                                                 </li>
+                                                                                @endcan
+                                                                                @can('delete rejected_date')
                                                                                 <li>
                                                                                     <a href="javascript:void(0);"
                                                                                         class="btn-sm btn btn-flat"
@@ -124,6 +125,7 @@
                                                                                             class="fas fa-trash-alt"></i>
                                                                                         Delete</a>
                                                                                 </li>
+                                                                                @endcan
                                                                             </ul>
                                                                         </div>
                                                                     </td>
@@ -320,12 +322,16 @@
                         search: "",
                         searchPlaceholder: "Search",
                     },
+                    @can('export off_date_data')
                     "buttons": ["excel", "pdf", "print", "colvis"]
+                    @else 
+                    "buttons": []
+                    @endcan
                 }).buttons().container().appendTo('#offDate-list-table_wrapper .col-md-6:eq(0)')
                 $('#offDate-list-table_filter').prepend(
-                    `@if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant')<button type="button" class=" btn btn-primary addOffDate" id="register" data-toggle="modal" data-target="#addOffDateModal" style="margin-right: 30px;"> <span class="fa fa-plus-circle"> </span> Add Off Date</button>@endif`
+                    `<button type="button" class=" btn btn-primary addOffDate" id="register" data-toggle="modal" data-target="#addOffDateModal" style="margin-right: 30px;"> <span class="fa fa-plus-circle"> </span> Add Off Date</button>`
                 )
             });
         </script>
     @endSection
-{{-- @endif --}}
+@endcan

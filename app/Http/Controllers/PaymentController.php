@@ -48,16 +48,16 @@ class PaymentController extends Controller
             $collector = ['equb_collector'];
             $member = ['member'];
             if ($userData) {
-                if ($userData->hasAnyRole($adminRoles)) {
+                // if ($userData->hasAnyRole($adminRoles)) {
                     $data['title'] = $this->title;
                     return view('admin/payment/addPayment', $data);
-                } if ($userData->hasRole($collector)) {
+                // } if ($userData->hasRole($collector)) {
                     $data['title'] = $this->title;
                     return view('equbCollecter/payment/addPayment', $data);
-                } if ($userData->hasRole($member)) {
+                // } if ($userData->hasRole($member)) {
                     $data['title'] = $this->title;
                     return view('member/payment/addPayment', $data);
-                } 
+                // } 
             }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
@@ -248,7 +248,7 @@ class PaymentController extends Controller
             $userData = Auth::user();
             $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'equb_collector'];
             $member = ['member'];
-            if ($userData && $userData->hasAnyRole($adminRoles)) {
+            // if ($userData && $userData->hasAnyRole($adminRoles)) {
                 $this->validate($request, [
                     // 'payment_type' => 'required',
                     'amount' => 'required',
@@ -389,12 +389,12 @@ class PaymentController extends Controller
                     Session::flash($type, $msg);
                     redirect('/member');
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             // dd($ex);
-            $msg = "Unknown Error Occurred, Please try again!";
+            $msg = $ex->getMessage();
             $type = 'error';
             Session::flash($type, $msg);
             return back();
@@ -452,7 +452,7 @@ class PaymentController extends Controller
             }
             
         } catch (Exception $ex) {
-            $msg = "Unable to process your request, Please try again!";
+            $msg = $ex->getMessage();
             $type = 'error';
             Session::flash($type, $msg);
             return back();
@@ -472,7 +472,7 @@ class PaymentController extends Controller
                 return view('auth/login');
             }
         } catch (Exception $ex) {
-            $msg = "Unable to process your request, Please try again!";
+            $msg = $ex->getMessage();
             $type = 'error';
             Session::flash($type, $msg);
             return back();
@@ -569,7 +569,7 @@ class PaymentController extends Controller
                 return view('admin/payment.searchPendingPaymentTable', $data);
             }
         } catch (Exception $ex) {
-            $msg = "Unable to process your request, Please try again!";
+            $msg = $ex->getMessage();
             $type = 'error';
             Session::flash($type, $msg);
             return back();
@@ -596,7 +596,7 @@ class PaymentController extends Controller
             }
         } catch (Exception $ex) {
             // dd($ex);
-            $msg = "Unknown Error Occurred, Please try again!";
+            $msg = $ex->getMessage();
             $type = 'error';
             Session::flash($type, $msg);
             return back();
@@ -637,7 +637,7 @@ class PaymentController extends Controller
                 return view('auth/login');
             }
         } catch (Exception $ex) {
-            $msg = "Unknown Error Occurred, Please try again!";
+            $msg = $ex->getMessage();
             $type = 'error';
             Session::flash($type, $msg);
             return back();
@@ -690,7 +690,7 @@ class PaymentController extends Controller
                 return back();
             };
         } catch (Exception $ex) {
-            $msg = "Unable to process your request, Please try again!";
+            $msg = $ex->getMessage();
             $type = 'error';
             Session::flash($type, $msg);
             return back();
@@ -787,7 +787,7 @@ class PaymentController extends Controller
             }
         } catch (Exception $ex) {
             // dd($ex);
-            $msg = "Unable to process your request, Please try again!";
+            $msg = $ex->getMessage();
             $type = 'error';
             Session::flash($type, $msg);
             return back();
@@ -884,7 +884,7 @@ class PaymentController extends Controller
             }
         } catch (Exception $ex) {
             // dd($ex);
-            $msg = "Unable to process your request, Please try again!";
+            $msg = $ex->getMessage();
             $type = 'error';
             Session::flash($type, $msg);
             return back();
@@ -928,7 +928,7 @@ class PaymentController extends Controller
                 return view('auth/login');
             }
         } catch (Exception $ex) {
-            $msg = "Unable to process your request, Please try again!";
+            $msg = $ex->getMessage();
             $type = 'error';
             Session::flash($type, $msg);
             return $msg;
@@ -972,7 +972,7 @@ class PaymentController extends Controller
                 return view('auth/login');
             }
         } catch (Exception $ex) {
-            $msg = "Unable to process your request, Please try again!";
+            $msg = $ex->getMessage();
             $type = 'error';
             Session::flash($type, $msg);
             return $msg;
@@ -1016,7 +1016,7 @@ class PaymentController extends Controller
                 return view('auth/login');
             }
         } catch (Exception $ex) {
-            $msg = "Unable to process your request, Please try again!";
+            $msg = $ex->getMessage();
             $type = 'error';
             Session::flash($type, $msg);
             return $msg;
@@ -1060,7 +1060,7 @@ class PaymentController extends Controller
                 return view('auth/login');
             }
         } catch (Exception $ex) {
-            $msg = "Unable to process your request, Please try again!";
+            $msg = $ex->getMessage();
             $type = 'error';
             Session::flash($type, $msg);
             return $msg;
@@ -1133,7 +1133,7 @@ class PaymentController extends Controller
             }
         } catch (Exception $ex) {
             // dd($ex);
-            $msg = "Unable to process your request, Please try again!";
+            $msg = $ex->getMessage();
             $type = 'error';
             Session::flash($type, $msg);
             return $msg;
@@ -1206,7 +1206,7 @@ class PaymentController extends Controller
             }
         } catch (Exception $ex) {
             // dd($ex);
-            $msg = "Unable to process your request, Please try again!";
+            $msg = $ex->getMessage();
             $type = 'error';
             Session::flash($type, $msg);
             return $msg;
@@ -1257,7 +1257,7 @@ class PaymentController extends Controller
                 return view('auth/login');
             }
         } catch (Exception $ex) {
-            $msg = "Unable to process your request, Please try again!";
+            $msg = $ex->getMessage();
             $type = 'error';
             Session::flash($type, $msg);
             return $msg;
@@ -1308,7 +1308,7 @@ class PaymentController extends Controller
                 return view('auth/login');
             }
         } catch (Exception $ex) {
-            $msg = "Unable to process your request, Please try again!";
+            $msg = $ex->getMessage();
             $type = 'error';
             Session::flash($type, $msg);
             return $msg;
