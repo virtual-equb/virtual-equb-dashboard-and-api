@@ -74,5 +74,10 @@
                 </form>
             </div>
         </div>
+<<<<<<< HEAD
     </div>
 @endcan
+=======
+    </div>
+@endcan
+>>>>>>> 9abdc6bc3a8a8edde9531f5f28de7395be54acee
