@@ -99,6 +99,7 @@
                                                             <th>Rote</th>
                                                             <th>Type</th>
                                                             <th>Space Left (Quota)</th>
+                                                            <th>Expected members (Quota)</th>
                                                             <th>Lottery Date</th>
                                                             <th>Total Amount (Birr)</th>
                                                             <th>Remark</th>
@@ -117,6 +118,7 @@
                                                                 <td>{{ $item->rote }}</td>
                                                                 <td>{{ $item->type }}</td>
                                                                 <td>{{ $item->remaining_quota }}</td>
+                                                                <td>{{ $item->expected_members }}</td>
                                                                 <td>
                                                                     <?php
                                                                     if ($item['lottery_date']) {
@@ -292,7 +294,7 @@
                 $("#type").on("change", function() {
                     var type = $(this).find("option:selected").val();
                     if (type === "Automatic") {
-                        lotteryDate.classList.remove("d-none");
+                        // lotteryDate.classList.remove("d-none");
                         startDate.classList.remove("d-none");
                         endDate.classList.remove("d-none");
                         quota.classList.remove("d-none");
@@ -304,7 +306,7 @@
                         //        options[i].disabled = true;
                         //    }
                         //}
-                        lotteryDate.required = true;
+                        // lotteryDate.required = true;
                         startDate.required = true;
                         endDate.required = true;
                         quota.required = true;
@@ -372,7 +374,7 @@
                         //      update_options[i].disabled = true;
                         //  }
                         // }
-                        lotteryDate.required = true;
+                        // lotteryDate.required = true;
                         startDate.required = true;
                         endDate.required = true;
                         quota.required = true;
@@ -489,7 +491,7 @@
                     //         update_option[i].disabled = true;
                     //     }
                     // }
-                    lotteryDate.required = true;
+                    // lotteryDate.required = true;
                     startDate.required = true;
                     endDate.required = true;
                     quota.required = true;
@@ -680,9 +682,9 @@
                                 }
                             },
                         },
-                        lottery_date: {
-                            required: true,
-                        },
+                        // lottery_date: {
+                        //     required: true,
+                        // },
                         start_date: {
                             required: true,
                         },
@@ -716,9 +718,9 @@
                             required: "Please select a type",
                             remote: "Equb Type already exist",
                         },
-                        lottery_date: {
-                            required: "Please select a lottery date",
-                        },
+                        // lottery_date: {
+                        //     required: "Please select a lottery date",
+                        // },
                         start_date: {
                             required: "Please select a start date",
                         },
@@ -800,9 +802,9 @@
                                 }
                             },
                         },
-                        lottery_date: {
-                            required: true,
-                        },
+                        // lottery_date: {
+                        //     required: true,
+                        // },
                         status: {
                             required: true,
                         },
@@ -828,9 +830,9 @@
                             required: "Please select a type",
                             remote: "Equb Type already exist",
                         },
-                        lottery_date: {
-                            required: "Please select a lottery date",
-                        },
+                        // lottery_date: {
+                        //     required: "Please select a lottery date",
+                        // },
                         status: {
                             required: "Please enter status",
                         },

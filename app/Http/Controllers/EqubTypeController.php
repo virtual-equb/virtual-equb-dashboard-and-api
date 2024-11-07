@@ -204,10 +204,9 @@ class EqubTypeController extends Controller
     }
     public function store(Request $request)
     {
-        // dd($request);
+       
         try {
                 $userData = Auth::user();
-            
             
                 $this->validate($request, [
                     'name' => 'required',
@@ -230,7 +229,7 @@ class EqubTypeController extends Controller
                 $main_equb = $request->input('main_equb_id');
                 $amount = $request->input('amount');
                 $total_amount = $request->input('total_amount');
-                $expected_members= $request->input('quota');
+                // $expected_members = $request->input('quota');
                 
                 // Ensure start_date is in YMD format
                 $formattedStartDate = Carbon::parse($start_date)->format('Y-m-d');
@@ -239,6 +238,8 @@ class EqubTypeController extends Controller
                 $lottery_date = $request->input('lottery_date');
                 if ($type === 'Automatic' && !$lottery_date) {
                     $lottery_date = Carbon::parse($formattedStartDate)->addDays(7)->format('Y-m-d');
+                    $total_amount = $quota * $amount;
+                    $expected_members = 100;
                 }
                 
                 if ($end_date) {
@@ -272,7 +273,7 @@ class EqubTypeController extends Controller
                     $image->storeAs('public/equbTypeIcons', $imageName);
                     $equbTypeData['image'] = 'equbTypeIcons/' . $imageName;
                 }
-                // dd($equbTypeData);
+
                 $create = $this->equbTypeRepository->create($equbTypeData);
                 $user = Auth::user();
                 $roleName = $user->getRoleNames()->first();
@@ -296,9 +297,6 @@ class EqubTypeController extends Controller
                     Session::flash($type, $msg);
                     redirect('/equbType');
                 }
-            // } else {
-            //     return view('auth/login');
-            // }
         } catch (Exception $ex) {
             // dd($ex);
             $msg = $ex->getMessage();

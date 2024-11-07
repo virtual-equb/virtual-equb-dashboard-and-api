@@ -47,7 +47,7 @@
                                     <div id="amount_div" class="form-group d-none">
                                         <label class="control-label">Amount</label>
                                         <input type="number" class="form-control" id="amount"
-                                            name="amount" placeholder="Round" min="1" required>
+                                            name="amount" placeholder="Amount" min="1" required>
                                     </div>
                                     <div class="form-group required">
                                         <label class="control-label">Rote</label>
