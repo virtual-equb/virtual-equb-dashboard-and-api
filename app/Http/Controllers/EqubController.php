@@ -63,23 +63,26 @@ class EqubController extends Controller
     {
         try {
             $userData = Auth::user();
-            // if ($userData->hasAnyRole(['admin', 'general_manager', 'operation_manager', 'it', 'finance'])) {
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance'];
+            $memberRole = ['member'];
+            $collectorRole = ['equb_collector'];
+            if ($userData->hasAnyRole($adminRoles)) {
                 $userData = Auth::user();
                 $equbs = $this->equbRepository->getAll();
                 return view('admin/equb.equbList', compact('equbs'));
-            // } elseif ($userData->hasRole('equb_collector')) {
+            } elseif ($userData->hasRole($collectorRole)) {
                 $userData = Auth::user();
                 $equbs = $this->equbRepository->getAll();
                 return view('equbCollecter/equb.equbList', compact('equbs'));
-            // } elseif ($userData->hasRole('member')) {
+            } elseif ($userData->hasRole($member)) {
                 $userData = Auth::user();
                 $equbs = $this->equbRepository->getAll();
                 return view('member/equb.equbList', compact('equbs'));
-            // } else {
-            //     return view('auth/login');
-            // }
+            } else {
+                return view('auth/login');
+            }
         } catch (Exception $ex) {
-            $msg = "Unable to process your request, Please try again!";
+            $msg = $ex->getMessage();
             $type = 'error';
             Session::flash($type, $msg);
             return back();
@@ -431,21 +434,24 @@ class EqubController extends Controller
     {
         try {
             $userData = Auth::user();
-            // if ($userData->hasAnyRole(['admin', 'general_manager', 'operation_manager', 'it', 'finance'])) {
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance'];
+            $memberRole = ['member'];
+            $collectorRole = ['equb_collector'];
+            if ($userData->hasAnyRole($adminRoles)) {
                 $equbTakerData['equb'] = $this->equbRepository->getByIdNestedForLottery($id);
                 $equbTakerData['total'] = $this->paymentRepository->getTotal($id);
                 return view('admin/equb.equbDetails', $equbTakerData);
-            // } elseif ($userData->hasRole('equb_collector')) {
+            } elseif ($userData->hasRole($collectorRole)) {
                 $equbTakerData['equb'] = $this->equbRepository->getByIdNested($id);
                 $equbTakerData['total'] = $this->paymentRepository->getTotal($id);
                 return view('equbCollecter/equb.equbDetails', $equbTakerData);
-            // } elseif ($userData->hasRole('member')) {
+            } elseif ($userData->hasRole($member)) {
                 $equbTakerData['equb'] = $this->equbRepository->getByIdNested($id);
                 $equbTakerData['total'] = $this->paymentRepository->getTotal($id);
                 return view('member/equb.equbDetails', $equbTakerData);
-            // } else {
-            //     return view('auth/login');
-            // }
+            } else {
+                return view('auth/login');
+            }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -462,18 +468,21 @@ class EqubController extends Controller
     {
         try {
             $userData = Auth::user();
-            // if ($userData->hasAnyRole(['admin', 'general_manager', 'operation_manager', 'it', 'finance'])) {
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance'];
+            $memberRole = ['member'];
+            $collectorRole = ['equb_collector'];
+            if ($userData->hasAnyRole($adminRoles)) {
                 $data['title'] = $this->title;
                 return view('admin/equb/addEqub', $data);
-            // } elseif ($userData->hasRole('equb_collector')) {
+            } elseif ($userData->hasRole($collectorRole)) {
                 $data['title'] = $this->title;
                 return view('equbCollecter/equb/addEqub', $data);
-            // } elseif ($userData->hasRole('member')) {
+            } elseif ($userData->hasRole($memberRole)) {
                 $data['title'] = $this->title;
                 return view('member/equb/addEqub', $data);
-            // } else {
-            //     return view('auth/login');
-            // }
+            } else {
+                return view('auth/login');
+            }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -520,6 +529,34 @@ class EqubController extends Controller
                 if (!$endDateCheck) {
                     $carbonDate = Carbon::createFromFormat('m/d/Y', $endDate);
                     $formattedEndDate = $carbonDate->format('Y-m-d');
+                }
+
+                // Retreive the equbType data
+                $equbTypeData = EqubType::find($equbType);
+                if (!$equbTypeData) {
+                    return response()->json([
+                        'code' => 404,
+                        'message' => 'Equb type not found.'
+                    ]);
+                }
+                // Check if the equb already exists for the member
+                if (!empty($equbType)) {
+                    $equbs_count = Equb::where('equb_type_id', $equbType)
+                                        ->where('member_id', $member)
+                                        ->count();
+                    if ($equbs_count > 0) {
+                        return response()->json([
+                            'code' => 400,
+                            'message' => 'Equb already exists!'
+                        ]);
+                    }
+                }
+
+                // Determine lottery_date based on equbType
+                if($equbTypeData->type === 'Automatic') {
+                    $lotteryDate = $equbTypeData->lottery_date;
+                } else {
+                    $lotteryDate = $request->input('lottery_date');
                 }
 
                 $equbData = [
@@ -661,20 +698,23 @@ class EqubController extends Controller
     {
         try {
             $userData = Auth::user();
-            // if ($userData->hasAnyRole(['admin', 'general_manager', 'operation_manager', 'it', 'finance'])) {
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance'];
+            $memberRole = ['member'];
+            $collectorRole = ['equb_collector'];
+            if ($userData->hasAnyRole($adminRoles)) {
                 $data['equb'] = $this->equbRepository->getById($equb);
                 return view('admin/member/updateMember', $data);
-            // } elseif ($userData->hasRole('equb_collector')) {
+            } elseif ($userData->hasRole($collectorRole)) {
                 $data['equb'] = $this->equbRepository->getById($equb);
                 return view('equbCollecter/member/updateMember', $data);
-            // } elseif ($userData->hasRole('member')) {
+            } elseif ($userData->hasRole($memberRole)) {
                 $data['equb'] = $this->equbRepository->getById($equb);
                 return view('member/member/updateMember', $data);
-            // } else {
-            //     return view('auth/login');
-            // }
+            } else {
+                return view('auth/login');
+            }
         } catch (Exception $ex) {
-            $msg = "Unable to process your request, Please try again!";
+            $msg = $ex->getMessage();
             $type = 'error';
             Session::flash($type, $msg);
             return back();

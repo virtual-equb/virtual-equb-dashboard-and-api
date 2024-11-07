@@ -2,22 +2,22 @@
 
 namespace App\Http\Controllers\api;
 
+use Log;
 use Exception;
 use Carbon\Carbon;
 use App\Models\Equb;
+use App\Models\User;
 use App\Models\Member;
+use App\Models\Payment;
 use App\Models\EqubType;
 use App\Models\RejectedDate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 use App\Http\Resources\Api\EqubResource;
-use App\Models\Payment;
-use App\Models\User;
 use App\Repositories\Equb\EqubRepository;
 use App\Repositories\Equb\IEqubRepository;
 use App\Repositories\Member\IMemberRepository;
@@ -258,12 +258,13 @@ class EqubController extends Controller
         // Retrieve equbs where the lottery date is today
         $equbs = Equb::whereDate('lottery_date', $today)
                        ->where('status', 'Active')
-                       ->with('equbType')
+                       ->with(['equbType', 'member'])
                        ->get();
                     //    dd($equbs);
         foreach ($equbs as $equb) {
             // dd($equb->equbType);
             $member = Member::find($equb->member_id);
+            $isAutomatic = $equb->equbType->type === 'Automatic';
 
             // Check for a valid member and phone
             if (!$member || !$member->phone) {
@@ -274,9 +275,21 @@ class EqubController extends Controller
             $this->sendSms($member->phone, $message);
             $count++;
 
-            // Optionally, set the next lottery date but for now (7 days) difference
-            // $equb->update(['lottery_date' => $today->addDays(7)]);
-            // $equb->equbType->update(['lottery_date' => $today->addDays(7)]);
+            // Optionally, set the next lottery date in (7 days) difference for Automatic Equbtype
+            if ($isAutomatic) {
+                $newLotteryDate = Carbon::parse($equb->lottery_date)->addDays(7);
+    
+                // Confirm that the model allows updating of this field
+                if ($equb->isFillable('lottery_date')) {
+                    $equb->lottery_date = $newLotteryDate;
+                    $equb->save();
+    
+                    // Log or debug to confirm update success
+                    \Log::info("Equb ID {$equb->id} lottery date updated to: $newLotteryDate");
+                } else {
+                    \Log::warning("lottery_date is not fillable on Equb model; update failed for Equb ID {$equb->id}");
+                }
+            }
         }
 
         return response()->json([
@@ -723,6 +736,14 @@ class EqubController extends Controller
                     ]);
                 }
             }
+            // Retreive the equbType data
+            $equbTypeData = EqubType::find($equbType);
+            if (!$equbTypeData) {
+                return response()->json([
+                    'code' => 404,
+                    'message' => 'Equb type not found.'
+                ]);
+            }
 
             // Check if the equb already exists for the member
             if (!empty($equbType)) {
@@ -735,6 +756,13 @@ class EqubController extends Controller
                         'message' => 'Equb already exists!'
                     ]);
                 }
+            }
+
+            // Determine lottery_date based on equbType
+            if($equbTypeData->type === 'Automatic') {
+                $lotteryDate = $equbTypeData->lottery_date;
+            } else {
+                $lotteryDate = $request->input('lottery_date');
             }
 
             // Prepare data for new Equb

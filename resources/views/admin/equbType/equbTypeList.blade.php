@@ -100,6 +100,7 @@
                                                             <th>Rote</th>
                                                             <th>Type</th>
                                                             <th>Space Left (Quota)</th>
+                                                            <th>Expected members (Quota)</th>
                                                             <th>Lottery Date</th>
                                                             <th>Total Amount (Birr)</th>
                                                             <th>Remark</th>
@@ -121,6 +122,7 @@
                                                                 <td>{{ $item->rote }}</td>
                                                                 <td>{{ $item->type }}</td>
                                                                 <td>{{ $item->remaining_quota }}</td>
+                                                                <td>{{ $item->expected_members }}</td>
                                                                 <td>
                                                                     <?php
                                                                     if ($item['lottery_date']) {
@@ -296,7 +298,7 @@
                 $("#type").on("change", function() {
                     var type = $(this).find("option:selected").val();
                     if (type === "Automatic") {
-                        lotteryDate.classList.remove("d-none");
+                        // lotteryDate.classList.remove("d-none");
                         startDate.classList.remove("d-none");
                         endDate.classList.remove("d-none");
                         quota.classList.remove("d-none");
@@ -308,7 +310,7 @@
                         //        options[i].disabled = true;
                         //    }
                         //}
-                        lotteryDate.required = true;
+                        // lotteryDate.required = true;
                         startDate.required = true;
                         endDate.required = true;
                         quota.required = true;
@@ -378,7 +380,7 @@
                         //      update_options[i].disabled = true;
                         //  }
                         // }
-                        lotteryDate.required = true;
+                        // lotteryDate.required = true;
                         startDate.required = true;
                         endDate.required = true;
                         quota.required = true;
@@ -466,6 +468,77 @@
     $('#amount').val(item.amount); // Ensure this field is populated
     $('#member').val(item.expected_members); // Ensure this field is populated
 
+<<<<<<< HEAD
+            function openEditModal(item) {
+                // console.log(item)
+                $('#did').val(item.id);
+                $('#editEqubTypeModal').modal('show');
+                $('#update_main_equb').val(item.main_equb);
+                $('#update_name').val(item.name);
+                $('#update_round').val(item.round);
+                $('#update_status').val(item.status);
+                $('#update_rote').val(item.rote);
+                $('#update_type').val(item.type);
+                $('#update_remark').val(item.remark);
+                $('#update_amount_div').val(item.amount);
+                $('#update_members_div').val(item.expected_members);
+                $('#update_lottery_date').val(item.lottery_date);
+                $('#update_start_date').datepicker('setDate', new Date(item.start_date));
+                $('#update_start_date').datepicker('destroy');
+                $('#update_end_date').datepicker('setDate', new Date(item.end_date));
+                $('#update_end_date').datepicker('destroy');
+                $('#update_quota').val(item.quota);
+                $('#update_terms').summernote('code', item.terms);
+                const lotteryDate = document.getElementById("update_lottery_date_div");
+                const startDate = document.getElementById("update_start_date_div");
+                const endDate = document.getElementById("update_end_date_div");
+                const quota = document.getElementById("update_quota_div");
+                const update_rotes = document.getElementById("update_rote");
+                const amount = document.getElementById("update_amount_div");
+                const members = document.getElementById("update_members_div");
+                const update_option = update_rotes.options;
+                if (item.type === "Automatic") {
+                    lotteryDate.classList.remove("d-none");
+                    startDate.classList.remove("d-none");
+                    endDate.classList.remove("d-none");
+                    quota.classList.remove("d-none");
+                    amount.classList.remove("d-none");
+                    members.classList.remove("d-none");
+                    // for (var i = 1; i < update_option.length; i++) {
+                    //     update_option[i].disabled = false;
+                    //     if (update_option[i].value !== "Weekly") {
+                    //         update_option[i].disabled = true;
+                    //     }
+                    // }
+                    // lotteryDate.required = true;
+                    startDate.required = true;
+                    endDate.required = true;
+                    quota.required = true;
+                    amount.required = true;
+                    members.required = true;
+                } else {
+                    lotteryDate.classList.add("d-none");
+                    startDate.classList.add("d-none");
+                    endDate.classList.add("d-none");
+                    quota.classList.add("d-none");
+                    amount.classList.add("d-none");
+                    members.classList.add("d-none");
+                    // for (var i = 1; i < update_option.length; i++) {
+                    //     update_option[i].disabled = false;
+                    //     if (update_option[i].value !== "Daily") {
+                    //         update_option[i].disabled = true;
+                    //     }
+                    // }
+                    lotteryDate.required = false;
+                    startDate.required = false;
+                    endDate.required = false;
+                    quota.required = false;
+                    amount.required = true;
+                    members.required = true;
+                }
+                $('#updateEqubType').attr('action', 'equbType/update/' + $('#did').val())
+            }
+=======
     // Populate total_amount and total_members fields
     $('#total_amount').val(item.total_amount); // Set total amount from item
     $('#total_members').val(item.total_expected_members); // Set total members from item
@@ -525,6 +598,7 @@
     // Set the action for the form
     $('#updateEqubType').attr('action', 'equbType/update/' + $('#did').val());
 }
+>>>>>>> 88579221d7a30a6edcc13608128d37881a7489fa
 
 
             function editEqubTypeValidation() {
@@ -688,9 +762,9 @@
                                 }
                             },
                         },
-                        lottery_date: {
-                            required: true,
-                        },
+                        // lottery_date: {
+                        //     required: true,
+                        // },
                         start_date: {
                             required: true,
                         },
@@ -724,9 +798,9 @@
                             required: "Please select a type",
                             remote: "Equb Type already exist",
                         },
-                        lottery_date: {
-                            required: "Please select a lottery date",
-                        },
+                        // lottery_date: {
+                        //     required: "Please select a lottery date",
+                        // },
                         start_date: {
                             required: "Please select a start date",
                         },
@@ -808,9 +882,9 @@
                                 }
                             },
                         },
-                        lottery_date: {
-                            required: true,
-                        },
+                        // lottery_date: {
+                        //     required: true,
+                        // },
                         status: {
                             required: true,
                         },
@@ -836,9 +910,9 @@
                             required: "Please select a type",
                             remote: "Equb Type already exist",
                         },
-                        lottery_date: {
-                            required: "Please select a lottery date",
-                        },
+                        // lottery_date: {
+                        //     required: "Please select a lottery date",
+                        // },
                         status: {
                             required: "Please enter status",
                         },

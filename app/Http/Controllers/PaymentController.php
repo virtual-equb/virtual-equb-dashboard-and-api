@@ -73,7 +73,7 @@ class PaymentController extends Controller
             $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'equb_collector'];
             $collector = ['equb_collector'];
             $member = ['member'];
-            if ($userData->hasAnyRole($adminRoles)) {
+            // if ($userData->hasAnyRole($adminRoles)) {
                 $this->validate($request, [
                     'payment_type' => 'required',
                     'amount' => 'required',
@@ -231,9 +231,9 @@ class PaymentController extends Controller
                     Session::flash($type, $msg);
                     redirect('/member');
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             // dd($ex);
             $msg = "Unknown Error Occurred, Please try again!";
@@ -413,7 +413,7 @@ class PaymentController extends Controller
                 $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance'];
                 $member = ['member'];
                 $collector = ['equb_collector'];
-                if ($userData->hasAnyRole($adminRoles)) {
+                // if ($userData->hasAnyRole($adminRoles)) {
                     $paymentData['member'] = $this->memberRepository->getMemberById($member_id);
                     $paymentData['equb'] = $this->equbRepository->geteEubById($equb_id);
                     $paymentData['payments'] = $this->paymentRepository->getSinglePayment($member_id, $equb_id, $offset);
@@ -424,7 +424,7 @@ class PaymentController extends Controller
                     $paymentData['limit'] = $limit;
                     $paymentData['pageNumber'] = $pageNumber;
                     return view('admin/payment.paymentList', $paymentData);
-                } elseif ($userData->hasRole($collector)) {
+                // } elseif ($userData->hasRole($collector)) {
                     $paymentData['member'] = $this->memberRepository->getMemberById($member_id);
                     $paymentData['equb'] = $this->equbRepository->geteEubById($equb_id);
                     $paymentData['payments'] = $this->paymentRepository->getSinglePayment($member_id, $equb_id, $offset);
@@ -435,7 +435,7 @@ class PaymentController extends Controller
                     $paymentData['limit'] = $limit;
                     $paymentData['pageNumber'] = $pageNumber;
                     return view('equbCollecter/payment.paymentList', $paymentData);
-                } elseif ($userData->hasRole($member)) {
+                // } elseif ($userData->hasRole($member)) {
                     $paymentData['member'] = $this->memberRepository->getMemberById($member_id);
                     $paymentData['equb'] = $this->equbRepository->geteEubById($equb_id);
                     $paymentData['payments'] = $this->paymentRepository->getSinglePayment($member_id, $equb_id, $offset);
@@ -446,9 +446,9 @@ class PaymentController extends Controller
                     $paymentData['limit'] = $limit;
                     $paymentData['pageNumber'] = $pageNumber;
                     return view('member/payment.paymentList', $paymentData);
-                } else {
-                    return back();
-                };
+                // } else {
+                //     return back();
+                // };
             }
             
         } catch (Exception $ex) {
@@ -464,13 +464,13 @@ class PaymentController extends Controller
             $userData = Auth::user();
             $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'equb_collector'];
             $member = ['member'];
-            if ($userData->hasAnyRole($adminRoles)) {
+            // if ($userData->hasAnyRole($adminRoles)) {
                 $this->middleware('auth');
                 $data['title'] = $this->title;
                 return view('admin/payment.pendingPaymentList', $data);
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = $ex->getMessage();
             $type = 'error';
@@ -540,7 +540,7 @@ class PaymentController extends Controller
             $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'equb_collector', 'call_center'];
             $member = ['member'];
             $collector = ['equb_collector'];
-            if ($userData->hasAnyRole($adminRoles)) {
+            // if ($userData->hasAnyRole($adminRoles)) {
                 $data['offset'] = $offset;
                 $limit = 50;
                 $data['limit'] = $limit;
@@ -554,7 +554,7 @@ class PaymentController extends Controller
                 $data['payments'] = $this->paymentRepository->searchPendingPayment($offset, $searchInput);
                 // dd($data);
                 return view('admin/payment.searchPendingPaymentTable', $data);
-            } elseif ($userData->hasRole($collector)) {
+            // } elseif ($userData->hasRole($collector)) {
                 $data['offset'] = $offset;
                 $limit = 50;
                 $data['limit'] = $limit;
@@ -567,7 +567,7 @@ class PaymentController extends Controller
                 $data['searchInput'] = $searchInput;
                 $data['payments'] = $this->paymentRepository->searchPendingPayment($offset, $searchInput);
                 return view('admin/payment.searchPendingPaymentTable', $data);
-            }
+            // }
         } catch (Exception $ex) {
             $msg = $ex->getMessage();
             $type = 'error';
@@ -585,7 +585,7 @@ class PaymentController extends Controller
             $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'equb_collector', 'assistant', 'call_center'];
             $member = ['member'];
             $collector = ['equb_collector'];
-            if ($userData->hasAnyRole($adminRoles)) {
+            // if ($userData->hasAnyRole($adminRoles)) {
                 $data['payments']  = $this->paymentRepository->getAllPendingByPaginate($offset);
                 $data['totalPayments']  = $this->paymentRepository->countPendingPayments();
                 $data['pageNumber'] = $pageNumber;
@@ -593,7 +593,7 @@ class PaymentController extends Controller
                 $data['limit'] = $limit;
                 $title = $this->title;
                 return view('admin/payment.pendingPaymentTable', $data);
-            }
+            // }
         } catch (Exception $ex) {
             // dd($ex);
             $msg = $ex->getMessage();
@@ -703,17 +703,12 @@ class PaymentController extends Controller
             $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'equb_collector'];
             $member = ['member'];
             $collector = ['equb_collector'];
-            if ($userData->hasAnyRole($adminRoles)) {
+            // if ($userData->hasAnyRole($adminRoles)) {
                 $paymentType = $request->input('update_payment_type');
                 $amount = $request->input('update_amount');
                 $credit = $request->input('update_creadit');
                 $remark = $request->input('update_payment_remark');
-                // $updated = [
-                //     'payment_type' => $paymentType,
-                //     'amount' => $amount,
-                //     'note' => $remark,
-                //     'collecter' => $userData->id
-                // ];
+                
                 $totalCredit = $this->paymentRepository->getTotalCredit($equb_id);
                 $availableBalance = $this->paymentRepository->getTotalBalance($equb_id);
                 $oldAmount = $this->paymentRepository->getAmount($id);
@@ -737,7 +732,7 @@ class PaymentController extends Controller
                     $availableBalance = 0;
                 }
                 $lastId = $this->paymentRepository->getLastId($equb_id);
-                // $updated = $this->paymentRepository->update($id, $updated);
+
                 if ($totalCredit > $availableBalance) {
                     $totalCredit = $totalCredit - $availableBalance;
                     $availableBalance = 0;
@@ -756,10 +751,7 @@ class PaymentController extends Controller
                     'creadit' => $totalCredit,
                     'balance' => $availableBalance
                 ];
-                // $updateCreditAndBalance = [
-                //     'creadit' => $totalCredit,
-                //     'balance' => $availableBalance
-                // ];
+                
                 $updatedCreditAndBalance = $this->paymentRepository->update($lastId, $updateCreditAndBalance);
                 // if ($updated && $updatedCreditAndBalance) {
                 if ($updatedCreditAndBalance) {
@@ -782,9 +774,9 @@ class PaymentController extends Controller
                     Session::flash($type, $msg);
                     return back();
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             // dd($ex);
             $msg = $ex->getMessage();
@@ -805,12 +797,7 @@ class PaymentController extends Controller
                 $amount = $request->input('update_amount');
                 $credit = $request->input('update_creadit');
                 $remark = $request->input('update_payment_remark');
-                // $updated = [
-                //     'payment_type' => $paymentType,
-                //     'amount' => $amount,
-                //     'note' => $remark,
-                //     'collecter' => $userData->id
-                // ];
+                
                 $totalCredit = $this->paymentRepository->getTotalCredit($equb_id);
                 $availableBalance = $this->paymentRepository->getTotalBalance($equb_id);
                 $oldAmount = $this->paymentRepository->getAmount($id);
@@ -853,12 +840,9 @@ class PaymentController extends Controller
                     'creadit' => $totalCredit,
                     'balance' => $availableBalance
                 ];
-                // $updateCreditAndBalance = [
-                //     'creadit' => $totalCredit,
-                //     'balance' => $availableBalance
-                // ];
+                //
                 $updatedCreditAndBalance = $this->paymentRepository->update($lastId, $updateCreditAndBalance);
-                // if ($updated && $updatedCreditAndBalance) {
+                
                 if ($updatedCreditAndBalance) {
                     $activityLog = [
                         'type' => 'payments',
@@ -897,7 +881,7 @@ class PaymentController extends Controller
             $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'equb_collector'];
             $member = ['member'];
             $collector = ['equb_collector'];
-            if ($userData->hasAnyRole($adminRoles)) {
+            // if ($userData->hasAnyRole($adminRoles)) {
                 $payment = $this->paymentRepository->getById($id);
                 if ($payment != null) {
                     $deleted = $this->paymentRepository->delete($id);
@@ -924,9 +908,9 @@ class PaymentController extends Controller
                 } else {
                     return false;
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = $ex->getMessage();
             $type = 'error';
@@ -1075,7 +1059,7 @@ class PaymentController extends Controller
             $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'equb_collector'];
             $member = ['member'];
             $collector = ['equb_collector'];
-            if ($userData->hasAnyRole($adminRoles)) {
+            // if ($userData->hasAnyRole($adminRoles)) {
                 $payment = $this->paymentRepository->getById($id);
                 // dd($payment);
                 $updated = [
@@ -1128,9 +1112,9 @@ class PaymentController extends Controller
                     Session::flash($type, $msg);
                     return redirect('member/');
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             // dd($ex);
             $msg = $ex->getMessage();
@@ -1148,7 +1132,7 @@ class PaymentController extends Controller
             $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'equb_collector'];
             $member = ['member'];
             $collector = ['equb_collector'];
-            if ($userData->hasAnyRole($adminRoles)) {
+            // if ($userData->hasAnyRole($adminRoles)) {
                 $payment = $this->paymentRepository->getById($id);
                 // dd($payment);
                 $updated = [
@@ -1201,9 +1185,9 @@ class PaymentController extends Controller
                     Session::flash($type, $msg);
                     return redirect('payment/show-all-pending-payment');
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             // dd($ex);
             $msg = $ex->getMessage();
@@ -1219,7 +1203,7 @@ class PaymentController extends Controller
             $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'equb_collector'];
             $member = ['member'];
             $collector = ['equb_collector'];
-            if ($userData->hasAnyRole($adminRoles)) {
+            // if ($userData->hasAnyRole($adminRoles)) {
                 $payment = $this->paymentRepository->getById($id);
                 $updated = [
                     'status' => 'unpaid',
@@ -1253,9 +1237,9 @@ class PaymentController extends Controller
                     Session::flash($type, $msg);
                     return redirect('member/');
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = $ex->getMessage();
             $type = 'error';
@@ -1270,7 +1254,7 @@ class PaymentController extends Controller
             $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'equb_collector'];
             $member = ['member'];
             $collector = ['equb_collector'];
-            if ($userData->hasAnyRole($adminRoles)) {
+            // if ($userData->hasAnyRole($adminRoles)) {
                 $payment = $this->paymentRepository->getById($id);
                 $updated = [
                     'status' => 'unpaid',
@@ -1304,9 +1288,9 @@ class PaymentController extends Controller
                     Session::flash($type, $msg);
                     return redirect('payment/show-all-pending-payment');
                 }
-            } else {
-                return view('auth/login');
-            }
+            // } else {
+            //     return view('auth/login');
+            // }
         } catch (Exception $ex) {
             $msg = $ex->getMessage();
             $type = 'error';
