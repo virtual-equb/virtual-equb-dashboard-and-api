@@ -171,6 +171,7 @@ Auth::user()->role == 'it') --}}
                                         <thead>
                                             <tr>
                                                 <th>#</th>
+                                                <th>image</th>
                                                 <th>Main Equb Name</th>
                                                 <th>Actions</th>
                                             </tr>

@@ -28,8 +28,8 @@
                                   <th>{{ $item->full_name }}</th>
                                   <th>{{ $item->phone }}</th>
                                   <td>{{ $item->gender }}</td>
-                                  <td>{{ $item->city }}</td>
-                                  <td>{{ $item->subcity }}</td>
+                                  <td>{{ $item->memberCity ? $item->memberCity->name : 'N/A' }}</td>
+                                  <td>{{ $item->memberSubcity ? $item->memberSubcity->name : 'N/A' }}</td>
                                   <td>{{ $item->specific_location }}</td>
                                   <td>{{ $item->status }}</td>
                                   <td>{{ $item->rating }}</td>

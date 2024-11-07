@@ -5,6 +5,7 @@ namespace App\Repositories\Member;
 
 use App\Models\Member;
 use App\Models\Equb;
+use App\Models\City;
 use App\Models\Payment;
 
 class MemberRepository implements IMemberRepository
@@ -19,7 +20,7 @@ class MemberRepository implements IMemberRepository
 
     public function getAll()
     {
-        return $this->model->get();
+        return $this->model->with(['memberCity', 'memberSubcity'])->get();
     }
 
     public function getPhone($id)
@@ -30,7 +31,11 @@ class MemberRepository implements IMemberRepository
     public function getAllByPaginate($offset)
     {
         $limit = 10;
-        return $this->model->orderBy('full_name', 'asc')->offset($offset)->limit($limit)->get();
+        return $this->model->with(['memberCity', 'memberSubcity'])
+            ->orderBy('full_name', 'asc')
+            ->offset($offset)
+            ->limit($limit)
+            ->get();
     }
     public function getAllPendingByPaginate($offset)
     {

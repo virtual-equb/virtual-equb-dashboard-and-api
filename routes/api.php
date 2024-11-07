@@ -104,11 +104,11 @@ Route::post('/changePassword/{id}', [UserController::class, 'changePassword'])->
 
 // New Apis CBE Gatway 1
 Route::middleware(['auth:api'])->group(function () {
-    Route::post('/cbegateway', [PaymentGatewayController::class, 'generateUrl']);
+    
 });
 // Transaction Status EncVal
 Route::post('/transaction-status', [PaymentGatewayController::class, 'transactionStatus']);
-
+Route::post('/cbegateway', [PaymentGatewayController::class, 'generateUrl']);
 
 // Main Equb
 Route::middleware(['auth:api'])->group(function () {
