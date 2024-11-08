@@ -13,12 +13,15 @@
             </div>
         </div>
         <nav class="mt-2">
-            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 <!-- Dashboard Section -->
-                <li class="nav-item">
+                <li class="nav-item" id="settingNava">
                     <a href="#" class="nav-link" id="dashboardLink" onclick="setActive('dashboardLink')">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
-                        <p>Dashboard<i class="fas fa-angle-left right"></i></p>
+                        <p>
+                            Dashboard
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
                     </a>
                     <ul class="nav nav-treeview ml-2">
                         <li class="nav-item">
@@ -38,11 +41,14 @@
                     </ul>
                 </li>
 
-                @can('view member')
+                <!-- Members Section -->
                 <li class="nav-item">
                     <a href="#" class="nav-link" id="membersLink" onclick="setActive('membersLink')">
                         <i class="nav-icon fas fa-users"></i>
-                        <p>Members<i class="fas fa-angle-left right"></i></p>
+                        <p>
+                            Members
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
                     </a>
                     <ul class="nav nav-treeview ml-2">
                         <li class="nav-item">
@@ -59,13 +65,15 @@
                         </li>
                     </ul>
                 </li>
-                @endcan
 
-                @can('view payment')
+                <!-- Payments Section -->
                 <li class="nav-item">
                     <a href="#" class="nav-link" id="paymentsLink" onclick="setActive('paymentsLink')">
                         <i class="nav-icon fas fa-credit-card"></i>
-                        <p>Payments<i class="fas fa-angle-left right"></i></p>
+                        <p>
+                            Payments
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
                     </a>
                     <ul class="nav nav-treeview ml-2">
                         <li class="nav-item">
@@ -76,69 +84,106 @@
                         </li>
                     </ul>
                 </li>
-                @endcan
 
-                @can('view main_equb')
+                <!-- Main Equbs Section -->
                 <li class="nav-item">
                     <a href="{{ route('mainEqubs.index') }}" class="nav-link" id="mainEqubs" onclick="setActive('mainEqubs')">
                         <i class="nav-icon fa fa-server"></i>
                         <p>Main Equbs</p>
                     </a>
                 </li>
-                @endcan
 
-                @can('view equb_type')
+                <!-- Equb Type Section -->
                 <li class="nav-item">
                     <a href="{{ route('showEqubType') }}" class="nav-link" id="showEqubType" onclick="setActive('showEqubType')">
                         <i class="nav-icon fa fa-network-wired"></i>
                         <p>Equb Type</p>
                     </a>
                 </li>
-                @endcan
 
-                @can('view rejected_date')
+                <!-- Off Date Section -->
                 <li class="nav-item">
                     <a href="{{ route('showRejectedDate') }}" class="nav-link" id="offDate" onclick="setActive('offDate')">
                         <i class="nav-icon fas fa-calendar-minus"></i>
                         <p>Off Date</p>
                     </a>
                 </li>
-                @endcan
 
-                @can('view notification')
+                <!-- Notifications Section -->
                 <li class="nav-item">
                     <a href="{{ route('showNotifations') }}" class="nav-link" id="notification" onclick="setActive('notification')">
                         <i class="nav-icon fa fa-bell"></i>
                         <p>Notification</p>
                     </a>
                 </li>
-                @endcan
 
-                @can('view city')
+                <!-- User Section -->
                 <li class="nav-item">
-                    <a href="{{ route('cities.index') }}" class="nav-link" id="city">
-                        <i class="nav-icon fas fa-map-marker-alt"></i>
-                        <p>City</p>
-                    </a>
-                </li>
-                @endcan
-
-                @can('view user')
-                <li class="nav-item">
-                    <a href="{{ route('user') }}" class="nav-link" id="adminNav">
+                    <a href="{{ route('user') }}" class="nav-link" id="adminNav" onclick="setActive('adminNav')">
                         <i class="nav-icon far fa-user"></i>
                         <p>User</p>
                     </a>
                 </li>
-                @endcan
 
+                <!-- Locations Section -->
+<!-- Locations Section -->
+<li class="nav-item">
+    <a href="#" class="nav-link {{ '' }}" id="locationsLink" onclick="setActive('locationsLink')">
+        <i class="nav-icon fas fa-map-marker-alt"></i>
+        <p>
+            Locations
+            <i class="fas fa-angle-left right"></i>
+        </p>
+    </a>
+    <ul class="nav nav-treeview ml-2" style="{{ request()->is('cities*') ? 'display: block;' : 'display: none;' }}">
+        <li class="nav-item">
+            <a href="{{ route('cities.index') }}" class="nav-link {{ request()->is('cities') ? 'active' : '' }}" id="cityLink" onclick="setActive('cityLink')">
+                <i class="nav-icon fas fa-city"></i>
+                <p>City</p>
+            </a>
+        </li>
+    </ul>
+</li>
+<!-- Settings Section -->
+<li class="nav-item">
+    <a href="#" class="nav-link {{ request()->is('permission') && request()->is('roles') ? 'active' : '' }}" id="settingsLink" onclick="setActive('settingsLink')">
+        <i class="nav-icon fas fa-cog"></i>
+        <p>
+            Settings
+            <i class="fas fa-angle-left right"></i>
+        </p>
+    </a>
+    <ul class="nav nav-treeview ml-2" style="{{ request()->is('permission') || request()->is('roles') ? 'display: block;' : 'display: none;' }}">
+        <li class="nav-item">
+            <a href="{{ url('settings/permission') }}" class="nav-link {{ request()->is('permission') ? 'active' : '' }}" id="nav-permissions" onclick="setActive('nav-permissions')">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Permissions</p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url('roles') }}" class="nav-link {{ request()->is('roles') ? 'active' : '' }}" id="nav-roles" onclick="setActive('nav-roles')">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Roles</p>
+            </a>
+        </li>
+    </ul>
+</li>
+
+          
+
+                <!-- Logout Section -->
                 <li class="nav-item">
                     <a href="#" onclick="$('#logout').submit(); return false;" class="nav-link" id="logoutLink">
                         <i class="nav-icon fas fa-sign-out-alt"></i>
                         <p>Logout</p>
                     </a>
-                    <form action="{{ route('logout') }}" id="logout" method="post" style="display: none;">
+                </li>
+                <li class="nav-item">
+                    <form action="{{ route('logout') }}" id="logout" method="post" style="display: none">
                         @csrf
+                        <button type="submit" class="btn btn-secondary nav-link text-white text-align-start">
+                            Logout
+                        </button>
                     </form>
                 </li>
             </ul>
@@ -148,9 +193,11 @@
 
 <script>
     function setActive(id) {
+        // Remove 'active' class from all nav links
         document.querySelectorAll('.nav-link').forEach(link => {
             link.classList.remove('active');
         });
+        // Add 'active' class to the clicked link
         document.getElementById(id).classList.add('active');
     }
 </script>
