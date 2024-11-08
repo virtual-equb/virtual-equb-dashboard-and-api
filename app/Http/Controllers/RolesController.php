@@ -140,4 +140,19 @@ class RolesController extends Controller
     {
         Permission::create(['name' => 'edit_equb', 'guard_name' => 'web']);
     }
+
+    public function rolesPermision()
+    {
+        $rolesAndPermissions = $this->getRolesAndPermissions();
+        return response()->json($rolesAndPermissions);
+    }
+    public function getRolesAndPermissions()
+    {
+        return Role::with('permissions')->get()->map(function ($role) {
+            return [
+                'name' => $role->name,
+                'permissions' => $role->permissions->pluck('name')->toArray(),
+            ];
+        });
+    }
 }

@@ -314,6 +314,7 @@ Route::middleware([
         Route::get('city/{cityId}', [BoleController::class, 'getSubCitiesByCityId'])->name('subcities.byCityId');
         
     });
+    Route::get('/rolesnew', [RolesController::class, 'rolesPermision'])->name('roles.rolesPermision');
     Route::prefix('main-equbs')->group(function () {
         // Get all cities
           Route::get('/', [MainEqubController::class, 'index'])->name('mainEqubs.index');
@@ -362,4 +363,5 @@ Route::middleware([
     Route::put('/roles/update/{id}', [RolesController::class, 'update'])
         ->name('roles.update');
 });
+
 });

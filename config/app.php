@@ -204,6 +204,7 @@ return [
         App\Providers\JetstreamServiceProvider::class,
         Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
         Kreait\Laravel\Firebase\ServiceProvider::class,
+        App\Providers\PermissionServiceProvider::class,
         
     ],
 
