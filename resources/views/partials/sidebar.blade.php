@@ -42,6 +42,7 @@
                 </li>
 
                 <!-- Members Section -->
+                @can('view member')
                 <li class="nav-item">
                     <a href="#" class="nav-link" id="membersLink" onclick="setActive('membersLink')">
                         <i class="nav-icon fas fa-users"></i>
@@ -65,7 +66,8 @@
                         </li>
                     </ul>
                 </li>
-
+                @endcan
+                @can('view payment')
                 <!-- Payments Section -->
                 <li class="nav-item">
                     <a href="#" class="nav-link" id="paymentsLink" onclick="setActive('paymentsLink')">
@@ -84,7 +86,8 @@
                         </li>
                     </ul>
                 </li>
-
+                @endcan
+                @can('view main_equb')
                 <!-- Main Equbs Section -->
                 <li class="nav-item">
                     <a href="{{ route('mainEqubs.index') }}" class="nav-link" id="mainEqubs" onclick="setActive('mainEqubs')">
@@ -92,7 +95,8 @@
                         <p>Main Equbs</p>
                     </a>
                 </li>
-
+                @endcan
+                @can('view equb_type')
                 <!-- Equb Type Section -->
                 <li class="nav-item">
                     <a href="{{ route('showEqubType') }}" class="nav-link" id="showEqubType" onclick="setActive('showEqubType')">
@@ -100,15 +104,17 @@
                         <p>Equb Type</p>
                     </a>
                 </li>
-
+                @endcan
                 <!-- Off Date Section -->
+                @can('view rejected_date ')
                 <li class="nav-item">
                     <a href="{{ route('showRejectedDate') }}" class="nav-link" id="offDate" onclick="setActive('offDate')">
                         <i class="nav-icon fas fa-calendar-minus"></i>
                         <p>Off Date</p>
                     </a>
                 </li>
-
+                @endcan
+                @can('view notification')
                 <!-- Notifications Section -->
                 <li class="nav-item">
                     <a href="{{ route('showNotifations') }}" class="nav-link" id="notification" onclick="setActive('notification')">
@@ -116,7 +122,8 @@
                         <p>Notification</p>
                     </a>
                 </li>
-
+                @endcan
+                @can('view user')
                 <!-- User Section -->
                 <li class="nav-item">
                     <a href="{{ route('user') }}" class="nav-link" id="adminNav" onclick="setActive('adminNav')">
@@ -124,9 +131,10 @@
                         <p>User</p>
                     </a>
                 </li>
-
+                @endcan
                 <!-- Locations Section -->
 <!-- Locations Section -->
+@can('view city')
 <li class="nav-item">
     <a href="#" class="nav-link {{ '' }}" id="locationsLink" onclick="setActive('locationsLink')">
         <i class="nav-icon fas fa-map-marker-alt"></i>
@@ -144,7 +152,9 @@
         </li>
     </ul>
 </li>
+@endcan
 <!-- Settings Section -->
+@can('view permission')
 <li class="nav-item">
     <a href="#" class="nav-link {{ request()->is('permission') && request()->is('roles') ? 'active' : '' }}" id="settingsLink" onclick="setActive('settingsLink')">
         <i class="nav-icon fas fa-cog"></i>
@@ -168,7 +178,7 @@
         </li>
     </ul>
 </li>
-
+@endcan
           
 
                 <!-- Logout Section -->
