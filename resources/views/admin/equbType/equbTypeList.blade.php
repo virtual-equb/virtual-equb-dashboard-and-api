@@ -77,8 +77,10 @@
                                             <li class="nav-item nav-blue equbTypeTab">
                                                 <a class="nav-link active" id="custom-tabs-two-member-tab"
                                                     data-toggle="pill" href="#custom-tabs-two-member" role="tab"
-                                                    aria-controls="custom-tabs-two-member" aria-selected="true"> <span
-                                                        class="fa fa-list"> </span> Equb Type</a>
+                                                    aria-controls="custom-tabs-two-member" aria-selected="true"> 
+                                                    <span class="fa fa-list"></span> 
+                                                    Equb Type
+                                                </a>
                                             </li>
                                         </ul>
                                     </div>
@@ -86,9 +88,9 @@
                                         <div class="tab-content" id="custom-tabs-two-tabContent">
                                             <div class="tab-pane fade show active" id="custom-tabs-two-member"
                                                 role="tabpanel" aria-labelledby="custom-tabs-two-member-tab">
-                                               @can('create equb_type') 
-                                                @include('admin/equbType.addEqubType')
-                                               @endcan
+                                                @can('create equb_type') 
+                                                    @include('admin/equbType.addEqubType')
+                                                @endcan
                                                 <table id="equbType-list-table" class="table table-bordered table-striped">
                                                     <thead>
                                                         <tr>
@@ -114,8 +116,8 @@
                                                             <tr>
                                                                 <td>{{ $key + 1 }}</td>
                                                                 <td>
-                                                        <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}" style="width: 50px; height: auto;">
-                                                    </td>
+                                                                    <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}" style="width: 50px; height: auto;">
+                                                                </td>
                                                                 <td>{{ $item->main_equb->name ?? 'N/A'}}</td>
                                                                 <td>{{ $item->name }}</td>
                                                                 <td>{{ $item->round }}</td>
@@ -142,7 +144,6 @@
                                                                     $createdDate = $toCreatedAt->format('M-j-Y');
                                                                     echo $createdDate; ?>
                                                                 </td>
-                                                                {{-- @if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant') --}}
                                                                     <td>
 
                                                                         <div class='dropdown'>
@@ -198,7 +199,6 @@
                                                                             </ul>
                                                                         </div>
                                                                     </td>
-                                                                {{-- @endif --}}
                                                             </tr>
                                                         @endforeach
                                                     </tbody>
@@ -468,7 +468,7 @@
     $('#amount').val(item.amount); // Ensure this field is populated
     $('#member').val(item.expected_members); // Ensure this field is populated
 
-<<<<<<< HEAD
+
             function openEditModal(item) {
                 // console.log(item)
                 $('#did').val(item.id);
@@ -538,7 +538,7 @@
                 }
                 $('#updateEqubType').attr('action', 'equbType/update/' + $('#did').val())
             }
-=======
+
     // Populate total_amount and total_members fields
     $('#total_amount').val(item.total_amount); // Set total amount from item
     $('#total_members').val(item.total_expected_members); // Set total members from item
@@ -598,7 +598,7 @@
     // Set the action for the form
     $('#updateEqubType').attr('action', 'equbType/update/' + $('#did').val());
 }
->>>>>>> 88579221d7a30a6edcc13608128d37881a7489fa
+
 
 
             function editEqubTypeValidation() {

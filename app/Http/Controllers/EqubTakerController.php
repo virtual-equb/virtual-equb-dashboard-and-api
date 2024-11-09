@@ -55,27 +55,30 @@ class EqubTakerController extends Controller
     {
         try {
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")){
+            $adminRole = ['admin', 'general_manager', 'operation_manager', 'it'];
+            $member = ['member'];
+            $equbcollector = ['equb_collector'];
+            if ($userData && $userData->hasAnyRole($adminRole)){
                 $data['equbTakers']  = $this->equbTakerRepository->getAll();
                 $data['equbs']  = $this->equbRepository->getAll();
                 $data['members']  = $this->memberRepository->getMemberWithEqub();
                 $data['title']  = $this->title;
                 return view('admin/equbTaker.equbTakerList', $data);
-            // } elseif ($userData && ($userData['role'] == "equb_collector")) {
+            } elseif ($userData && $userData->hasAnyRole($equbcollector)) {
                 $data['equbTakers']  = $this->equbTakerRepository->getAll();
                 $data['equbs']  = $this->equbRepository->getAll();
                 $data['members']  = $this->memberRepository->getMemberWithEqub();
                 $data['title']  = $this->title;
                 return view('equbCollecter/equbTaker.equbTakerList', $data);
-            // } elseif ($userData && ($userData['role'] == "member")) {
+            } elseif ($userData && $userData->hasAnyRole($member)) {
                 $data['equbTakers']  = $this->equbTakerRepository->getAll();
                 $data['equbs']  = $this->equbRepository->getAll();
                 $data['members']  = $this->memberRepository->getMemberWithEqub();
                 $data['title']  = $this->title;
                 return view('member/equbTaker.equbTakerList', $data);
-            // } else {
-            //     return view('auth/login');
-            // }
+            } else {
+                return view('auth/login');
+            }
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';

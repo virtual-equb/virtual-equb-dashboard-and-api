@@ -67,7 +67,7 @@ class EqubTypeController extends Controller
                 $data['activeEqubType']  = $this->equbTypeRepository->getActive();
                 $data['title']  = $this->title;
                 $data['mainEqubs'] = $this->mainEqubRepository->all();
-               //dd( $data['equbTypes'] );
+            //    dd( $data['equbTypes'] );
                 return view('admin/equbType.equbTypeList', $data);
             // } else {
             //     return view('auth/login');
@@ -562,6 +562,160 @@ class EqubTypeController extends Controller
             return back();
         }
     }
+
+    // public function drawAutoWinners(Request $request)
+    // {
+    //     try {
+    //         $equbTypeId = $request->equbTypeId;
+    //         $now = Carbon::now()->startOfDay();
+    //         $winners = [];
+    //         $winnerCount = 0;
+
+    //         // Fetch equb types based on equbTypeId
+    //         $equbTypes = $this->fetchEqubTypes($equbTypeId, $now);
+    //         if ($equbTypes->isEmpty()) {
+    //             return $this->setFlashAndRedirect("No active equb types with a lottery date of today found.", 'error');
+    //         }
+
+    //         foreach ($equbTypes as $equbType) {
+    //             $winnerData = $this->drawWinnerForEqubType($equbType, $now);
+    //             if ($winnerData) {
+    //                 $winners[] = $winnerData;
+    //                 $winnerCount++;
+    //             }
+    //         }
+
+    //         // Notify winners and other members, and update the lottery dates
+    //         $this->processWinners($winners);
+    //         $this->updateLotteryDates($equbTypes, $now);
+
+    //         return $this->setFlashAndRedirect("Equb draw has been successfully completed with $winnerCount winners!", 'success', compact('winnerCount'));
+
+    //     } catch (Exception $ex) {
+    //         return $this->setFlashAndRedirect("Unable to process your request, Please try again!", 'error');
+    //     }
+    // }
+
+    // private function fetchEqubTypes($equbTypeId, $now)
+    // {
+    //     if ($equbTypeId === 'all') {
+    //         return DB::table('equb_types')
+    //             ->whereDate('lottery_date', $now)
+    //             ->whereNull("deleted_at")
+    //             ->where("status", "Active")
+    //             ->get();
+    //     } else {
+    //         return DB::table('equb_types')
+    //             ->where("id", $equbTypeId)
+    //             ->whereDate('lottery_date', $now)
+    //             ->where("status", "Active")
+    //             ->get();
+    //     }
+    // }
+
+    // private function drawWinnerForEqubType($equbType, $now)
+    // {
+    //     $eligibleMembers = DB::table('equbs')
+    //         ->where('equb_type_id', $equbType->id)
+    //         ->where('status', 'Active')
+    //         ->where('check_for_draw', true)
+    //         ->pluck('member_id')
+    //         ->toArray();
+
+    //     if (count($eligibleMembers) <= 1) {
+    //         // Deactivate equbs if only one eligible member is left
+    //         Equb::where('equb_type_id', $equbType->id)->update(['status' => 'Deactive']);
+    //         return null;
+    //     }
+
+    //     $winnerId = $this->drawRandomWinner($eligibleMembers, $equbType->id);
+    //     if ($winnerId) {
+    //         return [
+    //             "equb_type_id" => $equbType->id,
+    //             "equb_type_name" => $equbType->name,
+    //             "winner_id" => $winnerId
+    //         ];
+    //     }
+
+    //     return null;
+    // }
+
+    // private function drawRandomWinner(array $members, $equbTypeId)
+    // {
+    //     $winnerId = $this->drawRandomId($members);
+    //     while (LotteryWinner::where('equb_type_id', $equbTypeId)->where('member_id', $winnerId)->exists()) {
+    //         $members = array_filter($members, fn($id) => $id !== $winnerId);
+    //         if (empty($members)) {
+    //             return null;
+    //         }
+    //         $winnerId = $this->drawRandomId($members);
+    //     }
+    //     return $winnerId;
+    // }
+
+    // private function processWinners(array $winners)
+    // {
+    //     $shortcode = config('key.SHORT_CODE');
+    //     foreach ($winners as $winnerData) {
+    //         $winner = $this->notifyWinner($winnerData, $shortcode);
+    //         $this->notifyOtherMembers($winnerData, $winner);
+    //     }
+    // }
+
+    // private function notifyWinner($winnerData, $shortcode)
+    // {
+    //     $user = Member::find($winnerData['winner_id']);
+    //     $notificationBody = "You have been selected as the winner of the equb {$winnerData['equb_type_name']}! For further information please call $shortcode.";
+    //     LotteryWinner::create($winnerData);
+
+    //     Notification::sendNotification($user->fcm_id, $notificationBody, "Congratulations");
+    //     $this->sendSms($user->phone_number, $notificationBody);
+        
+    //     return $user;
+    // }
+
+    // private function notifyOtherMembers($winnerData, $winner)
+    // {
+    //     $otherMembers = DB::table('equbs')
+    //         ->where('equb_type_id', $winnerData['equb_type_id'])
+    //         ->where('status', 'Active')
+    //         ->pluck('member_id')
+    //         ->toArray();
+
+    //     foreach ($otherMembers as $memberId) {
+    //         if ($memberId === $winner->id) continue;
+
+    //         $member = Member::find($memberId);
+    //         $notificationBody = "{$winner->full_name} has been selected as the winner of the equb {$winnerData['equb_type_name']}";
+    //         Notification::sendNotification($member->fcm_id, $notificationBody, "{$winnerData['equb_type_name']}'s Lottery Winner");
+    //         $this->sendSms($member->phone_number, $notificationBody);
+    //     }
+    // }
+
+    // private function updateLotteryDates($equbTypes, $now)
+    // {
+    //     foreach ($equbTypes as $equbType) {
+    //         $daysToBeAdded = match ($equbType->rote) {
+    //             "Daily" => 1,
+    //             "Weekly" => 7,
+    //             "Biweekly" => 14,
+    //             "Monthly" => 30,
+    //             default => 0,
+    //         };
+
+    //         if ($daysToBeAdded > 0) {
+    //             $newLotteryDate = $now->copy()->addDays($daysToBeAdded)->format('Y-m-d');
+    //             EqubType::where('id', $equbType->id)->update(['lottery_date' => $newLotteryDate]);
+    //         }
+    //     }
+    // }
+
+    // private function setFlashAndRedirect($message, $type, $data = [])
+    // {
+    //     Session::flash($type, $message);
+    //     return back()->with($data);
+    // }
+
 
     // public function drawAutoWinners(Request $request)
     // {
