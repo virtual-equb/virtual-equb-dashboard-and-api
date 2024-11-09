@@ -90,7 +90,7 @@
                                                 <table id="equbType-list-table" class="table table-bordered table-striped">
                                                     <thead>
                                                         <tr>
-                                                            <th>No</th>
+                                                        <th>No</th>
                                                             <td>Image</td>
                                                             <th>Equb</th>
                                                             <th>Name</th>
@@ -98,6 +98,7 @@
                                                             <th>Rote</th>
                                                             <th>Type</th>
                                                             <th>Space Left (Quota)</th>
+                                                            <th>Expected members (Quota)</th>
                                                             <th>Lottery Date</th>
                                                             <th>Total Amount (Birr)</th>
                                                             <th>Remark</th>
@@ -109,7 +110,7 @@
                                                     <tbody>
                                                         @foreach ($equbTypes as $key => $item)
                                                             <tr>
-                                                                <td>{{ $key + 1 }}</td>
+                                                            <td>{{ $key + 1 }}</td>
                                                                 <td>
                                                         <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}" style="width: 50px; height: auto;">
                                                     </td>
@@ -119,6 +120,7 @@
                                                                 <td>{{ $item->rote }}</td>
                                                                 <td>{{ $item->type }}</td>
                                                                 <td>{{ $item->remaining_quota }}</td>
+                                                                <td>{{ $item->expected_members }}</td>
                                                                 <td>
                                                                     <?php
                                                                     if ($item['lottery_date']) {
@@ -148,6 +150,7 @@
                                                                                 data-toggle='dropdown'>Menu<span
                                                                                     class='caret'></span></button>
                                                                             <ul class='dropdown-menu p-4'>
+                                                                                @can('update equb_type')
                                                                                 <li>
                                                                                     <a href="javascript:void(0);"
                                                                                         class="text-secondary btn btn-flat"
@@ -155,6 +158,8 @@
                                                                                             class="fa fa-edit"> </span>
                                                                                         Edit</a>
                                                                                 </li>
+                                                                                @endcan
+                                                                                @can('delete equb_type')
                                                                                 <li>
                                                                                     <a href="javascript:void(0);"
                                                                                         class="text-secondary btn btn-flat"
@@ -162,6 +167,8 @@
                                                                                             class="fas fa-trash-alt"></i>
                                                                                         Delete</a>
                                                                                 </li>
+                                                                                @endcan
+                                                                                @can('deactivate equb_type')
                                                                                 <li>
                                                                                     <a href="javascript:void(0);"
                                                                                         class="text-secondary btn btn-flat"
@@ -177,6 +184,7 @@
                                                                                         ?>
                                                                                     </a>
                                                                                 </li>
+                                                                                @endcan
                                                                                 <li>
                                                                                     <a href="javascript:void(0);"
                                                                                         class="text-secondary btn btn-flat view-icon"

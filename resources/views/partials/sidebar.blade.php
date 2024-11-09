@@ -15,7 +15,7 @@
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 <!-- Dashboard Section -->
-                <li class="nav-item" id="settingNava">
+                <li class="nav-item">
                     <a href="#" class="nav-link" id="dashboardLink" onclick="setActive('dashboardLink')">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>
@@ -30,12 +30,28 @@
                                 <p>Main Dashboard</p>
                             </a>
                         </li>
-                        @foreach (App\Models\MainEqub::all() as $equbType)
+                        @foreach (App\Models\MainEqub::all() as $mainEqub)
                             <li class="nav-item">
-                                <a href="{{ route('viewMainEqub', $equbType->id) }}" class="nav-link" id="equb-{{ $equbType->id }}" onclick="setActive('equb-{{ $equbType->id }}')">
+                                <a href="#" class="nav-link" onclick="setActive('equb-{{ $mainEqub->id }}')">
                                     <i class="far fa-circle nav-icon"></i>
-                                    <p>{{ $equbType->name }}</p>
+                                    <p>{{ $mainEqub->name }}<i class="fas fa-angle-left right"></i></p>
                                 </a>
+                                <ul class="nav nav-treeview ml-2">
+                                    @if ($mainEqub->equbTypes && $mainEqub->equbTypes->count())
+                                        @foreach ($mainEqub->equbTypes as $equbType)
+                                            <li class="nav-item">
+                                                <a href="{{ url('equbTypeDashboard/' . $equbType->id) }}" class="nav-link" id="{{ $equbType->id }}">
+                                                    <i class="far fa-circle nav-icon"></i>
+                                                    <p>{{ $equbType->id }}</p>
+                                                </a>
+                                            </li>
+                                        @endforeach
+                                    @else
+                                        <li class="nav-item">
+                                            <p>No Equb Types available</p>
+                                        </li>
+                                    @endif
+                                </ul>
                             </li>
                         @endforeach
                     </ul>
@@ -67,6 +83,7 @@
                     </ul>
                 </li>
                 @endcan
+
                 @can('view payment')
                 <!-- Payments Section -->
                 <li class="nav-item">
@@ -87,6 +104,7 @@
                     </ul>
                 </li>
                 @endcan
+
                 @can('view main_equb')
                 <!-- Main Equbs Section -->
                 <li class="nav-item">
@@ -96,6 +114,7 @@
                     </a>
                 </li>
                 @endcan
+
                 @can('view equb_type')
                 <!-- Equb Type Section -->
                 <li class="nav-item">
@@ -105,8 +124,8 @@
                     </a>
                 </li>
                 @endcan
-                <!-- Off Date Section -->
-                @can('view rejected_date ')
+
+                @can('view rejected_date')
                 <li class="nav-item">
                     <a href="{{ route('showRejectedDate') }}" class="nav-link" id="offDate" onclick="setActive('offDate')">
                         <i class="nav-icon fas fa-calendar-minus"></i>
@@ -114,8 +133,8 @@
                     </a>
                 </li>
                 @endcan
+
                 @can('view notification')
-                <!-- Notifications Section -->
                 <li class="nav-item">
                     <a href="{{ route('showNotifations') }}" class="nav-link" id="notification" onclick="setActive('notification')">
                         <i class="nav-icon fa fa-bell"></i>
@@ -123,8 +142,8 @@
                     </a>
                 </li>
                 @endcan
+
                 @can('view user')
-                <!-- User Section -->
                 <li class="nav-item">
                     <a href="{{ route('user') }}" class="nav-link" id="adminNav" onclick="setActive('adminNav')">
                         <i class="nav-icon far fa-user"></i>
@@ -132,54 +151,52 @@
                     </a>
                 </li>
                 @endcan
-                <!-- Locations Section -->
-<!-- Locations Section -->
-@can('view city')
-<li class="nav-item">
-    <a href="#" class="nav-link {{ '' }}" id="locationsLink" onclick="setActive('locationsLink')">
-        <i class="nav-icon fas fa-map-marker-alt"></i>
-        <p>
-            Locations
-            <i class="fas fa-angle-left right"></i>
-        </p>
-    </a>
-    <ul class="nav nav-treeview ml-2" style="{{ request()->is('cities*') ? 'display: block;' : 'display: none;' }}">
-        <li class="nav-item">
-            <a href="{{ route('cities.index') }}" class="nav-link {{ request()->is('cities') ? 'active' : '' }}" id="cityLink" onclick="setActive('cityLink')">
-                <i class="nav-icon fas fa-city"></i>
-                <p>City</p>
-            </a>
-        </li>
-    </ul>
-</li>
-@endcan
-<!-- Settings Section -->
-@can('view permission')
-<li class="nav-item">
-    <a href="#" class="nav-link {{ request()->is('permission') && request()->is('roles') ? 'active' : '' }}" id="settingsLink" onclick="setActive('settingsLink')">
-        <i class="nav-icon fas fa-cog"></i>
-        <p>
-            Settings
-            <i class="fas fa-angle-left right"></i>
-        </p>
-    </a>
-    <ul class="nav nav-treeview ml-2" style="{{ request()->is('permission') || request()->is('roles') ? 'display: block;' : 'display: none;' }}">
-        <li class="nav-item">
-            <a href="{{ url('settings/permission') }}" class="nav-link {{ request()->is('permission') ? 'active' : '' }}" id="nav-permissions" onclick="setActive('nav-permissions')">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Permissions</p>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a href="{{ url('roles') }}" class="nav-link {{ request()->is('roles') ? 'active' : '' }}" id="nav-roles" onclick="setActive('nav-roles')">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Roles</p>
-            </a>
-        </li>
-    </ul>
-</li>
-@endcan
-          
+
+                @can('view city')
+                <li class="nav-item">
+                    <a href="#" class="nav-link" id="locationsLink" onclick="setActive('locationsLink')">
+                        <i class="nav-icon fas fa-map-marker-alt"></i>
+                        <p>
+                            Locations
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview ml-2" style="{{ request()->is('cities*') ? 'display: block;' : 'display: none;' }}">
+                        <li class="nav-item">
+                            <a href="{{ route('cities.index') }}" class="nav-link {{ request()->is('cities') ? 'active' : '' }}" id="cityLink" onclick="setActive('cityLink')">
+                                <i class="nav-icon fas fa-city"></i>
+                                <p>City</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                @endcan
+
+                @can('view permission')
+                <li class="nav-item">
+                    <a href="#" class="nav-link" id="settingsLink" onclick="setActive('settingsLink')">
+                        <i class="nav-icon fas fa-cog"></i>
+                        <p>
+                            Settings
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview ml-2" style="{{ request()->is('permission') || request()->is('roles') ? 'display: block;' : 'display: none;' }}">
+                        <li class="nav-item">
+                            <a href="{{ url('settings/permission') }}" class="nav-link {{ request()->is('permission') ? 'active' : '' }}" id="nav-permissions" onclick="setActive('nav-permissions')">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Permissions</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url('roles') }}" class="nav-link {{ request()->is('roles') ? 'active' : '' }}" id="nav-roles" onclick="setActive('nav-roles')">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Roles</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                @endcan
 
                 <!-- Logout Section -->
                 <li class="nav-item">
@@ -187,13 +204,8 @@
                         <i class="nav-icon fas fa-sign-out-alt"></i>
                         <p>Logout</p>
                     </a>
-                </li>
-                <li class="nav-item">
                     <form action="{{ route('logout') }}" id="logout" method="post" style="display: none">
                         @csrf
-                        <button type="submit" class="btn btn-secondary nav-link text-white text-align-start">
-                            Logout
-                        </button>
                     </form>
                 </li>
             </ul>

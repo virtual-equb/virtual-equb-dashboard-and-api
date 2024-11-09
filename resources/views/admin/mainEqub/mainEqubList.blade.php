@@ -42,11 +42,9 @@
                                     </li>
                                 </ul>
                                 <div class="float-right">
-                                    @can('create main_equb')
                                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addMainEqubModal" style="margin-right: 30px;">
                                             <span class="fa fa-plus-circle"></span> Add Main Equb
                                         </button>
-                                    @endcan
                                 </div>
                             </div>
                             <div class="card-body">
