@@ -67,7 +67,7 @@ class EqubTypeController extends Controller
                 $data['activeEqubType']  = $this->equbTypeRepository->getActive();
                 $data['title']  = $this->title;
                 $data['mainEqubs'] = $this->mainEqubRepository->all();
-               //dd( $data['equbTypes'] );
+            //    dd( $data['equbTypes'] );
                 return view('admin/equbType.equbTypeList', $data);
             // } else {
             //     return view('auth/login');
@@ -330,6 +330,7 @@ class EqubTypeController extends Controller
             $winnerUsers = [];
             $checkUserArray = [];
             $equbsMembersToNotify = [];
+            $winnerCount = 0;
 
             if ($equbTypeId === 'all') {
                 $equbTypes = DB::table('equb_types')
@@ -337,6 +338,7 @@ class EqubTypeController extends Controller
                     ->where("deleted_at", "=", null)
                     ->where("status", "=", "Active")
                     ->get();
+
                 if ($equbTypes && count($equbTypes) > 0) {
                     foreach ($equbTypes as $equbType) {
                         $equbsMembers = DB::table('equbs')
@@ -345,11 +347,16 @@ class EqubTypeController extends Controller
                             ->where('check_for_draw', true)
                             ->pluck('member_id')
                             ->toArray();
-                        $equbsMembersToNotify = DB::table('equbs')->where('equb_type_id', $equbType->id)->where('status', 'Active')->pluck('member_id')->toArray();
+                        $equbsMembersToNotify = DB::table('equbs')
+                                ->where('equb_type_id', $equbType->id)
+                                ->where('status', 'Active')
+                                ->pluck('member_id')
+                                ->toArray();
+
                         // dd($equbsMembers);
                         $equbs = DB::table('equbs')->where('equb_type_id', $equbType->id)->where('status', 'Active')->get();
+                       
                         if ($equbsMembers) {
-
                             foreach ($equbsMembers as $member) {
                                 $checkUser = LotteryWinner::where('equb_type_id', $equbType->id)->where('member_id', $member)->first();
                                 if (!$checkUser && !in_array($member, $checkUserArray)) {
@@ -422,7 +429,7 @@ class EqubTypeController extends Controller
                             }
                         }
                         foreach ($equbTypes as $equbType) {
-                            $daysToBeAdded = 0;
+                            $daysToBeAdded = 7;
                             if ($equbType->rote === "Daily") {
                                 $daysToBeAdded = 1;
                             } elseif ($equbType->rote === "Weekly") {
@@ -562,6 +569,8 @@ class EqubTypeController extends Controller
             return back();
         }
     }
+
+
 
     // public function drawAutoWinners(Request $request)
     // {
