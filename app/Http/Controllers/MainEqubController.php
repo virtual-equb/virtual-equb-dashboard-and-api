@@ -93,12 +93,12 @@ class MainEqubController extends Controller
         return response()->json($mainEqub); // Return the data as JSON for the AJAX request
     }
 
-    public function update(Request $request, $id)
+    public function update1(Request $request, $id)
     {
         $request->validate([
             'name' => 'required|string|max:255',
             'remark' => 'nullable|string|max:500',
-            'status' => 'required|boolean',
+            'status' => 'nullable|boolean',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', 
 
         ]);
@@ -115,7 +115,31 @@ class MainEqubController extends Controller
     
         return response()->json(['message' => 'Main Equb updated successfully!']);
     }
-
+    public function update(Request $request, $id)
+    {
+     
+        // Handle the image upload
+        $data = []; // Initialize data array
+    
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('images/equbs', 'public'); // Store the image
+            $data['image'] = $imagePath; // Add the image path to the data array
+        }
+    
+        $equb = MainEqub::findOrFail($id);
+        $equb->name = $request->input('name');
+        $equb->remark = $request->input('remark');
+        $equb->active = $request->input('status');
+    
+        // Optionally, include the image path in the equb model if it was uploaded
+        if (isset($data['image'])) {
+            $equb->image = $data['image'];
+        }
+    
+        $equb->save();
+    
+        return response()->json(['message' => 'Equb updated successfully!']);
+    }
     public function destroy($id)
     {
         try {

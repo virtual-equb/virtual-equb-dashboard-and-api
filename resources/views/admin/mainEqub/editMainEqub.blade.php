@@ -19,8 +19,8 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="edit_status">Status</label>
-                        <select class="form-control" id="edit_status" name="status" required>
+                        <label for="edit_main_equb_status" class="control-label">Status:</label>
+                        <select class="form-control" id="edit_main_equb_status" name="status" required>
                             <option value="1">Active</option>
                             <option value="0">Inactive</option>
                         </select>
