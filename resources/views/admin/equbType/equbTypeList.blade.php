@@ -77,8 +77,10 @@
                                             <li class="nav-item nav-blue equbTypeTab">
                                                 <a class="nav-link active" id="custom-tabs-two-member-tab"
                                                     data-toggle="pill" href="#custom-tabs-two-member" role="tab"
-                                                    aria-controls="custom-tabs-two-member" aria-selected="true"> <span
-                                                        class="fa fa-list"> </span> Equb Type</a>
+                                                    aria-controls="custom-tabs-two-member" aria-selected="true"> 
+                                                    <span class="fa fa-list"></span> 
+                                                    Equb Type
+                                                </a>
                                             </li>
                                         </ul>
                                     </div>
@@ -86,11 +88,13 @@
                                         <div class="tab-content" id="custom-tabs-two-tabContent">
                                             <div class="tab-pane fade show active" id="custom-tabs-two-member"
                                                 role="tabpanel" aria-labelledby="custom-tabs-two-member-tab">
-                                                @include('admin/equbType.addEqubType')
+                                                @can('create equb_type') 
+                                                    @include('admin/equbType.addEqubType')
+                                                @endcan
                                                 <table id="equbType-list-table" class="table table-bordered table-striped">
                                                     <thead>
                                                         <tr>
-                                                        <th>No</th>
+                                                            <th>No</th>
                                                             <td>Image</td>
                                                             <th>Equb</th>
                                                             <th>Name</th>
@@ -110,10 +114,10 @@
                                                     <tbody>
                                                         @foreach ($equbTypes as $key => $item)
                                                             <tr>
-                                                            <td>{{ $key + 1 }}</td>
+                                                                <td>{{ $key + 1 }}</td>
                                                                 <td>
-                                                        <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}" style="width: 50px; height: auto;">
-                                                    </td>
+                                                                    <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}" style="width: 50px; height: auto;">
+                                                                </td>
                                                                 <td>{{ $item->main_equb->name ?? 'N/A'}}</td>
                                                                 <td>{{ $item->name }}</td>
                                                                 <td>{{ $item->round }}</td>
@@ -140,7 +144,6 @@
                                                                     $createdDate = $toCreatedAt->format('M-j-Y');
                                                                     echo $createdDate; ?>
                                                                 </td>
-                                                                {{-- @if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant') --}}
                                                                     <td>
 
                                                                         <div class='dropdown'>
@@ -196,7 +199,6 @@
                                                                             </ul>
                                                                         </div>
                                                                     </td>
-                                                                {{-- @endif --}}
                                                             </tr>
                                                         @endforeach
                                                     </tbody>
@@ -296,7 +298,7 @@
                 $("#type").on("change", function() {
                     var type = $(this).find("option:selected").val();
                     if (type === "Automatic") {
-                        lotteryDate.classList.remove("d-none");
+                        // lotteryDate.classList.remove("d-none");
                         startDate.classList.remove("d-none");
                         endDate.classList.remove("d-none");
                         quota.classList.remove("d-none");
@@ -308,7 +310,7 @@
                         //        options[i].disabled = true;
                         //    }
                         //}
-                        lotteryDate.required = true;
+                        // lotteryDate.required = true;
                         startDate.required = true;
                         endDate.required = true;
                         quota.required = true;
@@ -378,7 +380,7 @@
                         //      update_options[i].disabled = true;
                         //  }
                         // }
-                        lotteryDate.required = true;
+                        // lotteryDate.required = true;
                         startDate.required = true;
                         endDate.required = true;
                         quota.required = true;
@@ -466,6 +468,77 @@
     $('#amount').val(item.amount); // Ensure this field is populated
     $('#member').val(item.expected_members); // Ensure this field is populated
 
+
+            function openEditModal(item) {
+                // console.log(item)
+                $('#did').val(item.id);
+                $('#editEqubTypeModal').modal('show');
+                $('#update_main_equb').val(item.main_equb);
+                $('#update_name').val(item.name);
+                $('#update_round').val(item.round);
+                $('#update_status').val(item.status);
+                $('#update_rote').val(item.rote);
+                $('#update_type').val(item.type);
+                $('#update_remark').val(item.remark);
+                $('#update_amount_div').val(item.amount);
+                $('#update_members_div').val(item.expected_members);
+                $('#update_lottery_date').val(item.lottery_date);
+                $('#update_start_date').datepicker('setDate', new Date(item.start_date));
+                $('#update_start_date').datepicker('destroy');
+                $('#update_end_date').datepicker('setDate', new Date(item.end_date));
+                $('#update_end_date').datepicker('destroy');
+                $('#update_quota').val(item.quota);
+                $('#update_terms').summernote('code', item.terms);
+                const lotteryDate = document.getElementById("update_lottery_date_div");
+                const startDate = document.getElementById("update_start_date_div");
+                const endDate = document.getElementById("update_end_date_div");
+                const quota = document.getElementById("update_quota_div");
+                const update_rotes = document.getElementById("update_rote");
+                const amount = document.getElementById("update_amount_div");
+                const members = document.getElementById("update_members_div");
+                const update_option = update_rotes.options;
+                if (item.type === "Automatic") {
+                    lotteryDate.classList.remove("d-none");
+                    startDate.classList.remove("d-none");
+                    endDate.classList.remove("d-none");
+                    quota.classList.remove("d-none");
+                    amount.classList.remove("d-none");
+                    members.classList.remove("d-none");
+                    // for (var i = 1; i < update_option.length; i++) {
+                    //     update_option[i].disabled = false;
+                    //     if (update_option[i].value !== "Weekly") {
+                    //         update_option[i].disabled = true;
+                    //     }
+                    // }
+                    // lotteryDate.required = true;
+                    startDate.required = true;
+                    endDate.required = true;
+                    quota.required = true;
+                    amount.required = true;
+                    members.required = true;
+                } else {
+                    lotteryDate.classList.add("d-none");
+                    startDate.classList.add("d-none");
+                    endDate.classList.add("d-none");
+                    quota.classList.add("d-none");
+                    amount.classList.add("d-none");
+                    members.classList.add("d-none");
+                    // for (var i = 1; i < update_option.length; i++) {
+                    //     update_option[i].disabled = false;
+                    //     if (update_option[i].value !== "Daily") {
+                    //         update_option[i].disabled = true;
+                    //     }
+                    // }
+                    lotteryDate.required = false;
+                    startDate.required = false;
+                    endDate.required = false;
+                    quota.required = false;
+                    amount.required = true;
+                    members.required = true;
+                }
+                $('#updateEqubType').attr('action', 'equbType/update/' + $('#did').val())
+            }
+
     // Populate total_amount and total_members fields
     $('#total_amount').val(item.total_amount); // Set total amount from item
     $('#total_members').val(item.total_expected_members); // Set total members from item
@@ -525,6 +598,7 @@
     // Set the action for the form
     $('#updateEqubType').attr('action', 'equbType/update/' + $('#did').val());
 }
+
 
 
             function editEqubTypeValidation() {
@@ -688,9 +762,9 @@
                                 }
                             },
                         },
-                        lottery_date: {
-                            required: true,
-                        },
+                        // lottery_date: {
+                        //     required: true,
+                        // },
                         start_date: {
                             required: true,
                         },
@@ -724,9 +798,9 @@
                             required: "Please select a type",
                             remote: "Equb Type already exist",
                         },
-                        lottery_date: {
-                            required: "Please select a lottery date",
-                        },
+                        // lottery_date: {
+                        //     required: "Please select a lottery date",
+                        // },
                         start_date: {
                             required: "Please select a start date",
                         },
@@ -808,9 +882,9 @@
                                 }
                             },
                         },
-                        lottery_date: {
-                            required: true,
-                        },
+                        // lottery_date: {
+                        //     required: true,
+                        // },
                         status: {
                             required: true,
                         },
@@ -836,9 +910,9 @@
                             required: "Please select a type",
                             remote: "Equb Type already exist",
                         },
-                        lottery_date: {
-                            required: "Please select a lottery date",
-                        },
+                        // lottery_date: {
+                        //     required: "Please select a lottery date",
+                        // },
                         status: {
                             required: "Please enter status",
                         },
@@ -980,12 +1054,10 @@
                     //"buttons": ["excel", "pdf", "print", "colvis"]
                 }).buttons().container().appendTo('#equbType-list-table_wrapper .col-md-6:eq(0)')
                 $('#equbType-list-table_filter').prepend(
-                    `@if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant')<button type="button" class=" btn btn-primary addEqub" id="register" data-toggle="modal" data-target="#myModal" style="margin-right: 20px;"> <span class="fa fa-plus-circle"> </span> Add </button>@endif`
+                    `<button type="button" class=" btn btn-primary addEqub" id="register" data-toggle="modal" data-target="#myModal" style="margin-right: 20px;"> <span class="fa fa-plus-circle"> </span> Add </button>`
                 )
                 $('#equbType-list-table_filter').prepend(
-                    `@if (Auth::user()->role != 'operation_manager' &&
-                            Auth::user()->role != 'assistant' &&
-                            Auth::user()->role != 'customer_service')<button type="button" class=" btn btn-primary addEqub" id="draw" data-toggle="modal" data-target="#drawModal" style="margin-right: 20px;"> <span class="fa fa-random"> </span> Draw Todays Winner</button>@endif`
+                    `<button type="button" class=" btn btn-primary addEqub" id="draw" data-toggle="modal" data-target="#drawModal" style="margin-right: 20px;"> <span class="fa fa-random"> </span> Draw Todays Winner</button>`
                 )
 
                 $("#DeactiveEqubType-list-table").DataTable({
