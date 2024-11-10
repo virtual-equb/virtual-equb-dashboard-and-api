@@ -50,16 +50,25 @@ class MainEqubController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user();
+        
         // Validate the incoming request data
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', 
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'remark' => 'nullable|string',
             'active' => 'nullable'
         ]);
+    
+        // Handle the image upload
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('images', 'public'); // Save in 'storage/app/public/images'
+            $data['image'] = $imagePath; // Add image path to data array
+        }
+    
         $data['created_by'] = Auth::id();
         $mainEqub = MainEqub::create($data);
         $mainEqubs = $this->mainEqubRepository->all();
+    
         if ($mainEqub) {
             $activityLog = [
                 'type' => 'main_equbs',
@@ -69,11 +78,12 @@ class MainEqubController extends Controller
                 'username' => $user->name
             ];
             ActivityLog::create($activityLog);
+            
             $msg = "Main Equb has been created successfully";
             $type = 'success';
             Session::flash($type, $msg);
         }
-
+    
         // Redirect or return a response
         return redirect()->route('mainEqubs.index', ['mainEqubs' => $mainEqubs])->with('success', 'Main Equb added successfully.');
     }
