@@ -42,7 +42,7 @@
                                     </li>
                                 </ul>
                                 <div class="float-right">
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addMainEqubModal" style="margin-right: 30px;">
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addMainEqubModal" style="margin-right: 30px;">
                                             <span class="fa fa-plus-circle"></span> Add Main Equb
                                         </button>
                                 </div>
@@ -156,65 +156,64 @@
         $('#equbSearchText').val('');
         // Optionally refresh the table or apply a filter reset
     });
-
     // Open Edit Modal
-    function openEditModal(equbId) {
-        $.ajax({
-            type: 'GET',
-            url: '/main-equbs/' + equbId,
-            success: function(data) {
-                $('#edit_equb_id').val(data.id);
-                $('#edit_name').val(data.name);
-                $('#edit_remark').val(data.remark);
-                $('#edit_status').val(data.active);
-                
-                // Display current image if it exists
-                if (data.image) {
-                    $('#currentImage').attr('src', '{{ asset("storage/") }}/' + data.image).show();
-                } else {
-                    $('#currentImage').hide(); // Hide if no image
-                }
-
-                $('#editMainEqubModal').modal('show'); // Open the modal
-            },
-            error: function(xhr) {
-                console.error('Error fetching data:', xhr);
-                alert('Error fetching data: ' + xhr.responseText); // Dynamic error message
-            }
-        });
-    }
-
-    // Save Changes
-    $('#saveChanges').click(function() {
-    const id = $('#edit_equb_id').val();
-    const name = $('#edit_name').val();
-    const remark = $('#edit_remark').val();
-    const status = $('#edit_status').val();
-    const imageFile = $('#image')[0].files[0];
-
-    const formData = new FormData();
-    formData.append('name', name);
-    formData.append('remark', remark);
-    formData.append('status', status);
-    if (imageFile) {
-        formData.append('image', imageFile);
-    }
-
+function openEditModal(equbId) {
     $.ajax({
-        type: 'PUT',
-        url: '/main-equbs/' + id,
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(result) {
-            alert(result.message || 'Equb updated successfully!');
-            location.reload();
+        type: 'GET',
+        url: '/main-equbs/' + equbId,
+        success: function(data) {
+            $('#editMainEqubId').val(data.id);
+            $('#editMainEqubName').val(data.name);
+            $('#editMainEqubStatus').val(data.active ? 1 : 0); // Set status based on active
+
+            // Display current image if it exists
+            if (data.image) {
+                $('#currentImage').attr('src', '{{ asset("storage/") }}/' + data.image).show();
+            } else {
+                $('#currentImage').hide(); // Hide if no image
+            }
+
+            $('#editMainEqubModal').modal('show'); // Open the modal
         },
         error: function(xhr) {
-            console.error('Error updating equb:', xhr);
-            alert('Error updating equb: ' + xhr.responseText);
+            console.error('Error fetching data:', xhr);
+            alert('Error fetching data: ' + xhr.responseText); // Dynamic error message
         }
     });
+}
+
+// Save Changes
+// Save Changes
+$(document).ready(function() {
+    // Save Changes
+    $('#saveEditMainEqub').click(function() {
+        const id = $('#editMainEqubId').val();
+        const name = $('#editMainEqubName').val();
+        const status = $('#editMainEqubStatus').val();
+
+        // Create data object to send
+        const data = {
+            name: name,
+            active: status === "1" // Convert status to boolean
+        };
+
+        $.ajax({
+            type: 'PUT',
+            url: '/main-equbs/' + id, // Ensure this URL matches your route
+            data: data,
+            success: function(result) {
+                alert(result.message || 'Main Equb updated successfully!');
+                $('#editMainEqubModal').modal('hide'); // Hide the modal after saving
+                location.reload(); // Refresh the page to see changes
+            },
+            error: function(xhr) {
+                console.error('Error updating Main Equb:', xhr);
+                alert('Error updating Main Equb: ' + xhr.responseText);
+            }
+        });
+    });
 });
+
+   
 </script>
 @endsection
