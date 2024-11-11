@@ -71,9 +71,10 @@
                                             @foreach ($mainEqubs as $key => $equb)
                                                 <tr>
                                                     <td>{{ $key + 1 }}</td>
-                                                    <td>
-                                                        <img src="{{ asset('storage/' . $equb->image) }}" alt="{{ $equb->name }}" style="width: 50px; height: auto;">
-                                                    </td>
+                                                    <td style="background-color: rgb(76, 175, 80); width: 60px; text-align: center;">
+    <img src="{{ asset('storage/' . $equb->image) }}" alt="{{ $equb->name }}" 
+         style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+</td>
                                                     <td>{{ $equb->name }}</td>
                                                     <td>
                                                         <span class="badge {{ $equb->active ? 'badge-success' : 'badge-danger' }}">
@@ -192,7 +193,8 @@ $(document).ready(function() {
         const status = $('#editMainEqubStatus').val();
 
         // Create data object to send
-        const data = {
+        const 
+         = {
             name: name,
             active: status === "1" // Convert status to boolean
         };
@@ -216,4 +218,5 @@ $(document).ready(function() {
 
    
 </script>
+
 @endsection
