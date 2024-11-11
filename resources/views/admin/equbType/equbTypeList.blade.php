@@ -336,19 +336,36 @@
                     }
                 });
             });
+            // $("#quota").on("keyup", function() {
+            //     let startdate = document.getElementById('start_date').value;
+            //     let quota = document.getElementById('quota').value;
+            //     var date = new Date(startdate);
+            //     date.setDate(date.getDate() + (7 * quota)); 
+            //     $('#end_date').datepicker('setDate', new Date(date));
+            //     $('#end_date').datepicker('destroy');
+            // });
+            // $("#update_quota").on("keyup", function() {
+            //     let startdate = document.getElementById('update_start_date').value;
+            //     let quota = document.getElementById('update_quota').value;
+            //     var date = new Date(startdate);
+            //     date.setDate(date.getDate() + (7 * quota));
+            //     $('#update_end_date').datepicker('setDate', new Date(date));
+            //     $('#update_end_date').datepicker('destroy');
+            // });
             $("#quota").on("keyup", function() {
                 let startdate = document.getElementById('start_date').value;
-                let quota = document.getElementById('quota').value;
                 var date = new Date(startdate);
-                date.setDate(date.getDate() + (7 * quota));
+                date.setDate(date.getDate() + 105); // Add 105 days to the start date
+
                 $('#end_date').datepicker('setDate', new Date(date));
                 $('#end_date').datepicker('destroy');
             });
+
             $("#update_quota").on("keyup", function() {
                 let startdate = document.getElementById('update_start_date').value;
-                let quota = document.getElementById('update_quota').value;
                 var date = new Date(startdate);
-                date.setDate(date.getDate() + (7 * quota));
+                date.setDate(date.getDate() + 105); // Add 105 days to the start date
+
                 $('#update_end_date').datepicker('setDate', new Date(date));
                 $('#update_end_date').datepicker('destroy');
             });
