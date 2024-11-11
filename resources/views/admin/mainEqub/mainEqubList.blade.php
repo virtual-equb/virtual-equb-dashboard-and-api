@@ -192,11 +192,14 @@ $(document).ready(function() {
         const name = $('#editMainEqubName').val();
         const status = $('#editMainEqubStatus').val();
 
+        console.log('ID:', id);
+        console.log('Name:', name);
+        console.log('Status:', status); // Log the status
+
         // Create data object to send
-        const 
-         = {
+        const data = {
             name: name,
-            active: status === "1" // Convert status to boolean
+            active: status 
         };
 
         $.ajax({
@@ -218,5 +221,4 @@ $(document).ready(function() {
 
    
 </script>
-
 @endsection
