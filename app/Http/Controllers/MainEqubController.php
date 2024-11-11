@@ -117,35 +117,25 @@ class MainEqubController extends Controller
     }
     public function update(Request $request, $id)
     {
-        // Validate the incoming request
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'status' => 'required|boolean',
-            'remark' => 'nullable|string',
-            'new_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048' // Adjust validation as needed
-        ]);
+     
+        // Handle the image upload
+        $data = []; // Initialize data array
     
-        // Find the existing MainEqub record
-        $equb = MainEqub::findOrFail($id);
-    
-        // Update the fields
-        $equb->name = $request->input('name');
-        $equb->active = $request->input('status');
-        $equb->remark = $request->input('remark');
-    
-        // Handle the image upload if a new image is present
-        if ($request->hasFile('new_image')) {
-            // Delete the old image if it exists
-            if ($equb->image) {
-                Storage::disk('public')->delete($equb->image);
-            }
-    
-            // Store the new image
-            $imagePath = $request->file('new_image')->store('images/equbs', 'public');
-            $equb->image = $imagePath; // Update the image path in the equb record
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('images/equbs', 'public'); // Store the image
+            $data['image'] = $imagePath; // Add the image path to the data array
         }
     
-        // Save the updated record
+        $equb = MainEqub::findOrFail($id);
+        $equb->name = $request->input('name');
+        $equb->remark = $request->input('remark');
+        $equb->active = $request->input('status');
+    
+        // Optionally, include the image path in the equb model if it was uploaded
+        if (isset($data['image'])) {
+            $equb->image = $data['image'];
+        }
+    
         $equb->save();
     
         return response()->json(['message' => 'Equb updated successfully!']);
