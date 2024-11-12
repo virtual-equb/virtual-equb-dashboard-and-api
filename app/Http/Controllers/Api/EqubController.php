@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\api;
 
-use Log;
 use Exception;
 use Carbon\Carbon;
 use App\Models\Equb;
@@ -13,12 +12,14 @@ use App\Models\EqubType;
 use App\Models\RejectedDate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 use App\Http\Resources\Api\EqubResource;
 use App\Repositories\Equb\EqubRepository;
+use GPBMetadata\Google\Api\Log as ApiLog;
 use App\Repositories\Equb\IEqubRepository;
 use App\Repositories\Member\IMemberRepository;
 use App\Repositories\Payment\IPaymentRepository;
@@ -297,6 +298,68 @@ class EqubController extends Controller
             'code' => 200,
             'count' => $count
         ]);
+    }
+    public function sendMissedPaymentNotification()
+    {
+        try {
+            $today = Carbon::today();
+            $count = 0;
+
+            // Retrieve all active Equbs with 'Automatic' type and 'Daily' rotation
+            $equbs = Equb::whereHas('equbType', function ($query) {
+                        $query->where('type', 'Automatic')
+                              ->where('rote', 'Daily');
+                        })
+                        ->where('status', 'Active')
+                        ->with(['member', 'equbType'])
+                        ->get(); 
+            foreach($equbs as $equb) {
+                $member = $equb->member;
+
+                // Skip if member or phone number is invalid
+                if(!$member || !isset($member->phone) || empty($member->phone)) {
+                    Log::infor("Skipping Equb {$equb->equbType->name} due to missing member or phone");
+                    continue;
+                }
+
+                // Calculate the date range from the start date of the Equb to today
+                $startDate = Carbon::parse($equb->start_date)->startOfDay();
+                $days = $today->diffInDays($startDate);
+
+                // Loop through each day in the range to check for missing payments
+                for ($i = 1; $i <= $days; $i++) {
+                    $checkDate = $startDate->copy()->addDays($i);
+
+                    // check if a payment exists for the specific member on each past date
+                    $paymentExists = Payment::where('equb_id', $equb->id)
+                                             ->where('member_id', $member->id)
+                                             ->whereDate('created_at', $checkDate)
+                                             ->exists();
+                    // send notification if payment is missing for a specific date
+                    if (!$paymentExists) {
+                        $amount = $equb->amount;
+                        $shortcode = config('key.SHORT_CODE');
+                        $message = "Reminder: Your payment of $amount was due on {$checkDate->toFormattedDateString()} for Equb {$equb->equbType->name}. Please make your payment. For further information, call $shortcode.";
+
+                        $this->sendSms($member->phone, $message);
+                        $count++;
+                    }
+                }
+            }
+
+            return response()->json([
+                'message' => 'Payment notifications for missed payments sent successfully.',
+                'code' => 200,
+                'count' => $count
+            ]);
+        } catch (Exception $ex) {
+            // Return error response with exception message
+            return response()->json([
+                'message' => 'Unable to process your request, Please try again!',
+                'code' => 500,
+                'error' => $ex->getMessage(),
+            ]);
+        }
     }
     public function getReservedLotteryDate($lottery_date)
     {

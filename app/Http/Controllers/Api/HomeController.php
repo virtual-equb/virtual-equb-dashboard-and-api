@@ -38,7 +38,7 @@ class HomeController extends Controller
 
         // Guard Permission
         // $this->middleware('permission: view dashboard', ['only' => ['index', 'equbTypeIndex']]);
-        $this->middleware('api_permission_check:view dashboard', ['only' => ['index', 'equbTypeIndex']]);
+        // $this->middleware('api_permission_check:view dashboard', ['only' => ['index', 'equbTypeIndex']]);
     }
     /**
      * Get all dashboard info

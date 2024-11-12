@@ -6,10 +6,23 @@
     <div class="sidebar">
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image">
-                {{ Auth::user()->profile_photo_path }}
+                {{-- {{ Auth::user()->profile_photo_path || null }} --}}
+                @if (Auth::check() && Auth::user()->profile_photo_path)
+                    <img src="{{ Auth::user()->profile_photo_path }}" alt="Profile Photo">
+                @else
+                    <img src="{{ asset('default-profile.png') }}" alt="Default Profile Photo">
+                @endif
             </div>
             <div class="info">
+<<<<<<< HEAD
                 {{ Auth::user()->name }}</a>
+=======
+                <a href="/user/profile" class="d-block">
+                    @if (Auth::check() && Auth::user()->name)
+                    {{ Auth::user()->name }}
+                    @endif
+                </a>
+>>>>>>> fc37235cc1ce904045998ffe4b36899da11df932
             </div>
         </div>
         <nav class="mt-2">
