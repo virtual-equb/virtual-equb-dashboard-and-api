@@ -274,94 +274,13 @@
     @endsection
     @section('scripts')
         <script>
-          $(document).ready(function() {
-    $(document).on('click', '.view-icon', function(e) {
-        e.preventDefault();
-
-        var adminId = $(this).attr('equb-type-id');
-        var image = $(this).attr('equb-type-image');
-
-        $("#viewImage").attr("src", "/storage/" + image);
-
-        $('#modaloff6').modal('show');
-    });
-
-    $('.textareaa').summernote();
-
-    const selectBox = document.getElementById("type");
-    const lotteryDate = document.getElementById("lottery_date_div");
-    const startDate = document.getElementById("start_date_div");
-    const endDate = document.getElementById("end_date_div");
-    const quota = document.getElementById("quota_div");
-    const rote = document.getElementById("rote");
-    const amountDiv = document.getElementById("amount_div");
-    const members = document.getElementById('members_div');
-    const expectedMembers = document.getElementById('expected_members_div');
-    
-    // Function to calculate and display total amount
-    function calculateTotal() {
-        const amountInput = document.getElementById("amount_input"); // Assuming there's an input for the amount
-        const totalAmountDiv = document.getElementById("total_amount_div"); // Assuming you have a div to show the total amount
-        
-        if (amountInput && totalAmountDiv) {
-            const amount = parseFloat(amountInput.value) || 0; // Get the amount input
-            const total = amount * 105; // Calculate total amount
-            totalAmountDiv.textContent = "Total Amount: " + total.toFixed(2); // Display total amount
-        }
-    }
-
-    $("#type").on("change", function() {
-        var type = $(this).find("option:selected").val();
-        if (type === "Automatic") {
-            startDate.classList.remove("d-none");
-            endDate.classList.remove("d-none");
-            quota.classList.remove("d-none");
-            amountDiv.classList.remove("d-none");
-            members.classList.remove("d-none");
-            expectedMembers.classList.remove("d-none");
-            startDate.required = true;
-            endDate.required = true;
-            quota.required = true;
-            amountDiv.required = true;
-            members.required = true;
-
-            // Attach input event listener to amount input
-            const amountInput = document.getElementById("amount_input"); // Adjust based on your input ID
-            if (amountInput) {
-                amountInput.addEventListener("input", calculateTotal);
-            }
-        } else {
-            lotteryDate.classList.add("d-none");
-            startDate.classList.add("d-none");
-            endDate.classList.add("d-none");
-            quota.classList.add("d-none");
-            lotteryDate.required = false;
-            startDate.required = false;
-            endDate.required = false;
-            quota.required = false;
-            amountDiv.required = false;
-            members.required = false;
-        }
-    });
-});
             $(document).ready(function() {
-            // Initialize the jQuery UI datepicker for the end date
-            $('#end_date').datepicker();
+                $(document).on('click', '.view-icon', function(e) {
+                    e.preventDefault();
 
-            // Event listener for start_date change
-            $("#start_date").on("change", function() {
-                let startdate = $(this).val(); // Get the value of the start date input
-                if (startdate) {
-                    let date = new Date(startdate); // Create a Date object
-                    date.setDate(date.getDate() + 105); // Add 105 days
+                    var adminId = $(this).attr('equb-type-id');
+                    var image = $(this).attr('equb-type-image');
 
-<<<<<<< HEAD
-                    // Set the end date in the datepicker
-                    $('#end_date').datepicker('setDate', date);
-                }
-            });
-        });
-=======
                     $("#viewImage").attr("src", "/storage/" + image);
 
                     $('#modaloff6').modal('show');
@@ -376,6 +295,7 @@
                 const amount = document.getElementById("amount_div");
                 const members = document.getElementById('members_div');
                 const options = rote.options;
+                const expectedMembers = document.getElementById('expected_members_div');
                 $("#type").on("change", function() {
                     var type = $(this).find("option:selected").val();
                     if (type === "Automatic") {
@@ -385,6 +305,7 @@
                         quota.classList.remove("d-none");
                         amount.classList.remove("d-none");
                         members.classList.remove("d-none");
+                        expectedMembers.classList.remove("d-none"); // Show expected members
                         //for (var i = 1; i < options.length; i++) {
                         //    options[i].disabled = false;
                         //    if (options[i].value !== "Weekly") {
@@ -397,6 +318,8 @@
                         quota.required = true;
                         amount.required = true;
                         members.required = true;
+                        expectedMembers.required= true;
+
                     } else {
                         lotteryDate.classList.add("d-none");
                         startDate.classList.add("d-none");
@@ -417,37 +340,27 @@
                     }
                 });
             });
-            // $("#quota").on("keyup", function() {
-            //     let startdate = document.getElementById('start_date').value;
-            //     let quota = document.getElementById('quota').value;
-            //     var date = new Date(startdate);
-            //     date.setDate(date.getDate() + (7 * quota)); 
-            //     $('#end_date').datepicker('setDate', new Date(date));
-            //     $('#end_date').datepicker('destroy');
-            // });
-            // $("#update_quota").on("keyup", function() {
-            //     let startdate = document.getElementById('update_start_date').value;
-            //     let quota = document.getElementById('update_quota').value;
-            //     var date = new Date(startdate);
-            //     date.setDate(date.getDate() + (7 * quota));
-            //     $('#update_end_date').datepicker('setDate', new Date(date));
-            //     $('#update_end_date').datepicker('destroy');
-            // });
-            $("#quota").on("keyup", function() {
-                let startdate = document.getElementById('start_date').value;
-                var date = new Date(startdate);
-                date.setDate(date.getDate() + 105); // Add 105 days to the start date
+            $(document).ready(function() {
+            // Initialize the jQuery UI datepicker for the end date
+            $('#end_date').datepicker();
 
-                $('#end_date').datepicker('setDate', new Date(date));
-                $('#end_date').datepicker('destroy');
+            // Event listener for start_date change
+            $("#start_date").on("change", function() {
+                let startdate = $(this).val(); // Get the value of the start date input
+                if (startdate) {
+                    let date = new Date(startdate); // Create a Date object
+                    date.setDate(date.getDate() + 105); // Add 105 days
+
+                    // Set the end date in the datepicker
+                    $('#end_date').datepicker('setDate', date);
+                }
             });
-
->>>>>>> de2bbb9042100f2bade14d958ee0758c4cd5c70e
+        });
             $("#update_quota").on("keyup", function() {
                 let startdate = document.getElementById('update_start_date').value;
+                let quota = document.getElementById('update_quota').value;
                 var date = new Date(startdate);
-                date.setDate(date.getDate() + 105); // Add 105 days to the start date
-
+                date.setDate(date.getDate() + (7 * quota));
                 $('#update_end_date').datepicker('setDate', new Date(date));
                 $('#update_end_date').datepicker('destroy');
             });

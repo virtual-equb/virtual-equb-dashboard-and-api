@@ -30,25 +30,25 @@
                                 <p>Main Dashboard</p>
                             </a>
                         </li>
-                        @foreach (App\Models\MainEqub::all() as $mainEqub)
+                        @foreach (App\Models\MainEqub::with('subEqub')->get() as $mainEqub)
                             <li class="nav-item">
                                 <a href="#" class="nav-link" onclick="setActive('equb-{{ $mainEqub->id }}')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>{{ $mainEqub->name }}<i class="fas fa-angle-left right"></i></p>
                                 </a>
                                 <ul class="nav nav-treeview ml-2">
-                                    @if ($mainEqub->equbTypes && $mainEqub->equbTypes->count())
-                                        @foreach ($mainEqub->equbTypes as $equbType)
+                                    @if ($mainEqub->subEqub && $mainEqub->subEqub->count())
+                                        @foreach ($mainEqub->subEqub as $equbType)
                                             <li class="nav-item">
                                                 <a href="{{ url('equbTypeDashboard/' . $equbType->id) }}" class="nav-link" id="{{ $equbType->id }}">
                                                     <i class="far fa-circle nav-icon"></i>
-                                                    <p>{{ $equbType->id }}</p>
+                                                    <p>{{ $equbType->name }}</p>
                                                 </a>
                                             </li>
                                         @endforeach
                                     @else
                                         <li class="nav-item">
-                                            <p>No Equb Types available</p>
+                                            <p class="nav-link">No Equb Types available</p>
                                         </li>
                                     @endif
                                 </ul>
