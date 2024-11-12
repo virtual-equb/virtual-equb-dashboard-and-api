@@ -71,6 +71,9 @@
                             <div class="alert alert-success alert-block " style="background-color: #00843d; color: white;">
                                 <button type="button" class="close" data-dismiss="alert">×</button>
                                 <strong>{{ Session::get('success') }}</strong>
+                                @if(session('winnerCount'))
+                                    <p>Total winners in this draw: {{ session('winnerCount') }}</p>
+                                @endif
                             </div>
                         @elseif(Session::get('error'))
                             <div class="alert alert-error alert-block" style="background-color: #d22630;color: white;">
