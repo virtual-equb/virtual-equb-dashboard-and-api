@@ -14,15 +14,11 @@
                 @endif
             </div>
             <div class="info">
-<<<<<<< HEAD
-                {{ Auth::user()->name }}</a>
-=======
                 <a href="/user/profile" class="d-block">
                     @if (Auth::check() && Auth::user()->name)
                     {{ Auth::user()->name }}
                     @endif
                 </a>
->>>>>>> fc37235cc1ce904045998ffe4b36899da11df932
             </div>
         </div>
         <nav class="mt-2">
