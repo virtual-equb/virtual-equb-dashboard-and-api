@@ -51,10 +51,11 @@ Route::post('/notify-equb-start', [EqubController::class, 'sendStartNotification
 Route::post('/notify-equb-ends', [EqubController::class, 'sendEndNotifications']);
 Route::post('/daily-payment-notification', [EqubController::class, 'sendDailyPaymentNotification']);
 Route::post('/lottery-notification', [EqubController::class, 'sendLotteryNotification']);
+Route::post('/notify-missing-payment', [EqubController::class, 'sendMissedPaymentNotification']);
 
 Route::get('/registrationCity', [CityController::class, 'index'])->name('registrationCity');
 Route::post('member/registerMember', [MemberController::class, 'register'])->name('storeMember');
-Route::post('member/updateProfile/{id}', [MemberController::class, 'updateProfile'])->name('updateProfile'); // old update
+Route::put('member/updateProfile/{id}', [MemberController::class, 'updateProfile'])->name('updateProfile'); // old update
 // Route::middleware(['auth:api'])->put('member/updateProfile/{id}', [MemberController::class, 'updateProfile'])->name('updateProfile'); // new update
 Route::post('/checkMemberPhoneExist', [MemberController::class, 'checkMemberPhoneExist'])->name('check_member_phone_exist');
 Route::post('/checkUserPhoneExist', [UserController::class, 'checkPhone'])->name('check_user_phone_exist');
@@ -104,10 +105,9 @@ Route::post('/changePassword/{id}', [UserController::class, 'changePassword'])->
 
 // New Apis CBE Gatway 1
 Route::middleware(['auth:api'])->group(function () {
-    
+    // Transaction Status EncVal
+    Route::post('/transaction-status', [PaymentGatewayController::class, 'transactionStatus']);
 });
-// Transaction Status EncVal
-Route::post('/transaction-status', [PaymentGatewayController::class, 'transactionStatus']);
 Route::post('/cbegateway', [PaymentGatewayController::class, 'generateUrl']);
 
 // Main Equb
