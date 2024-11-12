@@ -2,29 +2,30 @@
 
 namespace App\Http\Controllers\api;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use App\Models\Payment;
-use App\Models\Equb;
-use App\Models\Member;
-use App\Models\User;
-use App\Http\Controllers\Controller;
-use App\Http\Resources\Api\MemberResource;
-use App\Models\EqubType;
+use DateTime;
 use Exception;
+use App\Models\Equb;
+use App\Models\User;
+use App\Models\Member;
+use App\Models\Payment;
+use App\Models\EqubType;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Resources\Api\MemberResource;
+use App\Repositories\Equb\IEqubRepository;
 use App\Repositories\User\IUserRepository;
 use App\Repositories\Member\IMemberRepository;
 use App\Repositories\Payment\IPaymentRepository;
 use App\Repositories\EqubType\IEqubTypeRepository;
-use App\Repositories\Equb\IEqubRepository;
 use App\Repositories\ActivityLog\IActivityLogRepository;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Session;
-use DateTime;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
-use Spatie\Permission\Models\Role;
 
 /**
  * @group Members
@@ -56,10 +57,10 @@ class MemberController extends Controller
         $this->title = "Virtual Equb - Member";
 
          // Guard Permissions
-         $this->middleware('api_permission_check:update member', ['only' => ['update', 'edit', 'updateStatus', 'rate', 'updateProfile']]);
-         $this->middleware('api_permission_check:delete member', ['only' => ['destroy']]);
-         $this->middleware('api_permission_check:view member', ['only' => ['index', 'searchMember', 'create', 'show', 'getPaidEqubs']]);
-         $this->middleware('api_permission_check:create member', ['only' => ['create']]);
+        //  $this->middleware('api_permission_check:update member', ['only' => ['update', 'edit', 'updateStatus', 'rate', 'updateProfile']]);
+        //  $this->middleware('api_permission_check:delete member', ['only' => ['destroy']]);
+        //  $this->middleware('api_permission_check:view member', ['only' => ['index', 'searchMember', 'create', 'show', 'getPaidEqubs']]);
+        //  $this->middleware('api_permission_check:create member', ['only' => ['create']]);
     }
     /**
      * Clear search entry
@@ -1160,151 +1161,167 @@ class MemberController extends Controller
      *
      * @return JsonResponse
      */
-    public function updateProfile($id, Request $request)
-    {
-        // dd($request);
-        try {
-                $userData = Auth::user();
-                $name = $request->input('full_name');
-                $phone = $request->input('phone');
-                $gender = $request->input('gender');
-                $city = $request->input('city');
-                $subcity = $request->input('subcity');
-                $woreda = $request->input('woreda');
-                $housenumber = $request->input('housenumber');
-                $location = $request->input('location');
-                $email = $request->input('email');
-                // dd($address);
-                $updated = [
-                    'full_name' => $name,
-                    'phone' => $phone,
-                    'gender' => $gender,
-                    'email' => $email,
-                    'city' => $city,
-                    'subcity' => $subcity,
-                    'woreda' => $woreda,
-                    'house_number' => $housenumber,
-                    'specific_location' => $location
-                ];
-                if ($request->file('profile_picture')) {
-                    $image = $request->file('profile_picture');
-                    $imageName = time() . '.' . $image->getClientOriginalExtension();
-                    $image->storeAs('public/profile_pictures', $imageName);
-                    $updated['profile_photo_path'] = 'profile_pictures/' . $imageName;
-                }
-                if (!empty($phone)) {
-                    $member_count = Member::where('phone', $phone)->where('id', '!=', $id)->count();
-                    if ($member_count > 0) {
-                        return response()->json([
-                            'code' => 403,
-                            'message' => 'Phone already exist',
-                        ]);
-                    }
-                }
-                if (!empty($email)) {
-                    $member_count = Member::where('email', $email)->where('id', '!=', $id)->count();
-                    if ($member_count > 0) {
-                        return response()->json([
-                            'code' => 403,
-                            'message' => 'Email already exist',
-                        ]);
-                    }
-                }
-                
-                $updated = $this->memberRepository->update($id, $updated);
-                // dd($id);
-                $updateUser = [
-                    'name' => $name,
-                    'phone_number' => $phone,
-                    'gender' => $gender,
-                    'email' => $email
-                ];
-                $updateUser = $this->userRepository->updateUser($userData->id, $updateUser);
-                if ($updated && $updateUser) {
-                    return response()->json([
-                        'code' => 200,
-                        'message' => 'Profile has been updated successfully!',
-                        'data' => $updated
-                    ]);
-                } else {
-                    return response()->json([
-                        'code' => 400,
-                        'message' => 'Unknown error occurred, Please try again!',
-                        "error" => "Unknown error occurred, Please try again!"
-                    ]);
-                }
-        } catch (Exception $ex) {
-            return response()->json([
-                'code' => 500,
-                'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex->getMessage()
-            ]);
-        }
-    }
     // public function updateProfile($id, Request $request)
     // {
+    //     // dd($request);
     //     try {
-    //         // Authenticate user
-    //         $userData = Auth::user();
-            
-    //         // Validation rules
-    //         $this->validate($request, [
-    //             'full_name' => 'nullable|string',
-    //             'phone' => 'nullable|string|unique:members,phone,' . $id,
-    //             'email' => 'nullable|email|unique:members,email,' . $id,
-    //             'gender' => 'nullable|in:male,female,other',
-    //             'city' => 'nullable|string',
-    //             'subcity' => 'nullable|string',
-    //             'woreda' => 'nullable|string',
-    //             'housenumber' => 'nullable|string',
-    //             'location' => 'nullable|string',
-    //             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
-    //         ]);
+    //             $userData = Auth::user();
+    //             $name = $request->input('full_name');
+    //             $phone = $request->input('phone');
+    //             $gender = $request->input('gender');
+    //             $city = $request->input('city');
+    //             $subcity = $request->input('subcity');
+    //             $woreda = $request->input('woreda');
+    //             $housenumber = $request->input('housenumber');
+    //             $location = $request->input('location');
+    //             $email = $request->input('email');
+    //             // dd($address);
+    //             $updated = [
+    //                 'full_name' => $name,
+    //                 'phone' => $phone,
+    //                 'gender' => $gender,
+    //                 'email' => $email,
+    //                 'city' => $city,
+    //                 'subcity' => $subcity,
+    //                 'woreda' => $woreda,
+    //                 'house_number' => $housenumber,
+    //                 'specific_location' => $location
+    //             ];
+    //             if ($request->file('profile_picture')) {
+    //                 $image = $request->file('profile_picture');
+    //                 $imageName = time() . '.' . $image->getClientOriginalExtension();
+    //                 $image->storeAs('public/profile_pictures', $imageName);
+    //                 // $updated['profile_photo_path'] = 'profile_pictures/' . $imageName;
+    //                 $updated['profile_photo_path'] = 'profile_pictures/' . $imageName;
+    //             }
+    //             if (!empty($phone)) {
+    //                 $member_count = Member::where('phone', $phone)->where('id', '!=', $id)->count();
+    //                 if ($member_count > 0) {
+    //                     return response()->json([
+    //                         'code' => 403,
+    //                         'message' => 'Phone already exist',
+    //                     ]);
+    //                 }
+    //             }
+    //             if (!empty($email)) {
+    //                 $member_count = Member::where('email', $email)->where('id', '!=', $id)->count();
+    //                 if ($member_count > 0) {
+    //                     return response()->json([
+    //                         'code' => 403,
+    //                         'message' => 'Email already exist',
+    //                     ]);
+    //                 }
+    //             }
+                
+    //             $updated = $this->memberRepository->update($id, $updated);
+    //             // dd($id);
+    //             $updateUser = [
+    //                 'name' => $name,
+    //                 'phone_number' => $phone,
+    //                 'gender' => $gender,
+    //                 'email' => $email
+    //             ];
+    //             $updateUser = $this->userRepository->updateUser($userData->id, $updateUser);
 
-    //         // Collect updates from request
-    //         $updatedData = $request->only([
-    //             'full_name', 'phone', 'gender', 'email', 'city', 'subcity', 
-    //             'woreda', 'housenumber', 'location'
-    //         ]);
-
-    //         // Handle profile picture upload
-    //         if ($request->hasFile('profile_picture')) {
-    //             $image = $request->file('profile_picture');
-    //             $imageName = time() . '.' . $image->getClientOriginalExtension();
-    //             $image->storeAs('public/profile_pictures', $imageName);
-    //             $updatedData['profile_photo_path'] = 'profile_pictures/' . $imageName;
-    //         }
-
-    //         // Update member and user records
-    //         $this->memberRepository->update($id, array_filter($updatedData));
-
-    //         $userUpdates = [
-    //             'name' => $request->input('full_name', $userData->name),
-    //             'phone_number' => $request->input('phone', $userData->phone_number),
-    //             'gender' => $request->input('gender', $userData->gender),
-    //             'email' => $request->input('email', $userData->email)
-    //         ];
-    //         $this->userRepository->updateUser($userData->id, array_filter($userUpdates));
-
-    //         // Return success response
-    //         return response()->json([
-    //             'code' => 200,
-    //             'message' => 'Profile has been updated successfully!',
-    //             'data' => array_filter($updatedData) // Only send updated fields
-    //         ]);
-
-    //     } catch (\Illuminate\Database\QueryException $ex) {
-    //         return response()->json([
-    //             'code' => 500,
-    //             'message' => 'Unable to process your request, Please try again!',
-    //             'error' => $ex->getMessage()
-    //         ]);
+    //             if ($updated && $updateUser) {
+    //                 return response()->json([
+    //                     'code' => 200,
+    //                     'message' => 'Profile has been updated successfully!',
+    //                     'data' => $updated
+    //                 ]);
+    //             } else {
+    //                 return response()->json([
+    //                     'code' => 400,
+    //                     'message' => 'Unknown error occurred, Please try again!',
+    //                     "error" => "Unknown error occurred, Please try again!"
+    //                 ]);
+    //             }
     //     } catch (Exception $ex) {
     //         return response()->json([
     //             'code' => 500,
-    //             'message' => 'An error occurred, Please try again!',
-    //             'error' => $ex->getMessage()
+    //             'message' => 'Unable to process your request, Please try again!',
+    //             "error" => $ex->getMessage()
     //         ]);
     //     }
     // }
+    public function updateProfile($id, Request $request)
+    {
+        try {
+            // Authenticate user
+            $userData = Auth::user();
+
+            // Validation rules for form data (especially file upload)
+            $this->validate($request, [
+                'full_name' => 'nullable|string',
+                'phone' => ['nullable', 'string', Rule::unique('members')->ignore($id)],
+                'email' => ['nullable', 'email', Rule::unique('members')->ignore($id)],
+                'gender' => 'nullable|in:male,female,other',
+                'city' => 'nullable|string',
+                'subcity' => 'nullable|string',
+                'woreda' => 'nullable|string',
+                'housenumber' => 'nullable|string',
+                'location' => 'nullable|string',
+                'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+            ]);
+
+            // Collect data from the request
+            $updatedData = [
+                'full_name' => $request->input('full_name', $userData->full_name),
+                'phone' => $request->input('phone', $userData->phone),
+                'gender' => $request->input('gender', $userData->gender),
+                'email' => $request->input('email', $userData->email),
+                'city' => $request->input('city', $userData->city),
+                'subcity' => $request->input('subcity', $userData->subcity),
+                'woreda' => $request->input('woreda', $userData->woreda),
+                'housenumber' => $request->input('housenumber', $userData->housenumber),
+                'location' => $request->input('location', $userData->specific_location),
+                'specific_location' => $request->input('specific_location', $userData->specific_location)
+            ];
+
+            // Handle profile picture upload (optional)
+            if ($request->hasFile('profile_picture')) {
+                $image = $request->file('profile_picture');
+                $imageName = time() . '.' . $image->getClientOriginalExtension();
+                $image->storeAs('public/profile_pictures', $imageName);
+                $updatedData['profile_photo_path'] = 'profile_pictures/' . $imageName;
+            }
+
+            // Remove null values from $updatedData to avoid overwriting with null values
+            $updatedData = array_filter($updatedData, fn($value) => !is_null($value));
+
+            // Update the `members` table directly
+            $member = Member::findOrFail($id);
+            $member->update($updatedData);
+
+            // Update the `users` table directly
+            $userUpdates = [
+                'name' => $request->input('full_name', $userData->name),
+                'phone_number' => $request->input('phone', $userData->phone_number),
+                'gender' => $request->input('gender', $userData->gender),
+                'email' => $request->input('email', $userData->email)
+            ];
+
+            $userData->update($userUpdates);
+
+            // Return success response with updated member data using a resource
+            return response()->json([
+                'code' => 200,
+                'message' => 'Profile has been updated successfully!',
+                'data' => new MemberResource($member)  // Return the updated member using a resource
+            ]);
+
+        } catch (\Illuminate\Database\QueryException $ex) {
+            return response()->json([
+                'code' => 500,
+                'message' => 'Unable to process your request, Please try again!',
+                'error' => $ex->getMessage()
+            ]);
+        } catch (Exception $ex) {
+            return response()->json([
+                'code' => 500,
+                'message' => 'An error occurred, Please try again!',
+                'error' => $ex->getMessage()
+            ]);
+        }
+    }
 }

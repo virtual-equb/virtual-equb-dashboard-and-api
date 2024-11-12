@@ -17,23 +17,15 @@ class MainEqubController extends Controller
 {
     public function __construct()
     {
-        // $this->middleware('auth:api');
+        $this->middleware('auth:api');
         $this->middleware('api_permission_check:update main_equb', ['only' => ['update', 'edit']]);
         $this->middleware('api_permission_check:delete main_equb', ['only' => ['destroy']]);
         $this->middleware('api_permission_check:view main_equb', ['only' => ['index', 'show']]);
         $this->middleware('api_permission_check:create main_equb', ['only' => ['store', 'create']]);
     }
-    public function getTypes() {
-        $types = EqubType::with('mainEqub')->get();
-        return response()->json([
-            'data' => $types
-        ]);
-
-        return view('admin/equbType.equbTypeList', $types);
-    }
 
     public function index() {
-        $userData = Auth::user();
+        // $userData = Auth::user();
         // dd($userData);
         try {
             
