@@ -1249,7 +1249,7 @@ class MemberController extends Controller
         try {
             // Authenticate user
             $userData = Auth::user();
-
+            // dd($request->all());
             // Validation rules for form data (especially file upload)
             $this->validate($request, [
                 'full_name' => 'nullable|string',
