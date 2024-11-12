@@ -355,16 +355,99 @@
                     let date = new Date(startdate); // Create a Date object
                     date.setDate(date.getDate() + 105); // Add 105 days
 
+<<<<<<< HEAD
                     // Set the end date in the datepicker
                     $('#end_date').datepicker('setDate', date);
                 }
             });
         });
+=======
+                    $("#viewImage").attr("src", "/storage/" + image);
+
+                    $('#modaloff6').modal('show');
+                });
+                $('.textareaa').summernote();
+                const selectBox = document.getElementById("type");
+                const lotteryDate = document.getElementById("lottery_date_div");
+                const startDate = document.getElementById("start_date_div");
+                const endDate = document.getElementById("end_date_div");
+                const quota = document.getElementById("quota_div");
+                const rote = document.getElementById("rote");
+                const amount = document.getElementById("amount_div");
+                const members = document.getElementById('members_div');
+                const options = rote.options;
+                $("#type").on("change", function() {
+                    var type = $(this).find("option:selected").val();
+                    if (type === "Automatic") {
+                        // lotteryDate.classList.remove("d-none");
+                        startDate.classList.remove("d-none");
+                        endDate.classList.remove("d-none");
+                        quota.classList.remove("d-none");
+                        amount.classList.remove("d-none");
+                        members.classList.remove("d-none");
+                        //for (var i = 1; i < options.length; i++) {
+                        //    options[i].disabled = false;
+                        //    if (options[i].value !== "Weekly") {
+                        //        options[i].disabled = true;
+                        //    }
+                        //}
+                        // lotteryDate.required = true;
+                        startDate.required = true;
+                        endDate.required = true;
+                        quota.required = true;
+                        amount.required = true;
+                        members.required = true;
+                    } else {
+                        lotteryDate.classList.add("d-none");
+                        startDate.classList.add("d-none");
+                        endDate.classList.add("d-none");
+                        quota.classList.add("d-none");
+                        //for (var i = 1; i < options.length; i++) {
+                        //   options[i].disabled = false;
+                        //  if (options[i].value !== "Daily") {
+                        //       options[i].disabled = true;
+                        //   }
+                        //}
+                        lotteryDate.required = false;
+                        startDate.required = false;
+                        endDate.required = false;
+                        quota.required = false;
+                        amount.required = false;
+                        members.required = false;
+                    }
+                });
+            });
+            // $("#quota").on("keyup", function() {
+            //     let startdate = document.getElementById('start_date').value;
+            //     let quota = document.getElementById('quota').value;
+            //     var date = new Date(startdate);
+            //     date.setDate(date.getDate() + (7 * quota)); 
+            //     $('#end_date').datepicker('setDate', new Date(date));
+            //     $('#end_date').datepicker('destroy');
+            // });
+            // $("#update_quota").on("keyup", function() {
+            //     let startdate = document.getElementById('update_start_date').value;
+            //     let quota = document.getElementById('update_quota').value;
+            //     var date = new Date(startdate);
+            //     date.setDate(date.getDate() + (7 * quota));
+            //     $('#update_end_date').datepicker('setDate', new Date(date));
+            //     $('#update_end_date').datepicker('destroy');
+            // });
+            $("#quota").on("keyup", function() {
+                let startdate = document.getElementById('start_date').value;
+                var date = new Date(startdate);
+                date.setDate(date.getDate() + 105); // Add 105 days to the start date
+
+                $('#end_date').datepicker('setDate', new Date(date));
+                $('#end_date').datepicker('destroy');
+            });
+
+>>>>>>> de2bbb9042100f2bade14d958ee0758c4cd5c70e
             $("#update_quota").on("keyup", function() {
                 let startdate = document.getElementById('update_start_date').value;
-                let quota = document.getElementById('update_quota').value;
                 var date = new Date(startdate);
-                date.setDate(date.getDate() + (7 * quota));
+                date.setDate(date.getDate() + 105); // Add 105 days to the start date
+
                 $('#update_end_date').datepicker('setDate', new Date(date));
                 $('#update_end_date').datepicker('destroy');
             });
