@@ -26,11 +26,12 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="currentImage" class="control-label">Current Image:</label>
-                        <div>
-                            <img id="currentImage" src="" alt="Current Image" style="max-width: 100%; height: auto; display: none;">
-                        </div>
-                    </div>
+    <label for="currentImage" class="control-label">Current Image:</label>
+    <div style="background-color: rgb(76, 175, 80); width: 60px; text-align: center;">
+        <img id="currentImage" src="{{ asset('storage/' . $equb->image) }}" alt="{{ $equb->name }}" 
+             style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; display: {{ $equb->image ? 'block' : 'none' }};">
+    </div>
+</div>
 
                     <div class="form-group">
                         <label for="newImage" class="control-label">Upload New Image:</label>

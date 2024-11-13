@@ -115,9 +115,11 @@
                                                         @foreach ($equbTypes as $key => $item)
                                                             <tr>
                                                                 <td>{{ $key + 1 }}</td>
-                                                                <td>
-                                                                    <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}" style="width: 50px; height: auto;">
-                                                                </td>
+                                                             
+                                                                <td style="background-color: rgb(76, 175, 80); width: 60px; text-align: center;">
+    <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}" 
+         style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+</td>
                                                                 <td>{{ $item->main_equb->name ?? 'N/A'}}</td>
                                                                 <td>{{ $item->name }}</td>
                                                                 <td>{{ $item->round }}</td>
