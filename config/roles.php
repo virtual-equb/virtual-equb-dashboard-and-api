@@ -28,29 +28,14 @@ return [
     'display_permission_in_exception' => false, // Set to true to display permission names in exceptions
 
     'permissions' => [
-        'City Management' => [
-            'create city' => ['web', 'api'],
-            'view city' => ['web', 'api'],
-            'update city' => ['web', 'api'],
-            'delete city' => ['web', 'api'],
-        ],
-        'Sub City Management' => [
-            'create sub_city' => ['web', 'api'],
-            'view sub_city' => ['web', 'api'],
-            'update sub_city' => ['web', 'api'],
-            'delete sub_city' => ['web', 'api'],
-        ],
-        'Country Management' => [
-            'create country' => ['web', 'api'],
-            'view country' => ['web', 'api'],
-            'update country' => ['web', 'api'],
-            'delete country' => ['web', 'api'],
-        ],
-        'Country Code Management' => [
-            'create country_code' => ['web', 'api'],
-            'view country_code' => ['web', 'api'],
-            'update country_code' => ['web', 'api'],
-            'delete country_code' => ['web', 'api'],
+        'Dashboard Management' => [
+            'view_dashboard' => ['web', 'api'],
+            'view_dashboard_daily_summary' => ['web', 'api'],
+            'view_dashboard_all_projection' => ['web', 'api'],
+            'view_dashboard_members' => ['web', 'api'],
+            'view_dashboard_summary' => ['web', 'api'],
+            'view_dashboard_lottery_winner' => ['web', 'api'],
+            'view_dashboard_projection_equb_type' => ['web', 'api'],
         ],
         'Equb Management' => [
             'create equb' => ['web', 'api'],
@@ -64,18 +49,7 @@ return [
             'update equb_taker' => ['web', 'api'],
             'delete equb_taker' => ['web', 'api'],
         ],
-        'Permission Management' => [
-            'create permission' => ['web', 'api'],
-            'view permission' => ['web', 'api'],
-            'update permission' => ['web', 'api'],
-            'delete permission' => ['web', 'api'],
-        ],
-        'Role Management' => [
-            'create role' => ['web', 'api'],
-            'view role' => ['web', 'api'],
-            'update role' => ['web', 'api'],
-            'delete role' => ['web', 'api'],
-        ],
+       
         'Equb Type Management' => [
             'create equb_type' => ['web', 'api'],
             'view equb_type' => ['web', 'api'],
@@ -114,6 +88,14 @@ return [
             'update rejected_date' => ['web', 'api'],
             'delete rejected_date' => ['web', 'api'],
         ],
+        'Payment Management' => [
+            'create payment' => ['web', 'api'],
+            'view payment' => ['web', 'api'],
+            'update payment' => ['web', 'api'],
+            'delete payment' => ['web', 'api'],
+            'add equb_payment' => ['web', 'api'],
+            'export payment_data' => ['web', 'api'],
+        ],
         'User Management' => [
             'create user' => ['web', 'api'],
             'view user' => ['web', 'api'],
@@ -123,14 +105,19 @@ return [
             'reset user_password' => ['web', 'api'],
             'activate user' => ['web', 'api'],
         ],
-        'Payment Management' => [
-            'create payment' => ['web', 'api'],
-            'view payment' => ['web', 'api'],
-            'update payment' => ['web', 'api'],
-            'delete payment' => ['web', 'api'],
-            'add equb_payment' => ['web', 'api'],
-            'export payment_data' => ['web', 'api'],
+        'Permission Management' => [
+            'create permission' => ['web', 'api'],
+            'view permission' => ['web', 'api'],
+            'update permission' => ['web', 'api'],
+            'delete permission' => ['web', 'api'],
         ],
+        'Role Management' => [
+            'create role' => ['web', 'api'],
+            'view role' => ['web', 'api'],
+            'update role' => ['web', 'api'],
+            'delete role' => ['web', 'api'],
+        ],
+       
         'Reporting' => [
             'view report' => ['web', 'api'],
             'view payment_report' => ['web', 'api'],
@@ -144,14 +131,24 @@ return [
             'view member_report' => ['web', 'api'],
             'view member_report_by_equb_type' => ['web', 'api'],
         ],
-        'Dashboard Management' => [
-            'view_dashboard' => ['web', 'api'],
-            'view_dashboard_daily_summary' => ['web', 'api'],
-            'view_dashboard_all_projection' => ['web', 'api'],
-            'view_dashboard_members' => ['web', 'api'],
-            'view_dashboard_summary' => ['web', 'api'],
-            'view_dashboard_lottery_winner' => ['web', 'api'],
-            'view_dashboard_projection_equb_type' => ['web', 'api'],
+       
+        'Location Management' => [
+            'create city' => ['web', 'api'],
+            'view city' => ['web', 'api'],
+            'update city' => ['web', 'api'],
+            'delete city' => ['web', 'api'],
+            'create sub_city' => ['web', 'api'],
+            'view sub_city' => ['web', 'api'],
+            'update sub_city' => ['web', 'api'],
+            'delete sub_city' => ['web', 'api'],
+            'create country' => ['web', 'api'],
+            'view country' => ['web', 'api'],
+            'update country' => ['web', 'api'],
+            'delete country' => ['web', 'api'],
+            'create country_code' => ['web', 'api'],
+            'view country_code' => ['web', 'api'],
+            'update country_code' => ['web', 'api'],
+            'delete country_code' => ['web', 'api'],
         ],
         'Miscellaneous' => [
             'test' => ['web', 'api'],
