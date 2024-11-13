@@ -180,15 +180,18 @@ class RolesController extends Controller
         // Find the role by ID
         $role = Role::findOrFail($id);
         $role->name = $formFields['name'];
-
         $role->save();
     
+        // Get permissions from the request, defaulting to an empty array if null
+        $permissions = $request->input('permissions', []);
+    
         // Filter and sync permissions
-        $filteredPermissions = array_filter($request->input('permissions'), function ($permission) {
+        $filteredPermissions = array_filter($permissions, function ($permission) {
             return $permission != 0;
         });
+    
         $role->permissions()->sync($filteredPermissions);
-       // dd( $filteredPermissions);
+    
         // Clear cache
         Artisan::call('cache:clear');
     
@@ -196,6 +199,7 @@ class RolesController extends Controller
         Session::flash('message', 'Role updated successfully.');
         return redirect($request->input('redirect_url')); // Assumes you have a redirect URL in the form
     }
+    
 
     /**
      * Remove the specified resource from storage.

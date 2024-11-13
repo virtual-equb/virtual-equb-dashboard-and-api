@@ -26,7 +26,7 @@ use Spatie\Permission\Models\Permission;
                                                 {{ get_label('settings', 'Settings') }}
                                             </li>
                                             <li class="breadcrumb-item active">
-                                                {{ get_label('role', 'Role') }}
+                                                {{ get_label('create_role', 'Create Role') }}
                                             </li>
                                         </ol>
                                     </nav>
@@ -40,13 +40,14 @@ use Spatie\Permission\Models\Permission;
                                             </a>
                                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                         </div>
-
-                                        <form action="{{ url('/roles/store') }}" method="POST">
+                                        <form action="{{ url('/roles/store') }}" class="form-submit-event" method="POST">
                                             @csrf
                                             <input type="hidden" name="redirect_url" value="/settings/permission">
 
                                             <div class="mb-3">
-                                                <label for="name" class="form-label">{{ get_label('name', 'Name') }} <span class="text-danger">*</span></label>
+                                                <label for="name" class="form-label">
+                                                    {{ get_label('name', 'Name') }} <span class="asterisk">*</span>
+                                                </label>
                                                 <input class="form-control" type="text" placeholder="{{ get_label('please_enter_role_name', 'Please enter role name') }}" id="name" name="name" required>
                                                 @error('name')
                                                     <p class="text-danger text-xs mt-1">{{ $message }}</p>
@@ -65,34 +66,38 @@ use Spatie\Permission\Models\Permission;
                                                                     <label class="form-check-label" for="selectAllColumnPermissions">{{ get_label('select_all', 'Select all') }}</label>
                                                                 </div>
                                                             </th>
-                                                            <th class="text-start fw-bold" style="font-size: 1.2em;">{{ get_label('permissions', 'Permissions') }}</th>
+                                                            <th class="text-start fw-bold" style="font-size: 1.2em;">
+                                                                Permissions
+                                                            </th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @foreach(config("roles.permissions") as $module => $permissions)
-                                                            <tr>
-                                                                <td class="text-start">
-                                                                    <div class="form-check">
-                                                                        <input type="checkbox" id="selectRow{{ $module }}" class="form-check-input row-permission-checkbox" data-module="{{ $module }}">
-                                                                        <label class="form-check-label fw-bold" for="selectRow{{ $module }}">{{ $module }}</label>
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="row">
-                                                                        @foreach($permissions as $permission)
-                                                                            <?php $permissionModel = Permission::where('name', $permission)->where('guard_name', 'web')->first(); ?>
-                                                                            <div class="col-3 mb-3">
-                                                                                <div class="form-check">
-                                                                                    <input type="checkbox" name="permissions[]" value="{{ optional($permissionModel)->id }}" class="form-check-input permission-checkbox" data-module="{{ $module }}">
-                                                                                    <label class="form-check-label text-capitalize">{{ optional($permissionModel)->name ? str_replace('_', ' ', optional($permissionModel)->name) : '' }}</label>
-                                                                                </div>
-                                                                            </div>
-                                                                        @endforeach
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        @endforeach
-                                                    </tbody>
+    @foreach(config("roles.permissions") as $module => $permissions)
+        <tr>
+            <td class="text-start">
+                <div class="form-check">
+                    <input type="checkbox" id="selectRow{{ $module }}" class="form-check-input row-permission-checkbox" data-module="{{ $module }}">
+                    <label class="form-check-label" for="selectRow{{ $module }}" style="font-size: 1.2em; font-weight: 600;">
+                        {{ $module }}
+                    </label>
+                </div>
+            </td>
+            <td>
+                <div class="row">
+                    @foreach($permissions as $permission => $guards)
+                        <div class="col-3 mb-3">
+                            <div class="form-check">
+                                <?php $permissionModel = Permission::where('name', $permission)->where('guard_name', 'web')->first(); ?>
+                                <input type="checkbox" name="permissions[]" value="{{ optional($permissionModel)->id }}" class="form-check-input permission-checkbox" data-module="{{ $module }}">
+                                <label class="form-check-label text-capitalize" for="permission{{ optional($permissionModel)->id }}">{{ $permission }}</label>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </td>
+        </tr>
+    @endforeach
+</tbody>
                                                 </table>
                                             </div>
 

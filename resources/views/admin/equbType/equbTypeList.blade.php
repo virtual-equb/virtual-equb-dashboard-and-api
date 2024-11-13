@@ -274,72 +274,118 @@
     @endsection
     @section('scripts')
         <script>
-            $(document).ready(function() {
-                $(document).on('click', '.view-icon', function(e) {
-                    e.preventDefault();
+   $(document).ready(function() {
+    $(document).ready(function() {
+    // Set Expected Members to 100 and make it unchangeable
+    $('#expected_members').val(100).prop('readonly', true).parent().removeClass('d-none');
 
-                    var adminId = $(this).attr('equb-type-id');
-                    var image = $(this).attr('equb-type-image');
+    // Show or hide fields based on the selected type
+    $('#type').change(function() {
+        var selectedType = $(this).val();
 
-                    $("#viewImage").attr("src", "/storage/" + image);
+        if (selectedType === 'Automatic') {
+            $('#amount_div').removeClass('d-none');
+            $('#quota_div').removeClass('d-none');
+            $('#total_amount').parent().removeClass('d-none'); // Show Total Amount field
+        } else {
+            $('#amount_div').addClass('d-none');
+            $('#quota_div').addClass('d-none');
+            $('#total_amount').parent().addClass('d-none'); // Hide Total Amount field
+        }
+    });
 
-                    $('#modaloff6').modal('show');
-                });
-                $('.textareaa').summernote();
-                const selectBox = document.getElementById("type");
-                const lotteryDate = document.getElementById("lottery_date_div");
-                const startDate = document.getElementById("start_date_div");
-                const endDate = document.getElementById("end_date_div");
-                const quota = document.getElementById("quota_div");
-                const rote = document.getElementById("rote");
-                const amount = document.getElementById("amount_div");
-                const members = document.getElementById('members_div');
-                const options = rote.options;
-                const expectedMembers = document.getElementById('expected_members_div');
-                $("#type").on("change", function() {
-                    var type = $(this).find("option:selected").val();
-                    if (type === "Automatic") {
-                        // lotteryDate.classList.remove("d-none");
-                        startDate.classList.remove("d-none");
-                        endDate.classList.remove("d-none");
-                        quota.classList.remove("d-none");
-                        amount.classList.remove("d-none");
-                        members.classList.remove("d-none");
-                        expectedMembers.classList.remove("d-none"); // Show expected members
-                        //for (var i = 1; i < options.length; i++) {
-                        //    options[i].disabled = false;
-                        //    if (options[i].value !== "Weekly") {
-                        //        options[i].disabled = true;
-                        //    }
-                        //}
-                        // lotteryDate.required = true;
-                        startDate.required = true;
-                        endDate.required = true;
-                        quota.required = true;
-                        amount.required = true;
-                        members.required = true;
-                        expectedMembers.required= true;
+    // Calculate Total Amount based on Amount
+    $('#amount').on('input', function() {
+        const amount = parseFloat($('#amount').val()) || 0;
+        const expectedMembers = 100; // Fixed expected members
+        const totalAmount = amount * expectedMembers; // Calculate total amount
 
-                    } else {
-                        lotteryDate.classList.add("d-none");
-                        startDate.classList.add("d-none");
-                        endDate.classList.add("d-none");
-                        quota.classList.add("d-none");
-                        //for (var i = 1; i < options.length; i++) {
-                        //   options[i].disabled = false;
-                        //  if (options[i].value !== "Daily") {
-                        //       options[i].disabled = true;
-                        //   }
-                        //}
-                        lotteryDate.required = false;
-                        startDate.required = false;
-                        endDate.required = false;
-                        quota.required = false;
-                        amount.required = false;
-                        members.required = false;
-                    }
-                });
-            });
+        $('#total_amount').val(totalAmount); // Update Total Amount
+    });
+
+    // Existing code for viewing icon
+    $(document).on('click', '.view-icon', function(e) {
+        e.preventDefault();
+
+        var adminId = $(this).attr('equb-type-id');
+        var image = $(this).attr('equb-type-image');
+
+        $("#viewImage").attr("src", "/storage/" + image);
+        $('#modaloff6').modal('show');
+    });
+});
+
+
+    $('.textareaa').summernote();
+
+    const selectBox = document.getElementById("type");
+    const lotteryDate = document.getElementById("lottery_date_div");
+    const startDate = document.getElementById("start_date_div");
+    const endDate = document.getElementById("end_date_div");
+    const quota = document.getElementById("quota_div");
+    const rote = document.getElementById("rote");
+    const amount = document.getElementById("amount_div");
+    const members = document.getElementById('members_div');
+    const expectedMembers = document.getElementById('expected_members_div');
+    const totalAmountDisplay = document.getElementById('total_amount_display'); // Element to show total amount
+
+    $("#type").on("change", function() {
+        var type = $(this).find("option:selected").val();
+        if (type === "Automatic") {
+            startDate.classList.remove("d-none");
+            endDate.classList.remove("d-none");
+            quota.classList.remove("d-none");
+            amount.classList.remove("d-none");
+            members.classList.remove("d-none");
+            expectedMembers.classList.remove("d-none"); // Show expected members
+
+            // Set required attributes
+            startDate.required = true;
+            endDate.required = true;
+            quota.required = true;
+            amount.required = true;
+            members.required = true;
+            expectedMembers.required = true;
+
+            // Calculate and display expected members and total amount
+            updateExpectedMembers();
+            updateTotalAmount();
+
+        } else {
+            lotteryDate.classList.add("d-none");
+            startDate.classList.add("d-none");
+            endDate.classList.add("d-none");
+            quota.classList.add("d-none");
+            amount.classList.add("d-none");
+            members.classList.add("d-none");
+            expectedMembers.classList.add("d-none");
+
+            // Remove required attributes
+            startDate.required = false;
+            endDate.required = false;
+            quota.required = false;
+            amount.required = false;
+            members.required = false;
+            expectedMembers.required = false;
+
+            // Clear total amount display
+            totalAmountDisplay.innerText = '';
+        }
+    });
+
+    function updateExpectedMembers() {
+        // Assuming members input is a number, display it in expected members
+        expectedMembers.value = members.value; // Adjust logic as needed
+    }
+
+    function updateTotalAmount() {
+        const amountValue = parseFloat(amount.value) || 0; // Get the amount value
+        const quotaValue = parseInt(quota.value) || 0; // Get the quota value
+        const totalAmount = amountValue * quotaValue; // Calculate total amount
+        totalAmountDisplay.innerText = totalAmount.toFixed(2); // Display total amount
+    }
+});
+
             $(document).ready(function() {
             // Initialize the jQuery UI datepicker for the end date
             $('#end_date').datepicker();
@@ -386,7 +432,6 @@
                         quota.classList.remove("d-none");
                         amount.classList.remove("d-none");
                         members.classList.remove("d-none");
-                        expected_members.classList.remove("d-none");
                         //for (var i = 1; i < update_options.length; i++) {
                         //    update_options[i].disabled = false;
                         //   if (update_options[i].value !== "Weekly") {
