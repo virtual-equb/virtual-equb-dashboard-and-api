@@ -49,7 +49,12 @@ return [
             'update equb_taker' => ['web', 'api'],
             'delete equb_taker' => ['web', 'api'],
         ],
-       
+       'Main Equb Management' => [
+    'create main_equb' => ['web', 'api'],
+    'view main_equb' => ['web', 'api'],
+    'update main_equb' => ['web', 'api'],
+    'delete main_equb' => ['web', 'api'],
+],
         'Equb Type Management' => [
             'create equb_type' => ['web', 'api'],
             'view equb_type' => ['web', 'api'],
