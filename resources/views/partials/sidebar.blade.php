@@ -10,7 +10,7 @@
                 @if (Auth::check() && Auth::user()->profile_photo_path)
                     <img src="{{ Auth::user()->profile_photo_path }}" alt="Profile Photo">
                 @else
-                    <img src="{{ asset('default-profile.png') }}" alt="Default Profile Photo">
+                    <img src="{{ asset('default-profile.png') }}" alt="Default Photo">
                 @endif
             </div>
             <div class="info">
@@ -197,12 +197,7 @@
                                 <p>Permissions</p>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a href="{{ url('roles') }}" class="nav-link {{ request()->is('roles') ? 'active' : '' }}" id="nav-roles" onclick="setActive('nav-roles')">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Roles</p>
-                            </a>
-                        </li>
+                     
                     </ul>
                 </li>
                 @endcan
