@@ -117,29 +117,38 @@ class MainEqubController extends Controller
     }
     public function update(Request $request, $id)
     {
-     
-        // Handle the image upload
-        $data = []; // Initialize data array
+        // Return the JSON representation of the request data for debugging
+        // This line is for debugging purposes; you can remove it later
+        // return response()->json($request->all());
     
+        // Validate the incoming request data
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'remark' => 'nullable|string|max:500', // Added validation for remark
+            'active' => 'required',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Added image validation
+        ]);
+    
+        // Find the MainEqub model by ID or fail
+        $equb = MainEqub::findOrFail($id);
+    
+        // Update the model attributes
+        $equb->name = $validatedData['name'];
+        $equb->remark = $validatedData['remark'] ?? $equb->remark; // Keep existing remark if not provided
+        $equb->active = $validatedData['active'];
+    
+        // Handle the image upload if a new image is provided
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('images/equbs', 'public'); // Store the image
-            $data['image'] = $imagePath; // Add the image path to the data array
+            $equb->image = $imagePath; // Update the image path in the model
         }
     
-        $equb = MainEqub::findOrFail($id);
-        $equb->name = $request->input('name');
-        $equb->remark = $request->input('remark');
-        $equb->active = $request->input('status');
-    
-        // Optionally, include the image path in the equb model if it was uploaded
-        if (isset($data['image'])) {
-            $equb->image = $data['image'];
-        }
-    
+        // Save the updated model
         $equb->save();
     
         return response()->json(['message' => 'Equb updated successfully!']);
     }
+    
     public function destroy($id)
     {
         try {

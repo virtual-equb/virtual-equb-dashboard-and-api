@@ -207,6 +207,7 @@ $(document).ready(function() {
             url: '/main-equbs/' + id, // Ensure this URL matches your route
             data: data,
             success: function(result) {
+                console.log(data);
                 alert(result.message || 'Main Equb updated successfully!');
                 $('#editMainEqubModal').modal('hide'); // Hide the modal after saving
                 location.reload(); // Refresh the page to see changes
