@@ -34,7 +34,7 @@
                 visibility: hidden;
             }
 
-            @media (max-width: 575.98px) {
+            @media (max-width: 2000px) {
                 #equbType-list-table {
                     display: block;
                     width: 100%;
