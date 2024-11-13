@@ -574,6 +574,7 @@ class EqubController extends Controller
                     $equbTypes = EqubType::where('id', $equbType)->first();
                     if ($equbTypes->type == 'Automatic') {
                         $equbTypes->remaining_quota -= 1;
+                        $equbTypes->increment('total_members', 1);
                         if ($equbTypes->remaining_quota == 0) {
                             $equbTypes->status = "Deactive";
                         }

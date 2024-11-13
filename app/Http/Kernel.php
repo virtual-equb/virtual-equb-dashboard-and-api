@@ -28,7 +28,7 @@ class Kernel extends HttpKernel
     {
         $schedule->command('equb:notify-due-starts')->hourly();
         $schedule->command('equb:notify-due-ends')->hourly();
-        $schedule->comand('equb:send-notifications')->daily();
+        $schedule->command('equb:send-notifications')->hourly();
     }
 
     /**

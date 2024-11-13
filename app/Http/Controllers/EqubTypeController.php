@@ -13,7 +13,9 @@ use App\Models\MainEqub;
 use Illuminate\Http\Request;
 use App\Models\LotteryWinner;
 use App\Service\Notification;
+use App\Jobs\NotifyWinnersJob;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -352,9 +354,6 @@ class EqubTypeController extends Controller
                 return back();
             }
 
-            // $equbEndDate = DB::table('equb_types')
-            //                 ->where('id', $equbTypeId)
-            //                 ->value('end_date');
             $equbEndDate = EqubType::where('id', $equbTypeId)->value('end_date');
             // Continue drawing winners until the end date
             while (Carbon::now()->startOfDay()->lte($equbEndDate)) {
@@ -415,6 +414,8 @@ class EqubTypeController extends Controller
             return back();
         }
     }
+    
+
     protected function notifyWinnersAndMembers($equbTypeId, array $roundWinners, array $allMembers)
     {
         $equbType = EqubType::find($equbTypeId);
@@ -434,7 +435,7 @@ class EqubTypeController extends Controller
         // Notify remaining members of the 7 selected winners
         $winnerNames = Member::whereIn('id', $roundWinners)->pluck('full_name')->toArray();
         $winnerList = implode(", ", $winnerNames);
-        $message = "The winners for the current Equb round are: {$winnerList}. For further information, please call ($shortcode}.";
+        $message = "The winners for the current Equb round are: {$winnerList}. For further information, please call {$shortcode}.";
         
         foreach ($allMembers as $memberId) {
             if (!in_array($memberId, $roundWinners)) { // Notify only non-winners

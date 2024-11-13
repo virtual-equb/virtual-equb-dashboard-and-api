@@ -45,6 +45,11 @@ class EqubNotificationCommand extends Command
         $lotteryCount = $lotteryResponse->getData()->count();
         $this->info("Lottery notification sent: {$lotteryCount}");
 
+        // Send missed payment notification
+        $missedResponse = $equbContorller->sendMissedPaymentNotification();
+        $missedCount = $missedResponse->getData()->count();
+        $this->info("Missed notification sent: {$missedCount}");
+
         $this->info("Equb notifications processed successfully.");
     }
 }
