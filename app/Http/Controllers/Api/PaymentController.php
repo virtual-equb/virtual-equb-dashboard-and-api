@@ -510,7 +510,7 @@ class PaymentController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }

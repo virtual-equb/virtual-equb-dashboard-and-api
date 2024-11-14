@@ -321,15 +321,22 @@ class EqubTypeController extends Controller
             return false;
         }
     }
+    
     public function drawAutoWinners(Request $request)
     {
         try {
             $equbTypeId = $request->equbTypeId;
             $now = Carbon::now()->startOfDay();
             $allWinners = []; // Track all winners to exclude from future draws
-            // $totalMembers = 100; // totalMembers
+            $totalMembers = 100; // totalMembers
             $winnerCount = 0;
-            $totalMembers = 1;
+            // $totalMembers = 1;
+
+            $equbEndDate = EqubType::where('id', $equbTypeId)->value('end_date');
+            if ($now->gt($equbEndDate)) {
+                Session::flash('error', "The Equb has already ended.");
+                return back();
+            }
 
             // Fetch active members for the equb 
             $members = DB::table('equbs')
@@ -337,30 +344,41 @@ class EqubTypeController extends Controller
                         ->where('status', 'Active')
                         ->pluck('member_id')
                         ->toArray();
-            
+                        dd($members);
             // Exclude members with 5 or more missed payments in the last 5 days
             $eligibleMembers = array_filter($members, function ($memberId) use ($now) {
                 $missedPayments = Payment::where('member_id', $memberId)
                         ->whereDate('created_at', '>=', $now->copy()->subDays(5))
                         ->count();
+                
                 return $missedPayments < 5;
             });
+            
 
             if (count($eligibleMembers) < $totalMembers) {
                 // Ensure there are at least 100 eligible members for the draw
-                $msg = "Not enough members for the lottery draw.";
-                $type = 'error';
-                Session::flash($type, $msg);
-                return back();
+                // $msg = "Not enough members for the lottery draw.";
+                // $type = 'error';
+                // Session::flash($type, $msg);
+                // return back();
+                $demoUsers = Member::where('gender', '')
+                            ->whereNotIn('id', $eligibleMembers)
+                            ->limit($totalMembers - count($eligibleMembers))
+                            ->pluck('id')
+                            ->toArray();
+                $eligibleMembers = array_merge($eligibleMembers, $demoUsers);
             }
 
-            $equbEndDate = EqubType::where('id', $equbTypeId)->value('end_date');
+            // $equbEndDate = EqubType::where('id', $equbTypeId)->value('end_date');
+
             // Continue drawing winners until the end date
             while (Carbon::now()->startOfDay()->lte($equbEndDate)) {
 
                 $eligibleMembers = array_diff($members, $allWinners); // Exclude previous winners
                 if (count($eligibleMembers) < 7) {
-                    break; // Stop if there are fewer than 7 eligible members
+                    // break; // Stop if there are fewer than 7 eligible members
+                    Session::flash('error', "Not enough members for the lottery draw.");
+                    return back();
                 }
 
                 // Draw 7 new unique winners
@@ -414,38 +432,182 @@ class EqubTypeController extends Controller
             return back();
         }
     }
-    
 
-    protected function notifyWinnersAndMembers($equbTypeId, array $roundWinners, array $allMembers)
-    {
-        $equbType = EqubType::find($equbTypeId);
-        $shortcode = config('key.SHORT_CODE');
+// public function drawAutoWinners2(Request $request)
+// {
+//     try {
+//         $equbTypeId = $request->equbTypeId;
+//         $now = Carbon::now()->startOfDay();
+//         $winnerCount = 0;
+//         $requiredWinners = 7;
+//         $totalMembers = 100;
+//         $allWinners = []; // Track all winners to exclude from future draws
 
-        foreach ($roundWinners as $winnerId) {
-            $winner = Member::find($winnerId);
+//         // Fetch Equb end date and check current date
+//         $equbEndDate = EqubType::where('id', $equbTypeId)->value('end_date');
+//         if ($now->gt($equbEndDate)) {
+//             Session::flash('error', "The Equb has already ended.");
+//             return back();
+//         }
+
+//         // Fetch all active members for the Equb
+//         $activeMembers = DB::table('equbs')
+//                         ->where('equb_type_id', $equbTypeId)
+//                         ->where('status', 'Active')
+//                         ->pluck('member_id')
+//                         ->toArray();
+
+//         // Filter out members with five or more missed payments in the last five days
+//         $eligibleMembers = array_filter($activeMembers, function ($memberId) use ($now) {
+//             $missedPayments = Payment::where('member_id', $memberId)
+//                 ->whereDate('created_at', '>=', $now->copy()->subDays(5))
+//                 ->count();
+//             return $missedPayments < 5;
+//         });
+
+//         // Add "Demo users" if eligible members are fewer than 100
+//         if (count($eligibleMembers) < $totalMembers) {
+//             // $demoUsers = User::role('Demo user') // Using Spatie's role method
+//             //             ->whereNotIn('id', $eligibleMembers) // Exclude already eligible members
+//             //             ->limit($totalMembers - count($eligibleMembers))
+//             //             ->pluck('id')
+//             //             ->toArray();
+//             $demoUsers = Member::where('gender', '')->whereNotIn('id', $eligibleMembers)->limit($totalMembers - count($eligibleMembers))->pluck('id')->toArray();
+//             $eligibleMembers = array_merge($eligibleMembers, $demoUsers);
+//         }
+
+//         // Continue drawing winners until the end date
+//         while ($now->lte($equbEndDate)) {
+//             // Exclude previous winners and check eligible count
+//             $eligibleMembers = array_diff($eligibleMembers, $allWinners);
+//             if (count($eligibleMembers) < $requiredWinners) {
+//                 Session::flash('error', "Not enough members for the lottery draw.");
+//                 return back();
+//             }
+
+//             // Draw 7 unique winners for this round
+//             $roundWinners = $this->drawRandomId($eligibleMembers, $requiredWinners);
+//             $allWinners = array_merge($allWinners, $roundWinners);
+
+//             // Batch insert winners to LotteryWinners
+//             $winnerEntries = [];
+//             foreach ($roundWinners as $winnerId) {
+//                 // Check if the winner is a Demo user or a regular member
+//                 $winner = null;
+//                 if (in_array($winnerId, $demoUsers)) {
+//                     $winner = User::find($winnerId);
+//                 } else {
+//                     $winner = Member::find($winnerId);
+//                 }
+
+//                 // $member = Member::find($winnerId);
+//                 $memberName = $winner ? $winner->full_name : "Unknown Member";
+
+//                 $equbType = EqubType::find($equbTypeId);
+//                 $equbTypeName = $equbType ? $equbType->name : "Unknown Equb Type";
+
+//                 $winnerEntries[] = [
+//                     'equb_type_id' => $equbTypeId,
+//                     'member_id' => $winnerId,
+//                     'member_name' => $memberName,
+//                     'equb_type_name' => $equbTypeName,
+//                     'created_at' => $now,
+//                     'updated_at' => $now
+//                 ];
+//                 $winnerCount++;
+//             }
+
+//             LotteryWinner::insert($winnerEntries); // Insert all winners at once
+
+//             // Notify winners and other members
+//             $this->notifyWinnersAndMembers($equbTypeId, $roundWinners, $eligibleMembers);
+
+//             // Advance draw date by 7 days
+//             // $nextDrawDate = $now->addDays(7);
+//             // EqubType::where('id', $equbTypeId)->update(['lottery_date' => $nextDrawDate]);
+//             $lotteryDate = Carbon::parse($now)->addDays(7);
+//             EqubType::where('id', $equbTypeId)->update(['lottery_date' => $lotteryDate]);
+
+//             if ($lotteryDate->gt($equbEndDate)) {
+//                 break; // Stop if the next lottery date exceeds the Equb end date
+//             }
+//         }
+
+//         Session::flash('success', "Equb draw completed! Total Winners: $winnerCount");
+//         return back()->with(['winnerCount' => $winnerCount]);
+        
+//     } catch (Exception $ex) {
+//         // dd($ex);
+//         Session::flash('error', "Unable to process your request, please try again!" . $ex->getMessage());
+//         return back();
+//     }
+// }
+
+protected function notifyWinnersAndMembers($equbTypeId, array $roundWinners, array $allMembers)
+{
+    $equbType = EqubType::find($equbTypeId);
+    $shortcode = config('key.SHORT_CODE');
+
+    // Prepare winner names for the non-winners message
+    $winnerNames = Member::whereIn('id', $roundWinners)->pluck('full_name')->toArray();
+    $winnerList = implode(", ", $winnerNames);
+
+    foreach ($allMembers as $memberId) {
+        $member = Member::find($memberId);
+        
+        if (in_array($memberId, $roundWinners)) {
+            // If the member is a winner, send a congrats message
             $title = "Congratulations";
             $message = "You have been selected as the winner of the equb {$equbType->name}. For further information, please call {$shortcode}.";
-            
-            // Notify the winner
-            $notifiedWinner = User::where('phone_number', $winner->phone)->first();
-            Notification::sendNotification($notifiedWinner->fcm_id, $message, $title);
-            $this->sendSms($notifiedWinner->phone_number, $message);
-        }
 
-        // Notify remaining members of the 7 selected winners
-        $winnerNames = Member::whereIn('id', $roundWinners)->pluck('full_name')->toArray();
-        $winnerList = implode(", ", $winnerNames);
-        $message = "The winners for the current Equb round are: {$winnerList}. For further information, please call {$shortcode}.";
-        
-        foreach ($allMembers as $memberId) {
-            if (!in_array($memberId, $roundWinners)) { // Notify only non-winners
-                $member = Member::find($memberId);
-                $notifiedMember = User::where('phone_number', $member->phone)->first();
+            $notifiedWinner = User::where('phone_number', $member->phone)->first();
+            if ($notifiedWinner) {
+                Notification::sendNotification($notifiedWinner->fcm_id, $message, $title);
+                $this->sendSms($notifiedWinner->phone_number, $message);
+            }
+        } else {
+            // If the member is not a winner, send the winners' list message
+            $message = "The winners for the current Equb round are: {$winnerList}. For further information, please call {$shortcode}.";
+
+            $notifiedMember = User::where('phone_number', $member->phone)->first();
+            if ($notifiedMember) {
                 Notification::sendNotification($notifiedMember->fcm_id, $message, "Equb Round Results");
                 $this->sendSms($notifiedMember->phone_number, $message);
             }
         }
     }
+}
+
+    // protected function notifyWinnersAndMembers($equbTypeId, array $roundWinners, array $allMembers)
+    // {
+    //     $equbType = EqubType::find($equbTypeId);
+    //     $shortcode = config('key.SHORT_CODE');
+
+    //     foreach ($roundWinners as $winnerId) {
+    //         $winner = Member::find($winnerId);
+    //         $title = "Congratulations";
+    //         $message = "You have been selected as the winner of the equb {$equbType->name}. For further information, please call {$shortcode}.";
+            
+    //         // Notify the winner
+    //         $notifiedWinner = User::where('phone_number', $winner->phone)->first();
+    //         Notification::sendNotification($notifiedWinner->fcm_id, $message, $title);
+    //         $this->sendSms($notifiedWinner->phone_number, $message);
+    //     }
+
+    //     // Notify remaining members of the 7 selected winners
+    //     $winnerNames = Member::whereIn('id', $roundWinners)->pluck('full_name')->toArray();
+    //     $winnerList = implode(", ", $winnerNames);
+    //     $message = "The winners for the current Equb round are: {$winnerList}. For further information, please call {$shortcode}.";
+        
+    //     foreach ($allMembers as $memberId) {
+    //         if (!in_array($memberId, $roundWinners)) { // Notify only non-winners
+    //             $member = Member::find($memberId);
+    //             $notifiedMember = User::where('phone_number', $member->phone)->first();
+    //             Notification::sendNotification($notifiedMember->fcm_id, $message, "Equb Round Results");
+    //             $this->sendSms($notifiedMember->phone_number, $message);
+    //         }
+    //     }
+    // }
 
     function drawRandomId(array $ids, int $numWinners = 7)
     {
