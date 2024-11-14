@@ -57,10 +57,10 @@ class PaymentController extends Controller
         $this->title = "Virtual Equb - Payment";
 
         // Permission Guard
-        $this->middleware('api_permission_check:update payment', ['only' => ['update', 'edit', 'updatePayment']]);
-        $this->middleware('api_permission_check:delete payment', ['only' => ['destroy', 'deleteAllPayment', 'deletePayment']]);
-        $this->middleware('api_permission_check:view payment', ['only' => ['index', 'show']]);
-        $this->middleware('api_permission_check:create payment', ['only' => ['store', 'storeForAdmin', 'create', 'initialize']]);
+        // $this->middleware('api_permission_check:update payment', ['only' => ['update', 'edit', 'updatePayment']]);
+        // $this->middleware('api_permission_check:delete payment', ['only' => ['destroy', 'deleteAllPayment', 'deletePayment']]);
+        // $this->middleware('api_permission_check:view payment', ['only' => ['index', 'show']]);
+        // $this->middleware('api_permission_check:create payment', ['only' => ['store', 'storeForAdmin', 'create', 'initialize']]);
     }
     /**
      * Get all payments of members
@@ -510,7 +510,7 @@ class PaymentController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex
+                "error" => $ex->getMessage()
             ]);
         }
     }
