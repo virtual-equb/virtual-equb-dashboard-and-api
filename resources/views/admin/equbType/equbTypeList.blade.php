@@ -120,7 +120,13 @@
     <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}" 
          style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
 </td>
-                                                                <td>{{ $item->main_equb->name ?? 'N/A'}}</td>
+<td>
+                    @if ($item->mainEqub)  
+                        {{ $item->mainEqub->name }}  
+                    @else
+                        N/A
+                    @endif
+                </td>
                                                                 <td>{{ $item->name }}</td>
                                                                 <td>{{ $item->round }}</td>
                                                                 <td>{{ $item->rote }}</td>
