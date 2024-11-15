@@ -11,6 +11,13 @@ class City extends Model
 
     protected $fillable = [
         'name',
+        'country_id',
         'active',
+        'created_by'
     ];
+
+    public function subCity()
+    {
+        return $this->belongsTo(Sub_city::class, 'city_id');
+    }
 }
