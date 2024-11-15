@@ -1053,8 +1053,8 @@ class MemberController extends Controller
             if ($request->file('profile_picture')) {
                 $image = $request->file('profile_picture');
                 $imageName = time() . '.' . $image->getClientOriginalExtension();
-                $image->storeAs('public/profile_pictures', $imageName);
-                $memberData['profile_photo_path'] = 'profile_pictures/' . $imageName;
+                $image->storeAs('public/images/profile', $imageName);
+                $memberData['profile_photo_path'] = '/images/profile/' . $imageName;
             }
 
             // Create member and user
@@ -1198,8 +1198,8 @@ class MemberController extends Controller
             if ($request->hasFile('profile_picture')) {
                 $image = $request->file('profile_picture');
                 $imageName = time() . '.' . $image->getClientOriginalExtension();
-                $image->storeAs('public/profile_pictures', $imageName);
-                $updatedData['profile_photo_path'] = 'profile_pictures/' . $imageName;
+                $image->storeAs('public/images/profile', $imageName);
+                $updatedData['profile_photo_path'] = '/images/profile/' . $imageName;
             }
 
             // Remove null values from $updatedData to avoid overwriting with null values
