@@ -26,7 +26,7 @@ class MemberResource extends JsonResource
             'woreda' => $this->woreda,
             'house_number' => $this->house_number,
             'specific_location' => $this->specific_location,
-            'profile_photo_path' => $this->profile_photo_path ? asset('storage/images' . $this->profile_photo_path) : null,
+            'profile_photo_path' => $this->profile_photo_path ? asset('storage/images/' . $this->profile_photo_path) : null,
             'verified' => $this->verified,
             'approved_by' => $this->approved_by,
             'approved_date' => (new \DateTime($this->approved_date))->format('Y-m-d H:i:s'),
