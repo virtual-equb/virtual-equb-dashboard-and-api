@@ -31,6 +31,6 @@ class Cities extends Model
 
     public function subCity() 
     {
-        return $this->belongsTo(Sub_city::class, 'id');
+        return $this->hasMany(Sub_city::class, 'city_id');
     }
 }
