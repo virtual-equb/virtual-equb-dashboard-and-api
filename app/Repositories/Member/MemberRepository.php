@@ -32,6 +32,7 @@ class MemberRepository implements IMemberRepository
     {
         $limit = 10;
         return $this->model->with(['memberCity', 'memberSubcity'])
+            ->where('gender', '!=', '')
             ->orderBy('full_name', 'asc')
             ->offset($offset)
             ->limit($limit)
@@ -65,7 +66,7 @@ class MemberRepository implements IMemberRepository
     }
     public function getActiveMember()
     {
-        return $this->model->where('status', 'Active')->count('id');
+        return $this->model->where('status', 'Active')->where('gender', '!=', '')->count('id');
     }
     public function getEqubTypeActiveMember($equbTypeId)
     {
@@ -141,7 +142,8 @@ class MemberRepository implements IMemberRepository
 
     public function getMember()
     {
-        return $this->model->all()->count();
+        // $this->model->all()->count();
+        return $this->model->where('gender', '!=', '')->count();
     }
     public function getPendingMembers()
     {
