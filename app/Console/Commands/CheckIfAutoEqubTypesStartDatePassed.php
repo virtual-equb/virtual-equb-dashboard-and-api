@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\EqubType;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Console\Command;
 
 class CheckIfAutoEqubTypesStartDatePassed extends Command

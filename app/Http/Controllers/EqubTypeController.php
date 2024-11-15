@@ -344,7 +344,7 @@ class EqubTypeController extends Controller
                         ->where('status', 'Active')
                         ->pluck('member_id')
                         ->toArray();
-                        dd($members);
+                        // dd($members);
             // Exclude members with 5 or more missed payments in the last 5 days
             $eligibleMembers = array_filter($members, function ($memberId) use ($now) {
                 $missedPayments = Payment::where('member_id', $memberId)

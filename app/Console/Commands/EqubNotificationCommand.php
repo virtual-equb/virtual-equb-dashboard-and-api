@@ -7,6 +7,9 @@ use Illuminate\Console\Command;
 
 class EqubNotificationCommand extends Command
 {
+    protected $command = [
+        \App\Console\Commands\EqubNotificationCommand::class,
+    ];
     /**
      * The name and signature of the console command.
      *
