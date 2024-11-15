@@ -106,7 +106,7 @@ Route::post('/changePassword/{id}', [UserController::class, 'changePassword'])->
 // New Apis CBE Gatway 1
 Route::middleware(['auth:api'])->group(function () {
     // Transaction Status EncVal
-    Route::post('/cbegateway', [PaymentGatewayController::class, 'generateUrl']);
+    
 });
 
 
@@ -122,6 +122,8 @@ Route::middleware(['auth:api'])->group(function () {
     Route::resource('/permissions', PermissionController::class);
     Route::get('/roles/{roleId}/give-permissions', [RoleController::class, 'addPermissionToRole']);
     Route::put('/roles/{roleId}/give-permissions', [RoleController::class, 'updatePermissionToRole']);
+    // CBE
+    Route::post('/cbegateway', [PaymentGatewayController::class, 'generateUrl']);
 });
 
 
