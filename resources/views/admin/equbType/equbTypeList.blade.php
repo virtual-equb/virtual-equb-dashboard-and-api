@@ -103,6 +103,7 @@
                                                             <th>Type</th>
                                                             <th>Space Left (Quota)</th>
                                                             <th>Expected members (Quota)</th>
+                                                            <th>Total joined members (Quota)</th>
                                                             <th>Lottery Date</th>
                                                             <th>Total Amount (Birr)</th>
                                                             <th>Remark</th>
@@ -133,6 +134,7 @@
                                                                 <td>{{ $item->type }}</td>
                                                                 <td>{{ $item->remaining_quota }}</td>
                                                                 <td>{{ $item->expected_members }}</td>
+                                                                <td>{{ $item->total_members }}</td>
                                                                 <td>
                                                                     <?php
                                                                     if ($item['lottery_date']) {

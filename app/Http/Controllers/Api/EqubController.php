@@ -847,6 +847,7 @@ class EqubController extends Controller
                 $equbTypes = EqubType::find($equbType);
                 if ($equbTypes && $equbTypes->type == 'Automatic') {
                     $equbTypes->decrement('remaining_quota', 1);
+                    $equbTypes->increment('total_members', 1);
                 }
 
                 // Prepare data for Equb Taker
