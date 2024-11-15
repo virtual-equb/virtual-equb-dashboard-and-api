@@ -1045,7 +1045,7 @@ class MemberController extends Controller
                 'woreda' => $woreda,
                 'house_number' => $housenumber,
                 'specific_location' => $location,
-                'status' => "Pending",
+                'status' => "Active",
                 'date_of_birth' => $dateofBirth
             ];
 
