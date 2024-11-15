@@ -31,6 +31,13 @@ class Kernel extends HttpKernel
         $schedule->command('equb:send-notifications')->everyMinute();
     }
 
+    protected function commands()
+    {
+        $this->load(__DIR__.'/Commands');
+
+        require base_path('routes/console.php');
+    }
+
     /**
      * The application's route middleware groups.
      *

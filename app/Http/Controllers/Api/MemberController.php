@@ -446,7 +446,7 @@ class MemberController extends Controller
                 $city = $request->input('city');
                 $subcity = $request->input('subcity');
                 $woreda = $request->input('woreda');
-                $housenumber = $request->input('housenumber');
+                $housenumber = $request->input('house_number');
                 $location = $request->input('location');
                 $email = $request->input('email');
                 $date_of_birth = $request->input('date_of_birth');
@@ -1246,10 +1246,10 @@ class MemberController extends Controller
     // }
     public function updateProfile($id, Request $request)
     {
+        // dd($request->all());
         try {
             // Authenticate user
             $userData = Auth::user();
-            // dd($request->all());
             // Validation rules for form data (especially file upload)
             $this->validate($request, [
                 'full_name' => 'nullable|string',
@@ -1259,23 +1259,35 @@ class MemberController extends Controller
                 'city' => 'nullable|string',
                 'subcity' => 'nullable|string',
                 'woreda' => 'nullable|string',
-                'housenumber' => 'nullable|string',
+                'house_number' => 'nullable|string',
                 'location' => 'nullable|string',
                 'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
             ]);
 
             // Collect data from the request
+            // $updatedData = [
+            //     'full_name' => $request->input('full_name', $userData->full_name),
+            //     'phone' => $request->input('phone', $userData->phone),
+            //     'gender' => $request->input('gender', $userData->gender),
+            //     'email' => $request->input('email', $userData->email),
+            //     'city' => $request->input('city', $userData->city),
+            //     'subcity' => $request->input('subcity', $userData->subcity),
+            //     'woreda' => $request->input('woreda', $userData->woreda),
+            //     'house_number' => $request->input('house_number', $userData->housenumber),
+            //     'location' => $request->input('location', $userData->specific_location),
+            //     'specific_location' => $request->input('specific_location', $userData->specific_location)
+            // ];
             $updatedData = [
-                'full_name' => $request->input('full_name', $userData->full_name),
-                'phone' => $request->input('phone', $userData->phone),
-                'gender' => $request->input('gender', $userData->gender),
-                'email' => $request->input('email', $userData->email),
-                'city' => $request->input('city', $userData->city),
-                'subcity' => $request->input('subcity', $userData->subcity),
-                'woreda' => $request->input('woreda', $userData->woreda),
-                'housenumber' => $request->input('housenumber', $userData->housenumber),
-                'location' => $request->input('location', $userData->specific_location),
-                'specific_location' => $request->input('specific_location', $userData->specific_location)
+                'full_name' => $request->get('full_name', $userData->full_name),
+                'phone' => $request->get('phone', $userData->phone),
+                'gender' => $request->get('gender', $userData->gender),
+                'email' => $request->get('email', $userData->email),
+                'city' => $request->get('city', $userData->city),
+                'subcity' => $request->get('subcity', $userData->subcity),
+                'woreda' => $request->get('woreda', $userData->woreda),
+                'house_number' => $request->get('house_number', $userData->housenumber),
+                'location' => $request->get('location', $userData->specific_location),
+                'specific_location' => $request->get('specific_location', $userData->specific_location)
             ];
 
             // Handle profile picture upload (optional)
@@ -1310,12 +1322,6 @@ class MemberController extends Controller
                 'data' => new MemberResource($member)  // Return the updated member using a resource
             ]);
 
-        } catch (\Illuminate\Database\QueryException $ex) {
-            return response()->json([
-                'code' => 500,
-                'message' => 'Unable to process your request, Please try again!',
-                'error' => $ex->getMessage()
-            ]);
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,

@@ -55,7 +55,7 @@ Route::post('/notify-missing-payment', [EqubController::class, 'sendMissedPaymen
 
 Route::get('/registrationCity', [CityController::class, 'index'])->name('registrationCity');
 Route::post('member/registerMember', [MemberController::class, 'register'])->name('storeMember');
-Route::put('member/updateProfile/{id}', [MemberController::class, 'updateProfile'])->name('updateProfile'); // old update
+Route::post('member/updateProfile/{id}', [MemberController::class, 'updateProfile'])->name('updateProfile'); // old update
 // Route::middleware(['auth:api'])->put('member/updateProfile/{id}', [MemberController::class, 'updateProfile'])->name('updateProfile'); // new update
 Route::post('/checkMemberPhoneExist', [MemberController::class, 'checkMemberPhoneExist'])->name('check_member_phone_exist');
 Route::post('/checkUserPhoneExist', [UserController::class, 'checkPhone'])->name('check_user_phone_exist');
@@ -102,12 +102,6 @@ Route::get('/getRemainingLotteryAmount/{id}', [EqubTakerController::class, 'getR
 Route::post('/dateInterval', [EqubController::class, 'dateInterval'])->name('dateInterval');
 Route::get('/getDailyPaidAmount/{equb_id}', [EqubController::class, 'getDailyPaidAmount'])->name('getDailyPaidAmount');
 Route::post('/changePassword/{id}', [UserController::class, 'changePassword'])->name('changePassword');
-
-// New Apis CBE Gatway 1
-Route::middleware(['auth:api'])->group(function () {
-    // Transaction Status EncVal
-    
-});
 
 
 // Main Equb
