@@ -570,7 +570,7 @@ class EqubRepository implements IEqubRepository
 
     public function create(array $attributes)
     {
-        return $this->model->create($attributes);
+        return $this->model->with('equbType')->create($attributes);
     }
 
     public function update($id, array $attributes)

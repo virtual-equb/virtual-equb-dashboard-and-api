@@ -446,7 +446,7 @@ class MemberController extends Controller
                 $city = $request->input('city');
                 $subcity = $request->input('subcity');
                 $woreda = $request->input('woreda');
-                $housenumber = $request->input('housenumber');
+                $housenumber = $request->input('house_number');
                 $location = $request->input('location');
                 $email = $request->input('email');
                 $date_of_birth = $request->input('date_of_birth');
@@ -1161,95 +1161,12 @@ class MemberController extends Controller
      *
      * @return JsonResponse
      */
-    // public function updateProfile($id, Request $request)
-    // {
-    //     // dd($request);
-    //     try {
-    //             $userData = Auth::user();
-    //             $name = $request->input('full_name');
-    //             $phone = $request->input('phone');
-    //             $gender = $request->input('gender');
-    //             $city = $request->input('city');
-    //             $subcity = $request->input('subcity');
-    //             $woreda = $request->input('woreda');
-    //             $housenumber = $request->input('housenumber');
-    //             $location = $request->input('location');
-    //             $email = $request->input('email');
-    //             // dd($address);
-    //             $updated = [
-    //                 'full_name' => $name,
-    //                 'phone' => $phone,
-    //                 'gender' => $gender,
-    //                 'email' => $email,
-    //                 'city' => $city,
-    //                 'subcity' => $subcity,
-    //                 'woreda' => $woreda,
-    //                 'house_number' => $housenumber,
-    //                 'specific_location' => $location
-    //             ];
-    //             if ($request->file('profile_picture')) {
-    //                 $image = $request->file('profile_picture');
-    //                 $imageName = time() . '.' . $image->getClientOriginalExtension();
-    //                 $image->storeAs('public/profile_pictures', $imageName);
-    //                 // $updated['profile_photo_path'] = 'profile_pictures/' . $imageName;
-    //                 $updated['profile_photo_path'] = 'profile_pictures/' . $imageName;
-    //             }
-    //             if (!empty($phone)) {
-    //                 $member_count = Member::where('phone', $phone)->where('id', '!=', $id)->count();
-    //                 if ($member_count > 0) {
-    //                     return response()->json([
-    //                         'code' => 403,
-    //                         'message' => 'Phone already exist',
-    //                     ]);
-    //                 }
-    //             }
-    //             if (!empty($email)) {
-    //                 $member_count = Member::where('email', $email)->where('id', '!=', $id)->count();
-    //                 if ($member_count > 0) {
-    //                     return response()->json([
-    //                         'code' => 403,
-    //                         'message' => 'Email already exist',
-    //                     ]);
-    //                 }
-    //             }
-                
-    //             $updated = $this->memberRepository->update($id, $updated);
-    //             // dd($id);
-    //             $updateUser = [
-    //                 'name' => $name,
-    //                 'phone_number' => $phone,
-    //                 'gender' => $gender,
-    //                 'email' => $email
-    //             ];
-    //             $updateUser = $this->userRepository->updateUser($userData->id, $updateUser);
-
-    //             if ($updated && $updateUser) {
-    //                 return response()->json([
-    //                     'code' => 200,
-    //                     'message' => 'Profile has been updated successfully!',
-    //                     'data' => $updated
-    //                 ]);
-    //             } else {
-    //                 return response()->json([
-    //                     'code' => 400,
-    //                     'message' => 'Unknown error occurred, Please try again!',
-    //                     "error" => "Unknown error occurred, Please try again!"
-    //                 ]);
-    //             }
-    //     } catch (Exception $ex) {
-    //         return response()->json([
-    //             'code' => 500,
-    //             'message' => 'Unable to process your request, Please try again!',
-    //             "error" => $ex->getMessage()
-    //         ]);
-    //     }
-    // }
     public function updateProfile($id, Request $request)
     {
+        // dd($request->all());
         try {
             // Authenticate user
             $userData = Auth::user();
-            // dd($request->all());
             // Validation rules for form data (especially file upload)
             $this->validate($request, [
                 'full_name' => 'nullable|string',
@@ -1259,23 +1176,22 @@ class MemberController extends Controller
                 'city' => 'nullable|string',
                 'subcity' => 'nullable|string',
                 'woreda' => 'nullable|string',
-                'housenumber' => 'nullable|string',
+                'house_number' => 'nullable|string',
                 'location' => 'nullable|string',
                 'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
             ]);
 
-            // Collect data from the request
             $updatedData = [
-                'full_name' => $request->input('full_name', $userData->full_name),
-                'phone' => $request->input('phone', $userData->phone),
-                'gender' => $request->input('gender', $userData->gender),
-                'email' => $request->input('email', $userData->email),
-                'city' => $request->input('city', $userData->city),
-                'subcity' => $request->input('subcity', $userData->subcity),
-                'woreda' => $request->input('woreda', $userData->woreda),
-                'housenumber' => $request->input('housenumber', $userData->housenumber),
-                'location' => $request->input('location', $userData->specific_location),
-                'specific_location' => $request->input('specific_location', $userData->specific_location)
+                'full_name' => $request->get('full_name', $userData->full_name),
+                'phone' => $request->get('phone', $userData->phone),
+                'gender' => $request->get('gender', $userData->gender),
+                'email' => $request->get('email', $userData->email),
+                'city' => $request->get('city', $userData->city),
+                'subcity' => $request->get('subcity', $userData->subcity),
+                'woreda' => $request->get('woreda', $userData->woreda),
+                'house_number' => $request->get('house_number', $userData->housenumber),
+                'location' => $request->get('location', $userData->specific_location),
+                'specific_location' => $request->get('specific_location', $userData->specific_location)
             ];
 
             // Handle profile picture upload (optional)
@@ -1310,12 +1226,6 @@ class MemberController extends Controller
                 'data' => new MemberResource($member)  // Return the updated member using a resource
             ]);
 
-        } catch (\Illuminate\Database\QueryException $ex) {
-            return response()->json([
-                'code' => 500,
-                'message' => 'Unable to process your request, Please try again!',
-                'error' => $ex->getMessage()
-            ]);
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,

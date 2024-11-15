@@ -22,6 +22,7 @@ return new class extends Migration
             $table->dateTime('start_date');
             $table->dateTime('end_date');
             $table->string('lottery_date');
+            $table->integer('total_members')->change();
             $table->enum('status', ['Active', 'Deactive',])->default('Active');
             $table->foreign('member_id')->references('id')->on('members');
             $table->foreign('equb_type_id')->references('id')->on('equb_types');

@@ -26,9 +26,16 @@ class Kernel extends HttpKernel
 
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('equb:notify-due-starts')->hourly();
-        $schedule->command('equb:notify-due-ends')->hourly();
-        $schedule->comand('equb:send-notifications')->daily();
+        $schedule->command('equb:notify-due-starts')->everyMinute();
+        $schedule->command('equb:notify-due-ends')->everyMinute();
+        $schedule->command('equb:send-notifications')->everyMinute();
+    }
+
+    protected function commands()
+    {
+        $this->load(__DIR__.'/Commands');
+
+        require base_path('routes/console.php');
     }
 
     /**

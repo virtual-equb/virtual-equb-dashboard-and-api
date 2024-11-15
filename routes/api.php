@@ -1,37 +1,37 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Models\User;
+use App\Models\Roles;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Request;
+use App\Http\Controllers\CodeController;
+use App\Http\Controllers\SubcityController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CityController;
 use App\Http\Controllers\Api\EqubController;
 use App\Http\Controllers\Api\HomeController;
+use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ChapaController;
 use App\Http\Controllers\Api\MemberController;
 use App\Http\Controllers\Api\ReportController;
+use App\Http\Controllers\Api\CountryController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\EqubTypeController;
-use App\Http\Controllers\Api\EqubTakerController;
-use App\Http\Controllers\Api\ActivityLogController;
-use App\Http\Controllers\Api\CityController;
-use App\Http\Controllers\Api\CountryCodeController;
-use App\Http\Controllers\Api\CountryController;
 use App\Http\Controllers\Api\MainEqubController;
+use App\Http\Controllers\Api\EqubTakerController;
+use App\Http\Controllers\Api\PermissionController;
+use App\Http\Controllers\Api\ActivityLogController;
+use App\Http\Controllers\Api\CountryCodeController;
 use App\Http\Controllers\Api\PaymentTypeController;
 use App\Http\Controllers\Api\RejectedDateController;
-use App\Http\Controllers\Api\PaymentGatewayController;
 use App\Http\Controllers\Api\PaymentTesterController;
-use App\Http\Controllers\Api\PermissionController;
-use App\Http\Controllers\Api\RoleController;
-use App\Http\Controllers\Api\SubcityController as ApiSubcityController;
-use App\Http\Controllers\CodeController;
+use App\Http\Controllers\Api\PaymentGatewayController;
 use App\Http\Controllers\EqubController as ControllersEqubController;
-use App\Http\Controllers\SubcityController;
-use App\Models\Roles;
-use App\Models\User;
+use App\Http\Controllers\Api\SubcityController as ApiSubcityController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,7 +46,7 @@ use App\Models\User;
 
 
 
-
+Route::post('/transaction-status', [PaymentGatewayController::class, 'transactionStatus']);
 Route::post('/notify-equb-start', [EqubController::class, 'sendStartNotifications']);
 Route::post('/notify-equb-ends', [EqubController::class, 'sendEndNotifications']);
 Route::post('/daily-payment-notification', [EqubController::class, 'sendDailyPaymentNotification']);
@@ -55,7 +55,7 @@ Route::post('/notify-missing-payment', [EqubController::class, 'sendMissedPaymen
 
 Route::get('/registrationCity', [CityController::class, 'index'])->name('registrationCity');
 Route::post('member/registerMember', [MemberController::class, 'register'])->name('storeMember');
-Route::put('member/updateProfile/{id}', [MemberController::class, 'updateProfile'])->name('updateProfile'); // old update
+Route::post('member/updateProfile/{id}', [MemberController::class, 'updateProfile'])->name('updateProfile'); // old update
 // Route::middleware(['auth:api'])->put('member/updateProfile/{id}', [MemberController::class, 'updateProfile'])->name('updateProfile'); // new update
 Route::post('/checkMemberPhoneExist', [MemberController::class, 'checkMemberPhoneExist'])->name('check_member_phone_exist');
 Route::post('/checkUserPhoneExist', [UserController::class, 'checkPhone'])->name('check_user_phone_exist');
@@ -103,12 +103,6 @@ Route::post('/dateInterval', [EqubController::class, 'dateInterval'])->name('dat
 Route::get('/getDailyPaidAmount/{equb_id}', [EqubController::class, 'getDailyPaidAmount'])->name('getDailyPaidAmount');
 Route::post('/changePassword/{id}', [UserController::class, 'changePassword'])->name('changePassword');
 
-// New Apis CBE Gatway 1
-Route::middleware(['auth:api'])->group(function () {
-    // Transaction Status EncVal
-    Route::post('/transaction-status', [PaymentGatewayController::class, 'transactionStatus']);
-});
-Route::post('/cbegateway', [PaymentGatewayController::class, 'generateUrl']);
 
 // Main Equb
 Route::middleware(['auth:api'])->group(function () {
@@ -122,6 +116,8 @@ Route::middleware(['auth:api'])->group(function () {
     Route::resource('/permissions', PermissionController::class);
     Route::get('/roles/{roleId}/give-permissions', [RoleController::class, 'addPermissionToRole']);
     Route::put('/roles/{roleId}/give-permissions', [RoleController::class, 'updatePermissionToRole']);
+    // CBE
+    Route::post('/cbegateway', [PaymentGatewayController::class, 'generateUrl']);
 });
 
 
