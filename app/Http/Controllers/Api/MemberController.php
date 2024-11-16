@@ -1045,7 +1045,7 @@ class MemberController extends Controller
                 'woreda' => $woreda,
                 'house_number' => $housenumber,
                 'specific_location' => $location,
-                'status' => "Pending",
+                'status' => "Active",
                 'date_of_birth' => $dateofBirth
             ];
 
@@ -1064,7 +1064,8 @@ class MemberController extends Controller
                 'email' => $email,
                 'password' => Hash::make($password),
                 'phone_number' => $phone,
-                'gender' => $gender
+                'gender' => $gender,
+                'status' => 'Active'
             ];
             $user = $this->userRepository->createUser($user);
 
