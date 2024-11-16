@@ -1064,7 +1064,8 @@ class MemberController extends Controller
                 'email' => $email,
                 'password' => Hash::make($password),
                 'phone_number' => $phone,
-                'gender' => $gender
+                'gender' => $gender,
+                'status' => 'Active'
             ];
             $user = $this->userRepository->createUser($user);
 
