@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('total_amount');
             $table->string('total_members');
             $table->string('expected_members');
+            $table->string('lottery_round');
             $table->enum('status', ['Active', 'Deactive',])->default('Active');
             $table->boolean('active')->default(false);
             $table->softDeletes();

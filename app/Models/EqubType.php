@@ -29,7 +29,8 @@ class EqubType extends Model
         'end_date', 
         'remaining_quota', 
         'image', 
-        'main_equb_id'
+        'main_equb_id',
+        'lottery_round'
     ];
 
     public function equbs()
