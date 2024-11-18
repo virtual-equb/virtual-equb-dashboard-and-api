@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Equb;
 use App\Models\EqubType;
 use App\Models\Member;
+use App\Models\Payment;
 use Exception;
 use App\Repositories\Payment\IPaymentRepository;
 use App\Repositories\Member\IMemberRepository;
@@ -417,6 +418,7 @@ class PaymentController extends Controller
                     $paymentData['member'] = $this->memberRepository->getMemberById($member_id);
                     $paymentData['equb'] = $this->equbRepository->geteEubById($equb_id);
                     $paymentData['payments'] = $this->paymentRepository->getSinglePayment($member_id, $equb_id, $offset);
+                    // dd($paymentData['payments']);
                     $paymentData['totalCredit'] = $this->paymentRepository->getTotalCredit($equb_id);
                     $paymentData['totalPaid'] = $this->paymentRepository->getTotalPaid($equb_id);
                     $paymentData['total'] = $this->paymentRepository->getTotalCount($equb_id);
@@ -467,6 +469,7 @@ class PaymentController extends Controller
             // if ($userData->hasAnyRole($adminRoles)) {
                 $this->middleware('auth');
                 $data['title'] = $this->title;
+                $data['paids'] = Payment::where('status', 'paid')->with('member')->get();
                 return view('admin/payment.pendingPaymentList', $data);
             // } else {
             //     return view('auth/login');

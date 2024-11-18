@@ -16,6 +16,7 @@
             </tr>
         </thead>
         <tbody>
+            
             @foreach ($payments as $key => $item)
                 <?php
                 //   $address = json_decode($item->address);
