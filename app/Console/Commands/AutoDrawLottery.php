@@ -2,10 +2,12 @@
 
 namespace App\Console\Commands;
 
-use App\Models\EqubType;
 use Exception;
+use App\Models\EqubType;
+use Illuminate\Support\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\App;
+use App\Http\Controllers\EqubController;
 
 class AutoDrawLottery extends Command
 {
@@ -14,7 +16,7 @@ class AutoDrawLottery extends Command
      *
      * @var string
      */
-    protected $signature = 'equb:auto-draw-lottery';
+    protected $signature = 'equb:autoDrawLottery';
 
     /**
      * The console command description.
@@ -33,7 +35,7 @@ class AutoDrawLottery extends Command
         $now = now()->startOfDay(); // current Date
 
         // Fetch all equbTypes where the lottery_date matches today
-        $equbs = EqubType::whereDate('lottery_date', $now)->get();
+        $equbs = EqubType::whereDate('lottery_date', $now)->where('type', 'Automatic')->get();
 
         if ($equbs->isEmpty()) {
             $this->info("No Equb lotteries are scheduled for today.");
@@ -61,4 +63,35 @@ class AutoDrawLottery extends Command
             }
         }
     }
+    //     try {
+    //         $now = Carbon::now()->startOfDay();
+
+    //         // Fetch only 'Automatic' EqubTypes with the current lottery date
+    //         $automaticEqubTypes = EqubType::where('type', 'Automatic')
+    //             ->whereDate('lottery_date', $now)
+    //             ->get();
+
+    //         if ($automaticEqubTypes->isEmpty()) {
+    //             $this->info('No Automatic EqubTypes scheduled for lottery today.');
+    //             return 0; // No equbs to process
+    //         }
+
+    //         // Process each Automatic EqubType
+    //         foreach ($automaticEqubTypes as $equbType) {
+    //             $request = new \Illuminate\Http\Request();
+    //             $request->merge(['equbTypeId' => $equbType->id]);
+
+    //             // Call the drawAutoWinners method from the controller
+    //             $controller = new EqubController();
+    //             $controller->drawAutoWinners($request);
+
+    //             $this->info("Lottery processed for EqubType ID: {$equbType->id}");
+    //         }
+
+    //         return 0; // Success
+    //     } catch (\Exception $ex) {
+    //         $this->error("Error processing lottery: " . $ex->getMessage());
+    //         return 1; // Failure
+    //     }
+    // }
 }

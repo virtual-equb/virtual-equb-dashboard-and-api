@@ -157,6 +157,7 @@ Route::prefix('member')->group(function () {
     Route::get('/loadMoreMember/{offsetVal}/{pageNumberVal}', [MemberController::class, 'loadMoreMember']);
     Route::get('/get-equbs/{id}', [MemberController::class, 'show'])->name('getEqub');
     Route::get('/get-paid-equbs/{id}', [MemberController::class, 'getPaidEqubs'])->name('getPaidEqub');
+    Route::get('/get-passed-equbs/{$id}', [MemberController::class, 'getEndedEqubs'])->name('getEndedEqubs');
     Route::get('/search-member/{searchInput}/{offset}/{pageNumber?}', [MemberController::class, 'searchMember'])->name('searchMember');
     Route::get('/get-allEqubs', [MemberController::class, 'getAllEqubs'])->name('getAllEqub');
     Route::get('/create-member', [MemberController::class, 'create'])->name('createMember');
@@ -177,8 +178,8 @@ Route::prefix('payment')->group(function () {
     Route::put('/updatePayment/{member_id}/{equb_id}/{id}', [PaymentController::class, 'updatePayment']);
     Route::delete('/deleteAll/{member_id}/{equb_id}', [PaymentController::class, 'deleteAllPayment'])->name('deleteAllPayment');
     Route::delete('/delete/{id}', [PaymentController::class, 'destroy'])->name('deletePayment');
-    Route::post('telebirr', [PaymentController::class, 'initialize'])->name('initialize');
-    Route::get('/telebirr/callback/{payment}', [PaymentController::class, 'callback'])->name('callback');
+    // Route::post('telebirr', [PaymentController::class, 'initialize'])->name('initialize');
+    // Route::get('/telebirr/callback/{payment}', [PaymentController::class, 'callback'])->name('callback');
 });
 Route::prefix('equbTaker')->group(function () {
     Route::get('/', [EqubTakerController::class, 'index'])->name('showEqubTaker');

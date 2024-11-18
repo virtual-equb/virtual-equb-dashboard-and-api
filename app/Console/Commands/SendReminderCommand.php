@@ -13,7 +13,7 @@ class SendReminderCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'send:reminder';
+    protected $signature = 'send:reminders';
 
     /**
      * The console command description.
