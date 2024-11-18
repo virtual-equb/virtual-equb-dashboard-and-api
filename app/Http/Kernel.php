@@ -29,6 +29,7 @@ class Kernel extends HttpKernel
         $schedule->command('equb:notify-due-starts')->everyMinute();
         $schedule->command('equb:notify-due-ends')->everyMinute();
         $schedule->command('equb:send-notifications')->everyMinute();
+        $schedule->command('equb:auto-draw-lottery')->dailyAt('00:00'); // Run every day at midnight
     }
 
     protected function commands()
