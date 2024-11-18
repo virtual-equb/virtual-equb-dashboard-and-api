@@ -14,14 +14,14 @@ class AutoDrawLottery extends Command
      *
      * @var string
      */
-    protected $signature = 'equb:auto-draw-lottery';
+    protected $signature = 'equb:autodrawlottery';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Automatically draw winners if lottery_date matches the current date.';
+    protected $description = 'Command description';
 
     /**
      * Execute the console command.

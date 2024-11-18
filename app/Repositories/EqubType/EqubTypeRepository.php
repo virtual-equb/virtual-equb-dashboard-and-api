@@ -22,14 +22,6 @@ class EqubTypeRepository implements IEqubTypeRepository
     }
     public function getAll()
     {
-        // $query = EqubType::with('mainEqub');
-        // $result = $query->get();
-        
-        // if ($result->isEmpty()) {
-        //     dd('No records found');
-        // }
-    
-        // return $result;
         return $this->model->with('mainEqub')->get();
     }
     public function getStartDate($id)

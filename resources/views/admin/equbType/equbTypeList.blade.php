@@ -119,7 +119,7 @@
                                                                 <td>
                                                                     <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}" style="width: 50px; height: auto;">
                                                                 </td>
-                                                                <td>{{ $item->main_equb->name ?? 'N/A'}}</td>
+                                                                <td>{{ $item->mainEqub->name ?? 'N/A'}}</td>
                                                                 <td>{{ $item->name }}</td>
                                                                 <td>{{ $item->round }}</td>
                                                                 <td>{{ $item->rote }}</td>
