@@ -157,7 +157,7 @@ Route::prefix('member')->group(function () {
     Route::get('/loadMoreMember/{offsetVal}/{pageNumberVal}', [MemberController::class, 'loadMoreMember']);
     Route::get('/get-equbs/{id}', [MemberController::class, 'show'])->name('getEqub');
     Route::get('/get-paid-equbs/{id}', [MemberController::class, 'getPaidEqubs'])->name('getPaidEqub');
-    Route::get('/get-passed-equbs/{$id}', [MemberController::class, 'getEndedEqubs'])->name('getEndedEqubs');
+    Route::get('/get-passed-equbs/{id}', [MemberController::class, 'getEndedEqubs']);
     Route::get('/search-member/{searchInput}/{offset}/{pageNumber?}', [MemberController::class, 'searchMember'])->name('searchMember');
     Route::get('/get-allEqubs', [MemberController::class, 'getAllEqubs'])->name('getAllEqub');
     Route::get('/create-member', [MemberController::class, 'create'])->name('createMember');
