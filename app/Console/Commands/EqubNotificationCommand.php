@@ -7,15 +7,13 @@ use Illuminate\Console\Command;
 
 class EqubNotificationCommand extends Command
 {
-    protected $command = [
-        \App\Console\Commands\EqubNotificationCommand::class,
-    ];
+    
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'equb:send-notifications';
+    protected $signature = 'equb:sendnotifications';
 
     /**
      * The console command description.

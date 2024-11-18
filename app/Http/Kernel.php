@@ -24,19 +24,20 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
     ];
 
+    protected $command = [
+        \App\Console\Commands\EqubNotificationCommand::class,
+        \App\Console\Commands\AutoDrawLottery::class,
+        \App\Console\Commands\SendEqubEndNotificationsCommand::class,
+        \App\Console\Commands\SendEqubStartNotificationsCommand::class
+    ];
+
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('equb:notify-due-starts --force')->everyMinute();
+        // logger('Schedule method executed');
+        $schedule->command('equb:notify-due-starts')->everyMinute();
         $schedule->command('equb:notify-due-ends')->everyMinute();
-        $schedule->command('equb:send-notifications')->everyMinute();
-        $schedule->command('equb:auto-draw-lottery')->dailyAt('00:00'); // Run every day at midnight
-    }
-
-    protected function commands()
-    {
-        $this->load(__DIR__.'/Commands');
-
-        require base_path('routes/console.php');
+        $schedule->command('equb:sendnotifications')->everyMinute();
+        $schedule->command('equb:autoDrawLottery')->dailyAt('00:00'); // Run every day at midnight
     }
 
     /**

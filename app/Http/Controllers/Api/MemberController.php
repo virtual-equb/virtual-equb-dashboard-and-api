@@ -645,6 +645,41 @@ class MemberController extends Controller
             ]);
         }
     }
+    public function getEndedEqubs($id) {
+        try {
+            $data['member'] = $this->memberRepository->getByIdNested($id);
+            $member = $data['member'];
+            $equbs = $member->equbs;
+
+            $passedEqubArray = [];
+            $currentDate = date('Y-m-d');
+
+            foreach($equbs as $equb) {
+                $equbEndDate = Equb::select('end_date')->where('id', $equb['id'])->pluck('end_date')->first();
+                // dd($equbEndDate);
+                if ($equbEndDate < $currentDate) {
+                    $totalPpayment = Payment::where('equb_id', $equb['id'])->where('status', 'paid')->sum('amount');
+                    $totalEqubAmount = Equb::select('total_amount')->where('id', $equb['id'])->pluck('total_amount')->first();
+                    $remainingPayment = $totalEqubAmount - $totalPpayment;
+
+                    $equb['total_payment'] = $totalPpayment;
+                    $equb['remaining_payment'] = $remainingPayment;
+                    // $equb['statu']
+
+                    array_push($passedEqubArray, $equb);
+                }
+            }
+
+            return response()->json($passedEqubArray);
+
+        } catch (Exception $ex) {
+            return response()->json([
+                'code' => 500,
+                'message' => 'Unable to process your request, Please try again!',
+                "error" => $ex->getMessage()
+            ]);
+        }
+    }
     /**
      * Update member status
      *
