@@ -366,13 +366,6 @@ class HomeController extends Controller
                 'totalEqubPayment'
             ));
 
-
-            // Use helper functions for complex calculations
-            // $dailyStats = $this->equbRepository->getDailyStats();
-            // $weeklyStats = $this->equbRepository->getWeeklyStats();
-            // $monthlyStats = $this->equbRepository->getMonthlyStats();
-            // $yearlyStats = $this->equbRepository->getYearlyStats();
-
         } catch (Exception $ex) {
             Session::flash('error', "Unable to process your request, Please try again!" . $ex->getMessage());
             return back();
