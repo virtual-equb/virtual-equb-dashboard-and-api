@@ -481,60 +481,7 @@ class PaymentController extends Controller
             return back();
         }
     }
-    // public function indexPendingPaginate($offsetVal, $pageNumberVal)
-    // {
-    //     try {
-    //         $offset = $offsetVal;
-    //         $limit = 10;
-    //         $pageNumber = $pageNumberVal;
-    //         $userData = Auth::user();
-    //         if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "finance")) {
-    //             // $paymentData['member'] = $this->memberRepository->getMemberById($member_id);
-    //             // $paymentData['equb'] = $this->equbRepository->geteEubById($equb_id);
-    //             $paymentData['payments'] = $this->paymentRepository->getAllPendingByPaginate($offset);
-    //             // $paymentData['totalCredit'] = $this->paymentRepository->getTotalCredit($equb_id);
-    //             // $paymentData['totalPaid'] = $this->paymentRepository->getTotalPaid($equb_id);
-    //             $paymentData['total'] = $this->paymentRepository->countPendingPayments();
-    //             $paymentData['offset'] = $offset;
-    //             $paymentData['limit'] = $limit;
-    //             $paymentData['pageNumber'] = $pageNumber;
-    //             $paymentData['title'] = $this->title;
-    //             // dd($paymentData);
-    //             return view('admin/payment.pendingPaymentList', $paymentData);
-    //         }
-    //         // elseif ($userData && ($userData['role'] == "equb_collector")) {
-    //         //     $paymentData['member'] = $this->memberRepository->getMemberById($member_id);
-    //         //     $paymentData['equb'] = $this->equbRepository->geteEubById($equb_id);
-    //         //     $paymentData['payments'] = $this->paymentRepository->getSinglePayment($member_id, $equb_id, $offset);
-    //         //     $paymentData['totalCredit'] = $this->paymentRepository->getTotalCredit($equb_id);
-    //         //     $paymentData['totalPaid'] = $this->paymentRepository->getTotalPaid($equb_id);
-    //         //     $paymentData['total'] = $this->paymentRepository->getTotalCount($equb_id);
-    //         //     $paymentData['offset'] = $offset;
-    //         //     $paymentData['limit'] = $limit;
-    //         //     $paymentData['pageNumber'] = $pageNumber;
-    //         //     return view('equbCollecter/payment.paymentList', $paymentData);
-    //         // } elseif ($userData && ($userData['role'] == "member")) {
-    //         //     $paymentData['member'] = $this->memberRepository->getMemberById($member_id);
-    //         //     $paymentData['equb'] = $this->equbRepository->geteEubById($equb_id);
-    //         //     $paymentData['payments'] = $this->paymentRepository->getSinglePayment($member_id, $equb_id, $offset);
-    //         //     $paymentData['totalCredit'] = $this->paymentRepository->getTotalCredit($equb_id);
-    //         //     $paymentData['totalPaid'] = $this->paymentRepository->getTotalPaid($equb_id);
-    //         //     $paymentData['total'] = $this->paymentRepository->getTotalCount($equb_id);
-    //         //     $paymentData['offset'] = $offset;
-    //         //     $paymentData['limit'] = $limit;
-    //         //     $paymentData['pageNumber'] = $pageNumber;
-    //         //     return view('member/payment.paymentList', $paymentData);
-    //         // }
-    //         else {
-    //             return back();
-    //         };
-    //     } catch (Exception $ex) {
-    //         $msg = "Unable to process your request, Please try again!";
-    //         $type = 'error';
-    //         Session::flash($type, $msg);
-    //         return back();
-    //     }
-    // }
+    
     public function searchPendingPayment($searchInput, $offset, $pageNumber = null)
     {
         // dd($searchInput);

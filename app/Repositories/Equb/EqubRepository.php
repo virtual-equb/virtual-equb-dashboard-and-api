@@ -6,6 +6,7 @@ namespace App\Repositories\Equb;
 use App\Models\Equb;
 use App\Models\EqubType;
 use App\Models\LotteryWinner;
+use App\Models\Payment;
 use Carbon\Carbon;
 
 class EqubRepository implements IEqubRepository
@@ -16,6 +17,77 @@ class EqubRepository implements IEqubRepository
     {
         $this->model = $equb;
         $this->limit = 50;
+    }
+
+    public function getDailyStats()
+    {
+        $date = Carbon::today();
+
+        $paidAmount = Payment::whereDate('created_at', $date)->sum('amount');
+        $expectedAmount = Equb::whereDate('start_date', '<=', $date)
+            ->whereDate('end_date', '>=', $date)
+            ->sum('amount');
+        $unpaidAmount = $expectedAmount - $paidAmount;
+
+        return [
+            'expected' => $expectedAmount,
+            'paid' => $paidAmount,
+            'unpaid' => max($unpaidAmount, 0),
+        ];
+    }
+
+    public function getWeeklyStats()
+    {
+        $startOfWeek = Carbon::now()->startOfWeek();
+        $endOfWeek = Carbon::now()->endOfWeek();
+
+        $paidAmount = Payment::whereBetween('created_at', [$startOfWeek, $endOfWeek])->sum('amount');
+        $expectedAmount = Equb::whereBetween('start_date', [$startOfWeek, $endOfWeek])
+                ->sum('amount');
+
+        $unpaidAmount = $expectedAmount - $paidAmount;
+
+        return [
+            'expected' => $expectedAmount,
+            'paid' => $paidAmount,
+            'unpaid' => max($unpaidAmount, 0),
+        ];
+    }
+
+    public function getMonthlyStats()
+    {
+        $currentMonth = Carbon::now()->month;
+
+        $paidAmount = Payment::whereMonth('created_at', $currentMonth)->sum('amount');
+        $expectedAmount = Equb::whereMonth('start_date', '<=', $currentMonth)
+                ->whereMonth('end_date', '>=', $currentMonth)
+                ->sum('amount');
+
+        $unpaidAmount = $expectedAmount - $paidAmount;
+
+        return [
+            'expected' => $expectedAmount,
+            'paid' => $paidAmount,
+            'unpaid' => max($unpaidAmount, 0),
+        ];
+    }
+
+    public function getYearlyStats()
+    {
+        $currentYear = Carbon::now()->year;
+
+        $paidAmount = Payment::whereYear('created_at', $currentYear)->sum('amount');
+        $expectedAmount = Equb::whereYear('start_date', '<=', $currentYear)
+                ->whereYear('end_date', '>=', $currentYear)
+                ->sum('amount');
+
+        $unpaidAmount = $expectedAmount - $paidAmount;
+
+        return [
+            'expected' => $expectedAmount,
+            'paid' => $paidAmount,
+            'unpaid' => max($unpaidAmount, 0),
+        ];
     }
 
     public function getStatusById($id)

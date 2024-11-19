@@ -107,7 +107,8 @@
                                 <div class="card-body">
                                     <div class="chart">
                                         <canvas id="barChart"
-                                            style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                                            style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;">
+                                        </canvas>
                                     </div>
                                 </div>
                             </div>
@@ -130,7 +131,8 @@
                                 <div class="card-body">
                                     <div class="chart">
                                         <canvas id="summaryChart"
-                                            style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                                            style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;">
+                                        </canvas>
                                     </div>
                                 </div>
                             </div>
@@ -254,7 +256,7 @@
         </div>
     @endSection
     @section('scripts')
-        <script>
+        {{-- <script>
             $(function() {
                 $('#settingNava').addClass('menu-is-opening menu-open');
                 $('#dashboard').addClass('active');
@@ -295,7 +297,7 @@
                         },
                     ]
                 }
-
+                // Projection for each equb type
                 var barChartOptions = {
                     maintainAspectRatio: false,
                     responsive: true,
@@ -333,6 +335,7 @@
                     data: barChartData,
                     options: barChartOptions
                 })
+                // Projection
                 var summaryChartCanvas = $('#summaryChart').get(0).getContext('2d')
 
                 var summaryChartData = {
@@ -401,6 +404,7 @@
                     data: summaryChartData,
                     options: summaryChartOptions
                 })
+                // Daily Summary
                 var pieChartCanvas = $('#pieChart').get(0).getContext('2d')
                 var pieData = {
                     labels: [
@@ -423,5 +427,114 @@
                     options: pieOptions
                 })
             })
+        </script> --}}
+        <script>
+            $(function () {
+                // Add active classes to navigation
+                $('#settingNava').addClass('menu-is-opening menu-open');
+                $('#dashboard').addClass('active');
+                $('#mainDash').addClass('active');
+        
+                // Bar Chart Data
+                const barChartLabels = @json($lables); // Labels for equb types
+                const barChartPaid = @json($fullPaidAmount); // Paid amounts for equb types
+                const barChartExpected = @json($Expected); // Expected amounts for equb types
+        
+                const barChartData = {
+                    labels: barChartLabels,
+                    datasets: [
+                        {
+                            label: 'Paid',
+                            backgroundColor: 'rgba(60,141,188,0.9)',
+                            borderColor: 'rgba(60,141,188,0.8)',
+                            data: barChartPaid
+                        },
+                        {
+                            label: 'Expected',
+                            backgroundColor: 'rgba(80, 214, 222, 0.9)',
+                            borderColor: 'rgba(210, 214, 222, 1)',
+                            data: barChartExpected
+                        }
+                    ]
+                };
+        
+                // Bar Chart Initialization
+                const barChartCanvas = document.getElementById('barChart').getContext('2d');
+                new Chart(barChartCanvas, {
+                    type: 'bar',
+                    data: barChartData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { grid: { display: false } },
+                            y: { grid: { display: false } }
+                        }
+                    }
+                });
+        
+                // Summary Chart Data
+                const summaryChartLabels = ['Weekly', 'Monthly', 'Yearly'];
+                const summaryChartPaid = [@json($weeklyPaidAmount), @json($monthlyPaidAmount), @json($yearlyPaidAmount)];
+                const summaryChartExpected = [@json($weeklyExpected), @json($monthlyExpected), @json($yearlyExpected)];
+        
+                const summaryChartData = {
+                    labels: summaryChartLabels,
+                    datasets: [
+                        {
+                            label: 'Paid',
+                            backgroundColor: 'rgba(60,141,188,0.9)',
+                            borderColor: 'rgba(60,141,188,0.8)',
+                            data: summaryChartPaid
+                        },
+                        {
+                            label: 'Expected',
+                            backgroundColor: 'rgba(80, 214, 222, 0.9)',
+                            borderColor: 'rgba(210, 214, 222, 1)',
+                            data: summaryChartExpected
+                        }
+                    ]
+                };
+        
+                // Summary Chart Initialization
+                const summaryChartCanvas = document.getElementById('summaryChart').getContext('2d');
+                new Chart(summaryChartCanvas, {
+                    type: 'bar',
+                    data: summaryChartData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { grid: { display: false } },
+                            y: { grid: { display: false } }
+                        }
+                    }
+                });
+        
+                // Pie Chart Data (Daily Summary)
+                const pieChartLabels = ['Paid', 'Unpaid', 'Expected'];
+                const pieChartData = [@json($daylyPaidAmount), @json($daylyUnpaidAmount), @json($daylyExpected)];
+        
+                const pieChartDataConfig = {
+                    labels: pieChartLabels,
+                    datasets: [
+                        {
+                            data: pieChartData,
+                            backgroundColor: ['#00a65a', '#f56954', '#f39c12']
+                        }
+                    ]
+                };
+        
+                // Pie Chart Initialization
+                const pieChartCanvas = document.getElementById('pieChart').getContext('2d');
+                new Chart(pieChartCanvas, {
+                    type: 'pie',
+                    data: pieChartDataConfig,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+            });
         </script>
 @endSection

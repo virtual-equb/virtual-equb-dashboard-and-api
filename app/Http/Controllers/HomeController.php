@@ -41,7 +41,7 @@ class HomeController extends Controller
         // $this->middleware('permission_check_logout:view dashboard', ['only' => ['index', 'show', 'equbTypeIndex']]);
     }
     //Projection chart updated here
-    public function index()
+    public function index1()
     {
         try {
             $userData = Auth::user();
@@ -250,7 +250,30 @@ class HomeController extends Controller
                         ]);
                     }
                 }
-                return view('admin/home', compact('automaticMembersArray',  'title', 'lables', 'fullPaidAmount', 'fullUnPaidAmount', 'Expected', 'daylyPaidAmount', 'daylyUnpaidAmount', 'daylyExpected', 'weeklyPaidAmount', 'weeklyUnpaidAmount', 'weeklyExpected', 'monthlyPaidAmount', 'monthlyUnpaidAmount', 'monthlyExpected', 'yearlyPaidAmount', 'yearlyUnpaidAmount', 'yearlyExpected', 'totalMember', 'tudayPaidMember', 'activeMember', 'totalUser', 'totalEqubPayment'));
+                return view('admin/home', compact('automaticMembersArray',  
+                           'title', 
+                           'lables', 
+                           'fullPaidAmount', 
+                           'fullUnPaidAmount', 
+                           'Expected', 
+                           'daylyPaidAmount', 
+                           'daylyUnpaidAmount', 
+                           'daylyExpected', 
+                           'weeklyPaidAmount', 
+                           'weeklyUnpaidAmount', 
+                           'weeklyExpected', 
+                           'monthlyPaidAmount', 
+                           'monthlyUnpaidAmount', 
+                           'monthlyExpected', 
+                           'yearlyPaidAmount', 
+                           'yearlyUnpaidAmount', 
+                           'yearlyExpected', 
+                           'totalMember', 
+                           'tudayPaidMember', 
+                           'activeMember', 
+                           'totalUser', 
+                           'totalEqubPayment'
+                        ));
         } catch (Exception $ex) {
             // dd($ex);
             $msg = "Unable to process your request, Please try again!";
@@ -258,6 +281,191 @@ class HomeController extends Controller
             Session::flash($type, $msg);
             return back();
         }
+    }
+    public function index()
+    {
+        try {
+            $title = $this->title;
+
+            // Use repositories to fetch aggregate data
+            $totalEqubAmount = $this->equbRepository->getExpectedTotal();
+            $totalEqubPayment = $this->paymentRepository->getTotalPayment();
+            $activeMember = $this->memberRepository->getActiveMember();
+            $totalMember = $this->memberRepository->getMember();
+            $totalUser = $this->userRepository->getUser();
+            $tudayPaidMember = $this->equbRepository->tudayPaidMember();
+
+            // Fetch winner data
+            $automaticWinnerMembers = LotteryWinner::whereDate('created_at', Carbon::today())->get();
+            $automaticMembersArray = $automaticWinnerMembers->map(function ($winner) {
+                return [
+                    'full_name' => $winner->member->full_name,
+                    'phone' => $winner->member->phone,
+                    'gender' => $winner->member->gender,
+                ];
+            });
+
+            // Daily Payments and Expected Amount
+            $fullDaylyPaidAmount = $this->paymentRepository->getDaylyPaidAmount();
+            $daylyPendingAmount = $this->paymentRepository->getDaylyPendingAmount();
+            $daylyPaidAmount = $fullDaylyPaidAmount + $daylyPendingAmount;
+            $daylyUnpaidAmount = max(0, $totalEqubAmount - $daylyPaidAmount);
+            $daylyExpected = $totalEqubAmount;
+
+            // Weekly stats
+            $weeklyExpected = $this->calculateWeeklyExpected();
+            $fullWeeklyPaidAmount = $this->paymentRepository->getWeeklyPaidAmount();
+            $weeklyPaidAmount = $fullWeeklyPaidAmount;
+            $weeklyUnpaidAmount = $weeklyExpected - $fullWeeklyPaidAmount;
+
+            // Monthly stats
+            $monthlyExpected = $this->calculateMonthlyExpected();
+            $fullMonthlyPaidAmount = $this->paymentRepository->getMonthlyPaidAmount();
+            $monthlyPaidAmount = $fullMonthlyPaidAmount;
+            $monthlyUnpaidAmount = $monthlyExpected - $fullMonthlyPaidAmount;
+
+            // Yearly Stats
+            $yearlyExpected = $this->calculateYearlyExpected();
+            $fullYearlyPaidAmount = $this->paymentRepository->getYearlyPaidAmount();
+            $yearlyPaidAmount = $fullYearlyPaidAmount;
+            $yearlyUnpaidAmount = $yearlyExpected - $fullYearlyPaidAmount;
+
+            // chart Data (Daily Stats)
+            $chartData = $this->generateChartData();
+
+            // Extract chart variables
+            $lables = $chartData['lables'];
+            $fullPaidAmount = $chartData['fullPaidAmount'];
+            $fullUnPaidAmount = $chartData['fullUnpaidAmount'];
+            $Expected = $chartData['Expected'];
+
+            // Return data to blade view 
+            return view('admin/home', compact(
+                'automaticMembersArray',
+                'title',
+                'lables',
+                'fullPaidAmount',
+                'fullUnPaidAmount',
+                'Expected',
+                'daylyPaidAmount',
+                'daylyUnpaidAmount',
+                'daylyExpected',
+                'weeklyPaidAmount',
+                'weeklyUnpaidAmount',
+                'weeklyExpected',
+                'monthlyPaidAmount',
+                'monthlyUnpaidAmount',
+                'monthlyExpected',
+                'yearlyPaidAmount',
+                'yearlyUnpaidAmount',
+                'yearlyExpected',
+                'totalMember',
+                'tudayPaidMember',
+                'activeMember',
+                'totalUser',
+                'totalEqubPayment'
+            ));
+
+        } catch (Exception $ex) {
+            Session::flash('error', "Unable to process your request, Please try again!" . $ex->getMessage());
+            return back();
+        }
+    }
+    private function calculateWeeklyExpected()
+    {
+        $weeklyExpected = $this->equbRepository->getExpectedAmount();
+        $sum = 0;
+
+        foreach ($weeklyExpected as $expected) {
+            $end_date = Carbon::parse($expected->end_date);
+            $start_date = Carbon::parse($expected->start_date);
+            $currunt_date = Carbon::today();
+
+            if ($start_date <= $currunt_date && $end_date >= $currunt_date) {
+                $difference = $currunt_date->diffInDays($end_date, false);
+            } else {
+                $difference = $start_date->diffInDays($end_date, false);
+            }
+
+            $days = min(7, $difference + 1); // Max days = 7
+            $sum += $expected->amount * $days;
+        }
+
+        return $sum;
+    }
+    private function calculateMonthlyExpected()
+    {
+        $monthlyExpected = $this->equbRepository->getExpectedAmount();
+        $sum = 0;
+
+        foreach ($monthlyExpected as $expected) {
+            $end_date = Carbon::parse($expected->end_date);
+            $start_date = Carbon::parse($expected->start_date);
+            $currunt_date = Carbon::today();
+
+            if ($start_date <= $currunt_date && $end_date >= $currunt_date) {
+                $difference = $currunt_date->diffInDays($end_date, false);
+            } else {
+                $difference = $start_date->diffInDays($end_date, false);
+            }
+
+            $days = min(30, $difference + 1); // max days = 30
+            $sum += $expected->amount * $days;
+        }
+
+        return $sum;
+    }
+    private function calculateYearlyExpected()
+    {
+        $yearlyExpected = $this->equbRepository->getExpectedAmount();
+        $sum = 0;
+
+        foreach ($yearlyExpected as $expected) {
+            $end_date = Carbon::parse($expected->end_date);
+            $start_date = Carbon::parse($expected->start_date);
+            $currunt_date = Carbon::today();
+
+            if ($start_date <= $currunt_date && $end_date >= $currunt_date) {
+                $difference = $currunt_date->diffInDays($end_date, false);
+            } else {
+                $difference = $start_date->diffInDays($end_date, false);
+            }
+
+            $days = min(365, $difference + 1); // max days = 365
+            $sum += $expected->amount * $days;
+        }
+
+        return $sum;
+    }
+    private function generateChartData()
+    {
+        $lables = Payment::join('equbs', 'payments.equb_id', '=', 'equbs.id')
+                ->join('equb_types', 'equb_types.id', '=', 'equbs.id')
+                ->groupBy('equb_types.name')
+                ->pluck('equb_types.name');
+
+        $fullPaidAmount = Payment::selectRaw('sum(payments.amount) as paidAmount')
+                ->join('equbs', 'payments.equb_id', '=', 'equbs.id') // Ensure proper join
+                ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
+                ->groupBy('equb_types.name')
+                ->get();
+
+        $Expected = $this->equbRepository->getExpected($lables);
+
+        // Fetch total unpaid amounts grouped by equb types
+        $fullUnPaidAmount = Payment::selectRaw('sum(payments.amount) as unpaidAmount')
+            ->join('equbs', 'payments.equb_id', '=', 'equbs.id')
+            ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
+            ->groupBy('equb_types.name')
+            ->where('payments.status', 'unpaid')
+            ->pluck('unpaidAmount');
+
+        return [
+            'lables' =>  json_encode($lables, JSON_UNESCAPED_UNICODE),
+            'fullPaidAmount' => json_encode($fullPaidAmount),
+            'Expected' => json_encode($Expected),
+            'fullUnpaidAmount' => json_encode($fullUnPaidAmount)
+        ];
     }
     public function equbTypeIndex($equb_type_id)
     {
