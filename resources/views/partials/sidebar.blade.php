@@ -110,6 +110,12 @@
                                 <p>Pending Payments</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{ route('showAllPaidPayments') }}" class="nav-link" id="showAllPaidPayments" onclick="setActive('showAllPaidPayments')">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Paid Payments</p>
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 @endcan

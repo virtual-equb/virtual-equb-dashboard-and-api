@@ -481,6 +481,27 @@ class PaymentController extends Controller
             return back();
         }
     }
+    public function paidPayment()
+    {
+        try {
+            $userData = Auth::user();
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'equb_collector'];
+            $member = ['member'];
+            // if ($userData->hasAnyRole($adminRoles)) {
+                $this->middleware('auth');
+                $data['title'] = $this->title;
+                $data['paids'] = Payment::where('status', 'paid')->with('member')->get();
+                return view('admin/payment.paidPaymentList', $data);
+            // } else {
+            //     return view('auth/login');
+            // }
+        } catch (Exception $ex) {
+            $msg = $ex->getMessage();
+            $type = 'error';
+            Session::flash($type, $msg);
+            return back();
+        }
+    }
     // public function indexPendingPaginate($offsetVal, $pageNumberVal)
     // {
     //     try {
@@ -535,6 +556,49 @@ class PaymentController extends Controller
     //         return back();
     //     }
     // }
+    public function searchPaidPayment($searchInput, $offset, $pageNumber = null)
+    {
+        // dd($searchInput);
+        try {
+            $userData = Auth::user();
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'equb_collector', 'call_center'];
+            $member = ['member'];
+            $collector = ['equb_collector'];
+            // if ($userData->hasAnyRole($adminRoles)) {
+                $data['offset'] = $offset;
+                $limit = 50;
+                $data['limit'] = $limit;
+                $data['totalPayments'] = $this->paymentRepository->searchPaidPaymentCount($searchInput);
+                if ($offset == 0) {
+                    $data['pageNumber'] = 1;
+                } else {
+                    $data['pageNumber'] = $pageNumber;
+                }
+                $data['searchInput'] = $searchInput;
+                $data['payments'] = $this->paymentRepository->searchPaidPayment($offset, $searchInput);
+                // dd($data);
+                return view('admin/payment.searchPendingPaymentTable', $data);
+            // } elseif ($userData->hasRole($collector)) {
+                $data['offset'] = $offset;
+                $limit = 50;
+                $data['limit'] = $limit;
+                $data['totalPayments'] = $this->paymentRepository->searchPendingPaymentCount($searchInput);
+                if ($offset == 0) {
+                    $data['pageNumber'] = 1;
+                } else {
+                    $data['pageNumber'] = $pageNumber;
+                }
+                $data['searchInput'] = $searchInput;
+                $data['payments'] = $this->paymentRepository->searchPendingPayment($offset, $searchInput);
+                return view('admin/payment.searchPendingPaymentTable', $data);
+            // }
+        } catch (Exception $ex) {
+            $msg = $ex->getMessage();
+            $type = 'error';
+            Session::flash($type, $msg);
+            return back();
+        }
+    }
     public function searchPendingPayment($searchInput, $offset, $pageNumber = null)
     {
         // dd($searchInput);
@@ -619,6 +683,47 @@ class PaymentController extends Controller
             if ($userData->hasAnyRole($adminRoles)) {
                 // $totalMember = $this->memberRepository->getPendingMembers();
                 $payments = $this->paymentRepository->getAllPendingByPaginate($offset);
+                // $totalPaid = $this->paymentRepository->getTotalPaid($equb_id);
+                // $equbTypes = $this->equbTypeRepository->getActive();
+                // $equbs = $this->equbRepository->getAll();
+                $totalPayments = $this->paymentRepository->countPendingPayments();
+                $title = $this->title;
+                return view('admin/payment.pendingPaymentTable', compact('title', 'payments', 'pageNumber', 'offset', 'limit', 'totalPayments'));
+                // return view('admin/payment.pendingPaymentList', compact('title', 'equbTypes', 'members', 'equbs', 'payments', 'pageNumber', 'offset', 'limit', 'totalPayments'));
+            } elseif ($userData->hasRole($collector)) {
+                // $totalMember = $this->memberRepository->getPendingMembers();
+                $members = $this->memberRepository->getAllPendingByPaginate($offset);
+                // $totalPaid = $this->paymentRepository->getTotalPaid($equb_id);
+                // $equbTypes = $this->equbTypeRepository->getActive();
+                // $equbs = $this->equbRepository->getAll();
+                $payments = $this->paymentRepository->countPendingPayments();
+                $title = $this->title;
+                return view('equbCollecter/member.pendingMemberTable', compact('title', 'payments', 'pageNumber', 'offset', 'limit', 'totalPayments'));
+                // return view('equbCollecter/member.pendingMemberTable', compact('title', 'members', 'equbTypes', 'equbs', 'payments', 'pageNumber', 'offset', 'limit', 'totalMember'));
+            } else {
+                return view('auth/login');
+            }
+        } catch (Exception $ex) {
+            $msg = $ex->getMessage();
+            $type = 'error';
+            Session::flash($type, $msg);
+            return back();
+        }
+    }
+    public function indexPaidPaginate($offsetVal, $pageNumberVal)
+    {
+      
+        try {
+            $limit = 10;
+            $offset = $offsetVal;
+            $pageNumber = $pageNumberVal;
+            $userData = Auth::user();
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'equb_collector', 'finance', 'call_center'];
+            $member = ['member'];
+            $collector = ['equb_collector'];
+            if ($userData->hasAnyRole($adminRoles)) {
+                // $totalMember = $this->memberRepository->getPendingMembers();
+                $payments = $this->paymentRepository->getAllPaidPayments($offset);
                 // $totalPaid = $this->paymentRepository->getTotalPaid($equb_id);
                 // $equbTypes = $this->equbTypeRepository->getActive();
                 // $equbs = $this->equbRepository->getAll();
