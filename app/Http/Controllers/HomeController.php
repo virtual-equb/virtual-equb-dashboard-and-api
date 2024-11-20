@@ -440,8 +440,10 @@ class HomeController extends Controller
     private function generateChartData()
     {
         $lables = Payment::join('equbs', 'payments.equb_id', '=', 'equbs.id')
-                ->join('equb_types', 'equb_types.id', '=', 'equbs.id')
+                ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
                 ->groupBy('equb_types.name')
+                ->orderBy('equb_types.id', 'asc')
+                ->whereDate('payments.created_at', '>=', date('Y-m-d'))
                 ->pluck('equb_types.name');
 
         $fullPaidAmount = Payment::selectRaw('sum(payments.amount) as paidAmount')
