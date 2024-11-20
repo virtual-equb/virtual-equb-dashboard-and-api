@@ -8,6 +8,14 @@ interface IEqubRepository
 {
     public function getAll();
 
+    public function getDailyStats();
+
+    public function getWeeklyStats();
+
+    public function getMonthlyStats();
+
+    public function getYearlyStats();
+
     public function getExpected($equbTypeId);
 
     public function getCountByDateAndEqubType($dateFrom, $dateTo, $equbType);
