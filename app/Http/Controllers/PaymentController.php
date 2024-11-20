@@ -481,7 +481,6 @@ class PaymentController extends Controller
             return back();
         }
     }
-<<<<<<< HEAD
     public function paidPayment()
     {
         try {
@@ -600,9 +599,6 @@ class PaymentController extends Controller
             return back();
         }
     }
-=======
-    
->>>>>>> 97a632ce5c029fb590f53be659bfe4ca28491cd7
     public function searchPendingPayment($searchInput, $offset, $pageNumber = null)
     {
         // dd($searchInput);
