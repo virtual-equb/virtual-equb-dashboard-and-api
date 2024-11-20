@@ -17,136 +17,128 @@
         </tr>
     </thead>
     <tbody>
-        @foreach($member->equbs as $key => $equb)
-             <tr id="tre{{ $equb['id'] }}">
-             <?php
-              $totalPpayment = App\Models\Payment::where('equb_id',$equb['id'])->where('status','paid')->sum('amount');
-              $totalEqubAmount = App\Models\Equb::where('status','Active')->select('total_amount')->where('id',$equb['id'])->pluck('total_amount')->first();
-              $remainingPayment =  $totalEqubAmount - $totalPpayment;
-              $lotteryDate = App\Models\Equb::where('status','Active')->where('id',$equb['id'])->pluck('lottery_date')->first();
-                  $lotteryDate=explode(',',$lotteryDate);
-                  $date = date('Y-m-d');
-                  $lotteryDate=$lotteryDate[0];
-                  $date1 = new DateTime($date);
-                  $date2 = new DateTime($lotteryDate);
-                  if($date2>$date1){
-                    $interval = $date2->diff($date1);
-                    $interval=$interval->days;
-                  }elseif($date2==$date1){
-                    $interval=0;
-                  }else{
-                    $interval="passed";
-                  }
-             ?>
+        @foreach($equbs as $key => $equb)  {{-- Use paginated $equbs --}}
+            <tr id="tre{{ $equb['id'] }}">
+                <?php
+                $totalPpayment = App\Models\Payment::where('equb_id', $equb['id'])->where('status', 'paid')->sum('amount');
+                $totalEqubAmount = App\Models\Equb::where('status', 'Active')->where('id', $equb['id'])->value('total_amount');
+                $remainingPayment = $totalEqubAmount - $totalPpayment;
+                $lotteryDate = explode(',', App\Models\Equb::where('status', 'Active')->where('id', $equb['id'])->value('lottery_date'))[0];
+                $currentDate = new DateTime();
+                $lotteryDateTime = new DateTime($lotteryDate);
+                $interval = $lotteryDateTime > $currentDate ? $lotteryDateTime->diff($currentDate)->days : ($lotteryDateTime == $currentDate ? 0 : 'passed');
+                ?>
                 <td class="details-control_lottery" id="{{ $equb['id'] }}"></td>
-                <td>{{$key+1}}</td>
-                <td>             
-                    <a href="javascript:void(0);" onclick="openPaymentTab({{$equb}})">{{$equb->equbType->name}} round {{$equb->equbType->round}}</a>
+                <td>{{ $key + 1 + ($equbs->currentPage() - 1) * $equbs->perPage() }}</td>
+                <td>
+                    <a href="javascript:void(0);" onclick="openPaymentTab({{ $equb }})">{{ $equb->equbType->name }} round {{ $equb->equbType->round }}</a>
                 </td> 
-                <td> {{number_format($equb->amount)}}</td>
+                <td>{{ number_format($equb->amount) }}</td>
+                <td>{{ (new DateTime($equb['start_date']))->format("M-j-Y") }}</td>
+                <td>{{ (new DateTime($equb['end_date']))->format("M-j-Y") }}</td>
+                <td>{{ number_format($totalPpayment) }}</td>
+                <td>{{ number_format($remainingPayment) }}</td>
+                <td>{{ number_format($equb->total_amount) }}</td>
                 <td>
-                    <?php
-                    $toCreatedAt= new DateTime($equb['start_date']);
-                    $createdDate = $toCreatedAt->format("M-j-Y");
-                    echo $createdDate;?>
-                </td>
-                <td>
-                    <?php
-                    $toCreatedAt= new DateTime($equb['end_date']);
-                    $createdDate = $toCreatedAt->format("M-j-Y");
-                    echo $createdDate;?>
-                </td>
-                <td> {{number_format($totalPpayment)}}</td>
-                <td> {{number_format($remainingPayment)}}</td>
-                <td> {{number_format($equb->total_amount)}}</td>
-
-                <td>
-                    <?php
-                    foreach(explode(',', $equb->lottery_date) as $lottery_date){
-                     $toCreatedAt= new DateTime($lottery_date);
-                     $createdDate = $toCreatedAt->format("M-j-Y");
-                     echo $createdDate;
-                     echo "<br>";
-                    }
-                    ?>
+                    @foreach(explode(',', $equb->lottery_date) as $lottery_date)
+                        {{ (new DateTime($lottery_date))->format("M-j-Y") }}<br>
+                    @endforeach
                 </td>   
-                <td>{{$interval}}</td>
-                <td> {{$equb->status}}</td>                           
-                  </tr>
+                <td>{{ $interval }}</td>
+                <td>{{ $equb->status }}</td>                           
+            </tr>
+            <tr class="child-row" style="display:none;">
+                <td colspan="12">
+                    {{-- Nested table or additional details can go here --}}
+                    <div class="nested-table">
+                        <h5>Additional Details for Equb ID: {{ $equb['id'] }}</h5>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Detail 1</th>
+                                    <th>Detail 2</th>
+                                    <th>Detail 3</th>
+                                    {{-- Add more detail headers as needed --}}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{-- Populate nested details here --}}
+                                @foreach($equb->payments as $payment) {{-- Assuming payments relation exists --}}
+                                    <tr>
+                                        <td>{{ $payment->detail1 }}</td>
+                                        <td>{{ $payment->detail2 }}</td>
+                                        <td>{{ $payment->detail3 }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </td>
+            </tr>
         @endforeach
     </tbody>
-    <tfoot>
-    </tfoot>
-  </table>
+</table>
+
+{{-- Pagination Links --}}
+<div class="mt-4">
+    {{ $equbs->links() }}  {{-- Include pagination links --}}
+</div>
+
+{{-- Modal for Equb Status Change --}}
 <div class="modal modal-danger fade" id="aaaa" tabindex="-1" role="dialog" aria-labelledby="Delete" aria-hidden="true">
-          <div class="modal-dialog" role="document">
-              <div class="modal-content">
-                  <div class="modal-header">
-                      <p class="modal-title" id="exampleModalLabel">Update equb type status</p>
-                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                      </button>
-                  </div>
-                  <form action="" method="post" id="bbbb">
-                    <div class="modal-body">
-                      @csrf
-                      @method('PUT')
-                      <p class="text-center">Are you sure you want to update status?</p>
-                  </div>
-                  <div class="modal-footer">
-                     <button type="submit" class="btn btn-sm btn-danger">update</button>
-                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                  </div>
-                  </form>
-              </div>
-          </div>
-      </div>
-  <script type="text/javascript">
-        function equbStatusChange(item){
-          $('#aaaa').modal('show');
-          $('#bbbb').attr('action',  "{{ url('member/equbStatus-update') }}"  + '/' +item.id);   
-          }
-       $(function () {
-        if ( $.fn.DataTable.isDataTable( '#equb-list-table' ) ) {
-          $( '#equb-list-table' ).DataTable().destroy();
-           }
-        var table=$("#equb-list-table").DataTable({
-          "responsive": false, "lengthChange": false,"searching": false, "autoWidth": false,"bSort": false,"bDestroy": true,
-          language: { 
-            search: "",
-            searchPlaceholder: "Search",}
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p class="modal-title" id="exampleModalLabel">Update Equb Type Status</p>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="" method="post" id="bbbb">
+                <div class="modal-body">
+                    @csrf
+                    @method('PUT')
+                    <p class="text-center">Are you sure you want to update status?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-sm btn-danger">Update</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function equbStatusChange(item){
+        $('#aaaa').modal('show');
+        $('#bbbb').attr('action', "{{ url('member/equbStatus-update') }}" + '/' + item.id);   
+    }
+
+    $(function () {
+        if ($.fn.DataTable.isDataTable('#equb-list-table')) {
+            $('#equb-list-table').DataTable().destroy();
+        }
+        var table = $("#equb-list-table").DataTable({
+            responsive: false,
+            lengthChange: false,
+            searching: false,
+            autoWidth: false,
+            bSort: false,
+            bDestroy: true,
+            language: { 
+                search: "",
+                searchPlaceholder: "Search",
+            }
         });
-        table.buttons().container().appendTo('#equb-list-table_wrapper .col-md-6:eq(0)');
-          $('#equb-list-table tbody').on('click', 'td.details-control_lottery', function() {
-              var tr = $(this).closest('tr');
-              var inputId = $(this).prop("id");
-              var row = table.row(tr);
-              if (row.child.isShown()) {
-                  row.child.hide();
-                  tr.removeClass('shown');
-              } else {
-                var loadHere = '<br><div id="loading" class="row d-flex justify-content-center"><div class="row"><img src="' +
-                "{{ url('images/loading.gif') }}" + '"/></div></div>';
-                row.child(loadHere).show();
-              $.ajax({
-                url: "{{ url('member/show-equb') }}"+'/'+inputId,
-                type: 'get',
-                    success: function(data){  
-                        row.child(data).show();
-                        row.child.show();
-                        tr.addClass('shown');
-                     
-                   },
-                    error: function(){
-                    }
-                });
 
-           }
-              
-          });
-
-
-      });
-  </script>
-  {{-- @endif --}}
-
+        $('#equb-list-table tbody').on('click', 'td.details-control_lottery', function() {
+            var tr = $(this).closest('tr').next('.child-row');
+            if (tr.is(':visible')) {
+                tr.hide();
+            } else {
+                tr.show();
+            }
+        });
+    });
+</script>
