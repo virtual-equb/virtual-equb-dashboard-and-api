@@ -112,6 +112,7 @@
                                     </div>
                                 </div>
                             </div>
+                            
                             @endcan
                         </div>
                         <div class="col-md-6">
@@ -429,17 +430,27 @@
             })
         </script> --}}
         <script>
+            
             $(function () {
                 // Add active classes to navigation
                 $('#settingNava').addClass('menu-is-opening menu-open');
                 $('#dashboard').addClass('active');
                 $('#mainDash').addClass('active');
+                var label = document.getElementById('lable').value;
+                var labelOpenBracket = label.replace('[', "");
+                var replaced = labelOpenBracket.replace('[', "");
+                var replacedd = replaced.replace('"', "");
+                var replaceddd = replacedd.replace('","', ",");
+                var replacedddd = replaceddd.replace('","', ",");
+                var replaceddddd = replacedddd.replace('"', "");
+                var equbPaymentsArr = replaceddddd.split(',');
         
                 // Bar Chart Data
                 const barChartLabels = @json($lables); // Labels for equb types
                 const barChartPaid = @json($fullPaidAmount); // Paid amounts for equb types
                 const barChartExpected = @json($Expected); // Expected amounts for equb types
-        
+                const barChartUnpiad = @json($fullUnPaidAmount);
+
                 const barChartData = {
                     labels: barChartLabels,
                     datasets: [
@@ -447,13 +458,29 @@
                             label: 'Paid',
                             backgroundColor: 'rgba(60,141,188,0.9)',
                             borderColor: 'rgba(60,141,188,0.8)',
-                            data: barChartPaid
+                            pointRadius: false,
+                            pointColor: '#3b8bba',
+                            pointStrokeColor: 'rgba(60,141,188,1)',
+                            pointHighlightFill: '#fff',
+                            pointHighlightStroke: 'rgba(60,141,188,1)',
+                            data: {{ $fullPaidAmount }}
                         },
                         {
                             label: 'Expected',
                             backgroundColor: 'rgba(80, 214, 222, 0.9)',
                             borderColor: 'rgba(210, 214, 222, 1)',
-                            data: barChartExpected
+                            pointsummaryChartRadius: false,
+                            pointColor: 'rgba(210, 214, 222, 1)',
+                            pointStrokeColor: '#c1c7d1',
+                            pointHighlightFill: '#fff',
+                            pointHighlightStroke: 'rgba(220,220,220,1)',
+                            data: {{$Expected}}
+                        },
+                        {
+                            label: 'Unpaid',
+                            backgroundColor: 'rgba(255, 99, 132, 0.8)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            data: {{ $fullUnPaidAmount }}
                         }
                     ]
                 };

@@ -24,22 +24,6 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
     ];
 
-    protected $command = [
-        \App\Console\Commands\EqubNotificationCommand::class,
-        \App\Console\Commands\AutoDrawLottery::class,
-        \App\Console\Commands\SendEqubEndNotificationsCommand::class,
-        \App\Console\Commands\SendEqubStartNotificationsCommand::class
-    ];
-
-    protected function schedule(Schedule $schedule)
-    {
-        // logger('Schedule method executed');
-        $schedule->command('equb:notify-due-starts')->everyMinute();
-        $schedule->command('equb:notify-due-ends')->everyMinute();
-        $schedule->command('equb:sendnotifications')->everyMinute();
-        $schedule->command('equb:autoDrawLottery')->dailyAt('00:00'); // Run every day at midnight
-    }
-
     /**
      * The application's route middleware groups.
      *

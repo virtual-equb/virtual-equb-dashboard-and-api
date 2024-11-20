@@ -105,7 +105,8 @@
                                                             <th>Expected members (Quota)</th>
                                                             <th>Total joined members (Quota)</th>
                                                             <th>Lottery Date</th>
-                                                            <th>Total Amount (Birr)</th>
+                                                            <th>Equb Amount (Birr)</th>
+                                                            <th>Expected Amount (Birr)</th>
                                                             <th>Remark</th>
                                                             <th>Status</th>
                                                             <th>Registered At </th>
@@ -138,6 +139,7 @@
                                                                     } ?>
                                                                 </td>
                                                                 <td>{{ $item->amount }}</td>
+                                                                <td>{{ $item->total_amount }}</td>
                                                                 <td>{{ $item->remark }}</td>
                                                                 <td>{{ $item->status }}</td>
                                                                 <td>
