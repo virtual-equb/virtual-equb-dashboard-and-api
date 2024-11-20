@@ -298,12 +298,15 @@ class HomeController extends Controller
             // Fetch winner data
             $automaticWinnerMembers = LotteryWinner::whereDate('created_at', Carbon::today())->get();
             $automaticMembersArray = $automaticWinnerMembers->map(function ($winner) {
-                return [
-                    'full_name' => $winner->member->full_name,
-                    'phone' => $winner->member->phone,
-                    'gender' => $winner->member->gender,
-                ];
-            });
+                if ($winner->member) { // Check if the related member exists
+                    return [
+                        'full_name' => $winner->member->full_name,
+                        'phone' => $winner->member->phone,
+                        'gender' => $winner->member->gender,
+                    ];
+                }
+                return null; // Return a placeholder or skip null members
+            })->filter(); // Remove null values from the collection
 
             // Daily Payments and Expected Amount
             $fullDaylyPaidAmount = $this->paymentRepository->getDaylyPaidAmount();
@@ -445,14 +448,28 @@ class HomeController extends Controller
                 ->orderBy('equb_types.id', 'asc')
                 ->whereDate('payments.created_at', '>=', date('Y-m-d'))
                 ->pluck('equb_types.name');
+                
+        // $lables = $lables->toArray();
+
+        $equbTypeId = Payment::join('equbs', 'payments.equb_id', '=', 'equbs.id')
+                    ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
+                    ->groupBy('equb_types.id')
+                    ->whereDate('payments.created_at', '>=', date('Y-m-d'))
+                    ->pluck('equb_types.id');
 
         $fullPaidAmount = Payment::selectRaw('sum(payments.amount) as paidAmount')
                 ->join('equbs', 'payments.equb_id', '=', 'equbs.id') // Ensure proper join
                 ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
                 ->groupBy('equb_types.name')
                 ->get();
+        $fullPaidAmount->toArray();
+        $fullPaidAmount = Arr::pluck($fullPaidAmount, 'paidAmount');
 
-        $Expected = $this->equbRepository->getExpected($lables);
+        $Expected = $this->equbRepository->getExpected($equbTypeId);
+        $Expected->toArray();
+        $Expected = Arr::pluck($Expected, 'expected');
+
+        
 
         // Fetch total unpaid amounts grouped by equb types
         $fullUnPaidAmount = Payment::selectRaw('sum(payments.amount) as unpaidAmount')
@@ -463,7 +480,7 @@ class HomeController extends Controller
             ->pluck('unpaidAmount');
 
         return [
-            'lables' =>  json_encode($lables, JSON_UNESCAPED_UNICODE),
+            'lables' =>  $lables,
             'fullPaidAmount' => json_encode($fullPaidAmount),
             'Expected' => json_encode($Expected),
             'fullUnpaidAmount' => json_encode($fullUnPaidAmount)

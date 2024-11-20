@@ -16,12 +16,18 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('inspire')->hourly();
-        $schedule->command('check:enddate')->dailyAt('9:00');
-        $schedule->command('check:lotterydate')->dailyAt('9:00');
-        $schedule->command('equb:draw')->dailyAt('9:00');
-        $schedule->command('check:unpaidPayments')->dailyAt('9:00');
-        $schedule->command('send:reminder')->dailyAt('9:00');
-        $schedule->command('check:equbtype')->dailyAt('9:00');
+        // $schedule->command('check:enddate')->dailyAt('9:00');
+        // $schedule->command('check:lotterydate')->dailyAt('9:00');
+        // $schedule->command('equb:draw')->dailyAt('9:00');
+        // $schedule->command('check:unpaidPayments')->dailyAt('9:00');
+        // $schedule->command('send:reminder')->dailyAt('9:00');
+        // $schedule->command('check:equbtype')->dailyAt('9:00');
+
+        // Updated Schedules
+        $schedule->command('equb:notify-due-starts')->dailyAt('00:00');
+        $schedule->command('equb:notify-due-ends')->dailyAt('00:00');
+        $schedule->command('equb:sendnotifications')->dailyAt('00:00');
+        $schedule->command('equb:autoDrawLottery')->dailyAt('00:00'); // Run every day at midnight
     }
 
     /**

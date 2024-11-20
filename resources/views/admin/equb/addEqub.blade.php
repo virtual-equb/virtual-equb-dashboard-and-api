@@ -6,7 +6,15 @@
                 {{ csrf_field() }}
 
                 <div class="modal-header">
+<<<<<<< HEAD
                     <h4 class="modal-title">Add Equb</h4>
+=======
+<<<<<<< HEAD
+                    <h4 class="modal-title">Add Equb</h4>
+=======
+                    <h4 class="modal-title">Add Equb sami</h4>
+>>>>>>> ca9d679eede169b91f99c58c076e2efb6fadc2cb
+>>>>>>> f57ab65126e22772e68049102f72b64d0da86517
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
@@ -30,8 +38,13 @@
                                         data-enddate="{{ $equbType->end_date }}" 
                                         data-rote="{{ $equbType->rote }}" 
                                         data-quota="{{ $equbType->quota }}"
+<<<<<<< HEAD
+                                        data-amount="{{ $equbType->amount }}" 
+                                        data-expected-total="{{ $equbType->expected_total }}" 
+=======
                                         data-amount="{{ $equbType->amount }}" <!-- Add amount data -->
                                         data-expected-total="{{ $equbType->expected_total }}" <!-- Add expected total data -->
+>>>>>>> ca9d679eede169b91f99c58c076e2efb6fadc2cb
                                         value="{{ $equbType->id }}">
                                         {{ $equbType->name }} round {{ $equbType->round }}
                                     </option>

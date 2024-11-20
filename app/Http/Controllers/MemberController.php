@@ -114,7 +114,10 @@ class MemberController extends Controller
             $limit = 50;
             $pageNumber = 1;
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "finance" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance', 'call_center', 'assistant'];
+            $memberRole = ['member'];
+            $collector = ['equb_collector'];
+            if ($userData && $userData->hasAnyRole($adminRoles)) {
                 $totalMember = $this->memberRepository->getMember();
                 $members = $this->memberRepository->getAllByPaginate($offset);
                 $equbTypes = $this->equbTypeRepository->getActive();
@@ -123,7 +126,7 @@ class MemberController extends Controller
                 $title = $this->title;
                 $cities = $this->cityRepository->getAll();
                 return view('admin/member.memberList', compact('title', 'equbTypes', 'members', 'equbs', 'payments','cities'));
-            // } elseif ($userData && ($userData['role'] == "equb_collector")) {
+            } elseif ($userData && $userData->hasAnyRole($collector)) {
                 $totalMember = $this->memberRepository->getMember();
                 $members = $this->memberRepository->getAllByPaginate($offset);
                 $equbTypes = $this->equbTypeRepository->getActive();
@@ -132,7 +135,7 @@ class MemberController extends Controller
                 $title = $this->title;
                 $cities = $this->cityRepository->getAll();
                 return view('equbCollecter/member.memberList', compact('title', 'equbTypes', 'equbs', 'payments','cities'));
-            // } elseif ($userData && ($userData['role'] == "member")) {
+            } elseif ($userData && $userData->hasAnyRole($member)) {
                 $members = $this->memberRepository->getByPhone($userData['phone_number']);
                 $equbTypes = $this->equbTypeRepository->getActive();
                 $equbs = $this->equbRepository->getAll();
@@ -140,11 +143,11 @@ class MemberController extends Controller
                 $members = $this->memberRepository->getByPhone($userData['phone_number']);
                 $cities = $this->cityRepository->getAll();
                 return view('member/member.memberList', compact('title', 'members', 'equbTypes', 'equbs', 'payments','cities'));
-            // } else {
-            //     return view('auth/login');
-            // }
+            } else {
+                return view('auth/login');
+            }
         } catch (Exception $ex) {
-            $msg = "Unknown Error Occurred, Please try again!";
+            $msg = "Unknown Error Occurred, Please try again! " . $ex->getMessage();
             $type = 'error';
             Session::flash($type, $msg);
             return back();
@@ -774,68 +777,132 @@ class MemberController extends Controller
             return back();
         }
     }
+    // public function updateStatus($id, Request $request)
+    // {
+    //     try {
+    //         $userData = Auth::user();
+    //             $status = $this->memberRepository->getStatusById($id)->status;
+    //             $member_phone = $this->memberRepository->getPhone($id);
+    //             $member_phone = $member_phone->phone;
+    //             $user_id = $this->userRepository->getUserId($member_phone);
+    //             $user_id = $user_id->id;
+    //             if ($status == "Deactive") {
+    //                 $status = "Active";
+    //                 $userStatus = 1;
+    //             } else {
+    //                 $status = "Deactive";
+    //                 $userStatus = 0;
+    //             }
+    //             $updated = [
+    //                 'status' => $status,
+    //             ];
+    //             $updateUser = [
+    //                 'enabled' => $userStatus,
+    //             ];
+    //             $updated = $this->memberRepository->update($id, $updated);
+    //             $updateUser = $this->userRepository->updateUser($user_id, $updateUser);
+    //             if ($updated && $updateUser) {
+    //                 if ($status == "Deactive") {
+    //                     $updateEqubStatus = [
+    //                         'status' => 'Deactive'
+    //                     ];
+    //                     $updated = $this->equbRepository->updateEqubStatus($id, $updateEqubStatus);
+    //                     $status = "Deactivated";
+    //                 } else {
+    //                     $status = "Activated";
+    //                 }
+    //                 $activityLog = [
+    //                     'type' => 'members',
+    //                     'type_id' => $id,
+    //                     'action' => $status,
+    //                     'user_id' => $userData->id,
+    //                     'username' => $userData->name,
+    //                     'role' => $userData->role,
+    //                 ];
+    //                 $this->activityLogRepository->createActivityLog($activityLog);
+    //                 try {
+    //                     $shortcode = config('key.SHORT_CODE');
+    //                     $message = $status == "Deactivated" ? "Sorry! Your Virtual Equb account has been $status. For further information please call " . $shortcode : "Congratulations! Your Virtual Equb account has been $status. For further information please call " . $shortcode;
+    //                     $this->sendSms($member_phone, $message);
+    //                 } catch (Exception $ex) {
+    //                     return redirect()->back()->with('error', 'Failed to send SMS');
+    //                 };
+    //                 $msg = "Status has been updated successfully!";
+    //                 $type = 'success';
+    //                 Session::flash($type, $msg);
+    //                 return back();
+    //             } else {
+    //                 $msg = "Unknown error occurred, Please try again!";
+    //                 $type = 'error';
+    //                 Session::flash($type, $msg);
+    //                 return back();
+    //             }
+    //     } catch (Exception $ex) {
+    //         $msg = "Unable to process your request, Please try again!";
+    //         $type = 'error';
+    //         Session::flash($type, $msg);
+    //         return back();
+    //     }
+    // }
     public function updateStatus($id, Request $request)
     {
         try {
             $userData = Auth::user();
-                $status = $this->memberRepository->getStatusById($id)->status;
-                $member_phone = $this->memberRepository->getPhone($id);
-                $member_phone = $member_phone->phone;
-                $user_id = $this->userRepository->getUserId($member_phone);
-                $user_id = $user_id->id;
-                if ($status == "Deactive") {
-                    $status = "Active";
-                    $userStatus = 1;
-                } else {
-                    $status = "Deactive";
-                    $userStatus = 0;
+
+            // Get current member status and phone
+            $member = $this->memberRepository->getStatusById($id);
+            $member_phone = $this->memberRepository->getPhone($id)->phone;
+            $user_id = $this->userRepository->getUserId($member_phone)->id;
+
+            // Determine new status
+            $newStatus = $member->status === "Active" ? "Deactive" : "Active";
+            $userStatus = $newStatus === "Active" ? 1 : 0;
+
+            // Update member and user status
+            $updated = $this->memberRepository->update($id, ['status' => $newStatus]);
+            $updateUser = $this->userRepository->updateUser($user_id, ['enabled' => $userStatus]);
+
+            if ($updated && $updateUser) {
+                // Handle equb status if deactivated
+                if ($newStatus === "Deactive") {
+                    $this->equbRepository->updateEqubStatus($id, ['status' => 'Deactive']);
                 }
-                $updated = [
-                    'status' => $status,
-                ];
-                $updateUser = [
-                    'enabled' => $userStatus,
-                ];
-                $updated = $this->memberRepository->update($id, $updated);
-                $updateUser = $this->userRepository->updateUser($user_id, $updateUser);
-                if ($updated && $updateUser) {
-                    if ($status == "Deactive") {
-                        $updateEqubStatus = [
-                            'status' => 'Deactive'
-                        ];
-                        $updated = $this->equbRepository->updateEqubStatus($id, $updateEqubStatus);
-                        $status = "Deactivated";
-                    } else {
-                        $status = "Activated";
-                    }
-                    $activityLog = [
-                        'type' => 'members',
-                        'type_id' => $id,
-                        'action' => $status,
-                        'user_id' => $userData->id,
-                        'username' => $userData->name,
-                        'role' => $userData->role,
-                    ];
-                    $this->activityLogRepository->createActivityLog($activityLog);
-                    try {
-                        $shortcode = config('key.SHORT_CODE');
-                        $message = $status == "Deactivated" ? "Sorry! Your Virtual Equb account has been $status. For further information please call " . $shortcode : "Congratulations! Your Virtual Equb account has been $status. For further information please call " . $shortcode;
-                        $this->sendSms($member_phone, $message);
-                    } catch (Exception $ex) {
-                        return redirect()->back()->with('error', 'Failed to send SMS');
-                    };
-                    $msg = "Status has been updated successfully!";
-                    $type = 'success';
-                    Session::flash($type, $msg);
-                    return back();
-                } else {
-                    $msg = "Unknown error occurred, Please try again!";
-                    $type = 'error';
-                    Session::flash($type, $msg);
-                    return back();
+
+                // Log activity
+                $this->activityLogRepository->createActivityLog([
+                    'type' => 'members',
+                    'type_id' => $id,
+                    'action' => $newStatus,
+                    'user_id' => $userData->id,
+                    'username' => $userData->name,
+                    'role' => $userData->role,
+                ]);
+
+                // Send SMS notification
+                try {
+                    $shortcode = config('key.SHORT_CODE');
+                    $message = $newStatus === "Deactive" 
+                        ? "Sorry! Your Virtual Equb account has been Deactivated. For further information please call {$shortcode}"
+                        : "Congratulations! Your Virtual Equb account has been Activated. For further information please call {$shortcode}";
+                    $this->sendSms($member_phone, $message);
+                } catch (Exception $ex) {
+                    return redirect()->back()->with('error', 'Failed to send SMS' . $ex->getMessage());
                 }
+
+                // Success message
+                $msg = "Status has been updated to {$newStatus} successfully!";
+                $type = 'success';
+                Session::flash($type, $msg);
+                return back();
+            } else {
+                $msg = "Unknown error occurred, Please try again!";
+                $type = 'error';
+                Session::flash($type, $msg);
+                return back();
+            }
+
         } catch (Exception $ex) {
-            $msg = "Unable to process your request, Please try again!";
+            $msg = "Unable to process your request, Please try again!" . $ex->getMessage();
             $type = 'error';
             Session::flash($type, $msg);
             return back();
