@@ -17,5 +17,6 @@ class MainEqub extends Model
     {
         return $this->hasMany(EqubType::class, 'main_equb_id');
     }
+    
 
 }

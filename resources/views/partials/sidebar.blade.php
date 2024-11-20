@@ -10,7 +10,7 @@
                 @if (Auth::check() && Auth::user()->profile_photo_path)
                     <img src="{{ Auth::user()->profile_photo_path }}" alt="Profile Photo">
                 @else
-                    <img src="{{ asset('default-profile.png') }}" alt="Default Profile Photo">
+                    <img src="{{ asset('default-profile.png') }}" alt="Default Photo">
                 @endif
             </div>
             <div class="info">
@@ -23,9 +23,10 @@
         </div>
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                <li class="nav-item" id="settingNava">
-                    <a href="#" class="nav-link" id="dashboard">
-                        <i class="nav-icon fas fa-indent"></i>
+                <!-- Dashboard Section -->
+                <li class="nav-item">
+                    <a href="#" class="nav-link" id="dashboardLink" onclick="setActive('dashboardLink')">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>
                             Dashboard
                             <i class="fas fa-angle-left right"></i>
@@ -33,26 +34,42 @@
                     </a>
                     <ul class="nav nav-treeview ml-2">
                         <li class="nav-item">
-                            <a href="{{ route('dashboard') }}" class="nav-link" id="mainDash">
-                                <i class="far fa-circle nav-icon ml-2"></i>
+                            <a href="{{ route('dashboard') }}" class="nav-link" id="mainDash" onclick="setActive('mainDash')">
+                                <i class="far fa-circle nav-icon"></i>
                                 <p>Main Dashboard</p>
                             </a>
                         </li>
-                    </ul>
-                    <ul class="nav nav-treeview ml-2">
-                        @foreach (App\Models\MainEqub::all() as $equbType)
+                        @foreach (App\Models\MainEqub::with('subEqub')->get() as $mainEqub)
                             <li class="nav-item">
-                                <a href="{{ route('viewMainEqub', $equbType->id) }}" class="nav-link" id="{{ $equbType->id }}">
+                                <a href="#" class="nav-link" onclick="setActive('equb-{{ $mainEqub->id }}')">
                                     <i class="far fa-circle nav-icon"></i>
-                                    <p>{{ $equbType->name }}</p>
+                                    <p>{{ $mainEqub->name }}<i class="fas fa-angle-left right"></i></p>
                                 </a>
+                                <ul class="nav nav-treeview ml-2">
+                                    @if ($mainEqub->subEqub && $mainEqub->subEqub->count())
+                                        @foreach ($mainEqub->subEqub as $equbType)
+                                            <li class="nav-item">
+                                                <a href="{{ url('equbTypeDashboard/' . $equbType->id) }}" class="nav-link" id="{{ $equbType->id }}">
+                                                    <i class="far fa-circle nav-icon"></i>
+                                                    <p>{{ $equbType->name }}</p>
+                                                </a>
+                                            </li>
+                                        @endforeach
+                                    @else
+                                        <li class="nav-item">
+                                            <p class="nav-link">No Equb Types available</p>
+                                        </li>
+                                    @endif
+                                </ul>
                             </li>
                         @endforeach
                     </ul>
                 </li>
+
+                <!-- Members Section -->
                 @can('view member')
-                <li class="nav-item" id="settingNavm">
-                    <a href="#" class="nav-link" id="mem">
+                <li class="nav-item">
+                    <a href="#" class="nav-link" id="membersLink" onclick="setActive('membersLink')">
                         <i class="nav-icon fas fa-users"></i>
                         <p>
                             Members
@@ -61,13 +78,13 @@
                     </a>
                     <ul class="nav nav-treeview ml-2">
                         <li class="nav-item">
-                            <a href="{{ route('showMember') }}" class="nav-link" id="nav-mem">
+                            <a href="{{ route('showMember') }}" class="nav-link" id="nav-mem" onclick="setActive('nav-mem')">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>All Members</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('showPendingMembers') }}" class="nav-link" id="pendingMem">
+                            <a href="{{ route('showPendingMembers') }}" class="nav-link" id="pendingMem" onclick="setActive('pendingMem')">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Pending Members</p>
                             </a>
@@ -75,10 +92,12 @@
                     </ul>
                 </li>
                 @endcan
+
                 @can('view payment')
-                <li class="nav-item" id="settingNavp">
-                    <a href="#" class="nav-link" id="pay">
-                        <i class="nav-icon fas fa-users"></i>
+                <!-- Payments Section -->
+                <li class="nav-item">
+                    <a href="#" class="nav-link" id="paymentsLink" onclick="setActive('paymentsLink')">
+                        <i class="nav-icon fas fa-credit-card"></i>
                         <p>
                             Payments
                             <i class="fas fa-angle-left right"></i>
@@ -86,7 +105,7 @@
                     </a>
                     <ul class="nav nav-treeview ml-2">
                         <li class="nav-item">
-                            <a href="{{ route('showAllPendingPayments') }}" class="nav-link" id="pendingPayments">
+                            <a href="{{ route('showAllPendingPayments') }}" class="nav-link" id="pendingPayments" onclick="setActive('pendingPayments')">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Pending Payments</p>
                             </a>
@@ -94,92 +113,117 @@
                     </ul>
                 </li>
                 @endcan
+
                 @can('view main_equb')
-                <li class="nav-item" id="nav-ety">
-                    <a href="{{ route('mainEqubs.index') }}" class="nav-link" id="city">
+                <!-- Main Equbs Section -->
+                <li class="nav-item">
+                    <a href="{{ route('mainEqubs.index') }}" class="nav-link" id="mainEqubs" onclick="setActive('mainEqubs')">
                         <i class="nav-icon fa fa-server"></i>
                         <p>Main Equbs</p>
                     </a>
                 </li>
                 @endcan
+
                 @can('view equb_type')
-                <li class="nav-item" id="nav-ety">
-                    <a href="{{ route('showEqubType') }}" class="nav-link" id="city">
+                <!-- Equb Type Section -->
+                <li class="nav-item">
+                    <a href="{{ route('showEqubType') }}" class="nav-link" id="showEqubType" onclick="setActive('showEqubType')">
                         <i class="nav-icon fa fa-network-wired"></i>
                         <p>Equb Type</p>
                     </a>
                 </li>
                 @endcan
-                @can('view rejected_date ')
-                <li class="nav-item" id="nav-ety">
-                    <a href="{{ route('showRejectedDate') }}" class="nav-link" id="offDate">
+
+                @can('view rejected_date')
+                <li class="nav-item">
+                    <a href="{{ route('showRejectedDate') }}" class="nav-link" id="offDate" onclick="setActive('offDate')">
                         <i class="nav-icon fas fa-calendar-minus"></i>
                         <p>Off Date</p>
                     </a>
                 </li>
                 @endcan
+
                 @can('view notification')
-                <li class="nav-item" id="nav-ety">
-                    <a href="{{ route('showNotifations') }}" class="nav-link" id="notification">
+                <li class="nav-item">
+                    <a href="{{ route('showNotifations') }}" class="nav-link" id="notification" onclick="setActive('notification')">
                         <i class="nav-icon fa fa-bell"></i>
                         <p>Notification</p>
                     </a>
                 </li>
                 @endcan
-                @can('view city')
-                <li class="nav-item" id="nav-ety">
-                    <a href="{{ route('cities.index') }}" class="nav-link" id="city">
-                        <i class="nav-icon fas fa-calendar-minus"></i>
-                        <p>City</p>
-                    </a>
-                </li>
-                @endcan
+
                 @can('view user')
-                <li class="nav-item" id="nav-ety">
-                    <a href="{{ route('user') }}" class="nav-link" id="adminNav">
+                <li class="nav-item">
+                    <a href="{{ route('user') }}" class="nav-link" id="adminNav" onclick="setActive('adminNav')">
                         <i class="nav-icon far fa-user"></i>
                         <p>User</p>
                     </a>
                 </li>
                 @endcan
-                <li class="nav-item" id="settingNavm">
-                    <a href="#" class="nav-link" id="settingsLink">
+
+                @can('view city')
+                <li class="nav-item">
+                    <a href="#" class="nav-link" id="locationsLink" onclick="setActive('locationsLink')">
+                        <i class="nav-icon fas fa-map-marker-alt"></i>
+                        <p>
+                            Locations
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview ml-2" style="{{ request()->is('cities*') ? 'display: block;' : 'display: none;' }}">
+                        <li class="nav-item">
+                            <a href="{{ route('cities.index') }}" class="nav-link {{ request()->is('cities') ? 'active' : '' }}" id="cityLink" onclick="setActive('cityLink')">
+                                <i class="nav-icon fas fa-city"></i>
+                                <p>City</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                @endcan
+
+                @can('view permission')
+                <li class="nav-item">
+                    <a href="#" class="nav-link" id="settingsLink" onclick="setActive('settingsLink')">
                         <i class="nav-icon fas fa-cog"></i>
                         <p>
                             Settings
                             <i class="fas fa-angle-left right"></i>
                         </p>
                     </a>
-                    <ul class="nav nav-treeview ml-2">
+                    <ul class="nav nav-treeview ml-2" style="{{ request()->is('permission') || request()->is('roles') ? 'display: block;' : 'display: none;' }}">
                         <li class="nav-item">
-                            <a href="{{ route('permissions.index') }}" class="nav-link" id="nav-permissions">
+                            <a href="{{ url('settings/permission') }}" class="nav-link {{ request()->is('permission') ? 'active' : '' }}" id="nav-permissions" onclick="setActive('nav-permissions')">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Permissions</p>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a href="" class="nav-link" id="nav-languages">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Language</p>
-                            </a>
-                        </li>
+                     
                     </ul>
                 </li>
+                @endcan
+
+                <!-- Logout Section -->
                 <li class="nav-item">
-                    <a href="" onclick="$('#logout').submit(); return false;" class="nav-link" id="adminNav">
+                    <a href="#" onclick="$('#logout').submit(); return false;" class="nav-link" id="logoutLink">
                         <i class="nav-icon fas fa-sign-out-alt"></i>
                         <p>Logout</p>
                     </a>
-                </li>
-                <li class="nav-item">
                     <form action="{{ route('logout') }}" id="logout" method="post" style="display: none">
                         @csrf
-                        <button type="submit" class="btn btn-secondary nav-link text-white text-align-start">
-                            Logout
-                        </button>
                     </form>
                 </li>
             </ul>
         </nav>
     </div>
 </aside>
+
+<script>
+    function setActive(id) {
+        // Remove 'active' class from all nav links
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active');
+        });
+        // Add 'active' class to the clicked link
+        document.getElementById(id).classList.add('active');
+    }
+</script>

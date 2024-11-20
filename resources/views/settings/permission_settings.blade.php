@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('styles')
-
 @endsection
 
 @section('content')
@@ -14,25 +13,8 @@
                             <div class="card">
 
                                 @section('title')
-                                <?= get_label('permission_settings', 'Permission settings') ?>
+                                {{ get_label('permission_settings', 'Permission settings') }}
                                 @endsection    
-
-                                <!-- Flash Message Section -->
-                                @if (session('success'))
-                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                        {{ session('success') }}
-                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                @elseif (session('error'))
-                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                        {{ session('error') }}
-                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                @endif
 
                                 <div class="d-flex justify-content-between mb-2 mt-4">
                                     <div>
@@ -73,9 +55,9 @@
                                                 <tbody>
                                                     @foreach($roles as $role)
                                                     <tr>
-                                                        <td>
-                                                            <h4 class="text-capitalize fw-bold mb-0">{{ get_label($role->name, ucfirst($role->name)) }}</h4>
-                                                        </td>
+                                                    <td>
+    <h4 class="text-capitalize fw-bold mb-0">{{ get_label($role->name, ucwords(str_replace('_', ' ', $role->name))) }}</h4>
+</td>
 
                                                         @if($role->name == 'admin')
                                                         <td>
@@ -101,8 +83,14 @@
                                                         @endif
                                                         <td class="align-items-center">
                                                             <div class="d-flex">
-                                                                <a href="/roles/edit/{{ $role->id }}" class="card-link">Edit<i class='bx bx-edit mx-1'></i></a>
-                                                                <a href="javascript:void(0);" type="button" data-id="{{ $role->id }}" data-type="roles" class="card-link mx-4 delete">Delete<i class='bx bx-trash text-danger mx-1'></i></a>
+                                                                <a href="/roles/edit/{{ $role->id }}" class="card-link"><i class='bx bx-edit text-primary' style="font-size: 1.2rem;"></i></a>
+                                                                <a href="javascript:void(0);" data-id="{{ $role->id }}" class="card-link mx-4 delete" data-bs-toggle="modal" data-bs-target="#deleteModal"><i class='bx bx-trash text-danger' style="font-size: 1.2rem;"></i></a>
+                                                                
+                                                                <!-- Hidden form for deletion -->
+                                                                <form action="{{ route('roles.destroy', $role->id) }}" method="POST" id="delete-form-{{ $role->id }}">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                </form>
                                                             </div>
                                                         </td>
                                                         @endif
@@ -113,6 +101,7 @@
                                         </div>
                                     </div>
                                 </div>
+                             
                             </div>
                         </div>
                     </div>
@@ -120,4 +109,43 @@
             </section>
         </div>
     </div>
+
+    <!-- Bootstrap Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this role?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        let roleIdToDelete;
+
+        document.querySelectorAll('.delete').forEach(button => {
+            button.addEventListener('click', function() {
+                roleIdToDelete = this.getAttribute('data-id');
+            });
+        });
+
+        document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+            document.getElementById('delete-form-' + roleIdToDelete).submit();
+        });
+    </script>
 @endsection
+
+<!-- Boxicons CSS -->
+<link href='https://unpkg.com/boxicons@latest/css/boxicons.min.css' rel='stylesheet'>
+<!-- Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>

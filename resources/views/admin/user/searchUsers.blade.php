@@ -23,7 +23,13 @@
                                  <th>{{ $item->email }}</th>
                                  <th>{{ $item->phone_number }}</th>
                                  <td>{{ $item->gender }}</td>
-                                 <td>{{ $item->role }}</td>
+                                 <td>
+                    @foreach($item->roles as $guard)
+                        <div class="badge badge-primary">
+                            {{ $guard->guard_name }}
+                        </div>
+                    @endforeach
+                </td>
                                  <td>{{ $item->enabled ? 'Active' : 'Inactive' }}</td>
                                  <td>
                                      <?php

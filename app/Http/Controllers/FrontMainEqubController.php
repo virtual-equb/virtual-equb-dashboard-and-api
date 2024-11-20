@@ -93,13 +93,11 @@ class FrontMainEqubController extends Controller
                 'active' => 'nullable'
             ]);
             $data['created_by'] = Auth::id();
-
             // Handle image upload if provided
             if ($request->hasFile('image')) {
                 $imagePath = $request->file('image')->store('images/equbs', 'public'); // Store the image
                 $data['image'] = $imagePath; // Add the image path to the data array
             }
-
             // Create the main equipment entry
             $mainEqub = MainEqub::create($data);
 

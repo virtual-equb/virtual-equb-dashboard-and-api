@@ -24,6 +24,7 @@ class EqubTypeRepository implements IEqubTypeRepository
     {
         return $this->model->with('mainEqub')->get();
     }
+    
     public function getStartDate($id)
     {
         return $this->model->where('id', $id)->first();

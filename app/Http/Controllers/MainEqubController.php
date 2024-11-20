@@ -93,12 +93,12 @@ class MainEqubController extends Controller
         return response()->json($mainEqub); // Return the data as JSON for the AJAX request
     }
 
-    public function update(Request $request, $id)
+    public function update1(Request $request, $id)
     {
         $request->validate([
             'name' => 'required|string|max:255',
             'remark' => 'nullable|string|max:500',
-            'status' => 'required|boolean',
+            'status' => 'nullable|boolean',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', 
 
         ]);
@@ -115,7 +115,40 @@ class MainEqubController extends Controller
     
         return response()->json(['message' => 'Main Equb updated successfully!']);
     }
-
+    public function update(Request $request, $id)
+    {
+        // Return the JSON representation of the request data for debugging
+        // This line is for debugging purposes; you can remove it later
+        // return response()->json($request->all());
+    
+        // Validate the incoming request data
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'remark' => 'nullable|string|max:500', // Added validation for remark
+            'active' => 'required',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Added image validation
+        ]);
+    
+        // Find the MainEqub model by ID or fail
+        $equb = MainEqub::findOrFail($id);
+    
+        // Update the model attributes
+        $equb->name = $validatedData['name'];
+        $equb->remark = $validatedData['remark'] ?? $equb->remark; // Keep existing remark if not provided
+        $equb->active = $validatedData['active'];
+    
+        // Handle the image upload if a new image is provided
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('images/equbs', 'public'); // Store the image
+            $equb->image = $imagePath; // Update the image path in the model
+        }
+    
+        // Save the updated model
+        $equb->save();
+    
+        return response()->json(['message' => 'Equb updated successfully!']);
+    }
+    
     public function destroy($id)
     {
         try {
