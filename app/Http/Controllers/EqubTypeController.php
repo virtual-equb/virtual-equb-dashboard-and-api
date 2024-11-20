@@ -361,16 +361,27 @@ class EqubTypeController extends Controller
             $previousWinners = LotteryWinner::where('equb_type_id', $equbTypeId)
                 ->pluck('member_id')
                 ->toArray();
+
             $eligibleMembers = array_diff($members, $previousWinners);
 
-            // Exclude members with 5 or more missed paymebts between start_date and lottery_date
-            $eligibleMembers = array_filter($eligibleMembers, function ($memberId) use ($equbStartDate, $lotteryDate) {
-                $missedPayments = Payment::where('member_id', $memberId)
-                    ->whereDate('created_at', '>=', $equbStartDate)
-                    ->whereDate('created_at', '<=', $lotteryDate)
-                    ->count();
+            // Exclude members with 5 or more missed payments between start_date and lottery_date
+            // $eligibleMembers = array_filter($eligibleMembers, function ($memberId) use ($equbStartDate, $lotteryDate) {
+            //     $missedPayments = Payment::where('member_id', $memberId)
+            //         ->whereDate('created_at', '>=', $equbStartDate)
+            //         ->whereDate('created_at', '<=', $lotteryDate)
+            //         ->count();
 
-                return $missedPayments < 5; // exclude members with 5 or more missed payments
+            //     return $missedPayments < 5; // exclude members with 5 or more missed payments
+            // });
+            $inactiveMembersIds = Payment::select('member_id')
+                    ->whereBetween('created_at', [$equbStartDate, $lotteryDate])
+                    ->groupBy('member_id')
+                    ->havingRaw('COUNT(*) >= 5')
+                    ->pluk('member_id');
+            Member::whereIn('id', $inactiveMembersIds)->update(['status' => 'Deactive']);
+
+            $eligibleMembers = array_filter($eligibleMembers, function ($memberId) use ($inactiveMembersIds) {
+                return !$inactiveMembersIds->contains($memberId); // Exclude deactivated members
             });
 
             // Stope the draw if no eligible members remain
