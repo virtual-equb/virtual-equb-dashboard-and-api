@@ -65,6 +65,16 @@
                             <label for="end_date" class="control-label">End Date</label>
                             <input type="text" class="form-control" id="end_date" name="end_date" placeholder="End Date" autocomplete="off" readonly>
                         </div>
+                          <!-- Expected Members and Total Amount -->
+                          <div class="form-group">
+                            <label class="control-label">Expected Members</label>
+                            <input type="number" class="form-control" id="expected_members" name="expected_members" placeholder="Expected Members" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label">Total Amount</label>
+                            <input type="number" class="form-control" id="total_amount" name="total_amount" placeholder="Total Amount" readonly>
+                        </div>
                         <div id="lottery_date_div" class="form-group d-none">
                             <label for="lottery_date" class="control-label">Lottery Date</label>
                             <input type="text" class="form-control" id="lottery_date" name="lottery_date" placeholder="Lottery Date" autocomplete="off">

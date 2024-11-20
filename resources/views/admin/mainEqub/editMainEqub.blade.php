@@ -9,38 +9,39 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="editMainEqubForm" enctype="multipart/form-data">
-                    @csrf
-                    <input type="hidden" id="edit_equb_id" name="equb_id">
+                <form id="editMainEqubForm" enctype="multipart/form-data"> <!-- Added enctype for file upload -->
+                    <input type="hidden" id="editMainEqubId">
                     
-                    <div class="form-group required">
-                        <label for="edit_name">Main Equb Name</label>
-                        <input type="text" class="form-control" id="edit_name" name="name" required>
+                    <div class="form-group">
+                        <label for="editMainEqubName" class="control-label">Main Equb Name:</label>
+                        <input type="text" class="form-control" id="editMainEqubName" required>
                     </div>
                     
                     <div class="form-group">
-                        <label for="edit_status">Status</label>
-                        <select class="form-control" id="edit_status" name="status" required>
+                        <label for="editMainEqubStatus" class="control-label">Status:</label>
+                        <select class="form-control" id="editMainEqubStatus" required>
                             <option value="1">Active</option>
                             <option value="0">Inactive</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="image" class="control-label">Image</label>
-                        <input type="file" class="form-control" id="image" name="image" accept="image/*">
-                        <img id="currentImage" src="" alt="Current Image" class="img-thumbnail" style="max-width: 100px; max-height: 100px; display: none;">
-                    </div>
+    <label for="currentImage" class="control-label">Current Image:</label>
+    <div style="background-color: rgb(76, 175, 80); width: 60px; text-align: center;">
+        <img id="currentImage" src="{{ asset('storage/' . $equb->image) }}" alt="{{ $equb->name }}" 
+             style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; display: {{ $equb->image ? 'block' : 'none' }};">
+    </div>
+</div>
 
                     <div class="form-group">
-                        <label for="edit_remark">Remark</label>
-                        <textarea class="form-control" id="edit_remark" name="remark"></textarea>
+                        <label for="newImage" class="control-label">Upload New Image:</label>
+                        <input type="file" class="form-control" id="newImage" name="new_image" accept="image/*"> <!-- File input for new image -->
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="saveChanges">Save changes</button>
+                <button type="button" class="btn btn-primary" id="saveEditMainEqub">Save changes</button>
             </div>
         </div>
     </div>

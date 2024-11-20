@@ -701,6 +701,12 @@ class MemberController extends Controller
                 'email' => $email,
                 'address' => json_encode($address),
             ];
+            if ($request->file('profile_picture')) {
+                $image = $request->file('profile_picture');
+                $imageName = time() . '.' . $image->getClientOriginalExtension();
+                $image->storeAs('public/profile_pictures', $imageName);
+                $memberData['profile_photo_path'] = 'profile_pictures/' . $imageName;
+            }
             $create = $this->memberRepository->create($memberData);
             // dd($memberData);
             $user = [

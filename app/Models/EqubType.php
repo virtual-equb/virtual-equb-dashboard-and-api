@@ -47,9 +47,8 @@ class EqubType extends Model
     }
 
     public function mainEqub()
-    {
-        return $this->belongsTo(MainEqub::class, 'main_equb_id');
-    }
-    
+  {
+    return $this->belongsTo(MainEqub::class, 'main_equb_id');  // Ensure the foreign key is correct
+  }
 
 }

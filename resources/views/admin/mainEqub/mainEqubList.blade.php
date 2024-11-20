@@ -42,11 +42,9 @@
                                     </li>
                                 </ul>
                                 <div class="float-right">
-                                    @can('create main_equb')
-                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addMainEqubModal" style="margin-right: 30px;">
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addMainEqubModal" style="margin-right: 30px;">
                                             <span class="fa fa-plus-circle"></span> Add Main Equb
                                         </button>
-                                    @endcan
                                 </div>
                             </div>
                             <div class="card-body">
@@ -73,36 +71,37 @@
                                             @foreach ($mainEqubs as $key => $equb)
                                                 <tr>
                                                     <td>{{ $key + 1 }}</td>
-                                                    <td>
-                                                        <img src="{{ asset('storage/' . $equb->image) }}" alt="{{ $equb->name }}" style="width: 50px; height: auto;">
-                                                    </td>
+                                                    <td style="background-color: rgb(76, 175, 80); width: 60px; text-align: center;">
+    <img src="{{ asset('storage/' . $equb->image) }}" alt="{{ $equb->name }}" 
+         style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+</td>
                                                     <td>{{ $equb->name }}</td>
                                                     <td>
                                                         <span class="badge {{ $equb->active ? 'badge-success' : 'badge-danger' }}">
                                                             {{ $equb->active ? 'Active' : 'Inactive' }}
                                                         </span>
                                                     </td>
-                                                        <td>
-                                                            <div class='dropdown'>
-                                                                <button class='btn btn-secondary btn-sm btn-flat dropdown-toggle' type='button' data-toggle='dropdown'>Menu<span class='caret'></span></button>
-                                                                <ul class='dropdown-menu p-4'>
-                                                                    @can('update main_equb')
-                                                                        <li>
-                                                                            <button class="text-secondary btn btn-flat" onclick="openEditModal({{ $equb->id }})">
-                                                                                <span class="fa fa-edit"></span> Edit
-                                                                            </button>
-                                                                        </li>
-                                                                    @endcan
-                                                                    @can('delete main_equb')
-                                                                        <li>
-                                                                            <button class="text-secondary btn btn-flat delete-equb" data-id="{{ $equb->id }}">
-                                                                                <i class="fas fa-trash-alt"></i> Delete
-                                                                            </button>
-                                                                        </li>
-                                                                    @endcan
-                                                                </ul>
-                                                            </div>
-                                                        </td>
+                                                    <td>
+                                                        <div class='dropdown'>
+                                                            <button class='btn btn-secondary btn-sm btn-flat dropdown-toggle' type='button' data-toggle='dropdown'>Menu<span class='caret'></span></button>
+                                                            <ul class='dropdown-menu p-4'>
+                                                                @can('update main_equb')
+                                                                    <li>
+                                                                        <button class="text-secondary btn btn-flat" onclick="openEditModal({{ $equb->id }})">
+                                                                            <span class="fa fa-edit"></span> Edit
+                                                                        </button>
+                                                                    </li>
+                                                                @endcan
+                                                                @can('delete main_equb')
+                                                                    <li>
+                                                                        <button class="text-secondary btn btn-flat delete-equb" data-id="{{ $equb->id }}">
+                                                                            <i class="fas fa-trash-alt"></i> Delete
+                                                                        </button>
+                                                                    </li>
+                                                                @endcan
+                                                            </ul>
+                                                        </div>
+                                                    </td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -125,88 +124,102 @@
 
 @section('scripts')
 <script>
+    // Setup CSRF token for all AJAX requests
+    $(document).ready(function() {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    });
+
+    // Delete Equb
     $(document).on('click', '.delete-equb', function() {
         const equbId = $(this).data('id');
         if (confirm('Are you sure you want to remove this main equb?')) {
             $.ajax({
                 url: '/main-equbs/' + equbId,
                 type: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Include CSRF token
-                },
                 success: function(result) {
+                    alert(result.message || 'Equb deleted successfully!'); // Dynamic success message
                     location.reload(); // Refresh the equb table
                 },
                 error: function(xhr) {
-                    console.error('Error deleting equb:', xhr); // Log error details to console
-                    alert('Error deleting equb: ' + xhr.responseText);
+                    console.error('Error deleting equb:', xhr);
+                    alert('Error deleting equb: ' + xhr.responseText); // Dynamic error message
                 }
             });
         }
     });
 
+    // Clear Search
     $('#clearSearch').click(function() {
         $('#equbSearchText').val('');
         // Optionally refresh the table or apply a filter reset
     });
+    // Open Edit Modal
+function openEditModal(equbId) {
+    $.ajax({
+        type: 'GET',
+        url: '/main-equbs/' + equbId,
+        success: function(data) {
+            $('#editMainEqubId').val(data.id);
+            $('#editMainEqubName').val(data.name);
+            $('#editMainEqubStatus').val(data.active ? 1 : 0); // Set status based on active
 
-    function openEditModal(equbId) {
-        $.ajax({
-            type: 'GET',
-            url: '/main-equbs/' + equbId, // Fetch specific equb data
-            success: function(data) {
-                $('#edit_equb_id').val(data.id);
-                $('#edit_name').val(data.name);
-                $('#edit_remark').val(data.remark);
-                $('#edit_status').val(data.active); // Set the status dropdown
-
-                // Display current image if it exists
-                if (data.image) {
-                    $('#currentImage').attr('src', '{{ asset("storage/") }}/' + data.image).show();
-                } else {
-                    $('#currentImage').hide(); // Hide if no image
-                }
-
-                $('#editMainEqubModal').modal('show'); // Open the modal
-            },
-            error: function(xhr) {
-                console.error('Error fetching data:', xhr); // Log error details to console
+            // Display current image if it exists
+            if (data.image) {
+                $('#currentImage').attr('src', '{{ asset("storage/") }}/' + data.image).show();
+            } else {
+                $('#currentImage').hide(); // Hide if no image
             }
-        });
-    }
 
-    $(document).ready(function() {
-    $('#saveChanges').click(function() {
-        const id = $('#edit_equb_id').val();
-        const name = $('#edit_name').val();
-        const remark = $('#edit_remark').val();
-        const status = $('#edit_status').val();
-        const imageFile = $('#image')[0].files[0]; // Get the selected file
-
-        const formData = new FormData();
-        formData.append('_token', $('meta[name="csrf-token"]').attr('content')); // Include CSRF token
-        formData.append('name', name);
-        formData.append('remark', remark);
-        formData.append('status', status);
-        if (imageFile) {
-            formData.append('image', imageFile); // Include image file if selected
+            $('#editMainEqubModal').modal('show'); // Open the modal
+        },
+        error: function(xhr) {
+            console.error('Error fetching data:', xhr);
+            alert('Error fetching data: ' + xhr.responseText); // Dynamic error message
         }
+    });
+}
+
+// Save Changes
+// Save Changes
+$(document).ready(function() {
+    // Save Changes
+    $('#saveEditMainEqub').click(function() {
+        const id = $('#editMainEqubId').val();
+        const name = $('#editMainEqubName').val();
+        const status = $('#editMainEqubStatus').val();
+
+        console.log('ID:', id);
+        console.log('Name:', name);
+        console.log('Status:', status); // Log the status
+
+        // Create data object to send
+        const data = {
+            name: name,
+            active: status 
+        };
 
         $.ajax({
             type: 'PUT',
-            url: '/main-equbs/' + id,
-            data: formData,
-            processData: false, // Important for FormData
-            contentType: false, // Important for FormData
+            url: '/main-equbs/' + id, // Ensure this URL matches your route
+            data: data,
             success: function(result) {
-                location.reload(); // Refresh the equb table after saving
+                console.log(data);
+                alert(result.message || 'Main Equb updated successfully!');
+                $('#editMainEqubModal').modal('hide'); // Hide the modal after saving
+                location.reload(); // Refresh the page to see changes
             },
             error: function(xhr) {
-                console.error('Error updating equb:', xhr); // Log error details to console
-                alert('Error updating equb: ' + xhr.responseText);
+                console.error('Error updating Main Equb:', xhr);
+                alert('Error updating Main Equb: ' + xhr.responseText);
             }
         });
     });
 });
+
+   
 </script>
 @endsection
