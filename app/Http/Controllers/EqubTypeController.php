@@ -377,7 +377,7 @@ class EqubTypeController extends Controller
                     ->whereBetween('created_at', [$equbStartDate, $lotteryDate])
                     ->groupBy('member_id')
                     ->havingRaw('COUNT(*) >= 5')
-                    ->pluk('member_id');
+                    ->pluck('member_id');
             Member::whereIn('id', $inactiveMembersIds)->update(['status' => 'Deactive']);
 
             $eligibleMembers = array_filter($eligibleMembers, function ($memberId) use ($inactiveMembersIds) {
@@ -386,6 +386,20 @@ class EqubTypeController extends Controller
 
             // Stope the draw if no eligible members remain
             if (empty($eligibleMembers)) {
+                // Retrieve users with roles 'admin' and 'operation_manager'
+                $userToNotify = User::role(['admin', 'opertaion_manager'])->get();
+
+                $message = "No eligible members for the lottery draw. Please review and ensure payments are up-to-date.";
+
+                foreach ($userToNotify as $user) {
+                    try {
+                        $this->sendSms($user->phone_number, $message);
+                    } catch (Exception $e) {
+                        Log::error("Failed to send SMS to {$user->phone_number}: {$e->getMessage()}");
+                    }
+                }
+
+                // Flash an error message for the web
                 Session::flash('error', "No eligible members for the lottery draw. Ensure payments are up-to-date.");
                 return back();
             }

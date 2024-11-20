@@ -40,14 +40,38 @@
                         </li>
                     </ul>
                     <ul class="nav nav-treeview ml-2">
-                        @foreach (App\Models\MainEqub::all() as $equbType)
+                        {{-- @foreach (App\Models\MainEqub::all() as $equbType)
                             <li class="nav-item">
                                 <a href="{{ route('viewMainEqub', $equbType->id) }}" class="nav-link" id="{{ $equbType->id }}">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>{{ $equbType->name }}</p>
                                 </a>
                             </li>
-                        @endforeach
+                        @endforeach --}}
+                        @foreach (App\Models\MainEqub::with('subEqub')->get() as $mainEqub)
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" onclick="setActive('equb-{{ $mainEqub->id }}')">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>{{ $mainEqub->name }}<i class="fas fa-angle-left right"></i></p>
+                            </a>
+                            <ul class="nav nav-treeview ml-2">
+                                @if ($mainEqub->subEqub && $mainEqub->subEqub->count())
+                                    @foreach ($mainEqub->subEqub as $equbType)
+                                        <li class="nav-item">
+                                            <a href="{{ url('equbTypeDashboard/' . $equbType->id) }}" class="nav-link" id="{{ $equbType->id }}">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>{{ $equbType->name }}</p>
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                @else
+                                    <li class="nav-item">
+                                        <p class="nav-link">No Equb Types available</p>
+                                    </li>
+                                @endif
+                            </ul>
+                        </li>
+                    @endforeach
                     </ul>
                 </li>
                 @can('view member')

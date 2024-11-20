@@ -558,12 +558,13 @@ class ReportController extends Controller
                 $data['title'] = "Virtual Equb - Collected By Report";
                 $data['collecters'] = $this->userRepository->getCollecters();
                 $data['equbTypes'] = $this->equbTypeRepository->getActive();
+                
                 return view('admin/report/collectedByReport/collectedByReports', $data);
             // } else {
             //     return view('auth/login');
             // }
         } catch (Exception $ex) {
-            $msg = "Unknown Error Occurred, Please try again!";
+            $msg = "Unknown Error Occurred, Please try again!" . $ex->getMessage();
             $type = 'error';
             Session::flash($type, $msg);
             return back();
