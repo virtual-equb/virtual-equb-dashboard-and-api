@@ -39,13 +39,9 @@
                                 <p>Main Dashboard</p>
                             </a>
                         </li>
-<<<<<<< HEAD
                     </ul>
                     <ul class="nav nav-treeview ml-2">
                         {{-- @foreach (App\Models\MainEqub::all() as $equbType)
-=======
-                        @foreach (App\Models\MainEqub::with('subEqub')->get() as $mainEqub)
->>>>>>> ca9d679eede169b91f99c58c076e2efb6fadc2cb
                             <li class="nav-item">
                                 <a href="#" class="nav-link" onclick="setActive('equb-{{ $mainEqub->id }}')">
                                     <i class="far fa-circle nav-icon"></i>
