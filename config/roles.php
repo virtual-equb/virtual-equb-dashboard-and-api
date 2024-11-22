@@ -29,13 +29,9 @@ return [
 
     'permissions' => [
         'Dashboard Management' => [
-            'view_dashboard' => ['web', 'api'],
-            'view_dashboard_daily_summary' => ['web', 'api'],
-            'view_dashboard_all_projection' => ['web', 'api'],
-            'view_dashboard_members' => ['web', 'api'],
-            'view_dashboard_summary' => ['web', 'api'],
-            'view_dashboard_lottery_winner' => ['web', 'api'],
-            'view_dashboard_projection_equb_type' => ['web', 'api'],
+             'view_dashboard' => ['web', 'api'],
+             'view dashboard_daily_summary'=> ['web', 'api'],
+             'view dashboard_all_projection'=> ['web', 'api'],
         ],
         'Equb Management' => [
             'create equb' => ['web', 'api'],
