@@ -29,7 +29,6 @@ return [
 
     'permissions' => [
         'Dashboard Management' => [
-             'view_dashboard' => ['web', 'api'],
              'view dashboard_daily_summary'=> ['web', 'api'],
              'view dashboard_all_projection'=> ['web', 'api'],
              'view dashboard_members' => ['web', 'api'],
@@ -38,6 +37,7 @@ return [
              'view dashboard_projection_equb_type'=> ['web', 'api'],
         ],
         'Equb Management' => [
+            'view_dashboard' => ['web', 'api'],
             'create equb' => ['web', 'api'],
             'view equb' => ['web', 'api'],
             'update equb' => ['web', 'api'],
