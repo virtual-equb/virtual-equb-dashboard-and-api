@@ -32,6 +32,10 @@ return [
              'view_dashboard' => ['web', 'api'],
              'view dashboard_daily_summary'=> ['web', 'api'],
              'view dashboard_all_projection'=> ['web', 'api'],
+             'view dashboard_members' => ['web', 'api'],
+             'view dashboard_summary'=> ['web', 'api'],
+             'view dashboard_lottery_winner'=> ['web', 'api'],
+             'view dashboard_projection_equb_type'=> ['web', 'api'],
         ],
         'Equb Management' => [
             'create equb' => ['web', 'api'],
