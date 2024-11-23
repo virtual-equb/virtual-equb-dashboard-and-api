@@ -39,7 +39,9 @@
                                 <p>Main Dashboard</p>
                             </a>
                         </li>
-                        @foreach (App\Models\MainEqub::with('subEqub')->get() as $mainEqub)
+                    </ul>
+                    <ul class="nav nav-treeview ml-2">
+                        {{-- @foreach (App\Models\MainEqub::all() as $equbType)
                             <li class="nav-item">
                                 <a href="#" class="nav-link" onclick="setActive('equb-{{ $mainEqub->id }}')">
                                     <i class="far fa-circle nav-icon"></i>
@@ -62,7 +64,31 @@
                                     @endif
                                 </ul>
                             </li>
-                        @endforeach
+                        @endforeach --}}
+                        @foreach (App\Models\MainEqub::with('subEqub')->get() as $mainEqub)
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" onclick="setActive('equb-{{ $mainEqub->id }}')">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>{{ $mainEqub->name }}<i class="fas fa-angle-left right"></i></p>
+                            </a>
+                            <ul class="nav nav-treeview ml-2">
+                                @if ($mainEqub->subEqub && $mainEqub->subEqub->count())
+                                    @foreach ($mainEqub->subEqub as $equbType)
+                                        <li class="nav-item">
+                                            <a href="{{ url('equbTypeDashboard/' . $equbType->id) }}" class="nav-link" id="{{ $equbType->id }}">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>{{ $equbType->name }}</p>
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                @else
+                                    <li class="nav-item">
+                                        <p class="nav-link">No Equb Types available</p>
+                                    </li>
+                                @endif
+                            </ul>
+                        </li>
+                    @endforeach
                     </ul>
                 </li>
 
@@ -108,12 +134,6 @@
                             <a href="{{ route('showAllPendingPayments') }}" class="nav-link" id="pendingPayments" onclick="setActive('pendingPayments')">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Pending Payments</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('showAllPaidPayments') }}" class="nav-link" id="showAllPaidPayments" onclick="setActive('showAllPaidPayments')">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Paid Payments</p>
                             </a>
                         </li>
                     </ul>
