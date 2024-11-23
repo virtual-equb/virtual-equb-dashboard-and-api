@@ -281,7 +281,7 @@
    $(document).ready(function() {
     $(document).ready(function() {
     // Set Expected Members to 100 and make it unchangeable
-    $('#expected_members').val(100).prop('readonly', true).parent().removeClass('d-none');
+    $('#expected_members').val(105).prop('readonly', true).parent().removeClass('d-none');
 
     // Show or hide fields based on the selected type
     $('#type').change(function() {

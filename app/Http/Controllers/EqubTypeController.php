@@ -242,7 +242,7 @@ class EqubTypeController extends Controller
                 if ($type === 'Automatic' && !$lottery_date) {
                     $lottery_date = Carbon::parse($formattedStartDate)->addDays(7)->format('Y-m-d');
                     $total_amount = $quota * $amount;
-                    $expected_members = 100;
+                    $expected_members = 105;
                 }
                 
                 if ($end_date) {
@@ -405,8 +405,8 @@ class EqubTypeController extends Controller
             }
 
             // Add Demo users if eligible members are less than 100
-            if (count($eligibleMembers) < 100) {
-                $demoUsersNeeded = 100 - count($eligibleMembers);
+            if (count($eligibleMembers) < 105) {
+                $demoUsersNeeded = 105 - count($eligibleMembers);
                 $demoUsers = Member::where('gender', '')
                     ->whereNotIn('id', $eligibleMembers)
                     ->limit($demoUsersNeeded)
