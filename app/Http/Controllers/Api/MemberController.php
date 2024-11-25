@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\api;
 
+use Log;
 use DateTime;
 use Exception;
 use App\Models\Equb;
@@ -13,7 +14,6 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Role;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -680,56 +680,66 @@ class MemberController extends Controller
     //         ]);
     //     }
     // }
-    public function getEndedEqubs($id) {
+    public function getEndedEqubs($id)
+    {
         try {
             $data['member'] = $this->memberRepository->getByIdNested($id);
             $member = $data['member'];
             $equbs = $member->equbs;
-
+            // dd($data['member']);
             $passedEqubArray = [];
             $currentDate = date('Y-m-d');
 
             foreach ($equbs as $equb) {
+                // Fetch equb details: end_date and total_amount
                 $equbData = Equb::select('end_date', 'total_amount')
                     ->where('id', $equb['id'])
                     ->first();
 
+                // Log equb data for debugging
                 if (!$equbData) {
+                    \Log::info("Equb not found for ID: {$equb['id']}");
                     continue; // Skip if no equb data found
                 }
 
                 $equbEndDate = $equbData->end_date;
                 $totalEqubAmount = $equbData->total_amount;
 
+                // Debugging log
+                \Log::info("Equb ID: {$equb['id']}, End Date: {$equbEndDate}, Total Amount: {$totalEqubAmount}");
+
                 // Only process equbs where the end date has passed
                 if ($equbEndDate < $currentDate) {
-                    // calculate the total payments made by the member for this equb
+                    // Calculate the total payments made by the member for this equb
                     $totalPayment = Payment::where('equb_id', $equb['id'])
                         ->where('status', 'paid')
                         ->sum('amount');
 
-                    // calculate remaining payment
                     $remainingPayment = $totalEqubAmount - $totalPayment;
 
+                    // Debugging log
+                    \Log::info("Equb ID: {$equb['id']}, Total Payment: {$totalPayment}, Remaining Payment: {$remainingPayment}");
+
                     // Exclude equbs where the total amount has been fully paid
-                    if ($remainingPayment <= 0) {
-                        continue;
+                    if ($remainingPayment > 0) {
+                        $equb['total_payment'] = $totalPayment;
+                        $equb['remaining_payment'] = $remainingPayment;
+
+                        array_push($passedEqubArray, $equb);
                     }
-
-                    // add payment details to the equb
-                    $equb['total_payment'] = $totalPayment;
-                    $equb['remaining_payment'] = $remainingPayment;
-
-                    array_push($passedEqubArray, $equb);
-
                 }
-
-                return response()->json($passedEqubArray);
             }
+
+            // Debugging log for result
+            \Log::info('Passed Equbs:', $passedEqubArray);
+
+            return response()->json($passedEqubArray);
 
         } catch (Exception $ex) {
             return response()->json([
-                'error' => $ex->getMessage()
+                'code' => 500,
+                'message' => 'Unable to process your request, Please try again!',
+                "error" => $ex->getMessage()
             ]);
         }
     }
