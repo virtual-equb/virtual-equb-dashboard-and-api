@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-
-=======
->>>>>>> ca9d679eede169b91f99c58c076e2efb6fadc2cb
     @extends('layouts.app')
     @section('content')
         <div class="content-wrapper">
