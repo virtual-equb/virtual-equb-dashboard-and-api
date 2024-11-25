@@ -106,8 +106,9 @@ class RolesController extends Controller
             // Create the role
             $role = Role::create($formFields);
     
-            // Fetch permissions by IDs
-            $filteredPermissions = Permission::whereIn('id', $request->input('permissions'))->get();
+            // Fetch permissions by IDs, ensure permissions is an array before using
+            $permissionIds = $request->input('permissions', []); // Default to an empty array if not present
+            $filteredPermissions = Permission::whereIn('id', $permissionIds)->get();
     
             // Log filtered permissions for debugging
             \Log::info('Filtered Permissions: ', $filteredPermissions->pluck('name')->toArray());

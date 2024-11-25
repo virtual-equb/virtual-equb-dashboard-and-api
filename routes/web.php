@@ -92,6 +92,9 @@ Route::middleware([
     Route::post('/dateInterval', [EqubController::class, 'dateInterval'])->name('dateInterval');
     Route::get('/getDailyPaidAmount/{equb_id}', [EqubController::class, 'getDailyPaidAmount'])->name('getDailyPaidAmount');
 
+    // Route for removing a user role
+Route::put('/user/remove-role/{id}', [UserController::class, 'removeRole'])->name('user.removeRole');
+
     Route::group(['prefix' => 'equbType'], function () {
         Route::get('/', [EqubTypeController::class, 'index'])->name('showEqubType');
         Route::get('/register', [EqubTypeController::class, 'create'])->name('creatEqubType');

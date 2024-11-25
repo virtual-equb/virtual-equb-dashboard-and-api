@@ -544,6 +544,10 @@ class UserController extends Controller
             return back();
         }
     }
+    public function removeRole (Request $request)
+    {
+        return response()->json($request->all());
+    }
     public function destroy($id)
     {
         try {
