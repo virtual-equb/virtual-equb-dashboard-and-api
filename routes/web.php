@@ -198,6 +198,7 @@ Route::middleware([
     });
     Route::group(['prefix' => 'notification'], function () {
         Route::get('/', [NotificationController::class, 'index'])->name('showNotifations');
+        Route::get('/sent', [NotificationController::class, 'index'])->name('showSentNotifications');
         Route::get('/create', [NotificationController::class, 'create'])->name('creatNotifation');
         Route::post('/store', [NotificationController::class, 'store'])->name('sendNotifation');
         Route::post('/sendIndividualNotifation', [NotificationController::class, 'sendToIndividual'])->name('sendIndividualNotifation');

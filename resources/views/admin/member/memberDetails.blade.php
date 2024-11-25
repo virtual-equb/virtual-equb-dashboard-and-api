@@ -1,6 +1,7 @@
 {{-- @if (Auth::user()->role == 'admin' ||
         Auth::user()->role == 'general_manager' ||
         Auth::user()->role == 'operation_manager' ||
+        Auth::user()->role == 'marketing_manager' ||
         Auth::user()->role == 'customer_service' ||
         Auth::user()->role == 'assistant' ||
         Auth::user()->role == 'finance' ||

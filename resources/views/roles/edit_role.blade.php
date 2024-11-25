@@ -73,32 +73,32 @@ use Spatie\Permission\Models\Permission;
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-    @foreach(config("roles.permissions") as $module => $permissions)
-        <tr>
-            <td class="text-start">
-                <div class="form-check">
-                    <input type="checkbox" id="selectRow{{ $module }}" class="form-check-input row-permission-checkbox" data-module="{{ $module }}">
-                    <label class="form-check-label" for="selectRow{{ $module }}" style="font-size: 1.2em; font-weight: 600;">
-                        {{ $module }}
-                    </label>
-                </div>
-            </td>
-            <td>
-                <div class="row">
-                    @foreach($permissions as $permission => $guards) <!-- Here we treat permission as the key -->
-                        <div class="col-3 mb-3">
-                            <div class="form-check">
-                                <?php $permissionModel = Permission::where('name', $permission)->where('guard_name', 'web')->first(); ?>
-                                <input type="checkbox" name="permissions[]" value="{{ optional($permissionModel)->id }}" class="form-check-input permission-checkbox" data-module="{{ $module }}" {{ $role_permissions->contains('name', $permission) ? 'checked' : '' }}>
-                                <label class="form-check-label text-capitalize" for="permission{{ optional($permissionModel)->id }}">{{ $permission }}</label> <!-- Display permission name -->
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </td>
-        </tr>
-    @endforeach
-</tbody>
+                                                        @foreach(config("roles.permissions") as $module => $permissions)
+                                                        <tr>
+                                                            <td class="text-start">
+                                                                <div class="form-check">
+                                                                    <input type="checkbox" id="selectRow{{ $module }}" class="form-check-input row-permission-checkbox" data-module="{{ $module }}">
+                                                                    <label class="form-check-label" for="selectRow{{ $module }}" style="font-size: 1.2em; font-weight: 600;">
+                                                                        {{ str_replace('_', ' ', $module) }}
+                                                                    </label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="row">
+                                                                    @foreach($permissions as $permission => $guards)
+                                                                        <div class="col-12 col-md-4 mb-3">
+                                                                            <div class="form-check">
+                                                                                <?php $permissionModel = Permission::where('name', $permission)->where('guard_name', 'web')->first(); ?>
+                                                                                <input type="checkbox" name="permissions[]" value="{{ optional($permissionModel)->id }}" class="form-check-input permission-checkbox" data-module="{{ $module }}" {{ $role_permissions->contains('name', $permission) ? 'checked' : '' }}>
+                                                                                <label class="form-check-label text-capitalize" for="permission{{ optional($permissionModel)->id }}">{{ str_replace('_', ' ', $permission) }}</label>
+                                                                            </div>
+                                                                        </div>
+                                                                    @endforeach
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        @endforeach
+                                                    </tbody>
                                                 </table>
                                             </div>
 
