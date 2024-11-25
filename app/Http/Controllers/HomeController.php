@@ -41,216 +41,227 @@ class HomeController extends Controller
         // $this->middleware('permission_check_logout:view dashboard', ['only' => ['index', 'show', 'equbTypeIndex']]);
     }
     //Projection chart updated here
-    public function index1()
+    public function index()
     {
         try {
             $userData = Auth::user();
             $roles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance', 'marketing_manager', 'call_center', 'it', 'assistant'];
-                $profile = Auth::user();
-                $title = $this->title;
-                $totalEqubAmount = $this->equbRepository->getExpectedTotal();
-                $totalEqubPayment = $this->paymentRepository->getTotalPayment();
-                $activeMember = $this->memberRepository->getActiveMember();
-                // $mainEqubs = $this->mainEqubRepository->all();
-                $fullPaidAmount = Payment::selectRaw('sum(payments.amount) as paidAmount')
-                    ->join('equbs', 'payments.equb_id', '=', 'equbs.id')
-                    ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
-                    ->groupBy('equb_types.name')
-                    ->orderBy('equb_types.id', 'asc')
-                    ->whereDate('payments.created_at', '>=', date('Y-m-d'))
-                    ->get();
-                $lable = Payment::join('equbs', 'payments.equb_id', '=', 'equbs.id')
-                    ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
-                    ->groupBy('equb_types.name')
-                    ->orderBy('equb_types.id', 'asc')
-                    ->whereDate('payments.created_at', '>=', date('Y-m-d'))
-                    ->pluck('equb_types.name');
-                $equbTypeId = Payment::join('equbs', 'payments.equb_id', '=', 'equbs.id')
-                    ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
-                    ->groupBy('equb_types.id')
-                    ->whereDate('payments.created_at', '>=', date('Y-m-d'))
-                    ->pluck('equb_types.id');
-                $equbTypeId = $equbTypeId->toArray();
-                $fullUnPaidAmount = Payment::selectRaw('sum(payments.amount) as unpaidAmount')
-                    ->join('equbs', 'payments.equb_id', '=', 'equbs.id')
-                    ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
-                    ->groupBy('equb_types.name')
-                    ->whereDate('payments.created_at', '>=', date('Y-m-d'))
-                    ->whereDate('payments.created_at', '>=', date('Y-m-d'))
-                    ->where('payments.status', 'unpaid')
-                    ->get();
-                $Expected = $this->equbRepository->getExpected($equbTypeId);
-                // dd($Expected);
-                $lables = $lable->toArray();
-                $fullPaidAmount = $fullPaidAmount->toArray();
-                $Expected = $Expected->toArray();
-                $fullPaidAmount = Arr::pluck($fullPaidAmount, 'paidAmount');
-                $Expected = Arr::pluck($Expected, 'expected');
-                $lables = json_encode($lables, JSON_UNESCAPED_UNICODE);
-                $fullPaidAmount = json_encode($fullPaidAmount);
-                $Expected = json_encode($Expected);
-                $lables = str_replace('"', "", $lables);
-                $fullPaidAmount = str_replace('"', "", $fullPaidAmount);
-                $Expected = str_replace('"', "", $Expected);
-                $fullDaylyPaidAmount = $this->paymentRepository->getDaylyPaidAmount();
-                $daylyPendingAmount = $this->paymentRepository->getDaylyPendingAmount();
-                $daylyPaidAmount = $fullDaylyPaidAmount + $daylyPendingAmount;
-                $daylyUnpaidAmount = $totalEqubAmount - $daylyPaidAmount;
-                if ($daylyUnpaidAmount <= 0) {
-                    $daylyUnpaidAmount = 0;
+            $profile = Auth::user();
+            $title = $this->title;
+            $totalEqubAmount = $this->equbRepository->getExpectedTotal();
+            $totalEqubPayment = $this->paymentRepository->getTotalPayment();
+            $activeMember = $this->memberRepository->getActiveMember();
+            $fullPaidAmount = Payment::selectRaw('sum(payments.amount) as paidAmount')
+                ->join('equbs', 'payments.equb_id', '=', 'equbs.id')
+                ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
+                ->groupBy('equb_types.name')
+                ->orderBy('equb_types.id', 'asc')
+                ->whereDate('payments.created_at', '>=', date('Y-m-d'))
+                ->get();
+            $lable = Payment::join('equbs', 'payments.equb_id', '=', 'equbs.id')
+                ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
+                ->groupBy('equb_types.name')
+                ->orderBy('equb_types.id', 'asc')
+                ->whereDate('payments.created_at', '>=', date('Y-m-d'))
+                ->pluck('equb_types.name');
+            $equbTypeId = Payment::join('equbs', 'payments.equb_id', '=', 'equbs.id')
+                ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
+                ->groupBy('equb_types.id')
+                ->whereDate('payments.created_at', '>=', date('Y-m-d'))
+                ->pluck('equb_types.id');
+            $equbTypeId = $equbTypeId->toArray();
+            $fullUnPaidAmount = Payment::selectRaw('sum(payments.amount) as unpaidAmount')
+                ->join('equbs', 'payments.equb_id', '=', 'equbs.id')
+                ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
+                ->groupBy('equb_types.name')
+                ->whereDate('payments.created_at', '>=', date('Y-m-d'))
+                ->whereDate('payments.created_at', '>=', date('Y-m-d'))
+                ->where('payments.status', 'unpaid')
+                ->get();
+            $Expected = $this->equbRepository->getExpected($equbTypeId);
+            // dd($Expected);
+            $lables = $lable->toArray();
+            $fullPaidAmount = $fullPaidAmount->toArray();
+            $Expected = $Expected->toArray();
+            $fullPaidAmount = Arr::pluck($fullPaidAmount, 'paidAmount');
+            $Expected = Arr::pluck($Expected, 'expected');
+            $lables = json_encode($lables, JSON_UNESCAPED_UNICODE);
+            $fullPaidAmount = json_encode($fullPaidAmount);
+            $Expected = json_encode($Expected);
+            $lables = str_replace('"', "", $lables);
+            $fullPaidAmount = str_replace('"', "", $fullPaidAmount);
+            $Expected = str_replace('"', "", $Expected);
+            $fullDaylyPaidAmount = $this->paymentRepository->getDaylyPaidAmount();
+            $daylyPendingAmount = $this->paymentRepository->getDaylyPendingAmount();
+            $daylyPaidAmount = $fullDaylyPaidAmount + $daylyPendingAmount;
+            $daylyUnpaidAmount = $totalEqubAmount - $daylyPaidAmount;
+            if ($daylyUnpaidAmount <= 0) {
+                $daylyUnpaidAmount = 0;
+            }
+            $daylyExpected = $totalEqubAmount;
+            $fullWeeklyPaidAmount = $this->paymentRepository->getWeeklyPaidAmount();
+            $weeklyPendingAmount = $this->paymentRepository->getWeeklyPendingAmount();
+            $weeklyPaidAmount = $fullWeeklyPaidAmount;
+            $weeklyExpected  = $this->equbRepository->getExpectedAmount();
+            $sum = 0;
+            $index = count($weeklyExpected);
+            $day = Carbon::today()->addDays(7);
+            for ($i = 0; $i < $index; $i++) {
+                $end_date = $weeklyExpected[$i]->end_date;
+                $end_date = \Carbon\Carbon::parse($end_date);
+                $start_date = $weeklyExpected[$i]->start_date;
+                $start_date = \Carbon\Carbon::parse($start_date);
+                $currunt_date = \Carbon\Carbon::today();
+                // if ($end_date >= $currunt_date) {
+                //     if ($start_date >= $currunt_date) {
+                //         $difference = $start_date->diffInDays($end_date, false);
+                //     } else {
+                //         $difference = $currunt_date->diffInDays($end_date, false);
+                //     }
+                if ($start_date <= $currunt_date && $end_date >= $currunt_date) {
+                    $difference = $currunt_date->diffInDays($end_date, false);
+                } else {
+                    $difference = $start_date->diffInDays($end_date, false);
                 }
-                $daylyExpected = $totalEqubAmount;
-                $fullWeeklyPaidAmount = $this->paymentRepository->getWeeklyPaidAmount();
-                $weeklyPendingAmount = $this->paymentRepository->getWeeklyPendingAmount();
-                $weeklyPaidAmount = $fullWeeklyPaidAmount;
-                $weeklyExpected  = $this->equbRepository->getExpectedAmount();
-                $sum = 0;
-                $index = count($weeklyExpected);
-                $day = Carbon::today()->addDays(7);
-                for ($i = 0; $i < $index; $i++) {
-                    $end_date = $weeklyExpected[$i]->end_date;
-                    $end_date = \Carbon\Carbon::parse($end_date);
-                    $start_date = $weeklyExpected[$i]->start_date;
-                    $start_date = \Carbon\Carbon::parse($start_date);
-                    $currunt_date = \Carbon\Carbon::today();
-                    // if ($end_date >= $currunt_date) {
-                    //     if ($start_date >= $currunt_date) {
-                    //         $difference = $start_date->diffInDays($end_date, false);
-                    //     } else {
-                    //         $difference = $currunt_date->diffInDays($end_date, false);
-                    //     }
-                    if ($start_date <= $currunt_date && $end_date >= $currunt_date) {
-                        $difference = $currunt_date->diffInDays($end_date, false);
-                    } else {
-                        $difference = $start_date->diffInDays($end_date, false);
-                    }
-                    if ($difference >= 6) {
-                        $wE = $weeklyExpected[$i]->amount;
-                        $wE = $wE * 7;
-                        $sum = $sum + $wE;
-                    } else {
-                        $wE = $weeklyExpected[$i]->amount;
-                        $difference = $difference + 1;
-                        $wE = $wE * $difference;
-                        $sum = $sum + $wE;
-                    }
-                    // }
+                if ($difference >= 6) {
+                    $wE = $weeklyExpected[$i]->amount;
+                    $wE = $wE * 7;
+                    $sum = $sum + $wE;
+                } else {
+                    $wE = $weeklyExpected[$i]->amount;
+                    $difference = $difference + 1;
+                    $wE = $wE * $difference;
+                    $sum = $sum + $wE;
                 }
-                $weeklyExpected = $sum;
-                $weeklyExpected1  = $this->equbRepository->getExpectedBackPayment();
-                $sum1 = 0;
-                $index1 = count($weeklyExpected1);
-                for ($i = 0; $i < $index1; $i++) {
-                    $end_date = $weeklyExpected1[$i]->end_date;
-                    $end_date = \Carbon\Carbon::parse($end_date);
-                    $start_date = $weeklyExpected1[$i]->start_date;
-                    $start_date = \Carbon\Carbon::parse($start_date);
-                    $currunt_date = \Carbon\Carbon::today()->subDays(7);
-                    
-                    if ($start_date <= $currunt_date && $end_date >= $currunt_date) {
-                        $difference = $currunt_date->diffInDays($end_date, false);
-                    } else {
-                        $difference = $start_date->diffInDays($end_date, false);
-                    }
-                    if ($difference >= 6) {
-                        $wE = $weeklyExpected1[$i]->amount;
-                        $wE = $wE * 7;
-                        $sum1 = $sum1 + $wE;
-                    } else {
-                        $wE = $weeklyExpected1[$i]->amount;
-                        $difference = $difference + 1;
-                        $wE = $wE * $difference;
-                        $sum1 = $sum1 + $wE;
-                    }
-                    // }
+                // }
+            }
+            $weeklyExpected = $sum;
+            $weeklyExpected1  = $this->equbRepository->getExpectedBackPayment();
+            $sum1 = 0;
+            $index1 = count($weeklyExpected1);
+            for ($i = 0; $i < $index1; $i++) {
+                $end_date = $weeklyExpected1[$i]->end_date;
+                $end_date = \Carbon\Carbon::parse($end_date);
+                $start_date = $weeklyExpected1[$i]->start_date;
+                $start_date = \Carbon\Carbon::parse($start_date);
+                $currunt_date = \Carbon\Carbon::today()->subDays(7);
+                // if ($end_date >= $currunt_date) {
+                // if ($start_date >= $currunt_date) {
+                //     $difference = $start_date->diffInDays($end_date, false);
+                // } else {
+                //     $difference = $currunt_date->diffInDays($end_date, false);
+                // }
+                if ($start_date <= $currunt_date && $end_date >= $currunt_date) {
+                    $difference = $currunt_date->diffInDays($end_date, false);
+                } else {
+                    $difference = $start_date->diffInDays($end_date, false);
                 }
-                $lastWeeklyExpected = $sum1;
-                $weeklyUnpaidAmount = $lastWeeklyExpected - $weeklyPaidAmount;
-                $fullMonthlyPaidAmount = $this->paymentRepository->getMonthlyPaidAmount();
-                $monthlyPendingAmount = $this->paymentRepository->getMonthlyPendingAmount();
-                $monthlyPaidAmount = $fullMonthlyPaidAmount + $monthlyPendingAmount;
-                $monthlyExpected  = $this->equbRepository->getExpectedAmount();
-                $sum2 = 0;
-                $index = count($monthlyExpected);
-                for ($i = 0; $i < $index; $i++) {
-                    $end_date = $monthlyExpected[$i]->end_date;
-                    $end_date = \Carbon\Carbon::parse($end_date);
-                    $start_date = $monthlyExpected[$i]->start_date;
-                    $start_date = \Carbon\Carbon::parse($start_date);
-                    $currunt_date = \Carbon\Carbon::today();
-                    
-                    if ($start_date <= $currunt_date && $end_date >= $currunt_date) {
-                        $difference = $currunt_date->diffInDays($end_date, false);
-                    } else {
-                        $difference = $start_date->diffInDays($end_date, false);
-                    }
-                    if ($difference >= 29) {
-                        $wE = $monthlyExpected[$i]->amount;
-                        $wE = $wE * 30;
-                        $sum2 = $sum2 + $wE;
-                    } else {
-                        $wE = $monthlyExpected[$i]->amount;
-                        $difference = $difference + 1;
-                        $wE = $wE * $difference;
-                        $sum2 = $sum2 + $wE;
-                    }
-                    
+                if ($difference >= 6) {
+                    $wE = $weeklyExpected1[$i]->amount;
+                    $wE = $wE * 7;
+                    $sum1 = $sum1 + $wE;
+                } else {
+                    $wE = $weeklyExpected1[$i]->amount;
+                    $difference = $difference + 1;
+                    $wE = $wE * $difference;
+                    $sum1 = $sum1 + $wE;
                 }
-                $monthlyExpected = $sum2;
-                $monthlyUnpaidAmount = $monthlyExpected - $monthlyPaidAmount;
-                $fullYearlyPaidAmount = $this->paymentRepository->getYearlyPaidAmount();
-                $yearlyPendingAmount = $this->paymentRepository->getYearlyPendingAmount();
-                $yearlyPaidAmount =  $fullYearlyPaidAmount + $yearlyPendingAmount;
-                $yearlyExpected  = $this->equbRepository->getExpectedAmount();
-                $sum3 = 0;
-                $index = count($yearlyExpected);
-                for ($i = 0; $i < $index; $i++) {
-                    $end_date = $yearlyExpected[$i]->end_date;
-                    $end_date = \Carbon\Carbon::parse($end_date);
-                    $start_date = $yearlyExpected[$i]->start_date;
-                    $start_date = \Carbon\Carbon::parse($start_date);
-                    $currunt_date = \Carbon\Carbon::today();
-                    // if ($end_date >= $currunt_date) {
-                    // if ($start_date >= $currunt_date) {
-                    //     $difference = $start_date->diffInDays($end_date, false);
-                    // } else {
-                    //     $difference = $currunt_date->diffInDays($end_date, false);
-                    // }
-                    if ($start_date <= $currunt_date && $end_date >= $currunt_date) {
-                        $difference = $currunt_date->diffInDays($end_date, false);
-                    } else {
-                        $difference = $start_date->diffInDays($end_date, false);
-                    }
-                    if ($difference >= 364) {
-                        $wE = $yearlyExpected[$i]->amount;
-                        $wE = $wE * 365;
-                        $sum3 = $sum3 + $wE;
-                    } else {
-                        $wE = $yearlyExpected[$i]->amount;
-                        $difference = $difference + 1;
-                        $wE = $wE * $difference;
-                        $sum3 = $sum3 + $wE;
-                    }
-                    // }
+                // }
+            }
+            $lastWeeklyExpected = $sum1;
+            $weeklyUnpaidAmount = $lastWeeklyExpected - $weeklyPaidAmount;
+            $fullMonthlyPaidAmount = $this->paymentRepository->getMonthlyPaidAmount();
+            $monthlyPendingAmount = $this->paymentRepository->getMonthlyPendingAmount();
+            $monthlyPaidAmount = $fullMonthlyPaidAmount + $monthlyPendingAmount;
+            $monthlyExpected  = $this->equbRepository->getExpectedAmount();
+            $sum2 = 0;
+            $index = count($monthlyExpected);
+            for ($i = 0; $i < $index; $i++) {
+                $end_date = $monthlyExpected[$i]->end_date;
+                $end_date = \Carbon\Carbon::parse($end_date);
+                $start_date = $monthlyExpected[$i]->start_date;
+                $start_date = \Carbon\Carbon::parse($start_date);
+                $currunt_date = \Carbon\Carbon::today();
+                // if ($end_date >= $currunt_date) {
+                // if ($start_date >= $currunt_date) {
+                //     $difference = $start_date->diffInDays($end_date, false);
+                // } else {
+                //     $difference = $currunt_date->diffInDays($end_date, false);
+                // }
+                if ($start_date <= $currunt_date && $end_date >= $currunt_date) {
+                    $difference = $currunt_date->diffInDays($end_date, false);
+                } else {
+                    $difference = $start_date->diffInDays($end_date, false);
                 }
-                $yearlyExpected = $sum3;
-                $yearlyUnpaidAmount = $yearlyExpected - $yearlyPaidAmount;
-                $totalMember = $this->memberRepository->getMember();
-                $totalUser = $this->userRepository->getUser();
-                $tudayPaidMember = $this->equbRepository->tudayPaidMember();
-                $automaticMembersArray = [];
-                $automaticWinnerMembers = LotteryWinner::where('created_at', ">", Carbon::today()->format('Y-m-d'))->orderBy('created_at', 'desc')->get();
-                foreach ($automaticWinnerMembers as $member) {
-                    $memberInfo = Member::where('id', $member->member_id)->first();
-                    if ($memberInfo) {
-                        array_push($automaticMembersArray, [
-                            "full_name" => $memberInfo->full_name,
-                            "phone" => $memberInfo->phone,
-                            "gender" => $memberInfo->gender
-                        ]);
-                    }
+                if ($difference >= 29) {
+                    $wE = $monthlyExpected[$i]->amount;
+                    $wE = $wE * 30;
+                    $sum2 = $sum2 + $wE;
+                } else {
+                    $wE = $monthlyExpected[$i]->amount;
+                    $difference = $difference + 1;
+                    $wE = $wE * $difference;
+                    $sum2 = $sum2 + $wE;
                 }
-                return view('admin/home', compact('automaticMembersArray',  
+                // dd($sum2);
+                // }
+            }
+            $monthlyExpected = $sum2;
+            $monthlyUnpaidAmount = $monthlyExpected - $monthlyPaidAmount;
+            $fullYearlyPaidAmount = $this->paymentRepository->getYearlyPaidAmount();
+            $yearlyPendingAmount = $this->paymentRepository->getYearlyPendingAmount();
+            $yearlyPaidAmount =  $fullYearlyPaidAmount + $yearlyPendingAmount;
+            $yearlyExpected  = $this->equbRepository->getExpectedAmount();
+            $sum3 = 0;
+            $index = count($yearlyExpected);
+            for ($i = 0; $i < $index; $i++) {
+                $end_date = $yearlyExpected[$i]->end_date;
+                $end_date = \Carbon\Carbon::parse($end_date);
+                $start_date = $yearlyExpected[$i]->start_date;
+                $start_date = \Carbon\Carbon::parse($start_date);
+                $currunt_date = \Carbon\Carbon::today();
+                // if ($end_date >= $currunt_date) {
+                // if ($start_date >= $currunt_date) {
+                //     $difference = $start_date->diffInDays($end_date, false);
+                // } else {
+                //     $difference = $currunt_date->diffInDays($end_date, false);
+                // }
+                if ($start_date <= $currunt_date && $end_date >= $currunt_date) {
+                    $difference = $currunt_date->diffInDays($end_date, false);
+                } else {
+                    $difference = $start_date->diffInDays($end_date, false);
+                }
+                if ($difference >= 364) {
+                    $wE = $yearlyExpected[$i]->amount;
+                    $wE = $wE * 365;
+                    $sum3 = $sum3 + $wE;
+                } else {
+                    $wE = $yearlyExpected[$i]->amount;
+                    $difference = $difference + 1;
+                    $wE = $wE * $difference;
+                    $sum3 = $sum3 + $wE;
+                }
+                // }
+            }
+            $yearlyExpected = $sum3;
+            $yearlyUnpaidAmount = $yearlyExpected - $yearlyPaidAmount;
+            $totalMember = $this->memberRepository->getMember();
+            $totalUser = $this->userRepository->getUser();
+            $tudayPaidMember = $this->equbRepository->tudayPaidMember();
+            $automaticMembersArray = [];
+            $automaticWinnerMembers = LotteryWinner::where('created_at', ">", Carbon::today()->format('Y-m-d'))->orderBy('created_at', 'desc')->get();
+            foreach ($automaticWinnerMembers as $member) {
+                $memberInfo = Member::where('id', $member->member_id)->first();
+                if ($memberInfo) {
+                    array_push($automaticMembersArray, [
+                        "full_name" => $memberInfo->full_name,
+                        "phone" => $memberInfo->phone,
+                        "gender" => $memberInfo->gender
+                    ]);
+                }
+            }
+                return view('admin/home', compact(
+                           'automaticMembersArray',  
                            'title', 
                            'lables', 
                            'fullPaidAmount', 
@@ -282,7 +293,7 @@ class HomeController extends Controller
             return back();
         }
     }
-    public function index()
+    public function index1()
     {
         try {
             $title = $this->title;
@@ -448,7 +459,20 @@ class HomeController extends Controller
                 ->orderBy('equb_types.id', 'asc')
                 ->whereDate('payments.created_at', '>=', date('Y-m-d'))
                 ->pluck('equb_types.name');
-                
+        // $lable = Payment::join('equbs', 'payments.equb_id', '=', 'equbs.id')
+        //         ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
+        //         ->groupBy('equb_types.name')
+        //         ->orderBy('equb_types.id', 'asc')
+        //         ->whereDate('payments.created_at', '>=', date('Y-m-d'))
+        //         ->pluck('equb_types.name');
+        // $lables = $lable->toArray();
+        // $lables = json_encode($lables, JSON_UNESCAPED_UNICODE);
+        // $lables = str_replace('"', "", $lables);
+        if (empty($lables)) {
+            $lables = ['No Data'];
+        }
+      
+        // dd($lables);
         // $lables = $lables->toArray();
 
         $equbTypeId = Payment::join('equbs', 'payments.equb_id', '=', 'equbs.id')

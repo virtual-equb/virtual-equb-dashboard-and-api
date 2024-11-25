@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\CBETransaction;
+use App\Models\Payment;
 use Illuminate\Support\Facades\Http;
 
 class PaymentGatewayController extends Controller {
@@ -72,12 +73,21 @@ class PaymentGatewayController extends Controller {
         // }
 
         private $storedAmount;
+        private $memberId;
+        private $equbId;
+        private $balance;
+        private $paymentType;
 
         public function generateUrl(Request $request)
         {
             // Validate that the 'amount' field (A) is present in the request
             $request->validate([
-                'amount' => 'required|numeric'
+                'amount' => 'required|numeric',
+                'member_id' => 'required|exists:members,id',
+                'equb_id' => 'required|exists:equbs,id',
+                'payment_type' => 'nullable',
+                'balance' => 'nullable',
+                'collector' => 'nullable'
             ]);
 
             // Store the amount in the class property for access by `encryptData`
@@ -194,12 +204,26 @@ class PaymentGatewayController extends Controller {
                 $transaction->tnd_date = $tndDate;
                 $transaction->signature = $signature;
                 $transaction->save();
+                
+                // Payment
+                // $amount = $this->storedAmount;
+                // $member = $this->memberId;
+                // $equbId = $this->equbId;
+                // $balance = $this->balance;
+                // $payment = Payment::create([
+                //     'amount' => $amount,
+                //     'member_id' => $member,
+                //     'equb_id' => $equbId,
+                //     'payment_type' => 'CBE gateway',
+                //     'balance' => $balance
+                // ]);
                 Log::info('Transaction verified successfully.');
                 return response()->json([
                     'message' => 'Transaction verified',
                     'TransactionId' => $transactionId,
                     'State' => $state,
-                    'TNDDate' => $tndDate
+                    'TNDDate' => $tndDate,
+                    // 'payment' => $payment
                 ]);
             } else {
                 Log::error('Transaction verification failed: data may be altered.');
