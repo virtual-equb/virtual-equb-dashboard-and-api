@@ -889,9 +889,9 @@ class EqubController extends Controller
 
                 // Finance Sms
                 $finances = User::role('finance')->get();
-                foreach($finances as $finance) {
+                foreach ($finances as $finance) {
                     if ($finance->phone_number) {
-                        $financeMessage = "Finance Alert: A new Equb with name {$create->name} has been registered. Please review the details.";
+                        $financeMessage = "Finance Alert: A New Member {$member->full_name}, has joined Equb titled {$create->equbType->name}. Please review the details.";
                         $this->sendSms($finance->phone_number, $financeMessage);
                     }
                 }
@@ -900,7 +900,7 @@ class EqubController extends Controller
                 $call_centers = User::role('call_center')->get();
                 foreach($call_centers as $finance) {
                     if ($finance->phone_number) {
-                        $financeMessage = "Call Center Alert: A new Equb with name {$create->name} has been registered. Please review the details.";
+                        $financeMessage = "Call Center Alert: A New Member {$member->full_name}, has joined Equb titled {$create->equbType->name}. Please review the details.";
                         $this->sendSms($finance->phone_number, $financeMessage);
                     }
                 }
