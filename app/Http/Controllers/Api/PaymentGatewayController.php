@@ -206,24 +206,24 @@ class PaymentGatewayController extends Controller {
                 $transaction->save();
                 
                 // Payment
-                $amount = $this->storedAmount;
-                $member = $this->memberId;
-                $equbId = $this->equbId;
-                $balance = $this->balance;
-                $payment = Payment::create([
-                    'amount' => $amount,
-                    'member_id' => $member,
-                    'equb_id' => $equbId,
-                    'payment_type' => 'CBE gateway',
-                    'balance' => $balance
-                ]);
+                // $amount = $this->storedAmount;
+                // $member = $this->memberId;
+                // $equbId = $this->equbId;
+                // $balance = $this->balance;
+                // $payment = Payment::create([
+                //     'amount' => $amount,
+                //     'member_id' => $member,
+                //     'equb_id' => $equbId,
+                //     'payment_type' => 'CBE gateway',
+                //     'balance' => $balance
+                // ]);
                 Log::info('Transaction verified successfully.');
                 return response()->json([
                     'message' => 'Transaction verified',
                     'TransactionId' => $transactionId,
                     'State' => $state,
                     'TNDDate' => $tndDate,
-                    'payment' => $payment
+                    // 'payment' => $payment
                 ]);
             } else {
                 Log::error('Transaction verification failed: data may be altered.');
