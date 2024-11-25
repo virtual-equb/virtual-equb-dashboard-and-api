@@ -18,6 +18,7 @@
                 </div>
             </div>
             <input type="hidden" id="lable" value="{{ $lables }}" />
+            {{-- {{$lables}} --}}
             <section class="content">
                 <div class="container-fluid">
                     <div class="row">
@@ -257,7 +258,7 @@
         </div>
     @endSection
     @section('scripts')
-        {{-- <script>
+        <script>
             $(function() {
                 $('#settingNava').addClass('menu-is-opening menu-open');
                 $('#dashboard').addClass('active');
@@ -428,8 +429,8 @@
                     options: pieOptions
                 })
             })
-        </script> --}}
-        <script>
+        </script>
+        {{-- <script>
             
             $(function () {
                 // Add active classes to navigation
@@ -450,6 +451,10 @@
                 const barChartPaid = @json($fullPaidAmount); // Paid amounts for equb types
                 const barChartExpected = @json($Expected); // Expected amounts for equb types
                 const barChartUnpiad = @json($fullUnPaidAmount);
+
+                console.log('lables', barChartLabels)
+                console.log('expected', barChartExpected)
+                console.log('paid', barChartPaid)
 
                 const barChartData = {
                     labels: barChartLabels,
@@ -563,5 +568,5 @@
                     }
                 });
             });
-        </script>
+        </script> --}}
 @endSection

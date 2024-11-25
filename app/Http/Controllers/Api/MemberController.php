@@ -645,6 +645,41 @@ class MemberController extends Controller
             ]);
         }
     }
+    // public function getEndedEqubs($id) {
+    //     try {
+    //         $data['member'] = $this->memberRepository->getByIdNested($id);
+    //         $member = $data['member'];
+    //         $equbs = $member->equbs;
+
+    //         $passedEqubArray = [];
+    //         $currentDate = date('Y-m-d');
+
+    //         foreach($equbs as $equb) {
+    //             $equbEndDate = Equb::select('end_date')->where('id', $equb['id'])->pluck('end_date')->first();
+    //             // dd($equbEndDate);
+    //             if ($equbEndDate < $currentDate) {
+    //                 $totalPpayment = Payment::where('equb_id', $equb['id'])->where('status', 'paid')->sum('amount');
+    //                 $totalEqubAmount = Equb::select('total_amount')->where('id', $equb['id'])->pluck('total_amount')->first();
+    //                 $remainingPayment = $totalEqubAmount - $totalPpayment;
+
+    //                 $equb['total_payment'] = $totalPpayment;
+    //                 $equb['remaining_payment'] = $remainingPayment;
+    //                 // $equb['statu']
+
+    //                 array_push($passedEqubArray, $equb);
+    //             }
+    //         }
+
+    //         return response()->json($passedEqubArray);
+
+    //     } catch (Exception $ex) {
+    //         return response()->json([
+    //             'code' => 500,
+    //             'message' => 'Unable to process your request, Please try again!',
+    //             "error" => $ex->getMessage()
+    //         ]);
+    //     }
+    // }
     public function getEndedEqubs($id) {
         try {
             $data['member'] = $this->memberRepository->getByIdNested($id);
@@ -654,29 +689,47 @@ class MemberController extends Controller
             $passedEqubArray = [];
             $currentDate = date('Y-m-d');
 
-            foreach($equbs as $equb) {
-                $equbEndDate = Equb::select('end_date')->where('id', $equb['id'])->pluck('end_date')->first();
-                // dd($equbEndDate);
-                if ($equbEndDate < $currentDate) {
-                    $totalPpayment = Payment::where('equb_id', $equb['id'])->where('status', 'paid')->sum('amount');
-                    $totalEqubAmount = Equb::select('total_amount')->where('id', $equb['id'])->pluck('total_amount')->first();
-                    $remainingPayment = $totalEqubAmount - $totalPpayment;
+            foreach ($equbs as $equb) {
+                $equbData = Equb::select('end_date', 'tota_amount')
+                    ->where('id', $equb['id'])
+                    ->first();
 
-                    $equb['total_payment'] = $totalPpayment;
+                if (!$equbData) {
+                    continue; // Skip if no equb data found
+                }
+
+                $equbEndDate = $equbData->end_date;
+                $totalEqubAmount = $equbData->total_amount;
+
+                // Only process equbs where the end date has passed
+                if ($equbEndDate < $currentDate) {
+                    // calculate the total payments made by the member for this equb
+                    $totalPayment = Payment::where('equb_id', $equb['id'])
+                        ->where('status', 'paid')
+                        ->sum('amount');
+
+                    // calculate remaining payment
+                    $remainingPayment = $totalEqubAmount - $totalPayment;
+
+                    // Exclude equbs where the total amount has been fully paid
+                    if ($remainingPayment <= 0) {
+                        continue;
+                    }
+
+                    // add payment details to the equb
+                    $equb['total_payment'] = $totalPayment;
                     $equb['remaining_payment'] = $remainingPayment;
-                    // $equb['statu']
 
                     array_push($passedEqubArray, $equb);
-                }
-            }
 
-            return response()->json($passedEqubArray);
+                }
+
+                return response()->json($passedEqubArray);
+            }
 
         } catch (Exception $ex) {
             return response()->json([
-                'code' => 500,
-                'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex->getMessage()
+                'error' => $ex->getMessage()
             ]);
         }
     }

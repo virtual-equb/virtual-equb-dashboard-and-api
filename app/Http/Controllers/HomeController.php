@@ -41,7 +41,7 @@ class HomeController extends Controller
         // $this->middleware('permission_check_logout:view dashboard', ['only' => ['index', 'show', 'equbTypeIndex']]);
     }
     //Projection chart updated here
-    public function index1()
+    public function index()
     {
         try {
             $userData = Auth::user();
@@ -250,7 +250,8 @@ class HomeController extends Controller
                         ]);
                     }
                 }
-                return view('admin/home', compact('automaticMembersArray',  
+                return view('admin/home', compact(
+                           'automaticMembersArray',  
                            'title', 
                            'lables', 
                            'fullPaidAmount', 
@@ -282,7 +283,7 @@ class HomeController extends Controller
             return back();
         }
     }
-    public function index()
+    public function index1()
     {
         try {
             $title = $this->title;
@@ -442,13 +443,26 @@ class HomeController extends Controller
     }
     private function generateChartData()
     {
-        $lables = Payment::join('equbs', 'payments.equb_id', '=', 'equbs.id')
+        // $lables = Payment::join('equbs', 'payments.equb_id', '=', 'equbs.id')
+        //         ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
+        //         ->groupBy('equb_types.name')
+        //         ->orderBy('equb_types.id', 'asc')
+        //         ->whereDate('payments.created_at', '>=', date('Y-m-d'))
+        //         ->pluck('equb_types.name');
+        $lable = Payment::join('equbs', 'payments.equb_id', '=', 'equbs.id')
                 ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
                 ->groupBy('equb_types.name')
                 ->orderBy('equb_types.id', 'asc')
                 ->whereDate('payments.created_at', '>=', date('Y-m-d'))
                 ->pluck('equb_types.name');
-                
+        $lables = $lable->toArray();
+        $lables = json_encode($lables, JSON_UNESCAPED_UNICODE);
+        $lables = str_replace('"', "", $lables);
+        if (empty($lables)) {
+            $lables = ['No Data'];
+        }
+      
+        // dd($lables);
         // $lables = $lables->toArray();
 
         $equbTypeId = Payment::join('equbs', 'payments.equb_id', '=', 'equbs.id')
