@@ -690,7 +690,7 @@ class MemberController extends Controller
             $currentDate = date('Y-m-d');
 
             foreach ($equbs as $equb) {
-                $equbData = Equb::select('end_date', 'tota_amount')
+                $equbData = Equb::select('end_date', 'total_amount')
                     ->where('id', $equb['id'])
                     ->first();
 
