@@ -24,6 +24,7 @@
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 <!-- Dashboard Section -->
+                @can('view dashboard')
                 <li class="nav-item">
                     <a href="#" class="nav-link" id="dashboardLink" onclick="setActive('dashboardLink')">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -91,7 +92,7 @@
                     @endforeach
                     </ul>
                 </li>
-
+                @endcan
                 <!-- Members Section -->
                 @can('view member')
                 <li class="nav-item">
@@ -170,11 +171,29 @@
                 @endcan
 
                 @can('view notification')
+                <!-- Notifications Section -->
                 <li class="nav-item">
-                    <a href="{{ route('showNotifations') }}" class="nav-link" id="notification" onclick="setActive('notification')">
+                    <a href="#" class="nav-link" id="notificationsLink" onclick="setActive('notificationsLink')">
                         <i class="nav-icon fa fa-bell"></i>
-                        <p>Notification</p>
+                        <p>
+                            Notifications
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
                     </a>
+                    <ul class="nav nav-treeview ml-2">
+                        <li class="nav-item">
+                            <a href="{{ route('showNotifations') }}" class="nav-link" id="notification" onclick="setActive('notification')">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>View Notifications</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('showSentNotifications') }}" class="nav-link" id="sentNotification" onclick="setActive('sentNotification')">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Sent Notifications</p>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
                 @endcan
 

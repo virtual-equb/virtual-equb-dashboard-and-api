@@ -1,4 +1,5 @@
-                  <table id="member-list-table" class="table table-bordered table-striped">
+@can('view lottery_winner')
+<table id="member-list-table" class="table table-bordered table-striped">
                   <thead >
                   <tr>
                     <th>Full Name</th>
@@ -30,6 +31,6 @@
                         @endforeach   
                      </tbody>
                    </table> 
-                    
+      @endcan              
 
 

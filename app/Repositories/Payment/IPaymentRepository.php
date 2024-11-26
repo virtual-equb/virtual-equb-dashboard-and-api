@@ -11,8 +11,9 @@ interface IPaymentRepository
     public function getAllPayment();
 
     public function getAllPendingPayments();
-
     public function getAllPendingByPaginate($offset);
+
+    public function getAllPaidPayments();
 
     public function getTotalPayment();
 
@@ -146,4 +147,9 @@ interface IPaymentRepository
     public function searchPendingPayment($offset, $searchInput);
 
     public function searchPendingPaymentCount($searchInput);
+
+    public function searchPaidPayment($offset, $searchInput);
+
+    public function searchPaidPaymentCount($searchInput);
+    
 }

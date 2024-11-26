@@ -26,7 +26,7 @@ use Spatie\Permission\Models\Permission;
                                                 {{ get_label('settings', 'Settings') }}
                                             </li>
                                             <li class="breadcrumb-item active">
-                                                {{ get_label('create_role', 'Create Role') }}
+                                                {{ str_replace('_', ' ', get_label('create_role', 'Create Role')) }}
                                             </li>
                                         </ol>
                                     </nav>
@@ -36,7 +36,7 @@ use Spatie\Permission\Models\Permission;
                                     <div class="card-body">
                                         <div class="alert alert-primary alert-dismissible" role="alert">
                                             <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#permission_instruction_modal">
-                                                {{ get_label('click_for_permission_settings_instructions', 'Click Here for Permission Settings Instructions.') }}
+                                                {{ str_replace('_', ' ', get_label('click_for_permission_settings_instructions', 'Click Here for Permission Settings Instructions.')) }}
                                             </a>
                                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                         </div>
@@ -46,9 +46,9 @@ use Spatie\Permission\Models\Permission;
 
                                             <div class="mb-3">
                                                 <label for="name" class="form-label">
-                                                    {{ get_label('name', 'Name') }} <span class="asterisk">*</span>
+                                                    {{ str_replace('_', ' ', get_label('name', 'Name')) }} <span class="asterisk">*</span>
                                                 </label>
-                                                <input class="form-control" type="text" placeholder="{{ get_label('please_enter_role_name', 'Please enter role name') }}" id="name" name="name" required>
+                                                <input class="form-control" type="text" placeholder="{{ str_replace('_', ' ', get_label('please_enter_role_name', 'Please enter role name')) }}" id="name" name="name" required>
                                                 @error('name')
                                                     <p class="text-danger text-xs mt-1">{{ $message }}</p>
                                                 @enderror
@@ -63,11 +63,11 @@ use Spatie\Permission\Models\Permission;
                                                             <th class="text-center" style="width: 50px;">
                                                                 <div class="form-check">
                                                                     <input type="checkbox" id="selectAllColumnPermissions" class="form-check-input">
-                                                                    <label class="form-check-label" for="selectAllColumnPermissions">{{ get_label('select_all', 'Select all') }}</label>
+                                                                    <label class="form-check-label" for="selectAllColumnPermissions">{{ str_replace('_', ' ', get_label('select_all', 'Select all')) }}</label>
                                                                 </div>
                                                             </th>
                                                             <th class="text-start fw-bold" style="font-size: 1.2em;">
-                                                                Permissions
+                                                                {{ str_replace('_', ' ', 'Permissions') }}
                                                             </th>
                                                         </tr>
                                                     </thead>
@@ -78,7 +78,7 @@ use Spatie\Permission\Models\Permission;
                 <div class="form-check">
                     <input type="checkbox" id="selectRow{{ $module }}" class="form-check-input row-permission-checkbox" data-module="{{ $module }}">
                     <label class="form-check-label" for="selectRow{{ $module }}" style="font-size: 1.2em; font-weight: 600;">
-                        {{ $module }}
+                        {{ str_replace('_', ' ', $module) }}
                     </label>
                 </div>
             </td>
@@ -89,7 +89,7 @@ use Spatie\Permission\Models\Permission;
                             <div class="form-check">
                                 <?php $permissionModel = Permission::where('name', $permission)->where('guard_name', 'web')->first(); ?>
                                 <input type="checkbox" name="permissions[]" value="{{ optional($permissionModel)->id }}" class="form-check-input permission-checkbox" data-module="{{ $module }}">
-                                <label class="form-check-label text-capitalize" for="permission{{ optional($permissionModel)->id }}">{{ $permission }}</label>
+                                <label class="form-check-label text-capitalize" for="permission{{ optional($permissionModel)->id }}">{{ str_replace('_', ' ', $permission) }}</label>
                             </div>
                         </div>
                     @endforeach
@@ -102,8 +102,8 @@ use Spatie\Permission\Models\Permission;
                                             </div>
 
                                             <div class="mt-2 d-flex justify-content-end">
-                                                <button type="submit" class="btn btn-primary me-2" id="submit_btn">{{ get_label('create', 'Create') }}</button>
-                                                <button type="reset" class="btn btn-outline-secondary">{{ get_label('cancel', 'Cancel') }}</button>
+                                                <button type="submit" class="btn btn-primary me-2" id="submit_btn">{{ str_replace('_', ' ', get_label('create', 'Create')) }}</button>
+                                                <button type="reset" class="btn btn-outline-secondary">{{ str_replace('_', ' ', get_label('cancel', 'Cancel')) }}</button>
                                             </div>
                                         </form>
                                     </div>

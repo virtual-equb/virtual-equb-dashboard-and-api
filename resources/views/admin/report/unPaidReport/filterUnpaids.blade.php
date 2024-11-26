@@ -1,9 +1,4 @@
-  {{-- @if (Auth::user()->role == 'admin' ||
-          Auth::user()->role == 'general_manager' ||
-          Auth::user()->role == 'operation_manager' ||
-          Auth::user()->role == 'finance' ||
-          Auth::user()->role == 'assistant' ||
-          Auth::user()->role == 'it') --}}
+@can('view unpaid_lottories_report')
       <table id="equb-table" class="table table-bordered table-striped ">
           <thead>
               <tr>
@@ -147,4 +142,4 @@
               }).buttons().container().appendTo('#equb-table_wrapper .col-md-6:eq(0)');
           });
       </script>
-  {{-- @endif --}}
+@endcan

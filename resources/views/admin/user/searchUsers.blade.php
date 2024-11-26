@@ -26,7 +26,7 @@
                                  <td>
                     @foreach($item->roles as $guard)
                         <div class="badge badge-primary">
-                            {{ $guard->guard_name }}
+                            {{ $guard->name }}
                         </div>
                     @endforeach
                 </td>

@@ -1,10 +1,4 @@
-  {{-- @if (Auth::user()->role == 'admin' ||
-          Auth::user()->role == 'general_manager' ||
-          Auth::user()->role == 'operation_manager' ||
-          Auth::user()->role == 'customer_service' ||
-          Auth::user()->role == 'assistant' ||
-          Auth::user()->role == 'finance' ||
-          Auth::user()->role == 'it') --}}
+@can('view equb')
       <table id="payment-list-table_in_member" class="table table-bordered table-striped"> {{-- <thead>Payment</thead> --}}
           <thead>
               <tr>
@@ -89,4 +83,4 @@
   @endforeach
   </tbody>
   </table>
-  {{-- @endif --}}
+@endcan

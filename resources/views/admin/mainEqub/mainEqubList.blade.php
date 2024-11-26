@@ -1,3 +1,4 @@
+@can('view main_equb')
 @extends('layouts.app')
 
 @section('styles')
@@ -223,3 +224,4 @@ $(document).ready(function() {
    
 </script>
 @endsection
+@endcan

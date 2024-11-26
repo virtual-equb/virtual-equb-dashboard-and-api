@@ -1,6 +1,4 @@
-       @if (Auth::user()->role == 'admin' ||
-               Auth::user()->role == 'general_manager' ||
-               Auth::user()->role == 'operation_manager')
+@can('view lottery_winner')
            <div class="modal fade" id="lotteryModal" role="dialog">
                <div class="modal-dialog">
                    <div class="modal-content">
