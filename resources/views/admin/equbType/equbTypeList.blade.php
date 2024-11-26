@@ -279,83 +279,89 @@
     @endsection
     @section('scripts')
         <script>
-   $(document).ready(function() {
-    $(document).ready(function() {
+$(document).ready(function() {
     // Set Expected Members to 100 and make it unchangeable
     $('#expected_members').val(105).prop('readonly', true).parent().removeClass('d-none');
 
     // Show or hide fields based on the selected type
     $("#type").on("change", function() {
-    var type = $(this).find("option:selected").val();
+        var type = $(this).find("option:selected").val();
 
-    if (type === "Automatic") {
-        startDate.classList.remove("d-none");
-        endDate.classList.remove("d-none");
-        quota.classList.remove("d-none");
-        amount.classList.remove("d-none");
-        members.classList.remove("d-none");
-        expectedMembers.classList.remove("d-none"); // Show expected members
+        if (type === "Automatic") {
+            startDate.classList.remove("d-none");
+            endDate.classList.remove("d-none");
+            quota.classList.remove("d-none");
+            amount.classList.remove("d-none");
+            members.classList.remove("d-none");
+            expectedMembers.classList.remove("d-none"); // Show expected members
+            $('#total_amount').parent().removeClass('d-none'); // Show total amount field
 
-        // Set required attributes
-        startDate.required = true;
-        endDate.required = true;
-        quota.required = true;
-        amount.required = true;
-        members.required = true;
-        expectedMembers.required = true;
+            // Set required attributes
+            startDate.required = true;
+            endDate.required = true;
+            quota.required = true;
+            amount.required = true;
+            members.required = true;
+            expectedMembers.required = true;
 
-    } else if (type === "Seasonal") {
-        startDate.classList.remove("d-none");
-        endDate.classList.remove("d-none");
-        amount.classList.remove("d-none"); // Show amount input
+        } else if (type === "Seasonal") {
+            startDate.classList.remove("d-none");
+            endDate.classList.remove("d-none");
+            amount.classList.remove("d-none"); // Show amount input
 
-        // Hide expected members and clear its value
-        expectedMembers.classList.add("d-none"); // Hide expected members section
-        $("#expected_members").val(''); // Clear the expected members input
+            // Remove expected members from the DOM
+            $("#expected_members").parent().remove(); // Remove expected members input from DOM
 
-        // Set required attributes for seasonal
-        startDate.required = true;
-        amount.required = true;
+            // Remove total amount from the DOM
+            $('#total_amount').parent().remove(); // Remove total amount field from DOM
 
-        // Event listener for start_date change
-        $("#start_date").on("change", function() {
-            let startDateValue = $(this).val(); // Get the value of the start date input
-            if (startDateValue) {
-                let date = new Date(startDateValue); // Create a Date object
-                date.setDate(date.getDate() + 21); // Add 21 days for Seasonal
+            // Hide total amount display
+            totalAmountDisplay.innerText = ''; // Clear total amount display
 
-                // Set the end date in the datepicker
-                $('#end_date').datepicker('setDate', date);
-            }
-        });
+            // Set required attributes for seasonal
+            startDate.required = true;
+            amount.required = true;
 
-    } else {
-        lotteryDate.classList.add("d-none");
-        startDate.classList.add("d-none");
-        endDate.classList.add("d-none");
-        quota.classList.add("d-none");
-        amount.classList.add("d-none");
-        members.classList.add("d-none");
-        expectedMembers.classList.add("d-none"); // Ensure expected members are hidden
+            // Event listener for start_date change
+            $("#start_date").on("change", function() {
+                let startDateValue = $(this).val(); // Get the value of the start date input
+                if (startDateValue) {
+                    let date = new Date(startDateValue); // Create a Date object
+                    date.setDate(date.getDate() + 21); // Add 21 days for Seasonal
 
-        // Remove required attributes
-        startDate.required = false;
-        endDate.required = false;
-        quota.required = false;
-        amount.required = false;
-        members.required = false;
-        expectedMembers.required = false;
+                    // Set the end date in the datepicker
+                    $('#end_date').datepicker('setDate', date);
+                }
+            });
 
-        // Clear total amount display
-        totalAmountDisplay.innerText = '';
-    }
-});
+        } else {
+            lotteryDate.classList.add("d-none");
+            startDate.classList.add("d-none");
+            endDate.classList.add("d-none");
+            quota.classList.add("d-none");
+            amount.classList.add("d-none");
+            members.classList.add("d-none");
+            expectedMembers.classList.add("d-none"); // Ensure expected members are hidden
+            $('#total_amount').parent().removeClass('d-none'); // Show total amount field again if needed
+
+            // Remove required attributes
+            startDate.required = false;
+            endDate.required = false;
+            quota.required = false;
+            amount.required = false;
+            members.required = false;
+            expectedMembers.required = false;
+
+            // Clear total amount display
+            totalAmountDisplay.innerText = '';
+        }
+    });
 
     // Calculate Total Amount based on Amount
     $('#amount').on('input', function() {
-        const amount = parseFloat($('#amount').val()) || 0;
-        const expectedMembers = 100; // Fixed expected members
-        const totalAmount = amount * expectedMembers; // Calculate total amount
+        const amountValue = parseFloat($('#amount').val()) || 0;
+        const expectedMembersValue = 100; // Fixed expected members
+        const totalAmount = amountValue * expectedMembersValue; // Calculate total amount
 
         $('#total_amount').val(totalAmount); // Update Total Amount
     });
@@ -370,8 +376,6 @@
         $("#viewImage").attr("src", "/storage/" + image);
         $('#modaloff6').modal('show');
     });
-});
-
 
     $('.textareaa').summernote();
 
@@ -386,71 +390,77 @@
     const expectedMembers = document.getElementById('expected_members_div');
     const totalAmountDisplay = document.getElementById('total_amount_display'); // Element to show total amount
 
+    // Additional event listener for type change
     $("#type").on("change", function() {
-    var type = $(this).find("option:selected").val();
+        var type = $(this).find("option:selected").val();
 
-    if (type === "Automatic") {
-        startDate.classList.remove("d-none");
-        endDate.classList.remove("d-none");
-        quota.classList.remove("d-none");
-        amount.classList.remove("d-none");
-        members.classList.remove("d-none");
-        expectedMembers.classList.remove("d-none"); // Show expected members
+        if (type === "Automatic") {
+            startDate.classList.remove("d-none");
+            endDate.classList.remove("d-none");
+            quota.classList.remove("d-none");
+            amount.classList.remove("d-none");
+            members.classList.remove("d-none");
+            expectedMembers.classList.remove("d-none"); // Show expected members
+            $('#total_amount').parent().removeClass('d-none'); // Show total amount field
 
-        // Set required attributes
-        startDate.required = true;
-        endDate.required = true;
-        quota.required = true;
-        amount.required = true;
-        members.required = true;
-        expectedMembers.required = true;
+            // Set required attributes
+            startDate.required = true;
+            endDate.required = true;
+            quota.required = true;
+            amount.required = true;
+            members.required = true;
+            expectedMembers.required = true;
 
-    } else if (type === "Seasonal") {
-        startDate.classList.remove("d-none");
-        endDate.classList.remove("d-none");
-        amount.classList.remove("d-none"); // Show amount input
+        } else if (type === "Seasonal") {
+            startDate.classList.remove("d-none");
+            endDate.classList.remove("d-none");
+            amount.classList.remove("d-none"); // Show amount input
 
-        // Hide expected members and clear its value
-        expectedMembers.classList.add("d-none"); // Hide expected members section
-        $("#expected_members").val(''); // Clear the expected members input
+            // Remove expected members and total amount from the DOM
+            $("#expected_members").parent().remove(); // Remove expected members input from DOM
+            $('#total_amount').parent().remove(); // Remove total amount field from DOM
 
-        // Set required attributes for seasonal
-        startDate.required = true;
-        amount.required = true;
+            // Hide total amount display
+            totalAmountDisplay.innerText = ''; // Clear total amount display
 
-        // Event listener for start_date change
-        $("#start_date").on("change", function() {
-            let startDateValue = $(this).val(); // Get the value of the start date input
-            if (startDateValue) {
-                let date = new Date(startDateValue); // Create a Date object
-                date.setDate(date.getDate() + 21); // Add 21 days for Seasonal
+            // Set required attributes for seasonal
+            startDate.required = true;
+            amount.required = true;
 
-                // Set the end date in the datepicker
-                $('#end_date').datepicker('setDate', date);
-            }
-        });
+            // Event listener for start_date change
+            $("#start_date").on("change", function() {
+                let startDateValue = $(this).val(); // Get the value of the start date input
+                if (startDateValue) {
+                    let date = new Date(startDateValue); // Create a Date object
+                    date.setDate(date.getDate() + 21); // Add 21 days for Seasonal
 
-    } else {
-        lotteryDate.classList.add("d-none");
-        startDate.classList.add("d-none");
-        endDate.classList.add("d-none");
-        quota.classList.add("d-none");
-        amount.classList.add("d-none");
-        members.classList.add("d-none");
-        expectedMembers.classList.add("d-none"); // Ensure expected members are hidden
+                    // Set the end date in the datepicker
+                    $('#end_date').datepicker('setDate', date);
+                }
+            });
 
-        // Remove required attributes
-        startDate.required = false;
-        endDate.required = false;
-        quota.required = false;
-        amount.required = false;
-        members.required = false;
-        expectedMembers.required = false;
+        } else {
+            lotteryDate.classList.add("d-none");
+            startDate.classList.add("d-none");
+            endDate.classList.add("d-none");
+            quota.classList.add("d-none");
+            amount.classList.add("d-none");
+            members.classList.add("d-none");
+            expectedMembers.classList.add("d-none"); // Ensure expected members are hidden
+            $('#total_amount').parent().removeClass('d-none'); // Show total amount field again if needed
 
-        // Clear total amount display
-        totalAmountDisplay.innerText = '';
-    }
-});
+            // Remove required attributes
+            startDate.required = false;
+            endDate.required = false;
+            quota.required = false;
+            amount.required = false;
+            members.required = false;
+            expectedMembers.required = false;
+
+            // Clear total amount display
+            totalAmountDisplay.innerText = '';
+        }
+    });
 
     function updateExpectedMembers() {
         // Assuming members input is a number, display it in expected members
@@ -461,9 +471,9 @@
         const amountValue = parseFloat(amount.value) || 0; // Get the amount value
         const quotaValue = parseInt(quota.value) || 0; // Get the quota value
         const totalAmount = amountValue * quotaValue; // Calculate total amount
-        totalAmountDisplay.innerText = totalAmount.toFixed(2); // Display total amount
     }
 });
+
 
             $(document).ready(function() {
             // Initialize the jQuery UI datepicker for the end date
