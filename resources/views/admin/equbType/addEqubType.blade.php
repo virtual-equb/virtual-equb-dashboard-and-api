@@ -30,6 +30,7 @@
                                 <option selected value="">Choose Type</option>
                                 <option value="Automatic">Automatic</option>
                                 <option value="Manual">Manual</option>
+                                <option value="Seasonal">Automatic Seasonal</option>
                             </select>
                         </div>
                         <div class="form-group required">

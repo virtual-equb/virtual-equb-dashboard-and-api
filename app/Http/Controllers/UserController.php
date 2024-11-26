@@ -587,6 +587,7 @@ class UserController extends Controller
                 // Sync roles for each guard
                 $updated->syncRoles(collect($rolesForWeb)->pluck('name')->toArray());
                 $updated->syncRoles(collect($rolesForApi)->pluck('name')->toArray());
+                
 
                 // Log activity
                 $activityLog = [
@@ -610,7 +611,7 @@ class UserController extends Controller
                 return back();
             }
         } catch (Exception $ex) {
-            $msg = "Unable to process your request, Please try again!";
+            $msg = "Unable to process your request, Please try again!" . $ex->getMessage();
             $type = 'error';
             Session::flash($type, $msg);
             return back();

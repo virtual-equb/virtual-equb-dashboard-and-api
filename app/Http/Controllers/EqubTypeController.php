@@ -244,6 +244,21 @@ class EqubTypeController extends Controller
                     $total_amount = $quota * $amount;
                     $expected_members = 105;
                 }
+                if ($type === 'Seasonal') {
+                    // set default values for a 21-day equb
+                    $lottery_date = Carbon::parse($start_date)->addDays(7)->format('Y-m-d');
+                    $end_date = Carbon::parse($start_date)->addDays(21)->format('Y-m-d');
+                    $total_amount = $quota * $amount;
+                    $expected_members = $request->input('quota');
+
+                    // set a default quota for unlimited members
+                    $quota = null;
+                    // Override terms for this type
+                    $terms = "1. Registration is open until one day before the lottery date. 
+                            2. Members registering late must pay for missed days. 
+                            3. The Equb lasts for 21 days, with weekly lotteries.
+                            4. Number of weekly winners: total_members ÷ 3.";
+                }
                 
                 if ($end_date) {
                     $endDateCheck = $this->isDateInYMDFormat($end_date);
@@ -506,6 +521,116 @@ class EqubTypeController extends Controller
         // Shuffle and pick random winners without repetition
         shuffle($ids);
         return array_slice($ids, 0, $numWinners);
+    }
+
+    public function drawSeasonedAutoWinners(Request $request)
+    {
+        try {
+            $equbTypeId = $request->equbTypeId;
+            $now = Carbon::now()->startOfDay();
+
+            // Fetch equbType details
+            $equb = EqubType::find($equbTypeId);
+            if (!$equb) {
+                Session::flash('error', 'Invalid Equb type');
+                return back();
+            }
+            $equbStartDate = Carbon::parse($equb->start_date);
+            $equbEndDate = $equbStartDate->copy()->addDays(21);
+            $lotteryDate = Carbon::parse($equb->lottery_date);
+
+            // Ensure lottery date is valid and equb has not ended
+            if ($now->gt($equbEndDate)) {
+                Session::flash('error', "the equb has already ended.");
+                return back();
+            }
+
+            // Fetch all active members
+            $members = DB::table('equbs')
+                    ->where('equb_type_id', $equbTypeId)
+                    ->where('status', 'Active')
+                    ->pluck('member_id')
+                    ->toArray();
+            // Exclude previous winners
+            $previousWinners = LotteryWinner::where('equb_type_id', $equbTypeId)
+                    ->pluck('member_id')
+                    ->toArray();
+
+            $eligibleMembers = array_diff($members, $previousWinners);
+
+            // Exclude members who registered late and did not pay owed amount
+            $eligibleMembers = array_filter($eligibleMembers, function($memberId) use ($equbStartDate, $now) {
+                $registrationDate = Member::where('id', $memberId)->value('created_at');
+                $registrationDate = Carbon::parse($registrationDate);
+
+                // Calculate owed days if registration was late
+                if ($registrationDate->gt($equbStartDate)) {
+                    $daysLate = $registrationDate->diffInDays($equbStartDate);
+
+                    // check if the member has made the required payment for the missed days
+                    $totalPaymentsMade = Payment::where('member_id', $memberId)
+                        ->whereBetween('created_at', [$registrationDate, $now])
+                        ->count();
+                    
+                        return $totalPaymentsMade >= $daysLate; // Member must have made payments for all owed days
+                }
+                return true;
+            });
+
+            // Determine the numbers of winners for this round
+            $totalMembers = count($eligibleMembers);
+            $winnersPerWeek = (int) ceil($totalMembers / 3);
+
+            // Draw winners for this week
+            $roundWinners = $this->drawRandomSeasonId($eligibleMembers, $winnersPerWeek);
+
+            // Save winners to the database
+            $winnerEntries = [];
+            foreach($roundWinners as $winnerId) {
+                $member = Member::find($winnerId);
+                $memberName = $member ? $member->full_name : "Unknown Member";
+                $equbTypeName = $equb->name ?? "Unknown Equb Type";
+
+                $winnerEntries[] = [
+                    'equb_type_id' => $equbTypeId,
+                    'member_id' => $winnerId,
+                    'member_name' => $memberName,
+                    'equb_type_name' => $equbTypeName,
+                    'created_at' => $now,
+                    'updated_at' => $now
+                ];
+            }
+
+            LotteryWinner::insert($winnerEntries);
+
+            // Notify winners
+            $this->notifyWinnersAndMembers($equbTypeId, $roundWinners, $members);
+
+            // Update the next lottery date
+            $nextLotteryDate = $now->addDays(7);
+            if ($nextLotteryDate->lte($equbEndDate)) {
+                $equb->update([
+                    'lottery_date' => $nextLotteryDate,
+                    'lottery_round' => $equb->lottery_round + 1
+                ]);
+            } else {
+                // $equb->update(['status' => ''])
+            }
+
+            Session::flash('success', "Lottery draw completed successfully");
+            return back();
+
+        } catch (Exception $ex) {
+            $msg = "Unable to process your request: " . $ex->getMessage();
+            Session::flash('error', $msg);
+            return back();
+        }
+    }
+
+    private function drawRandomSeasonId(array $eligibleMembers, int $numberOfWinners): array
+    {
+        shuffle($eligibleMembers);
+        return array_slice($eligibleMembers, 0, $numberOfWinners);
     }
     
     public function show(EqubType $equbType)
