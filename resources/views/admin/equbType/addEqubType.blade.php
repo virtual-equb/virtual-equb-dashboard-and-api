@@ -67,10 +67,10 @@
                             <input type="text" class="form-control" id="end_date" name="end_date" placeholder="End Date" autocomplete="off" readonly>
                         </div>
                           <!-- Expected Members and Total Amount -->
-                          <div class="form-group">
-                            <label class="control-label">Expected Members</label>
-                            <input type="number" class="form-control" id="expected_members" name="expected_members" placeholder="Expected Members" readonly>
-                        </div>
+                          <div class="form-group" id="expectedMembers">
+    <label class="control-label">Expected Members</label>
+    <input type="number" class="form-control" id="expected_members" name="expected_members" placeholder="Expected Members" readonly>
+</div>
 
                         <div class="form-group">
                             <label class="control-label">Total Amount</label>
