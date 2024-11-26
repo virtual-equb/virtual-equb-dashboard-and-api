@@ -24,6 +24,7 @@
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 <!-- Dashboard Section -->
+                @can('view dashboard')
                 <li class="nav-item">
                     <a href="#" class="nav-link" id="dashboardLink" onclick="setActive('dashboardLink')">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -91,7 +92,7 @@
                     @endforeach
                     </ul>
                 </li>
-
+                @endcan
                 <!-- Members Section -->
                 @can('view member')
                 <li class="nav-item">
