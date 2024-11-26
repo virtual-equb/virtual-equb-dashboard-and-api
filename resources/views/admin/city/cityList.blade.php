@@ -1,4 +1,5 @@
 
+@can('view city')
 @extends('layouts.app')
 
 @section('styles')
@@ -176,3 +177,4 @@
         });
     </script>
 @endsection
+@endcan

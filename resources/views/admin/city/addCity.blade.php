@@ -1,3 +1,4 @@
+@can('create city')
 <div class="modal fade" id="addCityModal" tabindex="-1" role="dialog" aria-labelledby="addCityModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -23,3 +24,4 @@
         </div>
     </div>
 </div>
+@endcan

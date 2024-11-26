@@ -1,4 +1,4 @@
-@can('update equb')
+@can('view equb')
               <form role="form" method="post" class="form-horizontal form-group" action="{{ route('registerEqub') }}"
                   enctype="multipart/form-data" id="addEqub">
                   {{ csrf_field() }}

@@ -1,4 +1,4 @@
-@can('delete lottery_winner')
+@can('update lottery_winner')
     <div class="modal fade" id="editLotteryPaymentModal" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">

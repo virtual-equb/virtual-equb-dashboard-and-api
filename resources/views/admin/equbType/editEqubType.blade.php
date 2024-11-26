@@ -1,4 +1,4 @@
-@can('create equb_type')
+@can('update equb_type')
 <div class="modal fade" id="editEqubTypeModal" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">

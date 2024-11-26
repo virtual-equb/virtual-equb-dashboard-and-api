@@ -1,11 +1,4 @@
-{{-- @if(Auth::user()->role == 'admin' ||
-Auth::user()->role == 'general_manager' ||
-Auth::user()->role == 'operation_manager' ||
-Auth::user()->role == 'finance' ||
-Auth::user()->role == 'assistant' ||
-Auth::user()->role == 'it') --}}
-
-
+@can('view main_equb')
 @extends('layouts.app')
 
 @section('content')
@@ -78,4 +71,4 @@ Auth::user()->role == 'it') --}}
 
 @endsection
 
-{{-- @endif --}}
+@endcan
