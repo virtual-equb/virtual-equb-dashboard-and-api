@@ -51,19 +51,7 @@
                         </option>
                     @endforeach
                 </select>
-                <div id="selectedRoles" class="mt-2">
-                    @foreach($userRoles as $userRole)
-                        <div class="selected-role d-flex align-items-center" data-role="{{ $userRole }}">
-                            <span class="role-name">{{ $userRole }}</span>
-                            <button type="button" class="btn btn-sm btn-danger ml-2 remove-role" 
-                                    data-user-id="{{ $user['id'] }}" 
-                                    data-role-id="{{ $userRole }}" 
-                                    onclick="removeRole(event)">
-                                <i class="fa fa-times"></i>
-                            </button>
-                        </div>
-                    @endforeach
-                </div>
+               
             </div>
         </div>
     </div>
@@ -105,48 +93,3 @@
     </div>
 </div>
 
-<script>
-    $(document).ready(function() {
-        // Handle user update form submission
-        $('#editUserForm').on('submit', function(event) {
-            event.preventDefault(); // Prevent the default form submission
-
-            $.ajax({
-                type: 'PUT',
-                url: '{{ url("user/update/" . $user["id"]) }}',
-                data: $(this).serialize(), // Serialize form data
-                success: function(response) {
-                    alert('User updated successfully!');
-                    // Optionally, refresh the page or update the UI with the new data
-                },
-                error: function(xhr) {
-                    console.error(xhr.responseText);
-                    alert('Error updating user: ' + xhr.responseText);
-                }
-            });
-        });
-    });
-
-    function removeRole(event) {
-        const button = event.currentTarget; // Get the button that was clicked
-        const userId = button.getAttribute('data-user-id'); // Get user ID from data attribute
-        const roleId = button.getAttribute('data-role-id'); // Get role ID from data attribute
-
-        $.ajax({
-            type: 'PUT',
-            url: '/user/remove-role/' + userId, // Ensure this matches the route
-            data: {
-                _token: '{{ csrf_token() }}',
-                roleId: roleId
-            },
-            success: function(result) {
-                alert('Response: ' + JSON.stringify(result, null, 2)); // Pretty print the JSON
-                location.reload(); // Refresh the role table after saving
-            },
-            error: function(xhr) {
-                console.log(xhr.responseText);
-                alert('Error removing role: ' + xhr.responseText);
-            }
-        });
-    }
-</script>
