@@ -1,3 +1,4 @@
+@can('create equb_type')
 <div class="modal fade" id="addEqubModal" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -165,3 +166,4 @@
         }
     });
 </script>
+@endcan

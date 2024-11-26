@@ -1,4 +1,4 @@
-     <section class="content-header">
+<section class="content-header">
          <h1>
              <small>Update User</small><br>
          </h1>

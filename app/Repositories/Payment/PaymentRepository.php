@@ -30,6 +30,10 @@ class PaymentRepository implements IPaymentRepository
     {
         return $this->model->where('status', 'pending')->with('member', 'equb.equbType')->orderByDesc('created_at')->get();
     }
+    public function getAllPaidPayments()
+    {
+        return $this->model->where('status', 'paid')->with('member', 'equb.equbType')->orderByDesc('created_at')->get();
+    }
     public function getAllPendingByPaginate($offset)
     {
         $limit = 10;
@@ -530,6 +534,27 @@ class PaymentRepository implements IPaymentRepository
             ->whereHas('member', fn ($q) =>  $q->where('full_name', 'LIKE', "%{$searchInput}%")
                 ->orWhere('phone', 'LIKE', "%{$searchInput}%"))
             ->where('status', 'Pending')
+            ->count();
+    }
+    public function searchPaidPayment($offset, $searchInput)
+    {
+        // dd($searchInput);
+        $limit = 10;
+        return $this->model
+            ->whereHas('member', fn ($q) =>  $q->where('full_name', 'LIKE', "%{$searchInput}%")
+                ->orWhere('phone', 'LIKE', "%{$searchInput}%"))
+            ->where('status', 'paid')
+            ->offset($offset)
+            ->limit($limit)
+            ->orderBy('created_at', 'desc')
+            ->get();
+    }
+    public function searchPaidPaymentCount($searchInput)
+    {
+        return $this->model
+            ->whereHas('member', fn ($q) =>  $q->where('full_name', 'LIKE', "%{$searchInput}%")
+                ->orWhere('phone', 'LIKE', "%{$searchInput}%"))
+            ->where('status', 'paid')
             ->count();
     }
 }

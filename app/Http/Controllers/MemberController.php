@@ -755,6 +755,7 @@ class MemberController extends Controller
             $member = ['member'];
             // if ($userData && $userData->hasAnyRole($Adminroles)) {
                 $data['member'] = $this->memberRepository->getByIdNested($id);
+                $data['equbs'] = $data['member']->equbs()->paginate(10); // 
                 $data['data'] = $this->memberRepository->getByIdNested($id)->equbs->pluck('lottery_date')->first();
                 return view('admin/member.memberDetails', $data);
             // } elseif ($userData && $userData->hasAnyRole($collector)) {

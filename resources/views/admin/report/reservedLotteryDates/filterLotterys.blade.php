@@ -1,9 +1,4 @@
-{{-- @if (Auth::user()->role == 'admin' ||
-        Auth::user()->role == 'general_manager' ||
-        Auth::user()->role == 'operation_manager' ||
-        Auth::user()->role == 'finance' ||
-        Auth::user()->role == 'assistant' ||
-        Auth::user()->role == 'it') --}}
+@extends('layouts.app')
     <?php
     $total_amount = 0;
     $total_remaining_amount = 0;
@@ -156,4 +151,4 @@
             }).buttons().container().appendTo('#lottery-table_wrapper .col-md-6:eq(0)');
         });
     </script>
-{{-- @endif --}}
+@endcan

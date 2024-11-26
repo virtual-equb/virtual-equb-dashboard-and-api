@@ -1,10 +1,4 @@
-     {{-- @if (Auth::user()->role == 'admin' ||
-             Auth::user()->role == 'general_manager' ||
-             Auth::user()->role == 'operation_manager' ||
-             Auth::user()->role == 'marketing_manager' ||
-             Auth::user()->role == 'finance' ||
-             Auth::user()->role == 'assistant' ||
-             Auth::user()->role == 'it') --}}
+@can('view report')
          <table id="member-table" class="table table-bordered table-striped ">
              <thead>
                  <tr>
@@ -132,4 +126,4 @@
                  }).buttons().container().appendTo('#member-table_wrapper .col-md-6:eq(0)');
              });
          </script>
-     {{-- @endif --}}
+@endcan

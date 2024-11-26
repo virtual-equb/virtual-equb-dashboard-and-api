@@ -417,107 +417,107 @@
                     }
                 });
 
-                // $('#addpayment').validate({
-                //     onfocusout: false,
-                //     rules: {
-                //         payment_type: {
-                //             required: true,
-                //             minlength: 1,
-                //             maxlength: 30,
-                //         },
-                //         amount: {
-                //             required: true,
-                //             maxlength: 10,
-                //         },
-                //         status: {
-                //             required: true,
-                //         },
-                //     },
-                //     messages: {
-                //         payment_type: {
-                //             required: "Select payment type",
-                //             minlength: "payment type must be more than 1 characters long",
-                //             maxlength: "payment type must be less than 30 characters long",
-                //         },
-                //         amount: {
-                //             required: "Please enter a amount",
-                //             maxlength: "amount must be less than or equal to 10 number",
-                //         },
-                //         status: {
-                //             required: "Select status",
-                //         },
-                //     },
-                //     errorElement: 'span',
-                //     errorPlacement: function(error, element) {
-                //         error.addClass('invalid-feedback');
-                //         element.closest('.form-group').append(error);
-                //         $.LoadingOverlay("hide");
-                //     },
-                //     highlight: function(element, errorClass, validClass) {
-                //         $(element).addClass('is-invalid');
-                //         $.LoadingOverlay("hide");
-                //     },
-                //     unhighlight: function(element, errorClass, validClass) {
-                //         $(element).removeClass('is-invalid');
-                //         $.LoadingOverlay("hide");
-                //     },
-                //     submitHandler: function(form) {
-                //         form.submit();
-                //         $.LoadingOverlay("show");
-                //     }
+                $('#addpayment').validate({
+                    onfocusout: false,
+                    rules: {
+                        payment_type: {
+                            required: true,
+                            minlength: 1,
+                            maxlength: 30,
+                        },
+                        amount: {
+                            required: true,
+                            maxlength: 10,
+                        },
+                        status: {
+                            required: true,
+                        },
+                    },
+                    messages: {
+                        payment_type: {
+                            required: "Select payment type",
+                            minlength: "payment type must be more than 1 characters long",
+                            maxlength: "payment type must be less than 30 characters long",
+                        },
+                        amount: {
+                            required: "Please enter a amount",
+                            maxlength: "amount must be less than or equal to 10 number",
+                        },
+                        status: {
+                            required: "Select status",
+                        },
+                    },
+                    errorElement: 'span',
+                    errorPlacement: function(error, element) {
+                        error.addClass('invalid-feedback');
+                        element.closest('.form-group').append(error);
+                        $.LoadingOverlay("hide");
+                    },
+                    highlight: function(element, errorClass, validClass) {
+                        $(element).addClass('is-invalid');
+                        $.LoadingOverlay("hide");
+                    },
+                    unhighlight: function(element, errorClass, validClass) {
+                        $(element).removeClass('is-invalid');
+                        $.LoadingOverlay("hide");
+                    },
+                    submitHandler: function(form) {
+                        form.submit();
+                        $.LoadingOverlay("show");
+                    }
 
-                // });
-                // $('#updatePayment').validate({
-                //     onfocusout: false,
-                //     rules: {
-                //         update_payment_type: {
-                //             required: true,
-                //             minlength: 1,
-                //             maxlength: 30,
-                //         },
-                //         update_amount: {
-                //             required: true,
-                //             maxlength: 10,
-                //         },
-                //         update_status: {
-                //             required: true,
-                //         },
-                //     },
-                //     messages: {
-                //         update_payment_type: {
-                //             required: "Select payment type",
-                //             minlength: "payment type must be more than 1 characters long",
-                //             maxlength: "payment type must be less than 30 characters long",
-                //         },
-                //         update_amount: {
-                //             required: "Please enter a amount",
-                //             maxlength: "amount must be less than or equal to 10 number",
-                //         },
-                //         update_status: {
-                //             required: "Select status",
-                //         },
-                //     },
-                //     errorElement: 'span',
-                //     errorPlacement: function(error, element) {
-                //         error.addClass('invalid-feedback');
-                //         element.closest('.form-group').append(error);
-                //         $.LoadingOverlay("hide");
-                //     },
-                //     highlight: function(element, errorClass, validClass) {
-                //         $(element).addClass('is-invalid');
-                //         $.LoadingOverlay("hide");
-                //     },
-                //     unhighlight: function(element, errorClass, validClass) {
-                //         $(element).removeClass('is-invalid');
-                //         $.LoadingOverlay("hide");
-                //     },
-                //     submitHandler: function(form) {
-                //         form.submit();
-                //         const myButton = document.getElementById('addLotteryBtn');
-                //         myButton.disabled = true;
-                //     }
+                });
+                $('#updatePayment').validate({
+                    onfocusout: false,
+                    rules: {
+                        update_payment_type: {
+                            required: true,
+                            minlength: 1,
+                            maxlength: 30,
+                        },
+                        update_amount: {
+                            required: true,
+                            maxlength: 10,
+                        },
+                        update_status: {
+                            required: true,
+                        },
+                    },
+                    messages: {
+                        update_payment_type: {
+                            required: "Select payment type",
+                            minlength: "payment type must be more than 1 characters long",
+                            maxlength: "payment type must be less than 30 characters long",
+                        },
+                        update_amount: {
+                            required: "Please enter a amount",
+                            maxlength: "amount must be less than or equal to 10 number",
+                        },
+                        update_status: {
+                            required: "Select status",
+                        },
+                    },
+                    errorElement: 'span',
+                    errorPlacement: function(error, element) {
+                        error.addClass('invalid-feedback');
+                        element.closest('.form-group').append(error);
+                        $.LoadingOverlay("hide");
+                    },
+                    highlight: function(element, errorClass, validClass) {
+                        $(element).addClass('is-invalid');
+                        $.LoadingOverlay("hide");
+                    },
+                    unhighlight: function(element, errorClass, validClass) {
+                        $(element).removeClass('is-invalid');
+                        $.LoadingOverlay("hide");
+                    },
+                    submitHandler: function(form) {
+                        form.submit();
+                        const myButton = document.getElementById('addLotteryBtn');
+                        myButton.disabled = true;
+                    }
 
-                // });
+                });
             });
         </script>
     @endSection
