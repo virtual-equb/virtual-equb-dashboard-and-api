@@ -1,8 +1,4 @@
-@if (Auth::user()->role == 'admin' ||
-        Auth::user()->role == 'general_manager' ||
-        Auth::user()->role == 'operation_manager' ||
-        Auth::user()->role == 'assistant' ||
-        Auth::user()->role == 'it')
+@can('view lottery_winner')
     <table id="payment-list-table_in_tab" class="table table-bordered table-striped ">
         <thead>
             <tr>
@@ -62,4 +58,4 @@
     <td colspan="4">{{ $total }}</td>
 </tr>
 </table>
-@endif
+@endcan

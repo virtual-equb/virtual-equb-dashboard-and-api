@@ -1,7 +1,4 @@
-@if (Auth::user()->role == 'admin' ||
-        Auth::user()->role == 'general_manager' ||
-        Auth::user()->role == 'operation_manager' ||
-        Auth::user()->role == 'it')
+@can('delete lottery_winner')
     <div class="modal fade" id="editLotteryPaymentModal" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -72,4 +69,4 @@
 
         </div>
     </div>
-@endif
+@endcan

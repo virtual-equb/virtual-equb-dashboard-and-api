@@ -1,9 +1,4 @@
-           {{-- @if (Auth::user()->role == 'admin' ||
-                   Auth::user()->role == 'general_manager' ||
-                   Auth::user()->role == 'operation_manager' ||
-                   Auth::user()->role == 'finance' ||
-                   Auth::user()->role == 'assistant' ||
-                   Auth::user()->role == 'it') --}}
+@can('view report')
                <?php
             //    dd($collecters);
                $total_amount = 0;
@@ -155,4 +150,4 @@
                        }).buttons().container().appendTo('#payment-table_wrapper .col-md-6:eq(0)');
                    });
                </script>
-           {{-- @endif --}}
+@endcan

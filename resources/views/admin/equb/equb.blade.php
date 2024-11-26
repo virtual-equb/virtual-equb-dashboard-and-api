@@ -1,9 +1,4 @@
-          @if (Auth::user()->role == 'admin' ||
-                  Auth::user()->role == 'general_manager' ||
-                  Auth::user()->role == 'operation_manager' ||
-                  Auth::user()->role == 'customer_service' ||
-                  Auth::user()->role == 'assistant' ||
-                  Auth::user()->role == 'it')
+@can('update equb')
               <form role="form" method="post" class="form-horizontal form-group" action="{{ route('registerEqub') }}"
                   enctype="multipart/form-data" id="addEqub">
                   {{ csrf_field() }}
@@ -28,4 +23,4 @@
                       </div>
                   </div>
               </form>
-          @endif
+@endcan
