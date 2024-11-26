@@ -476,67 +476,139 @@ class UserController extends Controller
             return back();
         }
     }
+    // public function update($id, Request $request)
+    // {
+    //     try {
+    //             $userData = Auth::user();
+    //             $this->validate(
+    //                 $request,
+    //                 [
+    //                     'name' => 'required',
+    //                     'email' => 'required',
+    //                     'phone_number' => 'required',
+    //                     'gender' => 'required',
+    //                     'role' => 'required|array',
+    //                 ]
+    //             );
+    //             $name = $request->input('name');
+    //             $email = $request->input('email');
+    //             $phone = $request->input('phone_number');
+    //             $gender = $request->input('gender');
+    //             $roles = $request->input('role');
+    //             $updated = [
+    //                 'name' => $name,
+    //                 'email' => $email,
+    //                 'phone_number' => $phone,
+    //                 'gender' => $gender,
+    //             ];
+    //             $updated = $this->userRepository->updateUser($id, $updated);
+    //             if ($updated) {
+            
+    //                 // Assign each role separately for both guards
+    //                 foreach ($roles as $roleName) {
+    //                     // First, ensure the roles exist for each guard
+    //                     $roleForWeb = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web']);
+    //                     $roleForApi = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'api']);
+
+    //                     // Assign the roles to the updated for both guards
+    //                     $updated->assignRole($roleForWeb);
+    //                     $updated->assignRole($roleForApi);
+    //                 }
+    //             }
+    //             // dd($updated);
+    //             // $updated->syncRoles([$role]);
+    //             if ($updated) {
+    //                 $activityLog = [
+    //                     'type' => 'users',
+    //                     'type_id' => $id,
+    //                     'action' => 'updated',
+    //                     'user_id' => $userData->id,
+    //                     'username' => $userData->name,
+    //                     'role' => $userData->role,
+    //                 ];
+    //                 $this->activityLogRepository->createActivityLog($activityLog);
+    //                 $msg = "User detail has been updated successfully!";
+    //                 $type = 'success';
+    //                 Session::flash($type, $msg);
+    //                 return back();
+    //             } else {
+    //                 $msg = "Unknown error occurred, Please try again!";
+    //                 $type = 'error';
+    //                 Session::flash($type, $msg);
+    //                 return back();
+    //             }
+    //     } catch (Exception $ex) {
+    //         $msg = "Unable to process your request, Please try again!";
+    //         $type = 'error';
+    //         Session::flash($type, $msg);
+    //         return back();
+    //     }
+    // }
     public function update($id, Request $request)
     {
         try {
-                $userData = Auth::user();
-                $this->validate(
-                    $request,
-                    [
-                        'name' => 'required',
-                        'email' => 'required',
-                        'phone_number' => 'required',
-                        'gender' => 'required',
-                        'role' => 'required|array',
-                    ]
-                );
-                $name = $request->input('name');
-                $email = $request->input('email');
-                $phone = $request->input('phone_number');
-                $gender = $request->input('gender');
-                $roles = $request->input('role');
-                $updated = [
-                    'name' => $name,
-                    'email' => $email,
-                    'phone_number' => $phone,
-                    'gender' => $gender,
-                ];
-                $updated = $this->userRepository->updateUser($id, $updated);
-                if ($updated) {
-            
-                    // Assign each role separately for both guards
-                    foreach ($roles as $roleName) {
-                        // First, ensure the roles exist for each guard
-                        $roleForWeb = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web']);
-                        $roleForApi = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'api']);
+            $userData = Auth::user();
+            $this->validate(
+                $request,
+                [
+                    'name' => 'required',
+                    'email' => 'required',
+                    'phone_number' => 'required',
+                    'gender' => 'required',
+                    'role' => 'required|array',
+                ]
+            );
 
-                        // Assign the roles to the updated for both guards
-                        $updated->assignRole($roleForWeb);
-                        $updated->assignRole($roleForApi);
-                    }
+            $name = $request->input('name');
+            $email = $request->input('email');
+            $phone = $request->input('phone_number');
+            $gender = $request->input('gender');
+            $roles = $request->input('role');
+
+            // Update user details
+            $updatedData = [
+                'name' => $name,
+                'email' => $email,
+                'phone_number' => $phone,
+                'gender' => $gender,
+            ];
+            $updated = $this->userRepository->updateUser($id, $updatedData);
+
+            if ($updated) {
+                // Ensure roles exist for both guards
+                $rolesForWeb = [];
+                $rolesForApi = [];
+
+                foreach ($roles as $roleName) {
+                    $rolesForWeb[] = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web']);
+                    $rolesForApi[] = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'api']);
                 }
-                // dd($updated);
-                // $updated->syncRoles([$role]);
-                if ($updated) {
-                    $activityLog = [
-                        'type' => 'users',
-                        'type_id' => $id,
-                        'action' => 'updated',
-                        'user_id' => $userData->id,
-                        'username' => $userData->name,
-                        'role' => $userData->role,
-                    ];
-                    $this->activityLogRepository->createActivityLog($activityLog);
-                    $msg = "User detail has been updated successfully!";
-                    $type = 'success';
-                    Session::flash($type, $msg);
-                    return back();
-                } else {
-                    $msg = "Unknown error occurred, Please try again!";
-                    $type = 'error';
-                    Session::flash($type, $msg);
-                    return back();
-                }
+
+                // Sync roles for each guard
+                $updated->syncRoles(collect($rolesForWeb)->pluck('name')->toArray());
+                $updated->syncRoles(collect($rolesForApi)->pluck('name')->toArray());
+
+                // Log activity
+                $activityLog = [
+                    'type' => 'users',
+                    'type_id' => $id,
+                    'action' => 'updated',
+                    'user_id' => $userData->id,
+                    'username' => $userData->name,
+                    'role' => $userData->role,
+                ];
+                $this->activityLogRepository->createActivityLog($activityLog);
+
+                $msg = "User detail has been updated successfully!";
+                $type = 'success';
+                Session::flash($type, $msg);
+                return back();
+            } else {
+                $msg = "Unknown error occurred, Please try again!";
+                $type = 'error';
+                Session::flash($type, $msg);
+                return back();
+            }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
