@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Payment;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\CBETransaction;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use App\Models\CBETransaction;
-use App\Models\Payment;
+use App\Models\TempTransaction;
 use Illuminate\Support\Facades\Http;
 
 class PaymentGatewayController extends Controller {
@@ -90,11 +92,31 @@ class PaymentGatewayController extends Controller {
                 'collector' => 'nullable'
             ]);
 
+            // Generate a unique token
+            $token = Str::uuid();
+
+            TempTransaction::create([
+                'token' => $token,
+                'amount' => $request->input('amount'),
+                'member_id' => $request->input('member_id'),
+                'equb_id' => $request->input('equb_id'),
+                'payment_type' => $request->input('payment_type'),
+                'balance' => $request->input('balance')
+            ]);
+
+            // Call encryptData
+            $encryptedUrl = $this->encryptData();
+
             // Store the amount in the class property for access by `encryptData`
             $this->storedAmount = $request->input('amount');
 
             // Call the `encryptData` function and get the URL
-            return $this->encryptData();
+            // return $this->encryptData();
+            return response()->json([
+                'message' => 'Transaction initialized',
+                'token' => $token,
+                'url' => $encryptedUrl
+            ]);
         }
 
         // Encrypt and send payload
@@ -206,17 +228,17 @@ class PaymentGatewayController extends Controller {
                 $transaction->save();
                 
                 // Payment
-                // $amount = $this->storedAmount;
-                // $member = $this->memberId;
-                // $equbId = $this->equbId;
-                // $balance = $this->balance;
-                // $payment = Payment::create([
-                //     'amount' => $amount,
-                //     'member_id' => $member,
-                //     'equb_id' => $equbId,
-                //     'payment_type' => 'CBE gateway',
-                //     'balance' => $balance
-                // ]);
+                $amount = $this->storedAmount;
+                $member = $this->memberId;
+                $equbId = $this->equbId;
+                $balance = $this->balance;
+                $payment = Payment::create([
+                    'amount' => $amount,
+                    'member_id' => $member,
+                    'equb_id' => $equbId,
+                    'payment_type' => 'CBE gateway',
+                    'balance' => $balance
+                ]);
                 Log::info('Transaction verified successfully.');
                 return response()->json([
                     'message' => 'Transaction verified',
