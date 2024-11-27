@@ -1,4 +1,4 @@
-            @if (Auth::user()->role == 'equb_collector')
+@can('update payment')
              <form role="form" method="post" class="form-horizontal form-group"
                      action="{{ route('registerEqub') }}"
                     enctype="multipart/form-data" id="addEqub">
@@ -33,4 +33,4 @@
                        </div> 
                   </div>
               </form>
-              @endif
+              @endcan

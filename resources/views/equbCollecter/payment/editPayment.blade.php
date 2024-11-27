@@ -1,4 +1,4 @@
-@if (Auth::user()->role == 'equb_collector')
+@can('update payment')
 <div class="modal fade" id="editPaymentModal" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -44,4 +44,4 @@
 
   </div>
 </div>
-@endif
+@endcan

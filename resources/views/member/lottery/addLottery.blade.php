@@ -1,4 +1,4 @@
-       @if (Auth::user()->role == 'member')
+@can('add equb_lottery')
           <div class="modal fade" id="lotteryModal" role="dialog">
             <div class="modal-dialog">
               <div class="modal-content">
@@ -61,4 +61,4 @@
               
             </div>
           </div>
-    @endif      
+    @endcan

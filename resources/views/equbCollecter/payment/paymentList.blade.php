@@ -1,4 +1,4 @@
-@if (Auth::user()->role == 'equb_collector')
+@can('view payment')
              <?php
                  $total_amount=0;
                  $total_credit=0;
@@ -153,4 +153,4 @@
              table.buttons().container().appendTo('#payment-list-table_in_tab_wrapper .col-md-6:eq(0)');
          });
     </script>
-    @endif
+    @endcan

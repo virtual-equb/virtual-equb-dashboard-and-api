@@ -1,4 +1,4 @@
-@if (Auth::user()->role == 'equb_collector')
+@can('view member')
 <table id="equb-list-table" class="table table-bordered table-striped" >      {{-- <thead>equb</thead> --}}
     <thead>
         <tr>
@@ -179,5 +179,5 @@
 
       });
   </script>
-  @endif
+  @endcan
 

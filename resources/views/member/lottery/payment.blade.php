@@ -1,4 +1,4 @@
-    @if (Auth::user()->role == 'member')
+@can('view payment')
  <form role="form" method="post" class="form-horizontal form-group"
          action="{{ route('registerEqub') }}"
         enctype="multipart/form-data" id="addEqub">
@@ -35,4 +35,4 @@
            </div> 
       </div>
   </form>
-@endif  
+@endcan
