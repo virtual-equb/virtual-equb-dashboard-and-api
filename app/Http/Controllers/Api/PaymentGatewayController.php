@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Http;
 class PaymentGatewayController extends Controller {
         public function __construct()
         {
-            $this->middleware('auth:api');
+            // $this->middleware('auth:api');
         }
         private $securityKey = 'b14ca5898a4e4133bbce2ea2315a1916';
 
