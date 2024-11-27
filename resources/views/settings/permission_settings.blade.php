@@ -1,3 +1,4 @@
+@can('view permission')
 @extends('layouts.app')
 
 @section('styles')
@@ -149,3 +150,4 @@
 <link href='https://unpkg.com/boxicons@latest/css/boxicons.min.css' rel='stylesheet'>
 <!-- Bootstrap Bundle with Popper -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+@endcan

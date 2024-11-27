@@ -1,6 +1,5 @@
+@can('view role')
 @extends('layouts.app')
-
-
 @section('content')
 {{-- @include('rolePermission.nav-links') --}}
 <div class="wrapper">
@@ -54,8 +53,6 @@
         </div>
     </div>
 </div>
-
-
 @endsection
-
+@endcan
 

@@ -1,4 +1,4 @@
-    @extends('layouts.app')
+@extends('layouts.app')
     @section('styles')
         <style type="text/css">
             td.details-control_equb {

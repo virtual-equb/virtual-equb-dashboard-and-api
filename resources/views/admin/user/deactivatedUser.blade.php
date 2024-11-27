@@ -1,4 +1,4 @@
-
+@can('deactivate user')
       <table id="deactiveUser-list-table" class="table table-bordered table-striped ">
           <thead>
               <tr>
@@ -205,3 +205,4 @@
               }).buttons().container().appendTo('#deactiveUser-list-table_wrapper .col-md-6:eq(0)')
           });
       </script>
+@endcan

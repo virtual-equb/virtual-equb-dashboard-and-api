@@ -1,4 +1,5 @@
-        <section class="content-header">
+@can('add user')
+<section class="content-header">
             <h1>
                 <small>Add User</small><br>
             </h1>
@@ -72,3 +73,4 @@
                 <button type="reset" class="btn btn-warning text-white">Clear</button>
             </div>
         </form>
+@endcan

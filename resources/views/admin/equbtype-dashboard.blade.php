@@ -1,4 +1,5 @@
-    @extends('layouts.app')
+@can('view dashboard') 
+@extends('layouts.app')
     @section('content')
         <div class="content-wrapper">
             <div class="content-header">
@@ -415,3 +416,4 @@
             })
         </script>
     @endSection
+@endcan

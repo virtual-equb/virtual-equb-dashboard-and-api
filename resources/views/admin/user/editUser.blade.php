@@ -1,3 +1,4 @@
+@can('update user')
 <section class="content-header">
          <h1>
              <small>Update User</small><br>
@@ -80,3 +81,4 @@
              <button type="reset" class="btn btn-warning text-white">Clear</button>
          </div>
 </form>
+@endcan
