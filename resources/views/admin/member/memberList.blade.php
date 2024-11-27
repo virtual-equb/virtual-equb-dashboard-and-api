@@ -1,3 +1,4 @@
+@can('view member')
     @extends('layouts.app')
     @section('styles')
         <style type="text/css">
@@ -1729,3 +1730,4 @@
             });
         </script>
 @endSection
+@endcan

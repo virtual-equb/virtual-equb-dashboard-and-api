@@ -1,4 +1,5 @@
 <!-- Add Sub City Modal -->
+@can('create sub_city')
 <div class="modal fade" id="addSubCityModal" tabindex="-1" role="dialog" aria-labelledby="addSubCityModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">

@@ -1,7 +1,4 @@
-  {{-- @if (Auth::user()->role == 'admin' ||
-          Auth::user()->role == 'general_manager' ||
-          Auth::user()->role == 'operation_manager' ||
-          Auth::user()->role == 'it') --}}
+@can('create payment')
      <div class="modal fade" id="myModal3" role="dialog">
          <div class="modal-dialog">
              <div class="modal-content">
@@ -52,4 +49,4 @@
              </div>
          </div>
      </div>
- {{-- @endif --}}
+@endcan

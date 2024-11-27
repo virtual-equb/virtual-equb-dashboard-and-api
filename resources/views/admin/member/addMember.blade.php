@@ -1,3 +1,4 @@
+@can('create member')
 <div class="modal fade" id="myModal" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -116,3 +117,4 @@ $(document).ready(function() {
     });
 });
 </script>
+@endcan
