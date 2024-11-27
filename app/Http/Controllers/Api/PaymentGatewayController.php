@@ -85,24 +85,24 @@ class PaymentGatewayController extends Controller {
             // Validate that the 'amount' field (A) is present in the request
             $request->validate([
                 'amount' => 'required|numeric',
-                'member_id' => 'required|exists:members,id',
-                'equb_id' => 'required|exists:equbs,id',
-                'payment_type' => 'nullable',
-                'balance' => 'nullable',
-                'collector' => 'nullable'
+                // 'member_id' => 'required|exists:members,id',
+                // 'equb_id' => 'required|exists:equbs,id',
+                // 'payment_type' => 'nullable',
+                // 'balance' => 'nullable',
+                // 'collector' => 'nullable'
             ]);
 
             // Generate a unique token
-            $token = Str::uuid();
+            // $token = Str::uuid();
 
-            TempTransaction::create([
-                'token' => $token,
-                'amount' => $request->input('amount'),
-                'member_id' => $request->input('member_id'),
-                'equb_id' => $request->input('equb_id'),
-                'payment_type' => $request->input('payment_type'),
-                'balance' => $request->input('balance')
-            ]);
+            // TempTransaction::create([
+            //     'token' => $token,
+            //     'amount' => $request->input('amount'),
+            //     'member_id' => $request->input('member_id'),
+            //     'equb_id' => $request->input('equb_id'),
+            //     'payment_type' => $request->input('payment_type'),
+            //     'balance' => $request->input('balance')
+            // ]);
 
             // Call encryptData
             $encryptedUrl = $this->encryptData();
@@ -111,12 +111,12 @@ class PaymentGatewayController extends Controller {
             $this->storedAmount = $request->input('amount');
 
             // Call the `encryptData` function and get the URL
-            // return $this->encryptData();
-            return response()->json([
-                'message' => 'Transaction initialized',
-                'token' => $token,
-                'url' => $encryptedUrl
-            ]);
+            return $this->encryptData();
+            // return response()->json([
+            //     'message' => 'Transaction initialized',
+            //     'token' => $token,
+            //     'url' => $encryptedUrl
+            // ]);
         }
 
         // Encrypt and send payload
@@ -165,7 +165,7 @@ class PaymentGatewayController extends Controller {
                 Log::error('Error sending payload: ' . $e->getMessage());
 
                 return response()->json([
-                    'message' => 'Error sending payload',
+                    'message' => 'Error sending payload' . $e->getMessage(),
                     'error' => $e->getMessage()
                 ], 500);
             }
@@ -228,17 +228,17 @@ class PaymentGatewayController extends Controller {
                 $transaction->save();
                 
                 // Payment
-                $amount = $this->storedAmount;
-                $member = $this->memberId;
-                $equbId = $this->equbId;
-                $balance = $this->balance;
-                $payment = Payment::create([
-                    'amount' => $amount,
-                    'member_id' => $member,
-                    'equb_id' => $equbId,
-                    'payment_type' => 'CBE gateway',
-                    'balance' => $balance
-                ]);
+                // $amount = $this->storedAmount;
+                // $member = $this->memberId;
+                // $equbId = $this->equbId;
+                // $balance = $this->balance;
+                // $payment = Payment::create([
+                //     'amount' => $amount,
+                //     'member_id' => $member,
+                //     'equb_id' => $equbId,
+                //     'payment_type' => 'CBE gateway',
+                //     'balance' => $balance
+                // ]);
                 Log::info('Transaction verified successfully.');
                 return response()->json([
                     'message' => 'Transaction verified',
