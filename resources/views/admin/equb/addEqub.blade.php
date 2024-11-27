@@ -18,7 +18,7 @@
                             <select class="custom-select form-control" id="type" name="type" required>
                                 <option selected value="">Choose Type</option>
                                 <option value="Automatic">Automatic</option>
-                                 <option value="Seasonal">Automatic Seasonal</option>
+                                <option value="Seasonal">Automatic Seasonal</option>
                                 <option value="Manual">Manual</option>
                             </select>
                         </div>
@@ -63,7 +63,7 @@
                         </div>
                         <div class="form-group">
                             <label class="control-label">End Date</label>
-                            <input type="text" class="form-control disabled" id="end_date"
+                            <input type="text" class="form-control" id="end_date"
                                 name="end_date" placeholder="End date" readonly>
                         </div>
 
@@ -113,7 +113,6 @@
 
         // Filter equbTypes based on the selected type
         const filteredTypes = equbTypes.filter(equbType => {
-            // Adjust condition based on your backend logic
             return (selectedType === "Automatic" && equbType.type === "Automatic") ||
                    (selectedType === "Seasonal" && equbType.type === "Seasonal") ||
                    (selectedType === "Manual" && equbType.type === "Manual");
@@ -142,6 +141,7 @@
         document.getElementById('amount_per_day').value = '';
         document.getElementById('total_amount').value = '';
         document.getElementById('start_date').readOnly = false; // Reset readOnly state
+        document.getElementById('end_date').value = ''; // Clear end date
     });
 
     document.getElementById('equb_type_id').addEventListener('change', function() {
@@ -151,13 +151,23 @@
         const amount = selectedOption.getAttribute('data-amount');
         const expectedTotal = selectedOption.getAttribute('data-expected-total');
         const startDate = selectedOption.getAttribute('data-startdate');
+        const endDate = selectedOption.getAttribute('data-enddate');
 
         if (document.getElementById('type').value === 'Automatic') {
             // For Automatic type
             document.getElementById('amount_per_day').value = amount;
             document.getElementById('total_amount').value = expectedTotal;
             document.getElementById('start_date').value = startDate; // Set start date
+            document.getElementById('end_date').value = endDate; // Set end date
             document.getElementById('start_date').readOnly = true; // Make start date read-only
+            document.getElementById('end_date').readOnly = true; // Make end date read-only
+        } else if (document.getElementById('type').value === 'Seasonal') {
+            document.getElementById('amount_per_day').value = amount;
+            document.getElementById('total_amount').value = expectedTotal;
+            document.getElementById('start_date').value = startDate; // Set start date
+            document.getElementById('end_date').value = endDate; // Set end date
+            document.getElementById('start_date').readOnly = true; // Make start date read-only
+            document.getElementById('end_date').readOnly = true; // Make end date read-only
         } else {
             // For Seasonal or Manual types, clear the values
             document.getElementById('amount_per_day').value = '';
@@ -165,6 +175,21 @@
             document.getElementById('start_date').readOnly = false; // Make start date editable
             document.getElementById('amount_per_day').readOnly = false; // Make amount editable
             document.getElementById('total_amount').readOnly = false; // Make total_amount editable
+            document.getElementById('end_date').value = ''; // Clear end date
+        }
+    });
+
+    document.getElementById('timeline').addEventListener('change', function() {
+        const startDateInput = document.getElementById('start_date');
+        const endDateInput = document.getElementById('end_date');
+
+        const startDateValue = new Date(startDateInput.value);
+        const timelineValue = parseInt(this.value);
+
+        if (startDateInput.value && !isNaN(timelineValue)) {
+            const endDate = new Date(startDateValue);
+            endDate.setDate(endDate.getDate() + timelineValue); // Add timeline days to start date
+            endDateInput.value = endDate.toISOString().split('T')[0]; // Format the date as YYYY-MM-DD
         }
     });
 </script>
