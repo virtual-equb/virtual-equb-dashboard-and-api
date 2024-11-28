@@ -1,4 +1,4 @@
-@can('add user')
+@can('create user')
 @extends('layouts.app')
     @section('styles')
         <style type="text/css">
@@ -617,3 +617,4 @@
             });
         </script>
 @endsection
+@endcan
