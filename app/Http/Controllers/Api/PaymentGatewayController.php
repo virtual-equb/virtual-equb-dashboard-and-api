@@ -85,48 +85,36 @@ class PaymentGatewayController extends Controller {
             // Validate that the 'amount' field (A) is present in the request
             $request->validate([
                 'amount' => 'required|numeric',
-                // 'member_id' => 'required|exists:members,id',
-                // 'equb_id' => 'required|exists:equbs,id',
+                'member_id' => 'required|exists:members,id',
+                'equb_id' => 'required|exists:equbs,id',
                 // 'payment_type' => 'nullable',
                 // 'balance' => 'nullable',
                 // 'collector' => 'nullable'
             ]);
-
-            // Generate a unique token
-            // $token = Str::uuid();
-
-            // TempTransaction::create([
-            //     'token' => $token,
-            //     'amount' => $request->input('amount'),
-            //     'member_id' => $request->input('member_id'),
-            //     'equb_id' => $request->input('equb_id'),
-            //     'payment_type' => $request->input('payment_type'),
-            //     'balance' => $request->input('balance')
-            // ]);
 
             // Call encryptData
             $encryptedUrl = $this->encryptData();
 
             // Store the amount in the class property for access by `encryptData`
             $this->storedAmount = $request->input('amount');
-
+            $this->memberId = $request->input('member_id');
+            $this->equbId = $request->input('equb_id');
+            // dd($this->memberId);
             // Call the `encryptData` function and get the URL
             return $this->encryptData();
-            // return response()->json([
-            //     'message' => 'Transaction initialized',
-            //     'token' => $token,
-            //     'url' => $encryptedUrl
-            // ]);
         }
 
         // Encrypt and send payload
         public function encryptData()
         {
             $amount = $this->storedAmount;
+            // $member = $this->memberId;
+            // dd($this->memberId);
             $payload = [
                 "U" => "VEKUB",
                 "W" => "782290",
-                "T" => "1122_t_med_lab22",
+                // "T" => "1122_t_med_lab22",
+                "T" => $amount,
                 // "A" => "500",
                 "A" => $amount,
                 "MC" => "822100",
@@ -226,18 +214,17 @@ class PaymentGatewayController extends Controller {
                 $transaction->tnd_date = $tndDate;
                 $transaction->signature = $signature;
                 $transaction->save();
-                
-                // Payment
-                // $amount = $this->storedAmount;
+
                 // $member = $this->memberId;
-                // $equbId = $this->equbId;
-                // $balance = $this->balance;
-                // $payment = Payment::create([
-                //     'amount' => $amount,
-                //     'member_id' => $member,
-                //     'equb_id' => $equbId,
-                //     'payment_type' => 'CBE gateway',
-                //     'balance' => $balance
+                // $equb = $this->equbId;
+                // $amount = $this->storedAmount;
+                // dd($this->storedAmount);
+                // Payment::create([
+                //     'member_id' => $this->memberId,
+                //     'equb_id' => $this->equbId,
+                //     'transaction_number' => $transaction->transaction_id, // Unique identifier
+                //     'amount' => $this->storedAmount,
+                //     'status' => 'initiated', // Status: pending
                 // ]);
                 Log::info('Transaction verified successfully.');
                 return response()->json([
