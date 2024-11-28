@@ -414,7 +414,7 @@ class PaymentController extends Controller
                 $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance'];
                 $member = ['member'];
                 $collector = ['equb_collector'];
-                // if ($userData->hasAnyRole($adminRoles)) {
+                if ($userData->hasAnyRole($adminRoles)) {
                     $paymentData['member'] = $this->memberRepository->getMemberById($member_id);
                     $paymentData['equb'] = $this->equbRepository->geteEubById($equb_id);
                     $paymentData['payments'] = $this->paymentRepository->getSinglePayment($member_id, $equb_id, $offset);
@@ -426,7 +426,7 @@ class PaymentController extends Controller
                     $paymentData['limit'] = $limit;
                     $paymentData['pageNumber'] = $pageNumber;
                     return view('admin/payment.paymentList', $paymentData);
-                // } elseif ($userData->hasRole($collector)) {
+                } elseif ($userData->hasAnyRole($collector)) {
                     $paymentData['member'] = $this->memberRepository->getMemberById($member_id);
                     $paymentData['equb'] = $this->equbRepository->geteEubById($equb_id);
                     $paymentData['payments'] = $this->paymentRepository->getSinglePayment($member_id, $equb_id, $offset);
@@ -437,7 +437,7 @@ class PaymentController extends Controller
                     $paymentData['limit'] = $limit;
                     $paymentData['pageNumber'] = $pageNumber;
                     return view('equbCollecter/payment.paymentList', $paymentData);
-                // } elseif ($userData->hasRole($member)) {
+                } elseif ($userData->hasAnyRole($member)) {
                     $paymentData['member'] = $this->memberRepository->getMemberById($member_id);
                     $paymentData['equb'] = $this->equbRepository->geteEubById($equb_id);
                     $paymentData['payments'] = $this->paymentRepository->getSinglePayment($member_id, $equb_id, $offset);
@@ -448,9 +448,9 @@ class PaymentController extends Controller
                     $paymentData['limit'] = $limit;
                     $paymentData['pageNumber'] = $pageNumber;
                     return view('member/payment.paymentList', $paymentData);
-                // } else {
-                //     return back();
-                // };
+                } else {
+                    return back();
+                };
             }
             
         } catch (Exception $ex) {
