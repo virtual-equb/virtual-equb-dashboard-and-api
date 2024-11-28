@@ -1,3 +1,4 @@
+@can('add user')
 @extends('layouts.app')
     @section('styles')
         <style type="text/css">

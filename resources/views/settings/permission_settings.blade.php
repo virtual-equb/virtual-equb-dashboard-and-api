@@ -1,6 +1,5 @@
 @can('view permission')
 @extends('layouts.app')
-
 @section('styles')
 @endsection
 
