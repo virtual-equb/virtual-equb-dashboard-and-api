@@ -79,6 +79,7 @@ class PaymentGatewayController extends Controller {
         private $equbId;
         private $balance;
         private $paymentType;
+        private $localTransactionId;
 
         public function generateUrl(Request $request)
         {
@@ -99,6 +100,17 @@ class PaymentGatewayController extends Controller {
             $this->storedAmount = $request->input('amount');
             $this->memberId = $request->input('member_id');
             $this->equbId = $request->input('equb_id');
+            $localTransactionId = Str::uuid();
+            $this->localTransactionId = $localTransactionId;
+
+            Payment::create([
+                'member_id' => $request->input('member_id'),
+                'equb_id' => $request->input('equb_id'),
+                'transaction_number' => $this->localTransactionId,
+                'amount' => $this->storedAmount,
+                'status' => 'pending'
+            ]);
+            
             // dd($this->memberId);
             // Call the `encryptData` function and get the URL
             return $this->encryptData();
@@ -108,13 +120,14 @@ class PaymentGatewayController extends Controller {
         public function encryptData()
         {
             $amount = $this->storedAmount;
+            $transactionId = $this->localTransactionId;
             // $member = $this->memberId;
             // dd($this->memberId);
             $payload = [
                 "U" => "VEKUB",
                 "W" => "782290",
                 // "T" => "1122_t_med_lab22",
-                "T" => $amount,
+                "T" => $transactionId,
                 // "A" => "500",
                 "A" => $amount,
                 "MC" => "822100",
@@ -215,17 +228,18 @@ class PaymentGatewayController extends Controller {
                 $transaction->signature = $signature;
                 $transaction->save();
 
-                // $member = $this->memberId;
-                // $equb = $this->equbId;
-                // $amount = $this->storedAmount;
-                // dd($this->storedAmount);
-                // Payment::create([
-                //     'member_id' => $this->memberId,
-                //     'equb_id' => $this->equbId,
-                //     'transaction_number' => $transaction->transaction_id, // Unique identifier
-                //     'amount' => $this->storedAmount,
-                //     'status' => 'initiated', // Status: pending
-                // ]);
+                $payment = Payment::where('transaction_number', $transactionId)->latest()->first();
+
+                if (!$payment) {
+                    return response()->json(['message' => 'Payment record not found'], 404);
+                }
+
+                // Update the payment record with the CBE details
+                $payment->update([
+                    'transaction_number' => $transactionId,
+                    'status' => $state === 'S' ? 'paid' : 'failed',
+                    'paid_date' => $state === 'S' ? now() : null,
+                ]);
                 Log::info('Transaction verified successfully.');
                 return response()->json([
                     'message' => 'Transaction verified',
