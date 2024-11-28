@@ -6,15 +6,37 @@ use App\Models\Payment;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\CBETransaction;
+use App\Models\TempTransaction;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use App\Models\TempTransaction;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use App\Repositories\Equb\IEqubRepository;
+use App\Repositories\Member\IMemberRepository;
+use App\Repositories\Payment\IPaymentRepository;
+use App\Repositories\EqubTaker\IEqubTakerRepository;
+use App\Repositories\ActivityLog\IActivityLogRepository;
 
 class PaymentGatewayController extends Controller {
-        public function __construct()
+        private $activityLogRepository;
+        private $paymentRepository;
+        private $memberRepository;
+        private $equbRepository;
+        private $equbTakerRepository;
+        public function __construct(
+            IPaymentRepository $paymentRepository,
+            IMemberRepository $memberRepository,
+            IEqubRepository $equbRepository,
+            IEqubTakerRepository $equbTakerRepository,
+            IActivityLogRepository $activityLogRepository
+        )
         {
             // $this->middleware('auth:api');
+            $this->activityLogRepository = $activityLogRepository;
+            $this->paymentRepository = $paymentRepository;
+            $this->memberRepository = $memberRepository;
+            $this->equbRepository = $equbRepository;
+            $this->equbTakerRepository = $equbTakerRepository;
         }
         private $securityKey = 'b14ca5898a4e4133bbce2ea2315a1916';
 
@@ -233,13 +255,94 @@ class PaymentGatewayController extends Controller {
                 if (!$payment) {
                     return response()->json(['message' => 'Payment record not found'], 404);
                 }
+                // payment calculations
+                $equbId = $payment->equb_id;
+                $memberId = $payment->member_id;
+                $amount = $payment->amount;
+                $credit = $payment->creadit;
+
+                // Compute total credit and balance
+                $totalCredit = $this->paymentRepository->getTotalCredit($equbId) ?? 0;
+                $equbAmount = $this->equbRepository->getEqubAmount($memberId, $equbId);
+                $availableBalance = $this->paymentRepository->getTotalBalance($equbId) ?? 0;
+
+                $creditData = ['creadit' => 0];
+                $this->paymentRepository->updateCredit($equbId, $creditData);
+
+                $lastTc = $totalCredit;
+                $totalCredit += $credit;
+
+                $balanceData = ['balance' => 0];
+                $this->paymentRepository->updateBalance($equbId, $balanceData);
+
+                $at = $amount;
+                $amount += $availableBalance;
+
+                if ($amount > $equbAmount) {
+                    if ($totalCredit > 0) {
+                        if ($totalCredit < $amount) {
+                            if ($at < $equbAmount) {
+                                $availableBalance -= $totalCredit;
+                                $totalCredit = 0;
+                            } elseif ($at > $equbAmount) {
+                                $diff = $at - $equbAmount;
+                                $totalCredit -= $diff;
+                                $availableBalance = ($availableBalance + $diff) - $totalCredit;
+                                $totalCredit = 0;
+                            }
+                        }
+                        $amount = $at;
+                    }
+                } elseif ($amount == $equbAmount) {
+                    $amount = $at;
+                    $totalCredit = $lastTc;
+                    $availableBalance = 0;
+                } elseif ($amount < $equbAmount) {
+                    if ($lastTc == 0) {
+                        $totalCredit = $equbAmount - $amount;
+                        $availableBalance = 0;
+                    } else {
+                        $totalCredit = $totalCredit;
+                        $availableBalance = 0;
+                    }
+                    $amount = $at;
+                }
 
                 // Update the payment record with the CBE details
                 $payment->update([
                     'transaction_number' => $transactionId,
                     'status' => $state === 'S' ? 'paid' : 'failed',
                     'paid_date' => $state === 'S' ? now() : null,
+                    'amount' => $amount,
+                    'creadit' => $totalCredit,
+                    'balance' => $availableBalance
                 ]);
+                // Update equb total payment and remaining payment
+                $totalPaid = $this->paymentRepository->getTotalPaid($equbId);
+                $totalEqubAmount = $this->equbRepository->getTotalEqubAmount($equbId);
+                $remainingPayment = $totalEqubAmount - $totalPaid;
+
+                $updated = [
+                    'total_payment' => $totalPaid,
+                    'remaining_payment' => $remainingPayment,
+                ];
+                $this->equbTakerRepository->updatePayment($equbId, $updated);
+
+                // Mark equb as deactivated if fully paid
+                if ($remainingPayment == 0) {
+                    $this->equbRepository->update($equbId, ['status' => 'Deactive']);
+                }
+
+                // Log the activity
+                $activityLog = [
+                    'type' => 'payments',
+                    'type_id' => $payment->id,
+                    'action' => 'updated',
+                    'user_id' => Auth::id(),
+                    'username' => Auth::user()->name,
+                    'role' => Auth::user()->role,
+                ];
+                $this->activityLogRepository->createActivityLog($activityLog);
                 Log::info('Transaction verified successfully.');
                 return response()->json([
                     'message' => 'Transaction verified',

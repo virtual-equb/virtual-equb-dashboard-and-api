@@ -274,14 +274,7 @@ class PaymentController extends Controller
                         'role' => $userData->role,
                     ];
                     $this->activityLogRepository->createActivityLog($activityLog);
-                    // $lotDate = $equbType->type == 'Automatic' ? $equbType->lottery_date : $equb->lottery_date;
-                    // try {
-                    //     $shortcode = config('key.SHORT_CODE');
-                    //     $message = "You have successfully paid $amount ETB and a total of $totalPpayment ETB for the equb $equbType->name. Your remaining unpaid amount is $remainingPayment ETB. Your lottery date is $lotDate" . " For further information please call " . $shortcode;
-                    //     $this->sendSms($memberPhone, $message);
-                    // } catch (Exception $ex) {
-                    //     return redirect()->back()->with('error', 'Failed to send SMS');
-                    // };
+                    
                     return response()->json([
                         'code' => 200,
                         'message' => 'Payment has been added successfully. Please give us sometime to review and approve it.',
