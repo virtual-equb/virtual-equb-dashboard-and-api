@@ -612,147 +612,55 @@ $(document).ready(function() {
                 $('#updateStatus').attr('action', "{{ url('equbType/updateStatus') }}" + '/' + $('#equbType_id').val());
 
             }
-  function openEditModal(item) {
+            function openEditModal(item) {
     $('#did').val(item.id);
     $('#editEqubTypeModal').modal('show');
-    $('#update_main_equb').val(item.main_equb);
+    
+    // Populate fields with item data
+    $('#update_main_equb').val(item.main_equb.id); // Ensure this field is populated
     $('#update_name').val(item.name);
     $('#update_round').val(item.round);
-    $('#update_status').val(item.status);
     $('#update_rote').val(item.rote);
     $('#update_type').val(item.type);
     $('#update_remark').val(item.remark);
-    $('#amount').val(item.amount); // Ensure this field is populated
-    $('#member').val(item.expected_members); // Ensure this field is populated
-
-
-            function openEditModal(item) {
-                // console.log(item)
-                $('#did').val(item.id);
-                $('#editEqubTypeModal').modal('show');
-                $('#update_main_equb').val(item.main_equb);
-                $('#update_name').val(item.name);
-                $('#update_round').val(item.round);
-                $('#update_status').val(item.status);
-                $('#update_rote').val(item.rote);
-                $('#update_type').val(item.type);
-                $('#update_remark').val(item.remark);
-                $('#update_amount_div').val(item.amount);
-                $('#update_members_div').val(item.expected_members);
-                $('#update_lottery_date').val(item.lottery_date);
-                $('#update_start_date').datepicker('setDate', new Date(item.start_date));
-                $('#update_start_date').datepicker('destroy');
-                $('#update_end_date').datepicker('setDate', new Date(item.end_date));
-                $('#update_end_date').datepicker('destroy');
-                $('#update_quota').val(item.quota);
-                $('#update_terms').summernote('code', item.terms);
-                const lotteryDate = document.getElementById("update_lottery_date_div");
-                const startDate = document.getElementById("update_start_date_div");
-                const endDate = document.getElementById("update_end_date_div");
-                const quota = document.getElementById("update_quota_div");
-                const update_rotes = document.getElementById("update_rote");
-                const amount = document.getElementById("update_amount_div");
-                const members = document.getElementById("update_members_div");
-                const update_option = update_rotes.options;
-                if (item.type === "Automatic") {
-                    lotteryDate.classList.remove("d-none");
-                    startDate.classList.remove("d-none");
-                    endDate.classList.remove("d-none");
-                    quota.classList.remove("d-none");
-                    amount.classList.remove("d-none");
-                    members.classList.remove("d-none");
-                    // for (var i = 1; i < update_option.length; i++) {
-                    //     update_option[i].disabled = false;
-                    //     if (update_option[i].value !== "Weekly") {
-                    //         update_option[i].disabled = true;
-                    //     }
-                    // }
-                    // lotteryDate.required = true;
-                    startDate.required = true;
-                    endDate.required = true;
-                    quota.required = true;
-                    amount.required = true;
-                    members.required = true;
-                } else {
-                    lotteryDate.classList.add("d-none");
-                    startDate.classList.add("d-none");
-                    endDate.classList.add("d-none");
-                    quota.classList.add("d-none");
-                    amount.classList.add("d-none");
-                    members.classList.add("d-none");
-                    // for (var i = 1; i < update_option.length; i++) {
-                    //     update_option[i].disabled = false;
-                    //     if (update_option[i].value !== "Daily") {
-                    //         update_option[i].disabled = true;
-                    //     }
-                    // }
-                    lotteryDate.required = false;
-                    startDate.required = false;
-                    endDate.required = false;
-                    quota.required = false;
-                    amount.required = true;
-                    members.required = true;
-                }
-                $('#updateEqubType').attr('action', 'equbType/update/' + $('#did').val())
-            }
-
-    // Populate total_amount and total_members fields
-    $('#total_amount').val(item.total_amount); // Set total amount from item
-    $('#total_members').val(item.total_expected_members); // Set total members from item
-
+    $('#amount').val(item.amount); 
+    $('#member').val(item.expected_members);
+    $('#total_amount').val(item.total_amount);
+    $('#total_members').val(item.total_expected_members);
     $('#update_lottery_date').val(item.lottery_date);
     $('#update_start_date').datepicker('setDate', new Date(item.start_date));
     $('#update_end_date').datepicker('setDate', new Date(item.end_date));
     $('#update_quota').val(item.quota);
     $('#update_terms').summernote('code', item.terms);
 
-    // Handle visibility and required fields based on type
-    const lotteryDate = document.getElementById("update_lottery_date_div");
-    const startDate = document.getElementById("update_start_date_div");
-    const endDate = document.getElementById("update_end_date_div");
-    const quota = document.getElementById("update_quota_div");
-    const amount = document.getElementById("update_amount_div");
-    const members = document.getElementById("update_members_div");
-    const total_amount = document.getElementById("update_total_amount_div");
-    const total_members = document.getElementById("update_total_members_div");
+    // Manage visibility and required fields based on type
+    const fieldsToToggle = {
+        "Automatic": [
+            "#update_lottery_date_div", 
+            "#update_start_date_div", 
+            "#update_end_date_div", 
+            "#update_quota_div", 
+            "#update_amount_div", 
+            "#update_members_div"
+        ],
+        "Manual": [
+            "#update_amount_div", 
+            "#update_members_div"
+        ]
+    };
 
-    if (item.type === "Automatic") {
-        lotteryDate.classList.remove("d-none");
-        startDate.classList.remove("d-none");
-        endDate.classList.remove("d-none");
-        quota.classList.remove("d-none");
-        amount.classList.remove("d-none");
-        members.classList.remove("d-none");
-        total_amount.classList.remove("d-none"); // Show total amount field
-        total_members.classList.remove("d-none"); // Show total members field
+    const isAutomatic = item.type === "Automatic";
+    fieldsToToggle["Automatic"].forEach(selector => {
+        $(selector).toggleClass("d-none", !isAutomatic);
+        $(selector).find('input, select').prop('required', isAutomatic);
+    });
 
-        lotteryDate.required = true;
-        startDate.required = true;
-        endDate.required = true;
-        quota.required = true;
-        amount.required = true;
-        members.required = true;
-        total_amount.required = true; // Make total amount required
-        total_members.required = true; // Make total members required
-    } else {
-        lotteryDate.classList.add("d-none");
-        startDate.classList.add("d-none");
-        endDate.classList.add("d-none");
-        quota.classList.add("d-none");
-        amount.classList.add("d-none");
-        members.classList.add("d-none");
-        total_amount.classList.add("d-none"); // Hide total amount
-        total_members.classList.add("d-none"); // Hide total members
+    fieldsToToggle["Manual"].forEach(selector => {
+        $(selector).toggleClass("d-none", isAutomatic);
+        $(selector).find('input, select').prop('required', !isAutomatic);
+    });
 
-        lotteryDate.required = false;
-        startDate.required = false;
-        endDate.required = false;
-        quota.required = false;
-        amount.required = true;
-        members.required = true;
-    }
-
-    // Set the action for the form
+    // Set the form action for updating
     $('#updateEqubType').attr('action', 'equbType/update/' + $('#did').val());
 }
 

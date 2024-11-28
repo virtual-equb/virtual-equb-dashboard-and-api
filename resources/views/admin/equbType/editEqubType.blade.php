@@ -14,7 +14,7 @@
                     <div class="col-sm-12">
                         <div class="form-group required">
                             <label class="control-label">Equb</label>
-                            <select class="custom-select form-control" id="update_main_equb" name="update_main_equb">
+                            <select class="custom-select form-control" id="update_main_equb" name="update_main_equb" required>
                                 <option selected value="">Choose Equb</option>
                                 @if(isset($mainEqubs) && count($mainEqubs) > 0)
                                     @foreach($mainEqubs as $equb)
@@ -27,7 +27,7 @@
                         </div>
                         <div class="form-group required">
                             <label class="control-label">Equb Type</label>
-                            <select class="custom-select form-control" id="update_type" name="update_type">
+                            <select class="custom-select form-control" id="update_type" name="update_type" required>
                                 <option selected value="">Choose Type</option>
                                 <option value="Automatic">Automatic</option>
                                 <option value="Manual">Manual</option>
@@ -52,7 +52,7 @@
                         </div>
                         <div class="form-group required">
                             <label class="control-label">Rote</label>
-                            <select class="custom-select form-control" id="update_rote" name="update_rote">
+                            <select class="custom-select form-control" id="update_rote" name="update_rote" required>
                                 <option selected value="">Choose Rote</option>
                                 <option value="Daily">Daily</option>
                                 <option value="Weekly">Weekly</option>
