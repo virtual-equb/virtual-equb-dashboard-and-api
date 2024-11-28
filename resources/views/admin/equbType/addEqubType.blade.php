@@ -116,20 +116,31 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
+                <div class="form-group required">
+                        <label class="control-label">Draw Type</label>
+                        <select class="custom-select form-control" id="draw_type" name="draw_type" required>
+                            <option selected value="">Choose Draw Type</option>
+                            <option value="Automatic">Automatic</option>
+                            <option value="Seasonal">Seasonal</option>
+                        </select>
+                    </div>
                     <div class="form-group required">
                         <label class="control-label">Equb Type</label>
                         <select class="form-control select2" id="equbTypeId" name="equbTypeId" required>
-                            <option value="all">All</option>
+                            <option selected value="">Choose Equb Type</option>
                             @foreach ($equbTypes as $equbType)
                                 <option data-info="{{ $equbType->type }}"
                                         data-startdate="{{ $equbType->start_date }}"
                                         data-enddate="{{ $equbType->end_date }}"
-                                        data-rote="{{ $equbType->rote }}" data-quota="{{ $equbType->quota }}"
+                                        data-rote="{{ $equbType->rote }}" 
+                                        data-quota="{{ $equbType->quota }}"
                                         value="{{ $equbType->id }}">
-                                    {{ $equbType->name }} round {{ $equbType->round }}</option>
+                                    {{ $equbType->name }} round {{ $equbType->round }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
+                </div>
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary" onclick="drawAutoWinners()">Draw</button>
@@ -140,3 +151,30 @@
     </div>
 </div>
 @endcan
+<script>
+    document.getElementById('draw_type').addEventListener('change', function() {
+        var selectedType = this.value;
+        var equbTypeSelect = document.getElementById('equbTypeId');
+
+        // Clear existing options
+        equbTypeSelect.innerHTML = '<option selected value="">Choose Equb Type</option>';
+
+        // Get the equb types from the original options
+        var equbTypes = @json($equbTypes); // Pass the array to JavaScript
+
+        equbTypes.forEach(function(equbType) {
+            // Check if the type matches the selected draw type
+            if (equbType.type === selectedType) {
+                var option = document.createElement('option');
+                option.value = equbType.id;
+                option.setAttribute('data-info', equbType.type);
+                option.setAttribute('data-startdate', equbType.start_date);
+                option.setAttribute('data-enddate', equbType.end_date);
+                option.setAttribute('data-rote', equbType.rote);
+                option.setAttribute('data-quota', equbType.quota);
+                option.textContent = equbType.name + ' round ' + equbType.round;
+                equbTypeSelect.appendChild(option);
+            }
+        });
+    });
+</script>
