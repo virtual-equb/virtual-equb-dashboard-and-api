@@ -6,7 +6,7 @@
             <form role="form" method="post" class="form-horizontal" action="{{ route('registerEqubType') }}" enctype="multipart/form-data" id="addEqubType">
                 {{ csrf_field() }}
                 <div class="modal-header">
-                    <h4 class="modal-title">Add Equb Type s</h4>
+                    <h4 class="modal-title">Add Equb Type</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
@@ -66,12 +66,11 @@
                             <label for="end_date" class="control-label">End Date</label>
                             <input type="text" class="form-control" id="end_date" name="end_date" placeholder="End Date" autocomplete="off" readonly>
                         </div>
-                          <!-- Expected Members and Total Amount -->
-                          <div class="form-group" id="expectedMembers">
-    <label class="control-label">Expected Members</label>
-    <input type="number" class="form-control" id="expected_members" name="expected_members" placeholder="Expected Members" readonly>
-</div>
-
+                        <!-- Expected Members and Total Amount -->
+                        <div class="form-group" id="expectedMembers">
+                            <label class="control-label">Expected Members</label>
+                            <input type="number" class="form-control" id="expected_members" name="expected_members" placeholder="Expected Members" readonly>
+                        </div>
                         <div class="form-group">
                             <label class="control-label">Total Amount</label>
                             <input type="number" class="form-control" id="total_amount" name="total_amount" placeholder="Total Amount" readonly>
@@ -116,7 +115,7 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
-                <div class="form-group required">
+                    <div class="form-group required">
                         <label class="control-label">Draw Type</label>
                         <select class="custom-select form-control" id="draw_type" name="draw_type" required>
                             <option selected value="">Choose Draw Type</option>
@@ -141,7 +140,6 @@
                         </select>
                     </div>
                 </div>
-                </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary" onclick="drawAutoWinners()">Draw</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -151,6 +149,7 @@
     </div>
 </div>
 @endcan
+
 <script>
     document.getElementById('draw_type').addEventListener('change', function() {
         var selectedType = this.value;
