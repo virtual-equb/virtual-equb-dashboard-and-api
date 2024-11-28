@@ -130,7 +130,8 @@ class PaymentGatewayController extends Controller {
                 'equb_id' => $request->input('equb_id'),
                 'transaction_number' => $this->localTransactionId,
                 'amount' => $this->storedAmount,
-                'status' => 'pending'
+                'status' => 'pending',
+                'payment_type' => 'CBE Gateway'
             ]);
             
             // dd($this->memberId);
@@ -315,7 +316,8 @@ class PaymentGatewayController extends Controller {
                     'paid_date' => $state === 'S' ? now() : null,
                     'amount' => $amount,
                     'creadit' => $totalCredit,
-                    'balance' => $availableBalance
+                    'balance' => $availableBalance,
+                    'payment_type' => 'CBE Gateway'
                 ]);
                 // Update equb total payment and remaining payment
                 $totalPaid = $this->paymentRepository->getTotalPaid($equbId);
