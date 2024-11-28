@@ -312,8 +312,8 @@ class PaymentGatewayController extends Controller {
                 // Update the payment record with the CBE details
                 $payment->update([
                     'transaction_number' => $transactionId,
-                    'status' => $state === 'S' ? 'paid' : 'failed',
-                    'paid_date' => $state === 'S' ? now() : null,
+                    'status' => $state === 'COM' ? 'paid' : 'failed',
+                    'paid_date' => $state === 'COM' ? now() : null,
                     'amount' => $amount,
                     'creadit' => $totalCredit,
                     'balance' => $availableBalance,
