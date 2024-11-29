@@ -14,7 +14,7 @@
                     <div class="col-sm-12">
                         <div class="form-group required">
                             <label class="control-label">Equb</label>
-                            <select class="custom-select form-control" id="update_main_equb" name="update_main_equb" required>
+                            <select class="custom-select form-control" id="update_main_equb" name="update_main_equb">
                                 <option selected value="">Choose Equb</option>
                                 @if(isset($mainEqubs) && count($mainEqubs) > 0)
                                     @foreach($mainEqubs as $equb)
@@ -27,7 +27,7 @@
                         </div>
                         <div class="form-group required">
                             <label class="control-label">Equb Type</label>
-                            <select class="custom-select form-control" id="update_type" name="update_type" required>
+                            <select class="custom-select form-control" id="update_type" name="update_type">
                                 <option selected value="">Choose Type</option>
                                 <option value="Automatic">Automatic</option>
                                 <option value="Manual">Manual</option>
@@ -52,7 +52,7 @@
                         </div>
                         <div class="form-group required">
                             <label class="control-label">Rote</label>
-                            <select class="custom-select form-control" id="update_rote" name="update_rote" required>
+                            <select class="custom-select form-control" id="update_rote" name="update_rote">
                                 <option selected value="">Choose Rote</option>
                                 <option value="Daily">Daily</option>
                                 <option value="Weekly">Weekly</option>
@@ -110,8 +110,9 @@
 <div class="modal fade" id="modaloff6" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form role="form" method="post" class="form-horizontal" action="" id="viewUserForm" enctype="multipart/form-data">
-                {{ csrf_field() }}
+        <form role="form" method="post" class="form-horizontal form-group" action="" id="updateEqubType"
+                    enctype="multipart/form-data">
+        {{ csrf_field() }}
 
                 <div class="modal-header">
                     <h4 class="modal-title">Icon</h4>
