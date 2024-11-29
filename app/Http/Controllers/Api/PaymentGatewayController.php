@@ -317,7 +317,8 @@ class PaymentGatewayController extends Controller {
                     'amount' => $amount,
                     'creadit' => $totalCredit,
                     'balance' => $availableBalance,
-                    'payment_type' => 'CBE Gateway'
+                    'payment_type' => 'CBE Gateway',
+                    'collector' => $memberId
                 ]);
                 // Update equb total payment and remaining payment
                 $totalPaid = $this->paymentRepository->getTotalPaid($equbId);
