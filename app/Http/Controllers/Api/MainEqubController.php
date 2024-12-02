@@ -29,8 +29,14 @@ class MainEqubController extends Controller
         // dd($userData);
         try {
             
-            $mainEqubs = MainEqub::with('subEqub')->get();
-
+            // $mainEqubs = MainEqub::with('subEqub')->where('subEqub.end_date', '<=', now())->get();
+            // Fetch mainEqubs with subEqubs whose end_date is not passed
+            $mainEqubs = MainEqub::with(['subEqub' => function ($query) {
+                $query->where('end_date', '>=', now());
+            }])->whereHas('subEqub', function ($query) {
+                $query->where('end_date', '>=', now());
+            })->get();
+            
             return response()->json([
                 'data' => MainEqubResource::collection($mainEqubs),
                 'code' => 200,
