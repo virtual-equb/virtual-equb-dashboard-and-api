@@ -17,11 +17,11 @@ class MainEqubController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api');
-        $this->middleware('api_permission_check:update main_equb', ['only' => ['update', 'edit']]);
-        $this->middleware('api_permission_check:delete main_equb', ['only' => ['destroy']]);
-        $this->middleware('api_permission_check:view main_equb', ['only' => ['index', 'show']]);
-        $this->middleware('api_permission_check:create main_equb', ['only' => ['store', 'create']]);
+        // $this->middleware('auth:api');
+        // $this->middleware('api_permission_check:update main_equb', ['only' => ['update', 'edit']]);
+        // $this->middleware('api_permission_check:delete main_equb', ['only' => ['destroy']]);
+        // $this->middleware('api_permission_check:view main_equb', ['only' => ['index', 'show']]);
+        // $this->middleware('api_permission_check:create main_equb', ['only' => ['store', 'create']]);
     }
 
     public function index() {
@@ -29,7 +29,13 @@ class MainEqubController extends Controller
         // dd($userData);
         try {
             
-            $mainEqubs = MainEqub::with('subEqub')->get();
+            // $mainEqubs = MainEqub::with('subEqub')->where('subEqub.end_date', '<=', now())->get();
+            // Fetch mainEqubs with subEqubs whose end_date is not passed
+            $mainEqubs = MainEqub::with(['subEqub' => function ($query) {
+                $query->where('end_date', '>=', now());
+            }])->whereHas('subEqub', function ($query) {
+                $query->where('end_date', '>=', now());
+            })->get();
 
             return response()->json([
                 'data' => MainEqubResource::collection($mainEqubs),
@@ -93,7 +99,12 @@ class MainEqubController extends Controller
 
     public function show($id) {
         
-        $mainEqub = MainEqub::where('id', $id)->with('subEqub')->first();
+        $mainEqub = MainEqub::where('id', $id)->with(['subEqub' => function ($query) {
+            $query->where('end_date', '>=', now());
+        }])->whereHas('subEqub', function ($query) {
+            $query->where('end_date', '>=', now());
+        })->first();
+
         return response()->json([
             'data' => new MainEqubResource($mainEqub)
         ]);
