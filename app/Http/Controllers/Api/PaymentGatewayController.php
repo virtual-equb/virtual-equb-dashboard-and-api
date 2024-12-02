@@ -16,6 +16,7 @@ use App\Repositories\Member\IMemberRepository;
 use App\Repositories\Payment\IPaymentRepository;
 use App\Repositories\EqubTaker\IEqubTakerRepository;
 use App\Repositories\ActivityLog\IActivityLogRepository;
+use Exception;
 
 class PaymentGatewayController extends Controller {
         private $activityLogRepository;
@@ -102,6 +103,7 @@ class PaymentGatewayController extends Controller {
         private $balance;
         private $paymentType;
         private $localTransactionId;
+        //
 
         public function generateUrl(Request $request)
         {
@@ -138,6 +140,34 @@ class PaymentGatewayController extends Controller {
             // dd($this->memberId);
             // Call the `encryptData` function and get the URL
             return $this->encryptData();
+        }
+
+        public function regenerateUrl(Request $request) {
+            $request->validate([
+                'payment_id' => 'required|exists:payments,id'
+            ]);
+            $payment = Payment::findOrFail($request->input('payment_id'));
+            $this->storedAmount = $payment->amount;
+            $this->localTransactionId = $payment->transaction_number;
+
+            return $this->encryptData();
+        }
+
+        public function cancelPayment($id) {
+            try {
+                $payment = Payment::findOrFail($id);
+
+                $payment->delete();
+
+                return response()->json([
+                    'message' => 'Payment deleted successfully',
+                ], 200);
+
+            } catch (Exception $ex) {
+                return response()->json([
+                    'error' => $ex->getMessage()
+                ], 500);
+            }
         }
 
         // Encrypt and send payload

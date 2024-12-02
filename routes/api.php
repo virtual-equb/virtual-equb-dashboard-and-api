@@ -118,6 +118,8 @@ Route::middleware(['auth:api'])->group(function () {
     Route::put('/roles/{roleId}/give-permissions', [RoleController::class, 'updatePermissionToRole']);
     // CBE
     Route::post('/cbegateway', [PaymentGatewayController::class, 'generateUrl']);
+    Route::post('/retry/cbegateway/{id}', [PaymentGatewayController::class, 'regenerateUrl']);
+    Route::delete('/cancel/cbegateway/{id}', [PaymentGatewayController::class, 'cancelPayment']);
 });
 
 
