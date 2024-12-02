@@ -85,7 +85,7 @@
                             <input type="number" value="0" onkeyup="getExpectedTotal()" class="form-control"
                                 id="amount_per_day" name="amount" placeholder="Amount" required readonly>
                         </div>
-                        <div class="form-group required">
+                        <div class="form-group required" id="expected_total_div">
                             <label class="control-label">Expected Total</label>
                             <input type="number" class="form-control" id="total_amount"
                                 name="total_amount" placeholder="Total equb amount" readonly min="1">
@@ -142,6 +142,14 @@
         document.getElementById('total_amount').value = '';
         document.getElementById('start_date').readOnly = false; // Reset readOnly state
         document.getElementById('end_date').value = ''; // Clear end date
+
+        // Hide or show expected total based on type
+        const expectedTotalDiv = document.getElementById('expected_total_div');
+        if (this.value === 'Automatic' || this.value === 'Seasonal') {
+            expectedTotalDiv.style.display = 'none'; // Hide the Expected Total input
+        } else {
+            expectedTotalDiv.style.display = 'block'; // Show the Expected Total input
+        }
     });
 
     document.getElementById('equb_type_id').addEventListener('change', function() {
@@ -169,7 +177,7 @@
             document.getElementById('start_date').readOnly = true; // Make start date read-only
             document.getElementById('end_date').readOnly = true; // Make end date read-only
         } else {
-            // For Seasonal or Manual types, clear the values
+            // For Manual type, clear the values
             document.getElementById('amount_per_day').value = '';
             document.getElementById('total_amount').value = '';
             document.getElementById('start_date').readOnly = false; // Make start date editable
