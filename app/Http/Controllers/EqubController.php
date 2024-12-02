@@ -651,7 +651,7 @@ class EqubController extends Controller
             // }
         } catch (Exception $ex) {
             // dd($ex);
-            $msg = "Unknown Error Occurred, Please try again!";
+            $msg = "Unknown Error Occurred, Please try again!" . $ex->getMessage();
             $type = 'error';
             Session::flash($type, $msg);
             return back();
