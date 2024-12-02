@@ -1,4 +1,3 @@
-@can('view unpaid_payment_report')
 @extends('layouts.app')
 @section('styles')
     <style type="text/css">
@@ -36,7 +35,7 @@
                                     <ul class="nav nav-pills" id="custom-tabs-two-tab" role="tablist">
                                         <li class="nav-item nav-blue memberTab">
                                             <a class="nav-link active" id="custom-tabs-two-member-tab" data-toggle="pill" href="#custom-tabs-two-member" role="tab" aria-controls="custom-tabs-two-member" aria-selected="true">
-                                                <span class="fa fa-list"></span> Paid Payments
+                                                <span class="fa fa-list"></span> Equb Collector
                                             </a>
                                         </li>
                                         <li class="nav-item paymentTab" id="payment-tab" style="display: none;">
@@ -170,4 +169,3 @@
         });
     </script>
 @endsection
-@endCan
