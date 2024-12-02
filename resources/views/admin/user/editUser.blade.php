@@ -56,7 +56,7 @@
 
                  </div>
              </div>
-             <div class="form-group row">
+             {{-- <div class="form-group row">
                  <label for="phone" class="col-md-2 control-label"> Role <i class="fa fa-asterisk text-danger"
                          style="font-size: 8px"></i></label>
                  <div class=" form-group col-md-10">
@@ -73,7 +73,22 @@
 
                      </select>
                  </div>
-             </div>
+             </div> --}}
+             <div class="form-group row">
+                <label for="phone" class="col-md-2 control-label">Role <i class="fa fa-asterisk text-danger" style="font-size: 8px"></i></label>
+                <div class="form-group col-md-10">
+                    <select class="custom-select form-control" id="editRole" multiple name="role[]">
+                        @foreach($roles as $role)
+                            <option 
+                                value="{{ $role->name }}"
+                                {{ in_array($role->name, $userRoles) ? 'selected' : '' }}
+                            >
+                                {{ $role->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
          </div>
          <div class="d-flex justify-content-end mr-5">
              <button type="submit" onclick="edit()" class="btn btn-outline-primary mr-3">Submit</button>

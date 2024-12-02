@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Mail;
-use App\Models\User;
-use App\Http\Controllers\Controller;
 use Exception;
-use App\Repositories\User\IUserRepository;
-use App\Repositories\ActivityLog\IActivityLogRepository;
+use App\Models\User;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
-use Spatie\Permission\Models\Role;
+use App\Repositories\User\IUserRepository;
+use App\Repositories\ActivityLog\IActivityLogRepository;
 
 class UserController extends Controller
 {
@@ -327,6 +328,7 @@ class UserController extends Controller
                     $user->assignRole($roleForWeb);
                     $user->assignRole($roleForApi);
                 }
+                
 
                 $userData = Auth::user();
                     $activityLog = [
@@ -544,7 +546,7 @@ class UserController extends Controller
     //         return back();
     //     }
     // }
-    public function update($id, Request $request)
+    public function update1($id, Request $request)
     {
         try {
             $userData = Auth::user();
@@ -576,18 +578,36 @@ class UserController extends Controller
 
             if ($updated) {
                 // Ensure roles exist for both guards
+                // $rolesForWeb = [];
+                // $rolesForApi = [];
+
+                // foreach ($roles as $roleName) {
+                //     $rolesForWeb[] = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web']);
+                //     $rolesForApi[] = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'api']);
+                // }
+
+                // // Sync roles for each guard
+                // $updated->syncRoles(collect($rolesForWeb)->pluck('name')->toArray());
+                // $updated->syncRoles(collect($rolesForApi)->pluck('name')->toArray());
                 $rolesForWeb = [];
                 $rolesForApi = [];
-
+    
                 foreach ($roles as $roleName) {
-                    $rolesForWeb[] = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web']);
-                    $rolesForApi[] = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'api']);
+                    $rolesForWeb[] = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web'])->name;
+                    $rolesForApi[] = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'api'])->name;
                 }
-
-                // Sync roles for each guard
-                $updated->syncRoles(collect($rolesForWeb)->pluck('name')->toArray());
-                $updated->syncRoles(collect($rolesForApi)->pluck('name')->toArray());
-                
+    
+                // Sync roles for 'web' guard
+                $updated->syncRoles($rolesForWeb);
+    
+                // Assign roles for 'api' guard
+                $updated->syncRoles([]); // Clear all roles for API first
+                foreach ($rolesForApi as $roleName) {
+                    $role = Role::where('name', $roleName)->where('guard_name', 'api')->first();
+                    if ($role) {
+                        $updated->assignRole($role->name);
+                    }
+                }
 
                 // Log activity
                 $activityLog = [
@@ -617,10 +637,108 @@ class UserController extends Controller
             return back();
         }
     }
-    public function removeRole (Request $request)
-    {
-        return response()->json($request->all());
+    public function update($id, Request $request)
+{
+    try {
+        $userData = Auth::user();
+
+        // Validate the request
+        $this->validate(
+            $request,
+            [
+                'name' => 'required',
+                'email' => 'required',
+                'phone_number' => 'required',
+                'gender' => 'required',
+                'role' => 'required|array',
+            ]
+        );
+
+        $name = $request->input('name');
+        $email = $request->input('email');
+        $phone = $request->input('phone_number');
+        $gender = $request->input('gender');
+        $roles = $request->input('role');
+
+        // Update user details
+        $updatedData = [
+            'name' => $name,
+            'email' => $email,
+            'phone_number' => $phone,
+            'gender' => $gender,
+        ];
+        $updated = $this->userRepository->updateUser($id, $updatedData);
+
+        if ($updated) {
+            // Sync roles for the 'web' guard
+            // $rolesForWeb = [];
+            // foreach ($roles as $roleName) {
+            //     $rolesForWeb[] = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web'])->name;
+            // }
+            // $updated->syncRoles($rolesForWeb); // Sync roles for the 'web' guard
+
+            // // Handle roles for the 'api' guard
+            // // First, remove existing roles for the 'api' guard
+            // $currentApiRoles = $updated->roles()->where('guard_name', 'api')->get();
+            // foreach ($currentApiRoles as $role) {
+            //     $updated->removeRole($role->name);
+            // }
+
+            // // Assign new roles for the 'api' guard
+            // foreach ($roles as $roleName) {
+            //     $roleApi = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'api']);
+            //     $updated->assignRole($roleApi->name); // Assign role for 'api'
+            // }
+            $rolesForWeb = [];
+            foreach ($roles as $roleName) {
+                $roleWeb = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web']);
+                $rolesForWeb[] = $roleWeb->name;
+            }
+            $updated->syncRoles($rolesForWeb); // Sync roles for 'web'
+
+            // Clear and assign roles for the 'api' guard
+            // First, remove existing roles for 'api'
+            $updated->roles()->where('guard_name', 'api')->delete();
+
+            // Then assign new roles for 'api'
+            foreach ($roles as $roleName) {
+                $roleApi = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'api']);
+                DB::table('model_has_roles')->insert([
+                    'role_id' => $roleApi->id,
+                    'model_type' => get_class($updated),
+                    'model_id' => $updated->id,
+                ]);
+            }
+
+
+            // Log activity
+            $activityLog = [
+                'type' => 'users',
+                'type_id' => $id,
+                'action' => 'updated',
+                'user_id' => $userData->id,
+                'username' => $userData->name,
+                'role' => $userData->role,
+            ];
+            $this->activityLogRepository->createActivityLog($activityLog);
+
+            Session::flash('success', "User detail has been updated successfully!");
+            return back();
+        } else {
+            Session::flash('error', "Unknown error occurred, Please try again!");
+            return back();
+        }
+    } catch (Exception $ex) {
+        Session::flash('error', "Unable to process your request, Please try again! " . $ex->getMessage());
+        return back();
     }
+}
+
+
+    // public function removeRole (Request $request)
+    // {
+    //     return response()->json($request->all());
+    // }
     public function destroy($id)
     {
         try {
