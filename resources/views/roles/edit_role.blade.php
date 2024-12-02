@@ -1,3 +1,4 @@
+@can('create role')
 @extends('layouts.app')
 
 @section('title')
@@ -153,3 +154,4 @@ use Spatie\Permission\Models\Permission;
 @endsection
 
 @endsection
+@endcan

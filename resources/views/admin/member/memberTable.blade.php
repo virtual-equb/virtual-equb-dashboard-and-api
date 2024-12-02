@@ -1,4 +1,5 @@
-              <div class="table-responsive">
+@can('view member')
+        <div class="table-responsive">
                   <table id="member-list-table" class="table table-bordered table-striped" style="padding-bottom:100px">
                       <thead>
                           <tr>
@@ -306,3 +307,4 @@
                       });
                   });
               </script>
+@endcan

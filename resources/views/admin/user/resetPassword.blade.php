@@ -1,7 +1,4 @@
-{{-- @if (Auth::user()->role == 'admin' ||
-        Auth::user()->role == 'general_manager' ||
-        Auth::user()->role == 'operation_manager' ||
-        Auth::user()->role == 'it') --}}
+@can('reset user_password')
     <div class="modal fade" id="resetPasswordModal" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -31,4 +28,4 @@
             </div>
         </div>
     </div>
-{{-- @endif --}}
+@endcan

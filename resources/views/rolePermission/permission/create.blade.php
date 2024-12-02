@@ -1,6 +1,5 @@
+@can('view permission')
 @extends('layouts.app')
-
-
 @section('content')
 <div class="wrapper">
     <div class="content-wrapper">
@@ -34,5 +33,4 @@
 
 
 @endsection
-
-
+@endcan

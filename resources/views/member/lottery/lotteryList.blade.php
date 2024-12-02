@@ -1,4 +1,4 @@
-@if (Auth::user()->role == 'member')
+@can('view lottery_winner')
  <table id="payment-list-table_in_tab" class="table table-bordered table-striped " >      {{-- <thead>Payment</thead> --}}
     <thead> 
         <tr>
@@ -82,4 +82,4 @@
            <td colspan="4">{{$total}}</td>
        </tr>
     </table> 
-    @endif 
+    @endcan

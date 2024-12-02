@@ -31,6 +31,7 @@
                                 <option selected value="">Choose Type</option>
                                 <option value="Automatic">Automatic</option>
                                 <option value="Manual">Manual</option>
+                                <option value="Seasonal">Automatic Seasonal</option>
                             </select>
                         </div>
                         <div class="form-group required">
@@ -109,8 +110,9 @@
 <div class="modal fade" id="modaloff6" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form role="form" method="post" class="form-horizontal" action="" id="viewUserForm" enctype="multipart/form-data">
-                {{ csrf_field() }}
+        <form role="form" method="post" class="form-horizontal form-group" action="" id="updateEqubType"
+                    enctype="multipart/form-data">
+        {{ csrf_field() }}
 
                 <div class="modal-header">
                     <h4 class="modal-title">Icon</h4>

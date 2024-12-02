@@ -1,4 +1,4 @@
-{{-- @if (Auth::user()->role == 'member') --}}
+@can('add equb_lottery')
 <table id="equb-list-table" class="table table-bordered table-striped">      
     <thead>
         <tr>
@@ -142,3 +142,4 @@
         });
     });
 </script>
+@endcan

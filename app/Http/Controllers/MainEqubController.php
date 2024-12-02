@@ -128,7 +128,7 @@ class MainEqubController extends Controller
             'active' => 'required',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Added image validation
         ]);
-    
+   // dd($validatedData);
         // Find the MainEqub model by ID or fail
         $equb = MainEqub::findOrFail($id);
     

@@ -1,4 +1,4 @@
-    @extends('layouts.app')
+@extends('layouts.app')
     @section('styles')
         <style type="text/css">
             td.details-control_equb {
@@ -1033,54 +1033,70 @@
                 };
                 $("#lottery_date").datepicker(datePickerOptions);
 
-                $(document).ready(function() {
-                    const selectBox = document.getElementById("equb_type_id");
-                    const updateSelectBox = document.getElementById("equb_type");
-                    const lotteryDate = document.getElementById("equb_lottery_date_div");
-                    const timeline = document.getElementById("timeline_div");
-                    $("#equb_type_id").on("change", function() {
-                        var type = $(this).find("option:selected").data("info");
-                        if (type !== "Automatic") {
-                            lotteryDate.classList.remove("d-none");
-                            timeline.classList.remove("d-none");
-                            lotteryDate.required = true;
-                        } else {
-                            var equbTypeStartDate = $(this).find("option:selected").data("startdate");
-                            var equbTypeEndDate = $(this).find("option:selected").data("enddate");
-                            $('#start_date').datepicker('setDate', new Date(equbTypeStartDate));
-                            $('#start_date').datepicker('destroy');
-                            $('#end_date').datepicker('setDate', new Date(equbTypeEndDate));
-                            $('#end_date').datepicker('destroy');
-                            lotteryDate.classList.add("d-none");
-                            timeline.classList.add("d-none");
-                            lotteryDate.required = false;
-                        }
-                        $("#lottery_date").datepicker("destroy");
-                        $("#lottery_date").datepicker(datePickerOptions);
-                    });
-                    $("#update_equb_type").on("change", function() {
-                        var type = $(this).find("option:selected").data("info");
-                        const lotteryDate = document.getElementById("update_equb_lottery_date_div");
-                        const timeline = document.getElementById("update_timeline_div");
-                        if (type !== "Automatic") {
-                            lotteryDate.classList.remove("d-none");
-                            timeline.classList.remove("d-none");
-                            lotteryDate.required = true;
-                        } else {
-                            var equbTypeStartDate = $(this).find("option:selected").data("startdate");
-                            var equbTypeEndDate = $(this).find("option:selected").data("enddate");
-                            $('#update_start_date').datepicker('setDate', new Date(equbTypeStartDate));
-                            $('#update_start_date').datepicker('destroy');
-                            $('#update_end_date').datepicker('setDate', new Date(equbTypeEndDate));
-                            $('#update_end_date').datepicker('destroy');
-                            lotteryDate.classList.add("d-none");
-                            timeline.classList.add("d-none");
-                            lotteryDate.required = false;
-                        }
-                        $("#update_lottery_date").datepicker("destroy");
-                        $("#update_lottery_date").datepicker(datePickerOptions);
-                    });
-                });
+  $(document).ready(function() {
+    const selectBox = document.getElementById("equb_type_id");
+    const updateSelectBox = document.getElementById("equb_type");
+    const lotteryDate = document.getElementById("equb_lottery_date_div");
+    const timeline = document.getElementById("timeline_div");
+
+    $("#equb_type_id").on("change", function() {
+        var type = $(this).find("option:selected").data("info");
+        
+        if (type === "Manual") {
+            lotteryDate.classList.remove("d-none");
+            timeline.classList.remove("d-none");
+            lotteryDate.required = true;
+        } else if (type === "Seasonal") {
+            // Hide both timeline and lottery date for Seasonal type
+            lotteryDate.classList.add("d-none");
+            timeline.classList.add("d-none");
+            lotteryDate.required = false;
+        } else {
+            var equbTypeStartDate = $(this).find("option:selected").data("startdate");
+            var equbTypeEndDate = $(this).find("option:selected").data("enddate");
+            $('#start_date').datepicker('setDate', new Date(equbTypeStartDate));
+            $('#start_date').datepicker('destroy');
+            $('#end_date').datepicker('setDate', new Date(equbTypeEndDate));
+            $('#end_date').datepicker('destroy');
+            lotteryDate.classList.add("d-none");
+            timeline.classList.add("d-none");
+            lotteryDate.required = false;
+        }
+
+        $("#lottery_date").datepicker("destroy");
+        $("#lottery_date").datepicker(datePickerOptions);
+    });
+
+    $("#update_equb_type").on("change", function() {
+        var type = $(this).find("option:selected").data("info");
+        const lotteryDate = document.getElementById("update_equb_lottery_date_div");
+        const timeline = document.getElementById("update_timeline_div");
+
+        if (type !== "Automatic") {
+            lotteryDate.classList.remove("d-none");
+            timeline.classList.remove("d-none");
+            lotteryDate.required = true;
+        } else if (type === "Seasonal") {
+            // Hide both timeline and lottery date for Seasonal type
+            lotteryDate.classList.add("d-none");
+            timeline.classList.add("d-none");
+            lotteryDate.required = false;
+        } else {
+            var equbTypeStartDate = $(this).find("option:selected").data("startdate");
+            var equbTypeEndDate = $(this).find("option:selected").data("enddate");
+            $('#update_start_date').datepicker('setDate', new Date(equbTypeStartDate));
+            $('#update_start_date').datepicker('destroy');
+            $('#update_end_date').datepicker('setDate', new Date(equbTypeEndDate));
+            $('#update_end_date').datepicker('destroy');
+            lotteryDate.classList.add("d-none");
+            timeline.classList.add("d-none");
+            lotteryDate.required = false;
+        }
+
+        $("#update_lottery_date").datepicker("destroy");
+        $("#update_lottery_date").datepicker(datePickerOptions);
+    });
+});
                 $("#lottery_date_check").datepicker({
                     format: 'yyyy-mm-dd',
                     //multidate: true,

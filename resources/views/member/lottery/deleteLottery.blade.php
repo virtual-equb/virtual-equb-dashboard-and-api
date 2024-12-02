@@ -1,5 +1,5 @@
-    @if (Auth::user()->role == 'member')
-
+@can('delete lottery_winner')
+    
                 <div class="modal modal-danger fade" id="openDeleteLotteryModal" tabindex="-1" role="dialog" aria-labelledby="Delete" aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
@@ -25,4 +25,4 @@
                         </div>
                     </div>
               </div>
-            @endif  
+            @endcan

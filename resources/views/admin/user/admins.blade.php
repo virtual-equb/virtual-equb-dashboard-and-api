@@ -1,4 +1,5 @@
-    @extends('layouts.app')
+@can('create user')
+@extends('layouts.app')
     @section('styles')
         <style type="text/css">
             td.details-control_equb {
@@ -616,3 +617,4 @@
             });
         </script>
 @endsection
+@endcan

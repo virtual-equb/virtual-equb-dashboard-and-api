@@ -756,7 +756,7 @@ class EqubTypeController extends Controller
             return back();
         }
     }
-    public function update($id, Request $request)
+   /* public function update($id, Request $request)
     {
         // dd($request);
         try {
@@ -872,6 +872,121 @@ class EqubTypeController extends Controller
             // } else {
             //     return view('auth/login');
             // }
+        } catch (Exception $ex) {
+            // dd($ex);
+            $msg = "Unable to process your request, Please try again!";
+            $type = 'error';
+            Session::flash($type, $msg);
+            return back();
+        }
+    }*/
+    public function update($id, Request $request)
+    {
+        // dd($request);
+        try {
+            $userData = Auth::user();
+          //  if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
+                $equbTypeDetail = EqubType::where('id', $id)->first();
+                // $validated = $this->validate($request, []);
+                $name = $request->input('update_name');
+                $round = $request->input('update_round');
+                $rote = $request->input('update_rote');
+                $type = $request->input('update_type');
+                $remark = $request->input('update_remark');
+                $lottery_date = $request->input('update_lottery_date');
+                $start_date = $request->input('start_date');
+                $end_date = $request->input('end_date');
+                if ($start_date) {
+                    $startDateCheck = $this->isDateInYMDFormat($start_date);
+                    $formattedStartDate = $start_date;
+                    if (!$startDateCheck) {
+                        $carbonDate = Carbon::createFromFormat('m/d/Y', $start_date);
+                        $formattedStartDate = $carbonDate->format('Y-m-d');
+                    }
+                }
+                if ($end_date) {
+                    $endDateCheck = $this->isDateInYMDFormat($end_date);
+                    $formattedEndDate = $end_date;
+                    if (!$endDateCheck) {
+                        $carbonDate = Carbon::createFromFormat('m/d/Y', $end_date);
+                        $formattedEndDate = $carbonDate->format('Y-m-d');
+                    }
+                }
+                $quota = $request->input('quota');
+                $remainingQuota = $equbTypeDetail->quota;
+                if ($remainingQuota != $quota) {
+                    $difference = $quota - $remainingQuota;
+                    if ($difference > 0) {
+                        $remainingQuota = $equbTypeDetail->remaining_quota + $difference;
+                    } else {
+                        $difference = $difference * -1;
+                        $remainingQuota = $equbTypeDetail->remaining_quota - $difference;
+                    }
+                }
+                $terms = $request->input('update_terms');
+                // dd($request->file('icon_update'));
+
+                $updated = [
+                    'name' => $name,
+                    'round' => $round,
+                    'rote' => $rote,
+                    'type' => $type,
+                    'remark' => $remark,
+                    'lottery_date' => $lottery_date,
+                    'start_date' => $start_date ? $formattedStartDate : null,
+                    'end_date' => $end_date ? $formattedEndDate : null,
+                    'quota' => $quota,
+                    'remaining_quota' => $remainingQuota,
+                    'terms' => $terms,
+                ];
+                if ($request->file('icon_update')) {
+                    $image = $request->file('icon_update');
+                    $imageName = time() . '.' . $image->getClientOriginalExtension();
+                    $image->storeAs('public/equbTypeIcons', $imageName);
+                    $updated['image'] = 'equbTypeIcons/' . $imageName;
+                }
+                $oldEqubType = $this->equbTypeRepository->getById($id);
+                $updated = $this->equbTypeRepository->update($id, $updated);
+                $newEqubType = $this->equbTypeRepository->getById($id);
+                if ($updated) {
+                    if ($oldEqubType->quota != $newEqubType->quota) {
+                        $updatedEqubs = $this->equbRepository->getByEqubTypeId($id);
+                        foreach ($updatedEqubs as $equb) {
+                            $amount = $equb->amount;
+                            $previousQuota = $oldEqubType->quota;
+                            $newQuota = $newEqubType->quota;
+                            $difference = $newQuota - $previousQuota;
+                            if ($difference > 0) {
+                                $addedAmount = $amount * $difference;
+                                $equb->total_amount += $addedAmount;
+                            } elseif ($difference < 0) {
+                                $subtractedAmount = $amount * abs($difference);
+                                $equb->total_amount -= $subtractedAmount;
+                            }
+                            $equb->end_date = $newEqubType->end_date;
+                            $equb->save();
+                        }
+                    }
+                    $activityLog = [
+                        'type' => 'equb_types',
+                        'type_id' => $id,
+                        'action' => 'updated',
+                        'user_id' => $userData->id,
+                        'username' => $userData->name,
+                        'role' => $userData->role,
+                    ];
+                    $this->activityLogRepository->createActivityLog($activityLog);
+                    $msg = "Equb type has been updated successfully!";
+                    $type = 'success';
+                    Session::flash($type, $msg);
+                    return redirect('equbType/');
+                } else {
+                    $msg = "Unknown error occurred, Please try again!";
+                    $type = 'error';
+                    Session::flash($type, $msg);
+                    return back();
+                }
+         
         } catch (Exception $ex) {
             // dd($ex);
             $msg = "Unable to process your request, Please try again!";

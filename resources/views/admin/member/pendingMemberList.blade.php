@@ -1,4 +1,5 @@
-    @extends('layouts.app')
+@can('view member')
+@extends('layouts.app')
     @section('styles')
         <style type="text/css">
             td.details-control_equb {
@@ -1667,3 +1668,4 @@
             });
         </script>
     @endSection
+@endcan

@@ -1,4 +1,4 @@
-  @if (Auth::user()->role == 'member')
+@can('view equb')
     <div class="table-responsive"> 
     <table id="payment-list-table_in_member" class="table table-bordered table-striped" >      {{-- <thead>Payment</thead> --}}
         <thead>
@@ -40,6 +40,6 @@
         </tbody>
       </table>
       </div> 
-   @endif   
+   @endcan
 
 
