@@ -100,7 +100,7 @@ class UserRepository implements IUserRepository
     }
     public function getActiveForUsers($offset, $id)
     {
-        return $this->model->with('roles')->orderBy('name', 'asc')->where('id', '!=', $id)->where('enabled', 1)->offset($offset)->limit($this->limit)->get();
+        return $this->model->with('roles')->orderBy('name', 'asc')->where('id', '!=', $id)->where('gender', '!=', '')->where('enabled', 1)->offset($offset)->limit($this->limit)->get();
     }
 
     public function getById($id)

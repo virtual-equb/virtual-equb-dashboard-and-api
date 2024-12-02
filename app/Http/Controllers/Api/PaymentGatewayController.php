@@ -131,7 +131,8 @@ class PaymentGatewayController extends Controller {
                 'transaction_number' => $this->localTransactionId,
                 'amount' => $this->storedAmount,
                 'status' => 'pending',
-                'payment_type' => 'CBE Gateway'
+                'payment_type' => 'CBE Gateway',
+                'collector' => $request->input('member_id')
             ]);
             
             // dd($this->memberId);
