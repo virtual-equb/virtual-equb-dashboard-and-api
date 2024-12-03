@@ -141,13 +141,8 @@ class PaymentGatewayController extends Controller {
             // Call the `encryptData` function and get the URL
             return $this->encryptData();
         }
-
-      public function regenerateUrl(Request $request, $id)
-    {
-        // Return JSON response
-        return response()->json($data, 200); // 200 is the HTTP status code for OK
-
-         $request->validate([
+    public function regenerateUrl(Request $request) {
+            $request->validate([
                 'payment_id' => 'required|exists:payments,id'
             ]);
             $payment = Payment::findOrFail($request->input('payment_id'));
@@ -155,7 +150,7 @@ class PaymentGatewayController extends Controller {
             $this->localTransactionId = $payment->transaction_number;
 
             return $this->encryptData();
-    }
+        }
 
         public function cancelPayment($id) {
             try {
