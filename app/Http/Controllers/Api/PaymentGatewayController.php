@@ -107,54 +107,75 @@ class PaymentGatewayController extends Controller {
 
         public function generateUrl(Request $request)
         {
-            // Validate that the 'amount' field (A) is present in the request
-            $request->validate([
-                'amount' => 'required|numeric',
-                'member_id' => 'required|exists:members,id',
-                'equb_id' => 'required|exists:equbs,id',
-                // 'payment_type' => 'nullable',
-                // 'balance' => 'nullable',
-                // 'collector' => 'nullable'
-            ]);
+            try {
 
-            // Call encryptData
-            $encryptedUrl = $this->encryptData();
+                    // Validate that the 'amount' field (A) is present in the request
+                $request->validate([
+                    'amount' => 'required|numeric',
+                    'member_id' => 'required|exists:members,id',
+                    'equb_id' => 'required|exists:equbs,id',
+                    // 'payment_type' => 'nullable',
+                    // 'balance' => 'nullable',
+                    // 'collector' => 'nullable'
+                ]);
 
-            // Store the amount in the class property for access by `encryptData`
-            $this->storedAmount = $request->input('amount');
-            $this->memberId = $request->input('member_id');
-            $this->equbId = $request->input('equb_id');
-            $localTransactionId = Str::uuid();
-            $this->localTransactionId = $localTransactionId;
+                // Call encryptData
+                $encryptedUrl = $this->encryptData();
 
-            Payment::create([
-                'member_id' => $request->input('member_id'),
-                'equb_id' => $request->input('equb_id'),
-                'transaction_number' => $this->localTransactionId,
-                'amount' => $this->storedAmount,
-                'status' => 'pending',
-                'payment_type' => 'CBE Gateway',
-                'collector' => $request->input('member_id')
-            ]);
+                // Store the amount in the class property for access by `encryptData`
+                $this->storedAmount = $request->input('amount');
+                $this->memberId = $request->input('member_id');
+                $this->equbId = $request->input('equb_id');
+                $localTransactionId = Str::uuid();
+                $this->localTransactionId = $localTransactionId;
+
+                Payment::create([
+                    'member_id' => $request->input('member_id'),
+                    'equb_id' => $request->input('equb_id'),
+                    'transaction_number' => $this->localTransactionId,
+                    'amount' => $this->storedAmount,
+                    'status' => 'pending',
+                    'payment_type' => 'CBE Gateway',
+                    'collector' => $request->input('member_id')
+                ]);
+                
+                // dd($this->memberId);
+                // Call the `encryptData` function and get the URL
+                return $this->encryptData();
+
+            } catch (Exception $ex) {
+                return response()->json([
+                    'error' => $ex->getMessage()
+                ], 500);
+            }
             
-            // dd($this->memberId);
-            // Call the `encryptData` function and get the URL
-            return $this->encryptData();
         }
-  public function regenerateUrl(Request $request, $id)
-    {
-          $request->validate([
-                'payment_id' => 'required|exists:payments,id'
-            ]);
-            $payment = Payment::findOrFail($request->input('payment_id'));
-            $this->storedAmount = $payment->amount;
-            $this->localTransactionId = $payment->transaction_number;
 
-            return $this->encryptData();
-    }
+        public function regenerateUrl($id) {
+
+            try {
+                if (!Payment::where('id', $id)->exists()) {
+                    return response()->json(['error' => 'Invalid payment ID'], 404);
+                }
+                $payment = Payment::findOrFail($id);
+                $this->storedAmount = $payment->amount;
+                $this->localTransactionId = $payment->transaction_number;
+    
+                return $this->encryptData();
+                
+            } catch (Exception $ex) {
+                return response()->json([
+                    'error' => $ex->getMessage()
+                ], 500);
+            }
+            
+        }
 
         public function cancelPayment($id) {
             try {
+                if (!Payment::where('id', $id)->exists()) {
+                    return response()->json(['error' => 'Invalid payment ID'], 404);
+                }
                 $payment = Payment::findOrFail($id);
 
                 $payment->delete();
@@ -173,57 +194,66 @@ class PaymentGatewayController extends Controller {
         // Encrypt and send payload
         public function encryptData()
         {
-            $amount = $this->storedAmount;
-            $transactionId = $this->localTransactionId;
-            // $member = $this->memberId;
-            // dd($this->memberId);
-            $payload = [
-                "U" => "VEKUB",
-                "W" => "782290",
-                // "T" => "1122_t_med_lab22",
-                "T" => $transactionId,
-                // "A" => "500",
-                "A" => $amount,
-                "MC" => "822100",
-                "Key" => $this->securityKey
-            ];
-
-            // Sort and encrypt the payload
-            $sortedPayload = $this->sortedMap($payload);
-            $signature = $this->createSignature($sortedPayload);
-            $sortedPayload['HV'] = $signature;
-            unset($sortedPayload['Key']);
-
-            $encryptedPayload = [];
-            foreach ($sortedPayload as $key => $value) {
-                $encryptedPayload[$key] = $this->encrypt($value, $this->securityKey);
-            }
-
-            $finalEncryptedPayload = $this->encrypt(json_encode($encryptedPayload), $this->securityKey);
-
-            $url = 'https://cbebirrpaymentgateway.cbe.com.et:8888/Default.aspx?r=' . urlencode($finalEncryptedPayload);
-
             try {
-                $response = Http::withOptions(['verify' => false])->post($url);
 
-                // Log the payload and the response for debugging
-                Log::info('Payload: ', ['payload' => $encryptedPayload]);
-                Log::info('Response: ', ['response' => $response->body()]);
+                $amount = $this->storedAmount;
+                $transactionId = $this->localTransactionId;
+                // $member = $this->memberId;
+                // dd($this->memberId);
+                $payload = [
+                    "U" => "VEKUB",
+                    "W" => "782290",
+                    // "T" => "1122_t_med_lab22",
+                    "T" => $transactionId,
+                    // "A" => "500",
+                    "A" => $amount,
+                    "MC" => "822100",
+                    "Key" => $this->securityKey
+                ];
 
+                // Sort and encrypt the payload
+                $sortedPayload = $this->sortedMap($payload);
+                $signature = $this->createSignature($sortedPayload);
+                $sortedPayload['HV'] = $signature;
+                unset($sortedPayload['Key']);
+
+                $encryptedPayload = [];
+                foreach ($sortedPayload as $key => $value) {
+                    $encryptedPayload[$key] = $this->encrypt($value, $this->securityKey);
+                }
+
+                $finalEncryptedPayload = $this->encrypt(json_encode($encryptedPayload), $this->securityKey);
+
+                $url = 'https://cbebirrpaymentgateway.cbe.com.et:8888/Default.aspx?r=' . urlencode($finalEncryptedPayload);
+
+                try {
+                    $response = Http::withOptions(['verify' => false])->post($url);
+
+                    // Log the payload and the response for debugging
+                    Log::info('Payload: ', ['payload' => $encryptedPayload]);
+                    Log::info('Response: ', ['response' => $response->body()]);
+
+                    return response()->json([
+                        'message' => 'Payload sent successfully',
+                        'responseStatus' => $response->status(),
+                        'responseData' => $response->body(),
+                        'url' => $url // Log the full request URL
+                    ]);
+                } catch (\Exception $e) {
+                    Log::error('Error sending payload: ' . $e->getMessage());
+
+                    return response()->json([
+                        'message' => 'Error sending payload' . $e->getMessage(),
+                        'error' => $e->getMessage()
+                    ], 500);
+                }
+
+            } catch (Exception $ex) {
                 return response()->json([
-                    'message' => 'Payload sent successfully',
-                    'responseStatus' => $response->status(),
-                    'responseData' => $response->body(),
-                    'url' => $url // Log the full request URL
-                ]);
-            } catch (\Exception $e) {
-                Log::error('Error sending payload: ' . $e->getMessage());
-
-                return response()->json([
-                    'message' => 'Error sending payload' . $e->getMessage(),
-                    'error' => $e->getMessage()
+                    'error' => $ex->getMessage()
                 ], 500);
             }
+            
         }
 
         // Handle transaction status
