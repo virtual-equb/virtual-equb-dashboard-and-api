@@ -191,57 +191,66 @@ class PaymentGatewayController extends Controller {
         // Encrypt and send payload
         public function encryptData()
         {
-            $amount = $this->storedAmount;
-            $transactionId = $this->localTransactionId;
-            // $member = $this->memberId;
-            // dd($this->memberId);
-            $payload = [
-                "U" => "VEKUB",
-                "W" => "782290",
-                // "T" => "1122_t_med_lab22",
-                "T" => $transactionId,
-                // "A" => "500",
-                "A" => $amount,
-                "MC" => "822100",
-                "Key" => $this->securityKey
-            ];
-
-            // Sort and encrypt the payload
-            $sortedPayload = $this->sortedMap($payload);
-            $signature = $this->createSignature($sortedPayload);
-            $sortedPayload['HV'] = $signature;
-            unset($sortedPayload['Key']);
-
-            $encryptedPayload = [];
-            foreach ($sortedPayload as $key => $value) {
-                $encryptedPayload[$key] = $this->encrypt($value, $this->securityKey);
-            }
-
-            $finalEncryptedPayload = $this->encrypt(json_encode($encryptedPayload), $this->securityKey);
-
-            $url = 'https://cbebirrpaymentgateway.cbe.com.et:8888/Default.aspx?r=' . urlencode($finalEncryptedPayload);
-
             try {
-                $response = Http::withOptions(['verify' => false])->post($url);
 
-                // Log the payload and the response for debugging
-                Log::info('Payload: ', ['payload' => $encryptedPayload]);
-                Log::info('Response: ', ['response' => $response->body()]);
+                $amount = $this->storedAmount;
+                $transactionId = $this->localTransactionId;
+                // $member = $this->memberId;
+                // dd($this->memberId);
+                $payload = [
+                    "U" => "VEKUB",
+                    "W" => "782290",
+                    // "T" => "1122_t_med_lab22",
+                    "T" => $transactionId,
+                    // "A" => "500",
+                    "A" => $amount,
+                    "MC" => "822100",
+                    "Key" => $this->securityKey
+                ];
 
+                // Sort and encrypt the payload
+                $sortedPayload = $this->sortedMap($payload);
+                $signature = $this->createSignature($sortedPayload);
+                $sortedPayload['HV'] = $signature;
+                unset($sortedPayload['Key']);
+
+                $encryptedPayload = [];
+                foreach ($sortedPayload as $key => $value) {
+                    $encryptedPayload[$key] = $this->encrypt($value, $this->securityKey);
+                }
+
+                $finalEncryptedPayload = $this->encrypt(json_encode($encryptedPayload), $this->securityKey);
+
+                $url = 'https://cbebirrpaymentgateway.cbe.com.et:8888/Default.aspx?r=' . urlencode($finalEncryptedPayload);
+
+                try {
+                    $response = Http::withOptions(['verify' => false])->post($url);
+
+                    // Log the payload and the response for debugging
+                    Log::info('Payload: ', ['payload' => $encryptedPayload]);
+                    Log::info('Response: ', ['response' => $response->body()]);
+
+                    return response()->json([
+                        'message' => 'Payload sent successfully',
+                        'responseStatus' => $response->status(),
+                        'responseData' => $response->body(),
+                        'url' => $url // Log the full request URL
+                    ]);
+                } catch (\Exception $e) {
+                    Log::error('Error sending payload: ' . $e->getMessage());
+
+                    return response()->json([
+                        'message' => 'Error sending payload' . $e->getMessage(),
+                        'error' => $e->getMessage()
+                    ], 500);
+                }
+
+            } catch (Exception $ex) {
                 return response()->json([
-                    'message' => 'Payload sent successfully',
-                    'responseStatus' => $response->status(),
-                    'responseData' => $response->body(),
-                    'url' => $url // Log the full request URL
-                ]);
-            } catch (\Exception $e) {
-                Log::error('Error sending payload: ' . $e->getMessage());
-
-                return response()->json([
-                    'message' => 'Error sending payload' . $e->getMessage(),
-                    'error' => $e->getMessage()
+                    'error' => $ex->getMessage()
                 ], 500);
             }
+            
         }
 
         // Handle transaction status
