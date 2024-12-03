@@ -173,6 +173,9 @@ class PaymentGatewayController extends Controller {
 
         public function cancelPayment($id) {
             try {
+                if (!Payment::where('id', $id)->exists()) {
+                    return response()->json(['error' => 'Invalid payment ID'], 404);
+                }
                 $payment = Payment::findOrFail($id);
 
                 $payment->delete();
