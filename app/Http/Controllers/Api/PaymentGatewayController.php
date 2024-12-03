@@ -150,7 +150,7 @@ class PaymentGatewayController extends Controller {
             $this->storedAmount = $payment->amount;
             $this->localTransactionId = $payment->transaction_number;
 
-            return "hello"
+            return $this->encryptData();
         }
 
         public function cancelPayment($id) {
