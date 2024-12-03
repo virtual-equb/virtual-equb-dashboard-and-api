@@ -142,14 +142,15 @@ class PaymentGatewayController extends Controller {
             return $this->encryptData();
         }
 
-        public function regenerateUrl(Request $request)
+        public function regenerateUrl(Request $request, $id)
     {
-        // Your logic to regenerate the URL goes here
+          $newUrl = "https://paymentgateway.com/retry/{$id}";
 
-        // Example response data
+        // Create the response data
         $data = [
             'message' => 'URL has been regenerated successfully.',
-            'url' => 'https://example.com/new-url', // Replace with your generated URL
+            'id' => $id,
+            'new_url' => $newUrl,
         ];
 
         // Return JSON response
