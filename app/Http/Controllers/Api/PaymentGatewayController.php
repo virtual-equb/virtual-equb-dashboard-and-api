@@ -142,16 +142,20 @@ class PaymentGatewayController extends Controller {
             return $this->encryptData();
         }
 
-        public function regenerateUrl(Request $request) {
-            $request->validate([
-                'payment_id' => 'required|exists:payments,id'
-            ]);
-            $payment = Payment::findOrFail($request->input('payment_id'));
-            $this->storedAmount = $payment->amount;
-            $this->localTransactionId = $payment->transaction_number;
+      public function regenerateUrl(Request $request, $id)
+    {
+          $newUrl = "https://paymentgateway.com/retry/{$id}";
 
-            return $this->encryptData();
-        }
+        // Create the response data
+        $data = [
+            'message' => 'URL has been regenerated successfully.',
+            'id' => $id,
+            'new_url' => $newUrl,
+        ];
+
+        // Return JSON response
+        return response()->json($data, 200); // 200 is the HTTP status code for OK
+    }
 
         public function cancelPayment($id) {
             try {
