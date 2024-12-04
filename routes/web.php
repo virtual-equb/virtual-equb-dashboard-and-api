@@ -20,7 +20,7 @@ use App\Http\Controllers\WebPermissionController;
 use App\Http\Controllers\WebRoleController;
 use App\Http\Controllers\SubController;
 use App\Http\Controllers\RolesController;
-
+use App\Http\Controllers\TermsAndConditionsController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -369,5 +369,5 @@ Route::middleware([
         Route::put('/roles/update/{id}', [RolesController::class, 'update'])
             ->name('roles.update');
     });
-
+    Route::get('/terms-and-conditions', [TermsAndConditionsController::class, 'index'])->name('terms.show');
 });
