@@ -98,6 +98,7 @@ Route::middleware([
         Route::get('/register', [EqubTypeController::class, 'create'])->name('creatEqubType');
         Route::post('/register', [EqubTypeController::class, 'store'])->name('registerEqubType');
         Route::post('/drawAutoWinners', [EqubTypeController::class, 'drawAutoWinners'])->name('drawAutoWinners');
+        Route::post('/drawAutoSeasonal', [EqubTypeController::class, 'drawSeasonedAutoWinners'])->name('drawAutoSeasonal');
         Route::get('/edit/{id}', [EqubTypeController::class, 'edit'])->name('editEqubType');
         Route::post('/update/{id}', [EqubTypeController::class, 'update'])->name('updateEqubType');
         Route::put('/deactiveEqubTypeStatus/{id}', [EqubTypeController::class, 'deactiveStatus'])->name('deactiveEqubTypeStatus');

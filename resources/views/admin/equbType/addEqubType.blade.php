@@ -150,7 +150,7 @@
 </div>
 @endcan
 
-<script>
+{{-- <script>
     document.getElementById('draw_type').addEventListener('change', function() {
         var selectedType = this.value;
         var equbTypeSelect = document.getElementById('equbTypeId');
@@ -175,5 +175,48 @@
                 equbTypeSelect.appendChild(option);
             }
         });
+    });
+</script> --}}
+
+<script>
+    document.getElementById('draw_type').addEventListener('change', function() {
+        var selectedType = this.value; // Get the selected draw type
+        var equbTypeSelect = document.getElementById('equbTypeId'); // Get the "Equb Type" select element
+
+        // Clear existing options in the "Equb Type" dropdown
+        equbTypeSelect.innerHTML = '<option selected value="">Choose Equb Type</option>';
+
+        // Get the equb types from the original options (passed from Laravel to JS)
+        var equbTypes = @json($equbTypes); // Pass the PHP array to JavaScript
+
+        // Loop through the equb types and filter them based on the selected draw type
+        equbTypes.forEach(function(equbType) {
+            // Check if the current equbType matches the selected draw type
+            if (equbType.type === selectedType) {
+                // Create a new option element for the matching equb type
+                var option = document.createElement('option');
+                option.value = equbType.id; // Set the value to the equbType ID
+                option.setAttribute('data-info', equbType.type);
+                option.setAttribute('data-startdate', equbType.start_date);
+                option.setAttribute('data-enddate', equbType.end_date);
+                option.setAttribute('data-rote', equbType.rote);
+                option.setAttribute('data-quota', equbType.quota);
+                
+                // Set the text content to display the name and round information
+                option.textContent = equbType.name + ' round ' + equbType.round;
+                
+                // Append the newly created option to the "Equb Type" select element
+                equbTypeSelect.appendChild(option);
+            }
+        });
+
+        // Check if the selected draw type is "Seasonal"
+        if (selectedType === 'Seasonal') {
+            // Change the form action to the 'drawAutoSeasonal' route
+            form.action = "{{ route('drawAutoSeasonal') }}";
+        } else {
+            // Default action for other types (e.g., "Automatic")
+            form.action = "{{ route('drawAutoWinners') }}";
+        }
     });
 </script>
