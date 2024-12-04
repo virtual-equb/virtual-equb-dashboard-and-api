@@ -314,4 +314,3 @@ class PaymentTesterController extends Controller
          return json_last_error() === JSON_ERROR_NONE;
      }
  }
-

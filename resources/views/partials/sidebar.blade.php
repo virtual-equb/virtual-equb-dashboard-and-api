@@ -143,12 +143,14 @@
                                 <p>Paid Payments</p>
                             </a>
                         </li>
+                        @can('view equb_taker')
                         <li class="nav-item">
-                            <a href="{{ route('showAllPaidPayments') }}" class="nav-link" id="paidPayments" onclick="setActive('paidPayments')">
+                            <a href="{{ route('showEqubTaker') }}" class="nav-link" id="showEqubTaker" onclick="setActive('showEqubTaker')">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Equb Taker</p>
                             </a>
                         </li>
+                        @endcan
                     </ul>
                 </li>
                 @endcan
