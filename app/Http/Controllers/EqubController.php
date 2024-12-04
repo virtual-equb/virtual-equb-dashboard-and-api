@@ -498,14 +498,13 @@ class EqubController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
         try {
             $userData = Auth::user();
             $equbType = EqubType::where('id', $request->input('equb_type_id'))->first();
             // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $this->validate($request, [
                     'equb_type_id' => 'required',
-                    'amount' => 'required|numeric|min:0',
+                    'amount' => 'required',
                     'total_amount' => 'nullable',
                     'start_date' => 'required',
                     // 'end_date' => 'required',
@@ -513,22 +512,17 @@ class EqubController extends Controller
                     // 'lottery_date' => 'required',
                 ]);
                 $member = $request->input('member_id');
-                $equbTypeId = $request->input('equb_type_id');
+                $equbType = $request->input('equb_type_id');
                 $amount = $request->input('amount');
                 $totalAmount = $request->input('total_amount');
                 $startDate = $request->input('start_date');
                 $timeline = $request->input('timeline');
                 $endDate = $request->input('end_date');
                 $lotteryDate = $request->input('lottery_date');
-                // Format Dates
                 $startDateCheck = $this->isDateInYMDFormat($startDate);
                 $endDateCheck = $this->isDateInYMDFormat($endDate);
                 $formattedStartDate = $startDate;
                 $formattedEndDate = $endDate;
-                if ($equbType->type === 'Seasonal') {
-                    $formattedEndDate = null;
-                }
-
                 if (!$startDateCheck) {
                     $carbonStartDate = Carbon::createFromFormat('m/d/Y', $startDate);
                     $formattedStartDate = $carbonStartDate->format('Y-m-d');
@@ -562,13 +556,18 @@ class EqubController extends Controller
                 // Determine lottery_date based on equbType
                 if($equbTypeData->type === 'Automatic') {
                     $lotteryDate = $equbTypeData->lottery_date;
+                    $totalAmount = $equbTypeData->total_amount;
                 } else {
                     $lotteryDate = $request->input('lottery_date');
+                }
+                if($equbTypeData->type === 'Seasonal') {
+                    $lotteryDate = $equbTypeData->lottery_date;
+                    $totalAmount = $equbTypeData->amount;
                 }
 
                 $equbData = [
                     'member_id' => $member,
-                    'equb_type_id' => $equbTypeId,
+                    'equb_type_id' => $equbType,
                     'amount' => $amount,
                     'total_amount' => $totalAmount,
                     'start_date' => $formattedStartDate,
@@ -579,14 +578,44 @@ class EqubController extends Controller
                 $create = $this->equbRepository->create($equbData);
                 if ($create) {
                     $equbTypes = EqubType::where('id', $equbType)->first();
-                    if ($equbTypes->type == 'Automatic') {
-                        $equbTypes->remaining_quota -= 1;
-                        $equbTypes->increment('total_members', 1);
+                    if ($equbTypes->type == 'Automatic' || $equbTypes->type == 'Seasonal') {
+                        // Update remaining_quota based on expected_members - 1
+                        $equbTypes->remaining_quota = $equbTypes->expected_members - $equbTypes->total_members - 1;
+                        
+                       
+                        // Manually increment total_members by 1
+                         $equbTypes->total_members = $equbTypes->total_members + 1;
+                         
+                          // Increment total_members by 1 since a new member joined
+                        // $equbTypes->increment('total_members', 1);
+            
+                        // Check if the remaining_quota is now 0 and deactivate if true
                         if ($equbTypes->remaining_quota == 0) {
                             $equbTypes->status = "Deactive";
                         }
+            
+                        // Save the updated EqubType
                         $equbTypes->save();
                     }
+                    // if ($equbTypes) {
+                    //     if ($equbTypes->type == 'Automatic') {
+                    //         $equbTypes->remaining_quota -= 1;
+                    //         $equbTypes->increment('total_members', 1);
+                    //         if ($equbTypes->remaining_quota == 0) {
+                    //             $equbTypes->status = "Deactive";
+                    //         }
+                    //         $equbTypes->save();
+                    //     }
+                    //     if ($equbTypes->type == 'Seasonal') {
+                    //         $equbTypes->remaining_quota -= 1;
+                    //         $equbTypes->increment('total_members', 1);
+                    //         if ($equbTypes->remaining_quota == 0) {
+                    //             $equbTypes->status = "Deactive";
+                    //         }
+                    //         $equbTypes->save();
+                    //     }
+                    // }
+                    
                 }
                 $equbTakerData = [
                     'member_id' => $member,
