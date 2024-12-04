@@ -133,7 +133,7 @@
         }
         $(function() {
     $.LoadingOverlay("show");
-    $(function() {
+    $(function() {  
             $.LoadingOverlay("show");
             $.ajax({
                 url: "{{ url('payment/show-paid-payment') }}/0/1", // Updated URL
