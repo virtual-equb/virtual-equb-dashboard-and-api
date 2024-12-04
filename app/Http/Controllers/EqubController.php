@@ -498,31 +498,37 @@ class EqubController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->all());
         try {
             $userData = Auth::user();
             $equbType = EqubType::where('id', $request->input('equb_type_id'))->first();
             // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $this->validate($request, [
                     'equb_type_id' => 'required',
-                    'amount' => 'required',
-                    'total_amount' => 'required',
+                    'amount' => 'required|numeric|min:0',
+                    'total_amount' => 'nullable',
                     'start_date' => 'required',
                     // 'end_date' => 'required',
                     // 'timeline' => 'required',
                     // 'lottery_date' => 'required',
                 ]);
                 $member = $request->input('member_id');
-                $equbType = $request->input('equb_type_id');
+                $equbTypeId = $request->input('equb_type_id');
                 $amount = $request->input('amount');
                 $totalAmount = $request->input('total_amount');
                 $startDate = $request->input('start_date');
                 $timeline = $request->input('timeline');
                 $endDate = $request->input('end_date');
                 $lotteryDate = $request->input('lottery_date');
+                // Format Dates
                 $startDateCheck = $this->isDateInYMDFormat($startDate);
                 $endDateCheck = $this->isDateInYMDFormat($endDate);
                 $formattedStartDate = $startDate;
                 $formattedEndDate = $endDate;
+                if ($equbType->type === 'Seasonal') {
+                    $formattedEndDate = null;
+                }
+
                 if (!$startDateCheck) {
                     $carbonStartDate = Carbon::createFromFormat('m/d/Y', $startDate);
                     $formattedStartDate = $carbonStartDate->format('Y-m-d');
@@ -562,7 +568,7 @@ class EqubController extends Controller
 
                 $equbData = [
                     'member_id' => $member,
-                    'equb_type_id' => $equbType,
+                    'equb_type_id' => $equbTypeId,
                     'amount' => $amount,
                     'total_amount' => $totalAmount,
                     'start_date' => $formattedStartDate,
