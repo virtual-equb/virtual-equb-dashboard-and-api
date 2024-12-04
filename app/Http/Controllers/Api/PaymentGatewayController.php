@@ -369,14 +369,30 @@ class PaymentGatewayController extends Controller {
                     }
                     $amount = $at;
                 }
+                $status = '';
+                $paidDate = null;
 
+                switch ($state) {
+                    case 'COM':
+                    case 'OTOUPD':
+                        $status = 'paid';
+                        $paidDate = now();
+                        break;
+                    case 'TNXFIL':
+                        $status = 'failed';
+                        break;
+                    case 'DRAFT':
+                        $status = 'draft';
+                        break;
+                    default:
+                        $status = 'unknown';
+                        break;
+                }
                 // Update the payment record with the CBE details
                 $payment->update([
                     'transaction_number' => $transactionId,
-                    // 'status' => $state === 'COM' ? 'paid' : 'failed',
-                    'status' => 'paid',
-                    // 'paid_date' => $state === 'COM' ? now() : null,
-                    'paid_date' => now(),
+                    'status' => $status,
+                    'paid_date' => $paidDate,
                     'amount' => $amount,
                     'creadit' => $totalCredit,
                     'balance' => $availableBalance,
