@@ -65,6 +65,7 @@ Route::get('/support', function () {
 Route::get('/terms', function () {
     return view('terms');
 });
+Route::get('/terms-and-conditions', [TermsAndConditionsController::class, 'index'])->name('terms.show');
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -369,5 +370,5 @@ Route::middleware([
         Route::put('/roles/update/{id}', [RolesController::class, 'update'])
             ->name('roles.update');
     });
-    Route::get('/terms-and-conditions', [TermsAndConditionsController::class, 'index'])->name('terms.show');
+   
 });
