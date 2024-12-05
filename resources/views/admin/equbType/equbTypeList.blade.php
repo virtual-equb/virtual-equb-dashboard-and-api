@@ -203,6 +203,15 @@
                                                                                             class="fas fa-image"></i>
                                                                                         View Icon</a>
                                                                                 </li>
+                                                                                @can('update equb_type')
+<li>
+    <a href="javascript:void(0);"
+       class="text-secondary btn btn-flat"
+       onclick="openViewMemberModel({{ $item->id }})"> <!-- Pass only the ID -->
+        <span class="fas fa-image"></span> View Member
+    </a>
+</li>
+@endcan
                                                                             </ul>
                                                                         </div>
                                                                     </td>
@@ -278,6 +287,27 @@
             </div>
         </div>
         @include('admin/equbType.editEqubType')
+        <!-- Modal for viewing member details -->
+<div class="modal fade" id="viewMemberModal" tabindex="-1" role="dialog" aria-labelledby="viewMemberModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewMemberModalLabel">Member Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="memberDetails">
+                    <!-- Member details will be populated here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
     @endsection
     @section('scripts')
         <script>
@@ -665,7 +695,31 @@ $(document).ready(function() {
 }
 
 
+function openViewMemberModel(memberId) {
+    // Log the member ID to the console
+    console.log("Member ID:", memberId);
 
+    // Fetch member details using AJAX
+    $.ajax({
+        url: '/member/get-equbs/' + memberId, // Adjust the URL to match your route
+        method: 'GET',
+        success: function(data) {
+            // Populate modal with member details
+            $('#memberDetails').html(`
+                <p><strong>Name:</strong> ${data.name}</p>
+                <p><strong>Email:</strong> ${data.email}</p>
+                <p><strong>Phone:</strong> ${data.phone}</p>
+                <p><strong>Role:</strong> ${data.role}</p>
+                <p><strong>Additional Info:</strong> ${data.additional_info}</p>
+            `);
+            // Show the modal
+            $('#viewMemberModal').modal('show');
+        },
+        error: function() {
+            alert('Error fetching member details. Please try again.');
+        }
+    });
+}
             function editEqubTypeValidation() {
                 $('#updateEqubType').validate({
                     onfocusout: false,
