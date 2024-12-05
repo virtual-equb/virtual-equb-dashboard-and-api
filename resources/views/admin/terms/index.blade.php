@@ -1,75 +1,50 @@
-@extends('layouts.app')
-
-@section('styles')
-    <style type="text/css">
-        .details-control {
-            background: url("{{ url('images/plus20.webp') }}") no-repeat center center;
-            cursor: pointer;
+<!DOCTYPE html>
+<html lang="am">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>የተወሰነ የግንዛቤ ውል</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            padding: 0;
+            background-color: #f9f9f9;
         }
-
-        tr.shown .details-control {
-            background: url("{{ url('images/minus20.webp') }}") no-repeat center center;
+        h1, h2, h3 {
+            color: #333;
         }
-
-        .form-group.required .control-label:after {
-            content: "*";
-            color: red;
+        p {
+            color: #555;
         }
-
-        .table-responsive {
-            overflow-x: auto;
+        ul {
+            margin: 10px 0;
+            padding-left: 20px;
         }
-
-        @media (max-width: 768px) {
-            .responsive-input {
-                width: 100%;
-                margin-bottom: 20px;
-            }
+        footer {
+            margin-top: 20px;
+            font-size: 0.9em;
+            text-align: center;
         }
     </style>
-@endsection
+</head>
+<body>
 
-@section('content')
-    <div class="wrapper">
-        <div class="content-wrapper">
-            <section class="content">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h3 class="card-title">Terms and Conditions</h3>
-                                </div>
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th>Title</th>
-                                                    <th>Content</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($terms as $term)
-                                                    <tr>
-                                                        <td>{{ $term->title }}</td>
-                                                        <td>{{ $term->content }}</td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="row mb-3">
-                                        <a href="" class="btn btn-primary" style="margin-right: 30px;">
-                                            <i class="fa fa-plus"></i> Add New Term
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </div>
-    </div>
-@endsection
+    <h1>የተወሰነ የግንዛቤ ውል</h1>
+    
+    <h2>አንቀፅ 1 ስለ ቨርቹዋል ዕቁብ ምንነት</h2>
+    <p>1.1.ቨርቹዋል ዕቁብ የሚያስቀምጠውን መስፈርት ለሚያሟሉ ግለሰቦች ወይንም ድርጅቶች ባሉበት ሆነው በስልክ መተግበሪያ በመታገዝ በቀጥታ እንዲገናኙና ዕቁብ ጥለው የሚደርሳቸውን ገንዘብ ወይንም ዕቃ እንዲካፈሉ በማመቻቸት ላይ የተሰማራ ሃላፊነቱ የተወሰነ የግል ማህበር ነው።</p>
+
+    <p>1.2. ይህ ስምምነትም የቨርቹዋል ዕቁብ መሆን በሚፈልጉ (በእርስዎ) እና በቨርቹዋል ዕቁብ ኀላፊነቱ የተወሰነ የግል ማህበር መካከል የተፈፀመ ስምምነት ነው።</p>
+
+    <h2>አንቀፅ 2 ተፈፃሚነት</h2>
+    <p>2.1. በዚህ የውል ስምምነት ውሰጥ የሰፈሩት ጠቅላላ ደንብና ሁኔታዎች መሰረት የዕቁብ አባል ከሆኑበት ጊዜ ጀምሮ ግዴታቸውን በአግባቡ ተወጥተው እስከሚያጠናቅቁ ድረስ ተፈፃሚና ተገዢ ይሆናሉ።</p>
+    <p>2.2. ይህ ስምምነት በኢትዩጲያ የንግድ ህግ 1243/2014 እና በኤሌክትሮኒክስ ትራንዛክሽን አዋጅ ቁጥር 1205/2012 አግባብነት ባላቸው ህጎች መሠረት በህግ ፊት የፀና ነው፡፡</p>
+
+    <footer>
+        <p>&copy; 2016 virtualEqub ይህ ውል የተወሰነ ነው፡፡</p>
+    </footer>
+
+</body>
+</html>
