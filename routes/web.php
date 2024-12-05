@@ -106,7 +106,8 @@ Route::middleware([
         Route::put('/activeEqubTypeStatus/{id}', [EqubTypeController::class, 'activeStatus'])->name('activeEqubTypeStatus');
         Route::delete('/delete/{id}', [EqubTypeController::class, 'destroy'])->name('deleteEqubType');
         Route::put('/updateStatus/{id}', [EqubTypeController::class, 'updateStatus'])->name('updateStatus');
-        Route::put('/updatePendingStatus/{id}/{status}', [EqubTypeController::class, 'updatePendingStatus'])->name('updatePendingStatus');
+        Route::put('/updatePendingStatus/{id}/{status}', [EqubTypeController::class, 'updatePendingStatus'])->name('updatePendingStatus'); 
+        Route::get('/member/{id}', [EqubController::class, 'memberByEqubType'])->name('memberByEqubType');
     });
     Route::group(['prefix' => 'mainEqub'], function () {
         Route::get('/mainequbs', [FrontMainEqubController::class, 'index'])->name('mainequbIndex');

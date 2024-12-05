@@ -18,6 +18,8 @@ interface IEqubRepository
 
     public function getExpected($equbTypeId);
 
+    public function getMemberByEqubType($id);
+
     public function getCountByDateAndEqubType($dateFrom, $dateTo, $equbType);
 
     public function getByDateAndEqubType($dateFrom, $dateTo, $equbType, $offset);

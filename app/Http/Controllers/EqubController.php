@@ -861,6 +861,17 @@ class EqubController extends Controller
      * @param  \App\Models\Equb  $equb
      * @return \Illuminate\Http\Response
      */
+    public function memberByEqubType($id)
+    {
+        // Fetch members based on the Equb type
+    $data['equbTypes'] = $this->equbRepository->getMemberByEqubType($id);
+    
+    // Ensure that $data['equbTypes'] contains the expected data
+    if (empty($data['equbTypes'])) {
+        return response()->json(['error' => 'No members found'], 404);
+    }
+    return response()->json($data);
+    }
     public function update($id, Request $request)
     {
         // dd($request->end_date);

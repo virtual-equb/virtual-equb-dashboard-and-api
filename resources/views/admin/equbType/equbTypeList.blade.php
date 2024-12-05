@@ -287,8 +287,7 @@
             </div>
         </div>
         @include('admin/equbType.editEqubType')
-        <!-- Modal for viewing member details -->
-<div class="modal fade" id="viewMemberModal" tabindex="-1" role="dialog" aria-labelledby="viewMemberModalLabel" aria-hidden="true">
+        <div class="modal fade" id="viewMemberModal" tabindex="-1" role="dialog" aria-labelledby="viewMemberModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -298,9 +297,17 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div id="memberDetails">
-                    <!-- Member details will be populated here -->
-                </div>
+                <table class="table" id="memberTable">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Phone Number</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Member details will be populated here -->
+                    </tbody>
+                </table>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -696,26 +703,42 @@ $(document).ready(function() {
 
 
 function openViewMemberModel(memberId) {
-    // Log the member ID to the console
     console.log("Member ID:", memberId);
 
-    // Fetch member details using AJAX
     $.ajax({
-        url: '/member/get-equbs/' + memberId, // Adjust the URL to match your route
+        url: '/equbType/member/' + memberId, // Ensure this URL matches your route
         method: 'GET',
         success: function(data) {
-            // Populate modal with member details
-            $('#memberDetails').html(`
-                <p><strong>Name:</strong> ${data.name}</p>
-                <p><strong>Email:</strong> ${data.email}</p>
-                <p><strong>Phone:</strong> ${data.phone}</p>
-                <p><strong>Role:</strong> ${data.role}</p>
-                <p><strong>Additional Info:</strong> ${data.additional_info}</p>
-            `);
-            // Show the modal
+            console.log("Member Data:", data);
+            
+            // Clear previous table data
+            $('#memberTable tbody').empty();
+
+            // Check if equbTypes has data
+            if (data.equbTypes && data.equbTypes.length > 0) {
+                // Populate table with member details
+                data.equbTypes.forEach(member => {
+                    $('#memberTable tbody').append(`
+                        <tr>
+                            <td>${member.id}</td>
+                            <td>${member.phone}</td>
+                        </tr>
+                    `);
+                });
+            } else {
+                $('#memberTable tbody').append(`
+                    <tr>
+                        <td colspan="2" class="text-center">No members found</td>
+                    </tr>
+                `);
+            }
+
+            // Show the modal with the member table
             $('#viewMemberModal').modal('show');
         },
-        error: function() {
+        error: function(xhr, status, error) {
+            console.error('AJAX Error:', status, error);
+            console.log('Response:', xhr.responseText);
             alert('Error fetching member details. Please try again.');
         }
     });
