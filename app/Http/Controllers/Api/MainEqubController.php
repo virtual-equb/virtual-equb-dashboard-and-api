@@ -31,11 +31,14 @@ class MainEqubController extends Controller
             
             // $mainEqubs = MainEqub::with('subEqub')->where('subEqub.end_date', '<=', now())->get();
             // Fetch mainEqubs with subEqubs whose end_date is not passed
+            // $mainEqubs = MainEqub::with(['subEqub' => function ($query) {
+            //     $query->where('end_date', '>=', now());
+            // }])->whereHas('subEqub', function ($query) {
+            //     $query->where('end_date', '>=', now());
+            // })->get();
             $mainEqubs = MainEqub::with(['subEqub' => function ($query) {
                 $query->where('end_date', '>=', now());
-            }])->whereHas('subEqub', function ($query) {
-                $query->where('end_date', '>=', now());
-            })->get();
+            }])->get();
 
             return response()->json([
                 'data' => MainEqubResource::collection($mainEqubs),
@@ -98,12 +101,22 @@ class MainEqubController extends Controller
     }
 
     public function show($id) {
-        
-        $mainEqub = MainEqub::where('id', $id)->with(['subEqub' => function ($query) {
+        // dd($id);
+        // $mainEqub = MainEqub::where('id', $id)->with(['subEqub' => function ($query) {
+        //     $query->where('end_date', '>=', now());
+        // }])->whereHas('subEqub', function ($query) {
+        //     $query->where('end_date', '>=', now());
+        // })->first();
+        // dd($mainEqub);
+        $mainEqub = MainEqub::with(['subEqub' => function ($query) {
             $query->where('end_date', '>=', now());
         }])->whereHas('subEqub', function ($query) {
             $query->where('end_date', '>=', now());
-        })->first();
+        })->findOrFail($id);
+
+        // $mainEqub = MainEqub::where('id', $id)->with(['subEqub' => function ($query) {
+        //     $query->where('end_date', '>=', now());
+        // }])->get();
 
         return response()->json([
             'data' => new MainEqubResource($mainEqub)
