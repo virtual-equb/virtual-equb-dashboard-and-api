@@ -720,8 +720,8 @@ function openViewMemberModel(memberId) {
                 data.equbTypes.forEach(member => {
                     $('#memberTable tbody').append(`
                         <tr>
-                            <td>${member.memberId}</td>
-                            <td>${member.phone}</td>
+                            <td>${member.id}</td>
+                            <td>${member.id}</td>
                         </tr>
                     `);
                 });
