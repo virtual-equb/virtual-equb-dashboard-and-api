@@ -101,13 +101,7 @@ class MainEqubController extends Controller
     }
 
     public function show($id) {
-        // dd($id);
-        // $mainEqub = MainEqub::where('id', $id)->with(['subEqub' => function ($query) {
-        //     $query->where('end_date', '>=', now());
-        // }])->whereHas('subEqub', function ($query) {
-        //     $query->where('end_date', '>=', now());
-        // })->first();
-        // dd($mainEqub);
+        
         $mainEqub = MainEqub::with(['subEqub' => function ($query) {
             $query->where('end_date', '>=', now());
         }])->whereHas('subEqub', function ($query) {
@@ -176,6 +170,19 @@ class MainEqubController extends Controller
     }
 
     public function delete() {
-        //
+        try {
+            $mainEqub = MainEqub::findOrFail($id);
+
+            $mainEqub->delete();
+
+            return response()->json([
+                'message' => 'Main equb deleted successfully'
+            ], 200);
+
+        } catch (Exception $ex) {
+            return response()->json([
+                'error' => $ex->getMessage()
+            ], 500);
+        }
     }
 }
