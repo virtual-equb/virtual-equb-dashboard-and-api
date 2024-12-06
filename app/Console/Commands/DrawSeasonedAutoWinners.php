@@ -14,7 +14,7 @@ class DrawSeasonedAutoWinners extends Command
      *
      * @var string
      */
-    protected $signature = 'equb:draw-winners {equbTypeId}';
+    protected $signature = 'equb:draw-winners {equbTypeId?}';
 
     /**
      * The console command description.
@@ -37,13 +37,16 @@ class DrawSeasonedAutoWinners extends Command
                 // Process a specific EqubType
                 $this->processEqubType($equbTypeId);
             } else {
-                // Process all active EqubTypes
-                $this->info('No equbTypeId provided. Processing all active EqubTypes...');
-                
-                $equbTypes = \App\Models\EqubType::where('status', 'Active')->pluck('id');
-                
+                // Process all EqubTypes with today's lottery_date
+                $this->info('No equbTypeId provided. Processing EqubTypes with today\'s lottery_date...');
+
+                $today = \Carbon\Carbon::now()->startOfDay();
+                $equbTypes = \App\Models\EqubType::where('status', 'Active')
+                    ->whereDate('lottery_date', $today)
+                    ->pluck('id');
+
                 if ($equbTypes->isEmpty()) {
-                    $this->warn('No active EqubTypes found.');
+                    $this->warn('No EqubTypes found with today\'s lottery_date.');
                     return;
                 }
 
@@ -62,7 +65,7 @@ class DrawSeasonedAutoWinners extends Command
         try {
             $this->info("Processing EqubType ID: $equbTypeId");
 
-            // Example: Simulate calling the logic from the controller
+            // Simulate calling the logic from the controller
             $request = new \Illuminate\Http\Request();
             $request->merge(['equbTypeId' => $equbTypeId]);
 
