@@ -20,7 +20,7 @@ use App\Http\Controllers\WebPermissionController;
 use App\Http\Controllers\WebRoleController;
 use App\Http\Controllers\SubController;
 use App\Http\Controllers\RolesController;
-
+use App\Http\Controllers\TermsAndConditionsController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -65,6 +65,7 @@ Route::get('/support', function () {
 Route::get('/terms', function () {
     return view('terms');
 });
+Route::get('/terms-and-conditions', [TermsAndConditionsController::class, 'index'])->name('terms.show');
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -105,7 +106,8 @@ Route::middleware([
         Route::put('/activeEqubTypeStatus/{id}', [EqubTypeController::class, 'activeStatus'])->name('activeEqubTypeStatus');
         Route::delete('/delete/{id}', [EqubTypeController::class, 'destroy'])->name('deleteEqubType');
         Route::put('/updateStatus/{id}', [EqubTypeController::class, 'updateStatus'])->name('updateStatus');
-        Route::put('/updatePendingStatus/{id}/{status}', [EqubTypeController::class, 'updatePendingStatus'])->name('updatePendingStatus');
+        Route::put('/updatePendingStatus/{id}/{status}', [EqubTypeController::class, 'updatePendingStatus'])->name('updatePendingStatus'); 
+        Route::get('/member/{id}', [EqubController::class, 'memberByEqubType'])->name('memberByEqubType');
     });
     Route::group(['prefix' => 'mainEqub'], function () {
         Route::get('/mainequbs', [FrontMainEqubController::class, 'index'])->name('mainequbIndex');
@@ -370,5 +372,5 @@ Route::middleware([
         Route::put('/roles/update/{id}', [RolesController::class, 'update'])
             ->name('roles.update');
     });
-
+   
 });
