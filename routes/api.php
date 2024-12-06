@@ -32,6 +32,7 @@ use App\Http\Controllers\Api\PaymentTesterController;
 use App\Http\Controllers\Api\PaymentGatewayController;
 use App\Http\Controllers\EqubController as ControllersEqubController;
 use App\Http\Controllers\Api\SubcityController as ApiSubcityController;
+use App\Http\Controllers\EqubTypeController as ControllersEqubTypeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,7 +45,7 @@ use App\Http\Controllers\Api\SubcityController as ApiSubcityController;
 |
 */
 
-
+Route::post('/drawauto', [ControllersEqubTypeController::class, 'drawSeasonedAutoWinners']);
 
 Route::post('/transaction-status', [PaymentGatewayController::class, 'transactionStatus']);
 Route::post('/notify-equb-start', [EqubController::class, 'sendStartNotifications']);
