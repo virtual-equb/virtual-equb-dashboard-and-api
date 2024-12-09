@@ -864,13 +864,38 @@ class EqubController extends Controller
     public function memberByEqubType($id)
     {
         // Fetch members based on the Equb type
-    $data['equbTypes'] = $this->equbRepository->getMemberByEqubType($id);
+        $equbTypes = $this->equbRepository->getMemberByEqubType($id);
     
-    // Ensure that $data['equbTypes'] contains the expected data
-    if (empty($data['equbTypes'])) {
-        return response()->json(['error' => 'No members found'], 404);
-    }
-    return response()->json($data);
+        // Check if the result is empty
+        if ($equbTypes->isEmpty()) {
+            return response()->json(['error' => 'No members found'], 404);
+        }
+    
+        // Convert the collection to array and format the response
+        $formattedEqubTypes = $equbTypes->map(function ($equbType) {
+            return [
+                'id' => $equbType->id,
+                'member_id' => $equbType->member_id,
+                'equb_type_id' => $equbType->equb_type_id,
+                'amount' => $equbType->amount,
+                'total_amount' => $equbType->total_amount,
+                'start_date' => $equbType->start_date,
+                'end_date' => $equbType->end_date,
+                'lottery_date' => $equbType->lottery_date,
+                'status' => $equbType->status,
+                'full_name' => $equbType->member->full_name ?? null, // Safely access member's first name
+                'phone' => $equbType->member->phone ?? null, // Safely access member's first name
+                'created_at' => $equbType->created_at,
+                'updated_at' => $equbType->updated_at,
+                'timeline' => $equbType->timeline,
+                'check_for_draw' => $equbType->check_for_draw,
+            ];
+        });
+    
+        // Return the formatted response
+        return response()->json([
+            'equbTypes' => $formattedEqubTypes // This will contain the array of equb types with names
+        ]);
     }
     public function update($id, Request $request)
     {

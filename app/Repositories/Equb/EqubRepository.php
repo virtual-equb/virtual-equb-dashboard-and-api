@@ -97,7 +97,7 @@ class EqubRepository implements IEqubRepository
     public function getMemberByEqubType($id)
     {
         // Use where to filter members by equb_type_id
-        return $this->model->where('equb_type_id', $id)->get();
+        return $this->model->with('member')->where('equb_type_id', $id)->get();
     }
     public function getMemberIdById($id)
     {

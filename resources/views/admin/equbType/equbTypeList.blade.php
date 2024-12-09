@@ -291,7 +291,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="viewMemberModalLabel">Member Details</h5>
+                <h5 class="modal-title" id="viewMemberModalLabel">{{ $item->name }} Equb Members </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -300,6 +300,7 @@
                 <table class="table" id="memberTable">
                     <thead>
                         <tr>
+                            <th>No</th>
                             <th>Name</th>
                             <th>Phone Number</th>
                         </tr>
@@ -714,18 +715,21 @@ function openViewMemberModel(memberId) {
             // Clear previous table data
             $('#memberTable tbody').empty();
 
-            // Check if equbTypes has data
             if (data.equbTypes && data.equbTypes.length > 0) {
-                // Populate table with member details
-                data.equbTypes.forEach(member => {
-                    $('#memberTable tbody').append(`
-                        <tr>
-                            <td>${member.id}</td>
-                            <td>${member.id}</td>
-                        </tr>
-                    `);
-                });
-            } else {
+    let index = 1; // Initialize index
+
+    // Populate table with member details
+    data.equbTypes.forEach(member => {
+        $('#memberTable tbody').append(`
+            <tr>
+                <td>${index}</td> <!-- Add index to the first column -->
+                <td>${member.full_name}</td>
+                <td>${member.phone}</td>
+            </tr>
+        `);
+        index++; // Increment index for the next row
+    });
+} else {
                 $('#memberTable tbody').append(`
                     <tr>
                         <td colspan="2" class="text-center">No members found</td>
