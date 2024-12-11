@@ -782,7 +782,7 @@ class PaymentController extends Controller
             // Calculate the new amount and other logic...
             // Ensure that you handle all possible conditions as needed...
     
-            $memberData = Member::where('phone', $user->phone_number)->first();
+            $memberData = Member::where('id',1)->first();
             // Check if member exists
             if (!$memberData) {
                 return response()->json([
