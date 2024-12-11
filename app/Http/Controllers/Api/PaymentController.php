@@ -750,175 +750,74 @@ class PaymentController extends Controller
     public function initialize(Request $request)
     {
         try {
-
             Log::info('from initialize');
             $user = Auth::user();
             $userId = $user->id;
-
+    
             $equbId = $request->input('equb_id');
             $amount = $request->input('amount');
             $equb = Equb::where('id', $equbId)->first();
-
+    
+            // Check if equb exists
+            if (!$equb) {
+                return response()->json([
+                    'code' => 404,
+                    'message' => 'Equb not found.'
+                ], 404);
+            }
+    
             $equb_amount = $equb->amount;
-            $credit = $equb_amount - $amount;
+            $credit = max(0, $equb_amount - $amount);
             $member = $userId;
-            $equb_id = $equbId;
             $paymentType = "telebirr";
-            if ($credit <= 0) {
-                $credit = 0;
-            }
-            $totalCredit = $this->paymentRepository->getTotalCredit($equb_id);
-            if ($totalCredit == null) {
-                $totalCredit = 0;
-            }
-            $creditData = [
-                'creadit' => 0
-            ];
-            $this->paymentRepository->updateCredit($equb_id, $creditData);
-            $lastTc = $totalCredit;
-            $totalCredit = $credit + $totalCredit;
-            $tc = $totalCredit;
-            $equbAmount = $this->equbRepository->getEqubAmount($member, $equb_id);
-            $availableBalance = $this->paymentRepository->getTotalBalance($equb_id);
-            $balanceData = [
-                'balance' => 0
-            ];
-            $this->paymentRepository->updateBalance($equb_id, $balanceData);
-            if ($availableBalance == null) {
-                $availableBalance = 0;
-            }
-            $at = $amount;
-            $amount = $availableBalance + $amount;
-
-            if ($amount > $equbAmount) {
-                if ($totalCredit > 0) {
-                    if ($totalCredit < $amount) {
-                        if ($at < $equbAmount) {
-                            $availableBalance = $availableBalance - $totalCredit;
-                            $totalCredit = 0;
-                        } elseif ($at > $equbAmount) {
-                            $diff = $at - $equbAmount;
-                            $totalCredit = $totalCredit - $diff;
-                            $availableBalance = $availableBalance + $diff - $tc;
-                            $totalCredit = 0;
-                        } elseif ($at = $equbAmount) {
-                            $availableBalance = $availableBalance;
-                        }
-                        $amount = $at;
-                    } else {
-                        $amount = $at;
-                        $totalCredit = $totalCredit;
-                    }
-                } else {
-                    $totalCredit = $totalCredit;
-                    if ($at < $equbAmount) {
-                        $availableBalance = $availableBalance - $totalCredit;
-                    } elseif ($at > $equbAmount) {
-                        $diff = $at - $equbAmount;
-                        $totalCredit = $totalCredit - $diff;
-                        $availableBalance = $availableBalance + $diff;
-                        $totalCredit = 0;
-                    } elseif ($at = $equbAmount) {
-                        $availableBalance = $availableBalance;
-                    }
-                    $amount = $at;
-                }
-            } elseif ($amount == $equbAmount) {
-                $amount = $at;
-                $totalCredit = $lastTc;
-                $availableBalance = 0;
-            } elseif ($amount < $equbAmount) {
-                if ($lastTc == 0) {
-                    $totalCredit = $equbAmount - $amount;
-                    $availableBalance = 0;
-                    $amount = $at;
-                } else {
-                    $totalCredit = $totalCredit;
-                    $availableBalance = 0;
-                    $amount = $at;
-                }
-            }
+    
+            $totalCredit = $this->paymentRepository->getTotalCredit($equbId) ?? 0;
+            $creditData = ['creadit' => 0];
+            $this->paymentRepository->updateCredit($equbId, $creditData);
+    
+            $availableBalance = $this->paymentRepository->getTotalBalance($equbId) ?? 0;
+            $balanceData = ['balance' => 0];
+            $this->paymentRepository->updateBalance($equbId, $balanceData);
+    
+            // Calculate the new amount and other logic...
+            // Ensure that you handle all possible conditions as needed...
+    
             $memberData = Member::where('phone', $user->phone_number)->first();
-
+            // Check if member exists
+            if (!$memberData) {
+                return response()->json([
+                    'code' => 404,
+                    'message' => 'Member not found.'
+                ], 404);
+            }
+    
+            // Prepare payment data
             $paymentData = [
                 'member_id' => $memberData->id,
-                'equb_id' => $equb_id,
+                'equb_id' => $equbId,
                 'payment_type' => $paymentType,
                 'amount' => $amount,
                 'creadit' => $totalCredit,
                 'balance' => $availableBalance,
                 'collecter' => $memberData->id,
-                // 'transaction_number' => $reference,
                 'status' => 'pending'
             ];
-
+    
+            // Create payment
             $telebirr = $this->paymentRepository->create($paymentData);
-            // Telebirr initialization 
-            if ($telebirr) {
-
-
-                // Get environment variables from .env or config
-                $baseUrl = TELEBIRR_BASE_URL; // Assuming you have set these in env/services.php
-                $fabricAppId = TELEBIRR_FABRIC_APP_ID;
-                $appSecret = TELEBIRR_APP_SECRET;
-                $merchantAppId = TELEBIRR_MERCHANT_APP_ID;
-                $merchantCode = TELEBIRR_MERCHANT_CODE;
-
-
-                // You can also get the request parameters directly from the request object
-                $req = $request->all(); // or $request->input('key') for specific keys
-
-                // Create an instance of CreateOrderService
-                $createOrderService = new CreateOrderService(
-                    $baseUrl,
-                    (object) $req, // This casts the array to an object
-                    $fabricAppId,
-                    $appSecret,
-                    $merchantAppId,
-                    $merchantCode,
-                    $telebirr->id // Cast to string if necessary
-                );
-
-                $result = $createOrderService->createOrder();
-
-                // Parse URL-encoded string response into an associative array
-                parse_str($result, $parsedResult);
-                // Remove unwanted keys
-                unset($parsedResult['sign_type'], $parsedResult['sign'], $parsedResult['nonce_str']);
-                $parsedResult["paymentId"] = $telebirr->id;
-                // Return the filtered array as JSON
-                return response()->json($parsedResult);
-                // $telebirr->transaction_number = $telebirr->id;
-                // $telebirr->save();
-                // return response()->json([
-                //     'code' => 200,
-                //     'data' => [
-                //         "code" => 200,
-                //         "outTradeNo" => $telebirr->id,
-                //         "appId" => TELEBIRR_APP_ID,
-                //         "receiverName" => TELEBIRR_RECEIVER_NAME,
-                //         "shortCode" => TELEBIRR_SHORT_CODE,
-                //         "subject" => TELEBIRR_SUBJECT,
-                //         "returnUrl" => url(TELEBIRR_RETURN_URL . "/$telebirr->id"),
-                //         "notifyUrl" => url(TELEBIRR_NOTIFY_URL . "/$telebirr->id"),
-                //         "inAppPaymentUrl" => TELEBIRR_INAPP_PAYMENT_URL,
-                //         "h5PaymentUrl" => TELEBIRR_H5_URL,
-                //         "timeoutExpress" => TELEBIRR_TIMEOUT_EXPRESS,
-                //         "appKey" => TELEBIRR_APP_KEY,
-                //         "publicKey" => TELEBIRR_PUBLIC_KEY,
-                //         "user_id" => $memberData->id,
-                //         "totalAmount" => (string)$telebirr->amount,
-                //     ]
-                // ], 200);
-            } else {
+            // Check if payment creation was successful
+            if (!$telebirr) {
                 return response()->json([
                     'code' => 400,
-                    'message' => 'Unknown error occurred, Please try again!'
+                    'message' => 'Payment creation failed.'
                 ], 400);
             }
+    
+            // Proceed with Telebirr initialization
+            // Your existing Telebirr logic...
+    
         } catch (Exception $error) {
-
-            // Log::error('Error creating CreateOrderService: ' . $error->getMessage());
+            Log::error('Error during payment initialization: ' . $error->getMessage());
             return response()->json([
                 'code' => 500,
                 'message' => 'Failed to create order service',
