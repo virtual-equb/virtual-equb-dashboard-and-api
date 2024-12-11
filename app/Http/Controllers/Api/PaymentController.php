@@ -737,7 +737,6 @@ class PaymentController extends Controller
     // }
     public function initialize(Request $request)
     {
-        // dd(app(\App\Services\CreateOrderService::class));
         try {
 
             Log::info('from initialize');
@@ -966,7 +965,7 @@ class PaymentController extends Controller
 
                     Log::info($telebirrObj);
                     // $payment->save($telebirrObj);
-                    Log::info($payment);
+  Log::info($payment);
                     $equb_id = $payment->equb_id;
 
                     $totalPpayment = $this->paymentRepository->getTotalPaid($equb_id);
@@ -1005,6 +1004,9 @@ class PaymentController extends Controller
             ]);
         }
     }
+
+
+
     public  function decrypt_RSA($publicPEMKey, $data)
     {
         $pkey_public = openssl_pkey_get_public(TELEBIRR_PUBLIC_KEY);
