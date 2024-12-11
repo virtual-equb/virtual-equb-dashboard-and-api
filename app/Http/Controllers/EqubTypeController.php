@@ -512,8 +512,9 @@ class EqubTypeController extends Controller
                 ->pluck('member_id')
                 ->toArray();
     
-            // Exclude previous winners
+            // Exclude previous winners based on winner_round
             $previousWinners = LotteryWinner::where('equb_type_id', $equbTypeId)
+                ->where('winner_round', '!=', 0) // Exclude members with non-zero winner_round
                 ->pluck('member_id')
                 ->toArray();
     
@@ -550,7 +551,7 @@ class EqubTypeController extends Controller
                 return back();
             }
     
-            // Add Demo users if eligible members are less than 100
+            // Add Demo users if eligible members are less than 105
             if (count($eligibleMembers) < 105) {
                 $demoUsersNeeded = 105 - count($eligibleMembers);
                 $demoUsers = Member::where('gender', '')
@@ -583,6 +584,7 @@ class EqubTypeController extends Controller
                     'member_id' => $winnerId,
                     'member_name' => $memberName,
                     'equb_type_name' => $equbTypeName,
+                    'winner_round' => $equb->lottery_round + 1, // Set the current round as winner_round
                     'created_at' => $now,
                     'updated_at' => $now
                 ];

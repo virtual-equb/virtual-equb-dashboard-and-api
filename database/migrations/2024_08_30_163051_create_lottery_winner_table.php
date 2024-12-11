@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('equb_type_name');
             $table->foreign('member_id')->references('id')->on('members');
             $table->foreign('equb_type_id')->references('id')->on('equb_types');
+            $table->string('winner_round');
             $table->softDeletes();
             $table->timestamps();
         });
