@@ -476,17 +476,40 @@ class EqubTypeController extends Controller
     public function getWinner($id, Request $request)
     {
         try {
-            $winner = LotteryWinner::where('equb_type_id', $id)->orderBy('created_at', 'desc')->first();
-            return $winner ? response()->json([
-                'code' => 200,
-                "data" => [
+            // $winner = LotteryWinner::where('equb_type_id', $id)->orderBy('created_at', 'desc')->get();
+            // return $winner ? response()->json([
+            //     'code' => 200,
+            //     "data" => [
+            //         "memberId" => $winner->member_id,
+            //         "memberName" => $winner->member_name
+            //     ]
+            // ]) : response()->json([
+            //     'code' => 200,
+            //     "message" => "Winner has not been selected yet",
+            //     "data" => []
+            // ]);
+            $winners = LotteryWinner::where('equb_type_id', $id)
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            if ($winners->isEmpty()) {
+                return response()->json([
+                    'code' => 200,
+                    "message" => "Winners have not been selected yet",
+                    "data" => []
+                ]);
+            }
+
+            $winnerData = $winners->map(function ($winner) {
+                return [
                     "memberId" => $winner->member_id,
-                    "memberName" => $winner->member_name
-                ]
-            ]) : response()->json([
+                    "memberName" => $winner->member_name,
+                ];
+            });
+
+            return response()->json([
                 'code' => 200,
-                "message" => "Winner has not been selected yet",
-                "data" => []
+                "data" => $winnerData
             ]);
         } catch (Exception $ex) {
             return response()->json([
