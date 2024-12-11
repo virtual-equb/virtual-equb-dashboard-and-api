@@ -150,40 +150,66 @@
 
                     <!-- Modal content-->
                     <div class="modal-content">
-                        <form role="form" method="post" class="form-horizontal form-group"
-                            action="{{ route('drawAutoWinners') }}" enctype="multipart/form-data" id="addEqubType">
-                            {{ csrf_field() }}
-                            <div class="modal-header">
-                                <h4 class="modal-title">Automatic Draw </h4>
-                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            </div>
-                            <div class="modal-body">
-                                {{-- <div class="col-sm-12">
-                                    <label class="control-label">Draw winners for automatic equbs?</label>
-                                </div> --}}
-                                <div class="form-group required">
-                                    <label class="control-label">Equb Type</label>
-                                    <select class="form-control select2" id="equbTypeId" name="equbTypeId"
-                                        placeholder="Equb Type">
-                                        <option value="all">All
-                                        </option>
-                                        @foreach ($equbTypes as $equbType)
-                                            <option data-info="{{ $equbType->type }}"
-                                                data-startdate="{{ $equbType->start_date }}"
-                                                data-enddate="{{ $equbType->end_date }}"
-                                                data-rote="{{ $equbType->rote }}" data-quota="{{ $equbType->quota }}"
-                                                value="{{ $equbType->id }}">
-                                                {{ $equbType->name }} round {{ $equbType->round }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="submit" class="btn btn-primary"
-                                    onclick="drawAutoWinners()">Draw</button>
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            </div>
-                        </form>
+                    <form role="form" method="post" class="form-horizontal" action="{{ route('registerEqub') }}" enctype="multipart/form-data" id="addEqub">
+                {{ csrf_field() }}
+                <div class="modal-header">
+                    <h4 class="modal-title">Add Equb</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="col-sm-12">
+                        <input type="hidden" id="member_id" name="member_id" value="">
+                        <div class="form-group required">
+                            <label class="control-label">Type</label>
+                            <select class="custom-select form-control" id="type" name="type" required onchange="filterEqubTypes()">
+                                <option selected value="">Choose Type</option>
+                                <option value="Automatic">Automatic</option>
+                                <option value="Seasonal">Seasonal</option>
+                                <option value="Manual">Manual</option>
+                            </select>
+                        </div>
+                        <div class="form-group required">
+                            <label class="control-label">Equb Type</label>
+                            <select class="form-control select2" id="equb_type_id" name="equb_type_id" placeholder="Equb Type">
+                                <option value="">choose...</option>
+                                @foreach ($equbTypes as $equbType)
+                                    <option data-info="{{ $equbType->type }}"
+                                        data-startdate="{{ $equbType->start_date }}"
+                                        data-enddate="{{ $equbType->end_date }}" 
+                                        data-rote="{{ $equbType->rote }}" 
+                                        data-quota="{{ $equbType->quota }}"
+                                        data-amount="{{ $equbType->amount }}" 
+                                        data-expected-total="{{ $equbType->expected_total }}" 
+                                        value="{{ $equbType->id }}">
+                                        {{ $equbType->name }} round {{ $equbType->round }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group required">
+                            <label class="control-label">Start Date</label>
+                            <input type="text" class="form-control" id="start_date" name="start_date" placeholder="Start date" autocomplete="off">
+                        </div>
+                        <div class="form-group required">
+                            <label class="control-label">End Date</label>
+                            <input type="text" class="form-control" id="end_date" name="end_date" placeholder="End date" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Amount</label>
+                            <input type="number" class="form-control" id="amount_per_day" name="amount" placeholder="Amount" required>
+                        </div>
+                        <div class="form-group required">
+                            <label class="control-label">Expected Total</label>
+                            <input type="number" class="form-control" id="total_amount" name="total_amount" placeholder="Total equb amount" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+
                     </div>
 
                 </div>
