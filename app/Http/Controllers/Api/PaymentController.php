@@ -916,7 +916,7 @@ class PaymentController extends Controller
             // Log::error('Error creating CreateOrderService: ' . $error->getMessage());
             return response()->json([
                 'code' => 500,
-                'message' => 'Failed to create order service',
+                'message' => 'Failed to create order service' . $error->getMessage(),
                 'error' => $error->getMessage(),
             ]);
         }
