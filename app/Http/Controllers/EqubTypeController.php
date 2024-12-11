@@ -337,75 +337,206 @@ class EqubTypeController extends Controller
         }
     }
     
+    // public function drawAutoWinners(Request $request)
+    // {
+    //     try {
+    //         $equbTypeId = $request->equbTypeId;
+    //         $now = Carbon::now()->startOfDay();
+
+    //         // Fetch Equbtype details
+    //         $equb = EqubType::find($equbTypeId);
+    //         if (!$equb) {
+    //             Session::flash('error', 'Invalid Equb type');
+    //             return back();
+    //         }
+
+    //         $equbStartDate = Carbon::parse($equb->start_date);
+    //         $equbEndDate = Carbon::parse($equb->end_date);
+    //         $lotteryDate = Carbon::parse($equb->lottery_date);
+
+    //         // Ensure the lottery date matches today and hasen't already ended
+    //         if (!$now->eq($lotteryDate)) {
+    //             Session::flash('error', "Lottery cannot proceed. Ensure the lottery date matches the current date.");
+    //             return back();
+    //         }
+
+    //         if ($now->gt($equbEndDate)) {
+    //             Session::flash('error', "The Equb has already ended.");
+    //             return back();
+    //         }
+
+    //         // Fetch active members for the equb
+    //         $members = DB::table('equbs')
+    //             ->where('equb_type_id', $equbTypeId)
+    //             ->where('status', 'Active')
+    //             ->pluck('member_id')
+    //             ->toArray();
+
+    //         // Exclude previous winners
+    //         $previousWinners = LotteryWinner::where('equb_type_id', $equbTypeId)
+    //             ->pluck('member_id')
+    //             ->toArray();
+
+    //         $eligibleMembers = array_diff($members, $previousWinners);
+
+    //         // Exclude members with 5 or more missed payments between start_date and lottery_date
+    //         // $eligibleMembers = array_filter($eligibleMembers, function ($memberId) use ($equbStartDate, $lotteryDate) {
+    //         //     $missedPayments = Payment::where('member_id', $memberId)
+    //         //         ->whereDate('created_at', '>=', $equbStartDate)
+    //         //         ->whereDate('created_at', '<=', $lotteryDate)
+    //         //         ->count();
+
+    //         //     return $missedPayments < 5; // exclude members with 5 or more missed payments
+    //         // });
+    //         $inactiveMembersIds = Payment::select('member_id')
+    //                 ->whereBetween('created_at', [$equbStartDate, $lotteryDate])
+    //                 ->groupBy('member_id')
+    //                 ->havingRaw('COUNT(*) >= 5')
+    //                 ->pluck('member_id');
+    //         Member::whereIn('id', $inactiveMembersIds)->update(['status' => 'Deactive']);
+
+    //         $eligibleMembers = array_filter($eligibleMembers, function ($memberId) use ($inactiveMembersIds) {
+    //             return !$inactiveMembersIds->contains($memberId); // Exclude deactivated members
+    //         });
+
+    //         // Stope the draw if no eligible members remain
+    //         if (empty($eligibleMembers)) {
+    //             // Retrieve users with roles 'admin' and 'operation_manager'
+    //             $userToNotify = User::role(['admin', 'opertaion_manager'])->get();
+
+    //             $message = "No eligible members for the lottery draw. Please review and ensure payments are up-to-date.";
+
+    //             foreach ($userToNotify as $user) {
+    //                 try {
+    //                     $this->sendSms($user->phone_number, $message);
+    //                 } catch (Exception $e) {
+    //                     Log::error("Failed to send SMS to {$user->phone_number}: {$e->getMessage()}");
+    //                 }
+    //             }
+
+    //             // Flash an error message for the web
+    //             Session::flash('error', "No eligible members for the lottery draw. Ensure payments are up-to-date.");
+    //             return back();
+    //         }
+
+    //         // Add Demo users if eligible members are less than 100
+    //         if (count($eligibleMembers) < 105) {
+    //             $demoUsersNeeded = 105 - count($eligibleMembers);
+    //             $demoUsers = Member::where('gender', '')
+    //                 ->whereNotIn('id', $eligibleMembers)
+    //                 ->limit($demoUsersNeeded)
+    //                 ->pluck('id')
+    //                 ->toArray();
+
+    //             $eligibleMembers = array_merge($eligibleMembers, $demoUsers);
+    //         }
+
+    //         // Ensure we have at least 7 eligible members
+    //         if (count($eligibleMembers) < 7) {
+    //             Session::flash('error', "Not enough eligible members for the lottery draw.");
+    //             return back();
+    //         }
+
+    //         // Draw 7 unique winners
+    //         $roundWinners = $this->drawRandomId($eligibleMembers, 7);
+
+    //         // Save winners to the database
+    //         $winnerEntries = [];
+    //         foreach ($roundWinners as $winnerId) {
+    //             $member = Member::find($winnerId);
+    //             $memberName = $member ? $member->full_name : "Unknown Member";
+    //             $equbTypeName = $equb->name ?? "Unknown Equb Type";
+
+    //             $winnerEntries[] = [
+    //                 'equb_type_id' => $equbTypeId,
+    //                 'member_id' => $winnerId,
+    //                 'member_name' => $memberName,
+    //                 'equb_type_name' => $equbTypeName,
+    //                 'created_at' => $now,
+    //                 'updated_at' => $now
+    //             ];
+    //         }
+
+    //         LotteryWinner::insert($winnerEntries);
+
+    //         // Notify winners and other members
+    //         $this->notifyWinnersAndMembers($equbTypeId, $roundWinners, $members);
+
+    //         // Update the next lottery date
+    //         $nextLotteryDate = $now->addDays(7);
+    //         if ($nextLotteryDate->lte($equbEndDate)) {
+    //             $equb->update([
+    //                 'lottery_date' => $nextLotteryDate, 
+    //                 'lottery_round' => $equb->lottery_round + 1
+    //             ]);
+    //         }
+
+    //     } catch (Exception $ex) {
+    //         $msg = "Unable to process your request: " . $ex->getMessage();
+    //         Session::flash('error', $msg);
+    //         return back();
+    //     }
+    // }
     public function drawAutoWinners(Request $request)
     {
         try {
             $equbTypeId = $request->equbTypeId;
             $now = Carbon::now()->startOfDay();
-
+    
             // Fetch Equbtype details
             $equb = EqubType::find($equbTypeId);
             if (!$equb) {
                 Session::flash('error', 'Invalid Equb type');
                 return back();
             }
-
+    
             $equbStartDate = Carbon::parse($equb->start_date);
             $equbEndDate = Carbon::parse($equb->end_date);
             $lotteryDate = Carbon::parse($equb->lottery_date);
-
-            // Ensure the lottery date matches today and hasen't already ended
+    
+            // Ensure the lottery date matches today and hasn't already ended
             if (!$now->eq($lotteryDate)) {
                 Session::flash('error', "Lottery cannot proceed. Ensure the lottery date matches the current date.");
                 return back();
             }
-
+    
             if ($now->gt($equbEndDate)) {
                 Session::flash('error', "The Equb has already ended.");
                 return back();
             }
-
+    
             // Fetch active members for the equb
             $members = DB::table('equbs')
                 ->where('equb_type_id', $equbTypeId)
                 ->where('status', 'Active')
                 ->pluck('member_id')
                 ->toArray();
-
+    
             // Exclude previous winners
             $previousWinners = LotteryWinner::where('equb_type_id', $equbTypeId)
                 ->pluck('member_id')
                 ->toArray();
-
+    
             $eligibleMembers = array_diff($members, $previousWinners);
-
-            // Exclude members with 5 or more missed payments between start_date and lottery_date
-            // $eligibleMembers = array_filter($eligibleMembers, function ($memberId) use ($equbStartDate, $lotteryDate) {
-            //     $missedPayments = Payment::where('member_id', $memberId)
-            //         ->whereDate('created_at', '>=', $equbStartDate)
-            //         ->whereDate('created_at', '<=', $lotteryDate)
-            //         ->count();
-
-            //     return $missedPayments < 5; // exclude members with 5 or more missed payments
-            // });
+    
+            // Identify inactive members who missed 5 or more payments
             $inactiveMembersIds = Payment::select('member_id')
-                    ->whereBetween('created_at', [$equbStartDate, $lotteryDate])
-                    ->groupBy('member_id')
-                    ->havingRaw('COUNT(*) >= 5')
-                    ->pluck('member_id');
-            Member::whereIn('id', $inactiveMembersIds)->update(['status' => 'Deactive']);
-
-            $eligibleMembers = array_filter($eligibleMembers, function ($memberId) use ($inactiveMembersIds) {
-                return !$inactiveMembersIds->contains($memberId); // Exclude deactivated members
-            });
-
-            // Stope the draw if no eligible members remain
+                ->whereBetween('created_at', [$equbStartDate, $lotteryDate])
+                ->groupBy('member_id')
+                ->havingRaw('COUNT(*) < 5') // Members with fewer than 5 payments
+                ->pluck('member_id')
+                ->toArray();
+    
+            // Exclude inactive members from eligible members
+            $eligibleMembers = array_diff($eligibleMembers, $inactiveMembersIds);
+    
+            // Stop the draw if no eligible members remain
             if (empty($eligibleMembers)) {
                 // Retrieve users with roles 'admin' and 'operation_manager'
-                $userToNotify = User::role(['admin', 'opertaion_manager'])->get();
-
+                $userToNotify = User::role(['admin', 'operation_manager'])->get();
+    
                 $message = "No eligible members for the lottery draw. Please review and ensure payments are up-to-date.";
-
+    
                 foreach ($userToNotify as $user) {
                     try {
                         $this->sendSms($user->phone_number, $message);
@@ -413,12 +544,12 @@ class EqubTypeController extends Controller
                         Log::error("Failed to send SMS to {$user->phone_number}: {$e->getMessage()}");
                     }
                 }
-
+    
                 // Flash an error message for the web
                 Session::flash('error', "No eligible members for the lottery draw. Ensure payments are up-to-date.");
                 return back();
             }
-
+    
             // Add Demo users if eligible members are less than 100
             if (count($eligibleMembers) < 105) {
                 $demoUsersNeeded = 105 - count($eligibleMembers);
@@ -427,26 +558,26 @@ class EqubTypeController extends Controller
                     ->limit($demoUsersNeeded)
                     ->pluck('id')
                     ->toArray();
-
+    
                 $eligibleMembers = array_merge($eligibleMembers, $demoUsers);
             }
-
+    
             // Ensure we have at least 7 eligible members
             if (count($eligibleMembers) < 7) {
                 Session::flash('error', "Not enough eligible members for the lottery draw.");
                 return back();
             }
-
+    
             // Draw 7 unique winners
             $roundWinners = $this->drawRandomId($eligibleMembers, 7);
-
+    
             // Save winners to the database
             $winnerEntries = [];
             foreach ($roundWinners as $winnerId) {
                 $member = Member::find($winnerId);
                 $memberName = $member ? $member->full_name : "Unknown Member";
                 $equbTypeName = $equb->name ?? "Unknown Equb Type";
-
+    
                 $winnerEntries[] = [
                     'equb_type_id' => $equbTypeId,
                     'member_id' => $winnerId,
@@ -456,28 +587,28 @@ class EqubTypeController extends Controller
                     'updated_at' => $now
                 ];
             }
-
+    
             LotteryWinner::insert($winnerEntries);
-
+    
             // Notify winners and other members
             $this->notifyWinnersAndMembers($equbTypeId, $roundWinners, $members);
-
+    
             // Update the next lottery date
             $nextLotteryDate = $now->addDays(7);
             if ($nextLotteryDate->lte($equbEndDate)) {
                 $equb->update([
-                    'lottery_date' => $nextLotteryDate, 
+                    'lottery_date' => $nextLotteryDate,
                     'lottery_round' => $equb->lottery_round + 1
                 ]);
             }
-
+    
         } catch (Exception $ex) {
             $msg = "Unable to process your request: " . $ex->getMessage();
             Session::flash('error', $msg);
             return back();
         }
     }
-
+    
 
 
 
