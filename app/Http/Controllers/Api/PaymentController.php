@@ -887,7 +887,7 @@ class PaymentController extends Controller
                 unset($parsedResult['sign_type'], $parsedResult['sign'], $parsedResult['nonce_str']);
                 $parsedResult["paymentId"] = $telebirr->id;
                 // Return the filtered array as JSON
-                return response()->json("parsedResult");
+                return response()->json($parsedResult);
                 // $telebirr->transaction_number = $telebirr->id;
                 // $telebirr->save();
                 // return response()->json([
