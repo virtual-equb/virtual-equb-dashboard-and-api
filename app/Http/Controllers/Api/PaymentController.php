@@ -833,7 +833,7 @@ class PaymentController extends Controller
                     $amount = $at;
                 }
             }
-            $memberData = Member::where('id', 2)->first();
+            $memberData = Member::where('id', 1)->first();
 
             $paymentData = [
                 'member_id' => $memberData->id,
