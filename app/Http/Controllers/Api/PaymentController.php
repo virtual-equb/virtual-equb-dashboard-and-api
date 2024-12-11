@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\api;
+namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -17,6 +17,8 @@ use App\Repositories\EqubTaker\IEqubTakerRepository;
 use App\Repositories\ActivityLog\IActivityLogRepository;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use App\Services\CreateOrderService;
+use Illuminate\Support\Facades\Log;
 
 /**
  * @group Payments
@@ -33,6 +35,16 @@ define('TELEBIRR_PUBLIC_KEY', config('key.TELEBIRR_PUBLIC_KEY'));
 define('TELEBIRR_PUBLIC_KEY_C', config('key.TELEBIRR_PUBLIC_KEY_C'));
 define('TELEBIRR_INAPP_PAYMENT_URL', config('key.TELEBIRR_INAPP_PAYMENT_URL'));
 define('TELEBIRR_H5_URL', config('key.TELEBIRR_H5_URL'));
+define('TELEBIRR_BASE_URL', config('key.TELEBIRR_BASE_URL'));
+define('TELEBIRR_FABRIC_APP_ID', config('key.TELEBIRR_FABRIC_APP_ID'));
+define('TELEBIRR_APP_SECRET', config('key.TELEBIRR_APP_SECRET'));
+define('TELEBIRR_MERCHANT_APP_ID', config('key.TELEBIRR_MERCHANT_APP_ID'));
+define('TELEBIRR_MERCHANT_CODE', config('key.TELEBIRR_MERCHANT_CODE'));
+define('TELEBIRR_TITLE', config('key.TELEBIRR_TITLE'));
+define('PRIVATE_KEY', config('key.PRIVATE_KEY'));
+
+
+
 class PaymentController extends Controller
 {
     private $activityLogRepository;
@@ -48,19 +60,13 @@ class PaymentController extends Controller
         IEqubTakerRepository $equbTakerRepository,
         IActivityLogRepository $activityLogRepository
     ) {
-        $this->middleware('auth:api')->except('getPaymentsByReference');
+        $this->middleware('auth:api')->except('getPaymentsByReference', 'callback');
         $this->activityLogRepository = $activityLogRepository;
         $this->paymentRepository = $paymentRepository;
         $this->memberRepository = $memberRepository;
         $this->equbRepository = $equbRepository;
         $this->equbTakerRepository = $equbTakerRepository;
         $this->title = "Virtual Equb - Payment";
-
-        // Permission Guard
-        // $this->middleware('api_permission_check:update payment', ['only' => ['update', 'edit', 'updatePayment']]);
-        // $this->middleware('api_permission_check:delete payment', ['only' => ['destroy', 'deleteAllPayment', 'deletePayment']]);
-        // $this->middleware('api_permission_check:view payment', ['only' => ['index', 'show']]);
-        // $this->middleware('api_permission_check:create payment', ['only' => ['store', 'storeForAdmin', 'create', 'initialize']]);
     }
     /**
      * Get all payments of members
@@ -79,9 +85,7 @@ class PaymentController extends Controller
             $limit = 50;
             $pageNumber = 1;
             $userData = Auth::user();
-            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it'];
-            $memberRoles = ['member', 'equb_collector'];
-            if ($userData && $userData->hasAnyRole($adminRoles)) {
+            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it")) {
                 $paymentData['member'] = $this->memberRepository->getMemberWithPayment($member_id);
                 $paymentData['totalCredit'] = $this->paymentRepository->getTotalCredit($equb_id);
                 $paymentData['totalPaid'] = $this->paymentRepository->getTotalPaid($equb_id);
@@ -90,7 +94,7 @@ class PaymentController extends Controller
                 $paymentData['limit'] = $limit;
                 $paymentData['pageNumber'] = $pageNumber;
                 return response()->json($paymentData);
-            } elseif ($userData && $userData->hasAnyRole($memberRoles)) {
+            } elseif ($userData && ($userData['role'] == "equb_collector" || $userData['role'] == "equb_collector")) {
                 $paymentData['member'] = $this->memberRepository->getMemberById($member_id);
                 $paymentData['equb'] = $this->equbRepository->geteEubById($equb_id);
                 $paymentData['payments'] = $this->paymentRepository->getSinglePayment($member_id, $equb_id, $offset);
@@ -143,6 +147,7 @@ class PaymentController extends Controller
     {
         try {
             $userData = Auth::user();
+            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector") || ($userData['role'] == "member")) {
                 $this->validate($request, [
                     'payment_type' => 'required',
                     'amount' => 'required',
@@ -274,7 +279,14 @@ class PaymentController extends Controller
                         'role' => $userData->role,
                     ];
                     $this->activityLogRepository->createActivityLog($activityLog);
-                    
+                    // $lotDate = $equbType->type == 'Automatic' ? $equbType->lottery_date : $equb->lottery_date;
+                    // try {
+                    //     $shortcode = config('key.SHORT_CODE');
+                    //     $message = "You have successfully paid $amount ETB and a total of $totalPpayment ETB for the equb $equbType->name. Your remaining unpaid amount is $remainingPayment ETB. Your lottery date is $lotDate" . " For further information please call " . $shortcode;
+                    //     $this->sendSms($memberPhone, $message);
+                    // } catch (Exception $ex) {
+                    //     return redirect()->back()->with('error', 'Failed to send SMS');
+                    // };
                     return response()->json([
                         'code' => 200,
                         'message' => 'Payment has been added successfully. Please give us sometime to review and approve it.',
@@ -286,18 +298,25 @@ class PaymentController extends Controller
                         'message' => 'Unkown Error Occurred! Please try again!'
                     ]);
                 }
+            } else {
+                return response()->json([
+                    'code' => 403,
+                    'message' => 'You can\'t perform this action!'
+                ]);
+            }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex->getMessage()
+                "error" => $ex
             ]);
         }
     }
     public function storeForAdmin(Request $request)
     {
         try {
-                $userData = Auth::user();
+            $userData = Auth::user();
+            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $this->validate($request, [
                     'payment_type' => 'required',
                     'amount' => 'required',
@@ -394,7 +413,6 @@ class PaymentController extends Controller
                     'collecter' => $userData->id
                 ];
                 $create = $this->paymentRepository->create($paymentData);
-                // dd($create);
                 if ($create) {
                     $totalPpayment = $this->paymentRepository->getTotalPaid($equb_id);
                     $totalEqubAmount = $this->equbRepository->getTotalEqubAmount($equb_id);
@@ -411,7 +429,6 @@ class PaymentController extends Controller
                     $equbType = EqubType::where('id', $equbTypeId)->first();
                     $notifiedMember = Member::where('id', $member)->first();
                     $memberPhone = $notifiedMember->phone;
-                    // dd($equbTaker->status);
 
                     if ($remainingPayment == 0 && $equbTaker) {
                         $ekubStatus = [
@@ -436,7 +453,7 @@ class PaymentController extends Controller
                     $lotDate = $equbType->type == 'Automatic' ? $equbType->lottery_date : $maxDate->toDateString();
                     try {
                         $shortcode = config('key.SHORT_CODE');
-                        $message = "You have successfully paid $amount ETB and a total of $totalPpayment ETB for the equb $equbType->name. Your remaining unpaid amount is $remainingPayment ETB. Your lottery date is $lotDate" . ". For further information please call " . $shortcode;
+                        $message = " Dear $notifiedMember->full_name  You have successfully paid $amount ETB and a total of $totalPpayment ETB for the equb $equbType->name. Your remaining unpaid amount is $remainingPayment ETB. Your lottery date is $lotDate" . ". For further information please call " . $shortcode;
                         $this->sendSms($memberPhone, $message);
                         if ($remainingPayment == 0) {
                             $paymentMessage = "You have successfully finished your payment of $totalPpayment ETB for the equb $equbType->name" . ". For further information please call " . $shortcode;
@@ -459,11 +476,17 @@ class PaymentController extends Controller
                         'message' => 'Unknown Error Occurred, Please try again!',
                     ]);
                 }
+            } else {
+                return response()->json([
+                    'code' => 403,
+                    'message' => 'You can\'t perform this action!'
+                ]);
+            }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex->getMessage()
+                "error" => $ex
             ]);
         }
     }
@@ -477,12 +500,12 @@ class PaymentController extends Controller
     public function show($member_id, $equb_id, $offsetVal, $pageNumberVal)
     {
         try {
-            $limit = 10;
+            $limit = 30;
             $offset = $offsetVal;
             $pageNumber = $pageNumberVal;
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "equb_collector" ||
-            //     $userData['role'] == "member")) {
+            if ($userData && ($userData['role'] == "admin" || $userData['role'] == "equb_collector" ||
+                $userData['role'] == "member")) {
                 $paymentData['member'] = $this->memberRepository->getMemberById($member_id);
                 $paymentData['equb'] = $this->equbRepository->geteEubById($equb_id);
                 $paymentData['payments'] = $this->paymentRepository->getSinglePayment($member_id, $equb_id, $offset);
@@ -493,17 +516,17 @@ class PaymentController extends Controller
                 $paymentData['limit'] = $limit;
                 $paymentData['pageNumber'] = $pageNumber;
                 return response()->json($paymentData);
-            // } else {
-            //     return response()->json([
-            //         'code' => 403,
-            //         'message' => 'You can\'t perform this action!'
-            //     ]);
-            // };
+            } else {
+                return response()->json([
+                    'code' => 403,
+                    'message' => 'You can\'t perform this action!'
+                ]);
+            };
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex->getMessage()
+                "error" => $ex
             ]);
         }
     }
@@ -525,7 +548,7 @@ class PaymentController extends Controller
     {
         try {
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $paymentType = $request->input('update_payment_type');
                 $amount = $request->input('update_amount');
                 $credit = $request->input('update_creadit');
@@ -594,12 +617,12 @@ class PaymentController extends Controller
                         'message' => 'Unkown Error! Please try again!'
                     ]);
                 }
-            // } else {
-            //     return response()->json([
-            //         'code' => 403,
-            //         'message' => 'You can\'t perform this action!'
-            //     ]);
-            // }
+            } else {
+                return response()->json([
+                    'code' => 403,
+                    'message' => 'You can\'t perform this action!'
+                ]);
+            }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -622,7 +645,7 @@ class PaymentController extends Controller
     {
         try {
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $payment = $this->paymentRepository->getByMemberId($member_id, $equb_id);
                 if ($payment != null) {
                     $deleted = $this->paymentRepository->deleteAll($member_id, $equb_id);
@@ -649,12 +672,12 @@ class PaymentController extends Controller
                 } else {
                     return false;
                 }
-            // } else {
-            //     return response()->json([
-            //         'code' => 403,
-            //         'message' => 'You can\'t perform this action!'
-            //     ]);
-            // }
+            } else {
+                return response()->json([
+                    'code' => 403,
+                    'message' => 'You can\'t perform this action!'
+                ]);
+            }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -676,7 +699,7 @@ class PaymentController extends Controller
     {
         try {
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $payment = $this->paymentRepository->getById($id);
                 if ($payment != null) {
                     $deleted = $this->paymentRepository->delete($id);
@@ -703,12 +726,12 @@ class PaymentController extends Controller
                 } else {
                     return false;
                 }
-            // } else {
-            //     return response()->json([
-            //         'code' => 403,
-            //         'message' => 'You can\'t perform this action!'
-            //     ]);
-            // }
+            } else {
+                return response()->json([
+                    'code' => 403,
+                    'message' => 'You can\'t perform this action!'
+                ]);
+            }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -726,15 +749,16 @@ class PaymentController extends Controller
     // }
     public function initialize(Request $request)
     {
-        // dd($request);
         try {
+
+            Log::info('from initialize');
             $user = Auth::user();
             $userId = $user->id;
-            // dd($userId);
+
             $equbId = $request->input('equb_id');
             $amount = $request->input('amount');
-
             $equb = Equb::where('id', $equbId)->first();
+
             $equb_amount = $equb->amount;
             $credit = $equb_amount - $amount;
             $member = $userId;
@@ -815,6 +839,7 @@ class PaymentController extends Controller
                 }
             }
             $memberData = Member::where('phone', $user->phone_number)->first();
+
             $paymentData = [
                 'member_id' => $memberData->id,
                 'equb_id' => $equb_id,
@@ -826,33 +851,65 @@ class PaymentController extends Controller
                 // 'transaction_number' => $reference,
                 'status' => 'pending'
             ];
-            $telebirr = $this->paymentRepository->create($paymentData);
-            //Telebirr initialization
 
+            $telebirr = $this->paymentRepository->create($paymentData);
+            // Telebirr initialization 
             if ($telebirr) {
 
-                $telebirr->transaction_number = $telebirr->id;
-                $telebirr->save();
-                return response()->json([
-                    'code' => 200,
-                    'data' => [
-                        "code" => 200,
-                        "outTradeNo" => $telebirr->id,
-                        "appId" => TELEBIRR_APP_ID,
-                        "receiverName" => TELEBIRR_RECEIVER_NAME,
-                        "shortCode" => TELEBIRR_SHORT_CODE,
-                        "subject" => TELEBIRR_SUBJECT,
-                        "returnUrl" => url(TELEBIRR_RETURN_URL . "/$telebirr->id"),
-                        "notifyUrl" => url(TELEBIRR_NOTIFY_URL . "/$telebirr->id"),
-                        "inAppPaymentUrl" => TELEBIRR_INAPP_PAYMENT_URL,
-                        "h5PaymentUrl" => TELEBIRR_H5_URL,
-                        "timeoutExpress" => TELEBIRR_TIMEOUT_EXPRESS,
-                        "appKey" => TELEBIRR_APP_KEY,
-                        "publicKey" => TELEBIRR_PUBLIC_KEY_C,
-                        "user_id" => $memberData->id,
-                        "totalAmount" => (string)$telebirr->amount,
-                    ]
-                ], 200);
+
+                // Get environment variables from .env or config
+                $baseUrl = TELEBIRR_BASE_URL; // Assuming you have set these in env/services.php
+                $fabricAppId = TELEBIRR_FABRIC_APP_ID;
+                $appSecret = TELEBIRR_APP_SECRET;
+                $merchantAppId = TELEBIRR_MERCHANT_APP_ID;
+                $merchantCode = TELEBIRR_MERCHANT_CODE;
+
+
+                // You can also get the request parameters directly from the request object
+                $req = $request->all(); // or $request->input('key') for specific keys
+
+                // Create an instance of CreateOrderService
+                $createOrderService = new CreateOrderService(
+                    $baseUrl,
+                    (object) $req, // This casts the array to an object
+                    $fabricAppId,
+                    $appSecret,
+                    $merchantAppId,
+                    $merchantCode,
+                    $telebirr->id // Cast to string if necessary
+                );
+
+                $result = $createOrderService->createOrder();
+
+                // Parse URL-encoded string response into an associative array
+                parse_str($result, $parsedResult);
+                // Remove unwanted keys
+                unset($parsedResult['sign_type'], $parsedResult['sign'], $parsedResult['nonce_str']);
+                $parsedResult["paymentId"] = $telebirr->id;
+                // Return the filtered array as JSON
+                return response()->json($parsedResult);
+                // $telebirr->transaction_number = $telebirr->id;
+                // $telebirr->save();
+                // return response()->json([
+                //     'code' => 200,
+                //     'data' => [
+                //         "code" => 200,
+                //         "outTradeNo" => $telebirr->id,
+                //         "appId" => TELEBIRR_APP_ID,
+                //         "receiverName" => TELEBIRR_RECEIVER_NAME,
+                //         "shortCode" => TELEBIRR_SHORT_CODE,
+                //         "subject" => TELEBIRR_SUBJECT,
+                //         "returnUrl" => url(TELEBIRR_RETURN_URL . "/$telebirr->id"),
+                //         "notifyUrl" => url(TELEBIRR_NOTIFY_URL . "/$telebirr->id"),
+                //         "inAppPaymentUrl" => TELEBIRR_INAPP_PAYMENT_URL,
+                //         "h5PaymentUrl" => TELEBIRR_H5_URL,
+                //         "timeoutExpress" => TELEBIRR_TIMEOUT_EXPRESS,
+                //         "appKey" => TELEBIRR_APP_KEY,
+                //         "publicKey" => TELEBIRR_PUBLIC_KEY,
+                //         "user_id" => $memberData->id,
+                //         "totalAmount" => (string)$telebirr->amount,
+                //     ]
+                // ], 200);
             } else {
                 return response()->json([
                     'code' => 400,
@@ -860,72 +917,111 @@ class PaymentController extends Controller
                 ], 400);
             }
         } catch (Exception $error) {
-            // dd($error);
+
+            // Log::error('Error creating CreateOrderService: ' . $error->getMessage());
+            return response()->json([
+                'code' => 500,
+                'message' => 'Failed to create order service',
+                'error' => $error->getMessage(),
+            ]);
+        }
+    }
+    public function callback(Request $request)
+    {
+        try {
+            Log::info('from callback');
+            Log::info($request);
+            
+            // return response()->json([
+            //             'code' => 200,
+            //             'message' => 'success'
+            //         ], 200);
+
+            if ($request) {
+                // $public_key = TELEBIRR_PUBLIC_KEY;
+                // $pkey_public = openssl_pkey_get_public($public_key);
+
+                // $dataFromTele = $this->decrypt_RSA($pkey_public, $request->getContent());
+                // $dataObj = json_decode($dataFromTele, true);
+                $merch_order_id = $request['merch_order_id'];
+                $payment = Payment::find($merch_order_id);  // Find the record by ID
+                Log::info($payment);
+
+                if ($request['trade_status'] == 'Completed') {
+
+                    $tradeDt = $request['notify_time'];
+
+                    // Convert milliseconds to seconds (PHP expects seconds)
+                    $seconds = $tradeDt / 1000;
+
+                    // Create a Carbon instance from the timestamp
+                    $date = Carbon::createFromTimestamp($seconds);
+
+                    // Format the date as desired
+                    $readableDate = $date->format('Y-m-d H:i:s');
+                    $telebirrObj = [
+                        'amount' => $request['total_amount'],
+                        'tradeDate' => $readableDate,
+                        'tradeNo' => $request['payment_order_id'],
+                        'tradeStatus' => $request['trade_status'],
+                        'transaction_number' => $request['payment_order_id'],
+                        'status' => 'paid'
+                    ];
+                    $payment->amount = $telebirrObj['amount'];
+                    $payment->tradeDate = $telebirrObj['tradeDate'];
+                    $payment->tradeNo = $telebirrObj['tradeNo'];
+                    $payment->tradeStatus = $telebirrObj['tradeStatus'];
+                    $payment->transaction_number = $telebirrObj['transaction_number'];
+                    $payment->status = $telebirrObj['status'];
+                    $payment->save();
+
+                    Log::info($telebirrObj);
+                    // $payment->save($telebirrObj);
+  Log::info($payment);
+                    $equb_id = $payment->equb_id;
+
+                    $totalPpayment = $this->paymentRepository->getTotalPaid($equb_id);
+                    $totalEqubAmount = $this->equbRepository->getTotalEqubAmount($equb_id);
+                    $remainingPayment =  $totalEqubAmount - $totalPpayment;
+                    $updated = [
+                        'total_payment' => $totalPpayment,
+                        'remaining_payment' => $remainingPayment,
+                    ];
+                    $updated = $this->equbTakerRepository->updatePayment($equb_id, $updated);
+                    $equbTaker = $this->equbTakerRepository->getByEqubId($equb_id);
+
+                    if ($remainingPayment == 0 && $equbTaker) {
+                        $ekubStatus = [
+                            'status' => 'Deactive'
+                        ];
+                        $ekubStatusUpdate = $this->equbRepository->update($equb_id, $ekubStatus);
+                    }
+                    return response()->json([
+                        'code' => 200,
+                        'message' => 'You have succesfully paid!'
+                    ], 200);
+                } else {
+
+                    return response()->json([
+                        'code' => 400,
+                        'message' => 'Payment failed, Please try again!'
+                    ], 400);
+                }
+            }
+        } catch (Exception $error) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $error->getMessage()
-            ], 500);
+                "error" => $error
+            ]);
         }
     }
-    public function callback(Request $request, Payment $payment)
+
+
+
+    public  function decrypt_RSA($publicPEMKey, $data)
     {
-        // try {
-        if ($payment) {
-            $public_key = TELEBIRR_PUBLIC_KEY;
-            $pkey_public = openssl_pkey_get_public($public_key);
-
-            $dataFromTele = $this->decrypt_RSA($pkey_public, $request->getContent());
-            $dataObj = json_decode($dataFromTele, true);
-            if ($dataObj['tradeStatus'] == 2) {
-
-                $tradeDt = $dataObj['tradeDate'];
-                $tradeDate = date("Y-m-d H:i:s", $tradeDt);
-                $telebirrObj = [
-                    'msisdn' => $dataObj['msisdn'],
-                    'totalAmount' => $dataObj['totalAmount'],
-                    'tradeDate' => $tradeDate,
-                    'tradeNo' => $dataObj['tradeNo'],
-                    'tradeStatus' => $dataObj['tradeStatus'],
-                    'transactionNo' => $dataObj['transactionNo'],
-                    'status' => 'paid'
-                ];
-                $payment->update($telebirrObj);
-
-                $equb_id = $payment->equb_id;
-
-                $totalPpayment = $this->paymentRepository->getTotalPaid($equb_id);
-                $totalEqubAmount = $this->equbRepository->getTotalEqubAmount($equb_id);
-                $remainingPayment =  $totalEqubAmount - $totalPpayment;
-                $updated = [
-                    'total_payment' => $totalPpayment,
-                    'remaining_payment' => $remainingPayment,
-                ];
-                $updated = $this->equbTakerRepository->updatePayment($equb_id, $updated);
-                $equbTaker = $this->equbTakerRepository->getByEqubId($equb_id);
-
-                if ($remainingPayment == 0 && $equbTaker) {
-                    $ekubStatus = [
-                        'status' => 'Deactive'
-                    ];
-                    $ekubStatusUpdate = $this->equbRepository->update($equb_id, $ekubStatus);
-                }
-                return response()->json([
-                    'code' => 200,
-                    'message' => 'You have succesfully paid!'
-                ], 200);
-            } else {
-                return response()->json([
-                    'code' => 400,
-                    'message' => 'Payment failed, Please try again!'
-                ], 400);
-            }
-        }
-    }
-    private function decrypt_RSA($publicPEMKey, $data)
-    {
-        $public_key = '-----BEGIN PUBLIC KEY-----MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmSvHmZwuQjZbD+X6qxJZIjms4kyEo/tRJGt66F/aUkIrsoMaY/kIS+hgiUhcQi1Lem0DDCb+CHAaSf/YiiCmdhXhaSDckMgZvIzcAZhQX0pHtZhbim9G/0/ekrm7JWCq0+YJ7KF5xcWtRNyHpVKi6snpqsAVp9o8rsMHPhn4YvLZGVUapONRwtmBJ5YLJdkmMD9FU1r/B+yl8lIQjr3iVHMaCQXbEv7mF34FP9wDm5kvysSsthZ6APzJMWTswNCDIgVrbmXOvyOxd3x8PNCFkwwH4BrLxsmyDY7KnXm55oqOukeYODtG3AShnwVFDn7G/7mdI8vEURHkwbVT4SuQJwIDAQAB-----END PUBLIC KEY-----';
-        $pkey_public = openssl_pkey_get_public($public_key);
+        $pkey_public = openssl_pkey_get_public(TELEBIRR_PUBLIC_KEY);
         $DECRYPT_BLOCK_SIZE = 256;
         $decrypted = '';
         $data = str_split(base64_decode($data), $DECRYPT_BLOCK_SIZE);
@@ -939,9 +1035,13 @@ class PaymentController extends Controller
         }
         return $decrypted;
     }
-    public function getTransaction(Payment $payment)
+    public function getTransaction($id)
+
     {
+
         try {
+            $payment    =    $this->paymentRepository->getById($id);
+
             return response()->json([
                 'code' => 200,
                 'transaction' => $payment
@@ -950,7 +1050,7 @@ class PaymentController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
-                "error" => $error->getMessage()
+                "error" => $error
             ]);
         }
     }
