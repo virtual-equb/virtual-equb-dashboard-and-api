@@ -66,7 +66,6 @@ Route::get('/getPaymentsByReference/{reference}', [PaymentController::class, 'ge
 Route::get('/sendOtp/{phone}', [UserController::class, 'sendOtp'])->name('sendOtp');
 Route::get('/verifyOtp/{code}/{phone}', [UserController::class, 'verifyOtp'])->name('verifyOtp');
 // Route::get('/getEqubType', [EqubTypeController::class, 'getEqubType'])->name('getEqubType');
-Route::post('/payments/telebirr/callback', [PaymentController::class, 'callback'])->name('callback');
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -184,12 +183,6 @@ Route::prefix('payment')->group(function () {
     Route::delete('/delete/{id}', [PaymentController::class, 'destroy'])->name('deletePayment');
     // Route::post('telebirr', [PaymentController::class, 'initialize'])->name('initialize');
     // Route::get('/telebirr/callback/{payment}', [PaymentController::class, 'callback'])->name('callback');
-  //  Route::post('/payments/telebirr/callback', [PaymentController::class, 'callback'])->name('callback');
-    Route::post('telebirr', [PaymentController::class, 'initialize'])->name('initialize');
-
-
-
-
 });
 Route::prefix('equbTaker')->group(function () {
     Route::get('/', [EqubTakerController::class, 'index'])->name('showEqubTaker');
