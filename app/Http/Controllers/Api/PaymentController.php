@@ -747,12 +747,6 @@ class PaymentController extends Controller
             $equbId = $request->input('equb_id');
             $amount = $request->input('amount');
             $equb = Equb::where('id', $equbId)->first();
-            if (!$equb) {
-                return response()->json([
-                    'code' => 404,
-                    'message' => 'Equb not found',
-                ], 404);
-            }
 
             $equb_amount = $equb->amount;
             $credit = $equb_amount - $amount;
@@ -833,7 +827,7 @@ class PaymentController extends Controller
                     $amount = $at;
                 }
             }
-            $memberData = Member::where('id', 1)->first();
+            $memberData = Member::where('id', $user->phone_number)->first();
 
             $paymentData = [
                 'member_id' => $memberData->id,
@@ -916,7 +910,7 @@ class PaymentController extends Controller
             // Log::error('Error creating CreateOrderService: ' . $error->getMessage());
             return response()->json([
                 'code' => 500,
-                'message' => 'Failed to create order service' . $error->getMessage(),
+                'message' => 'Failed to create order service',
                 'error' => $error->getMessage(),
             ]);
         }
