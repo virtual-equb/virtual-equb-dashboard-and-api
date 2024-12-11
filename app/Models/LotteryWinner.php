@@ -12,6 +12,6 @@ class LotteryWinner extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'member_id', 'equb_type_id', 'member_name', 'equb_type_name'
+        'member_id', 'equb_type_id', 'member_name', 'equb_type_name', 'winner_round'
     ];
 }
