@@ -7,7 +7,7 @@
     "require": {
         "php": "^8.2",
         "doctrine/dbal": "^3.3",
-        "guzzlehttp/guzzle": "^7.7",
+        "guzzlehttp/guzzle": "^7.9",
         "kreait/laravel-firebase": "^5.2",
         "laravel/framework": "^9.11",
         "laravel/jetstream": "^2.8",
