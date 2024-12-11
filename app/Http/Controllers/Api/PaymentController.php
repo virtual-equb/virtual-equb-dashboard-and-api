@@ -965,7 +965,7 @@ class PaymentController extends Controller
 
                     Log::info($telebirrObj);
                     // $payment->save($telebirrObj);
-  Log::info($payment);
+                    Log::info($payment);
                     $equb_id = $payment->equb_id;
 
                     $totalPpayment = $this->paymentRepository->getTotalPaid($equb_id);
