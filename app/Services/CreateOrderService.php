@@ -88,7 +88,7 @@ class CreateOrderService
     {
 
         try {
-              Log::info('Notify url');
+            Log::info('Notify url');
             Log::info($this->notifyPath);
 
             // Create request array
