@@ -747,6 +747,12 @@ class PaymentController extends Controller
             $equbId = $request->input('equb_id');
             $amount = $request->input('amount');
             $equb = Equb::where('id', $equbId)->first();
+            if (!$equb) {
+                return response()->json([
+                    'code' => 404,
+                    'message' => 'Equb not found',
+                ], 404);
+            }
 
             $equb_amount = $equb->amount;
             $credit = $equb_amount - $amount;
