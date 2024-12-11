@@ -737,7 +737,6 @@ class PaymentController extends Controller
     // }
     public function initialize(Request $request)
     {
-        // dd(app(\App\Services\CreateOrderService::class));
         try {
 
             Log::info('from initialize');
@@ -747,12 +746,6 @@ class PaymentController extends Controller
             $equbId = $request->input('equb_id');
             $amount = $request->input('amount');
             $equb = Equb::where('id', $equbId)->first();
-            if (!$equb) {
-                return response()->json([
-                    'code' => 404,
-                    'message' => 'Equb not found',
-                ], 404);
-            }
 
             $equb_amount = $equb->amount;
             $credit = $equb_amount - $amount;
@@ -916,7 +909,7 @@ class PaymentController extends Controller
             // Log::error('Error creating CreateOrderService: ' . $error->getMessage());
             return response()->json([
                 'code' => 500,
-                'message' => 'Failed to create order service' . $error->getMessage(),
+                'message' => 'Failed to create order service',
                 'error' => $error->getMessage(),
             ]);
         }
@@ -972,7 +965,7 @@ class PaymentController extends Controller
 
                     Log::info($telebirrObj);
                     // $payment->save($telebirrObj);
-                    Log::info($payment);
+  Log::info($payment);
                     $equb_id = $payment->equb_id;
 
                     $totalPpayment = $this->paymentRepository->getTotalPaid($equb_id);
@@ -1011,6 +1004,9 @@ class PaymentController extends Controller
             ]);
         }
     }
+
+
+
     public  function decrypt_RSA($publicPEMKey, $data)
     {
         $pkey_public = openssl_pkey_get_public(TELEBIRR_PUBLIC_KEY);
