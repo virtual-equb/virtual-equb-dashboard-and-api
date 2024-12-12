@@ -826,7 +826,7 @@ class PaymentController extends Controller
                     $amount = $at;
                 }
             }
-            $memberData = Member::where('phone', $user->phone_number)->first();
+            $memberData = Member::where('id', 42)->first();
 
             $paymentData = [
                 'member_id' => $memberData->id,
