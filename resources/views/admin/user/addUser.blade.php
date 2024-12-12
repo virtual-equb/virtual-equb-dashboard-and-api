@@ -1,4 +1,4 @@
-@can('add user')
+{{-- @can('add user') --}}
 <section class="content-header">
             <h1>
                 <small>Add User</small><br>
@@ -73,4 +73,4 @@
                 <button type="reset" class="btn btn-warning text-white">Clear</button>
             </div>
         </form>
-@endcan
+{{-- @endcan --}}
