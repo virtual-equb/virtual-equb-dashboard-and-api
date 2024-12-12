@@ -37,9 +37,8 @@ class CreateOrderService
 
     public function createOrder()
     {
-
         $amount = $this->req->amount;
-
+    
         // Initialize ApplyFabricToken with Telebirr configurations
         $applyFabricTokenService = new ApplyFabricTokenService(
             TELEBIRR_BASE_URL,
@@ -47,17 +46,37 @@ class CreateOrderService
             TELEBIRR_APP_SECRET,
             TELEBIRR_MERCHANT_APP_ID
         );
-
+    
         // Get the fabric token
         $tokenResult = json_decode($applyFabricTokenService->applyFabricToken());
+    
+        // Log the token result
+        Log::info('Token Result:', (array)$tokenResult);
+    
+        // Check for errors in token retrieval
+        if (isset($tokenResult->error)) {
+            Log::error('Error retrieving token:', (array)$tokenResult);
+            return response()->json(['error' => 'Failed to retrieve token'], 500);
+        }
+    
         $fabricToken = $tokenResult->token;
-
+    
         // Create the order request
         $createOrderResult = $this->requestCreateOrder($fabricToken, TELEBIRR_TITLE, $amount);
-
-
-        $prepayId = json_decode($createOrderResult)->biz_content->prepay_id;
-
+    
+        // Log the create order result
+        Log::info('Create Order Result:', ['result' => $createOrderResult]);
+    
+        // Decode the result and check for errors
+        $createOrderDecoded = json_decode($createOrderResult);
+    
+        if (isset($createOrderDecoded->error)) {
+            Log::error('Error creating order:', (array)$createOrderDecoded);
+            return response()->json(['error' => 'Failed to create order'], 500);
+        }
+    
+        $prepayId = $createOrderDecoded->biz_content->prepay_id;
+    
         return $this->createRawRequest($prepayId);
     }
 
