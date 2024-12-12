@@ -63,7 +63,7 @@ class EqubTakerController extends Controller
                 $data['equbs']  = $this->equbRepository->getAll();
                 $data['members']  = $this->memberRepository->getMemberWithEqub();
                 $data['title']  = $this->title;
-           //   dd(  $data['equbTakers']);
+             dd(  $data['equbTakers']);
                 return view('admin/equbTaker.equbTakerList', $data);
             } elseif ($userData && $userData->hasAnyRole($equbcollector)) {
                 $data['equbTakers']  = $this->equbTakerRepository->getAll();
