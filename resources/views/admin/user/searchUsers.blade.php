@@ -9,6 +9,7 @@
                              <th>Phone</th>
                              <th>Gender</th>
                              <th>Role</th>
+                             <th>Role Guard</th>
                              <th>Status</th>
                              <th>Registered At </th>
                              <th style="width: 60px">Action </th>
@@ -24,12 +25,19 @@
                                  <th>{{ $item->phone_number }}</th>
                                  <td>{{ $item->gender }}</td>
                                  <td>
-                    @foreach($item->roles as $guard)
-                        <div class="badge badge-primary">
-                            {{ $guard->name }}
-                        </div>
-                    @endforeach
-                </td>
+                                    @foreach($item->roles as $guard)
+                                        <div class="badge badge-primary">
+                                            {{ $guard->name }}
+                                        </div>
+                                    @endforeach
+                                  </td>
+                                  <td>
+                                    @foreach($item->roles as $guard)
+                                        <div class="badge badge-primary">
+                                            {{ $guard->guard_name }}
+                                        </div>
+                                    @endforeach
+                                </td>
                                  <td>{{ $item->enabled ? 'Active' : 'Inactive' }}</td>
                                  <td>
                                      <?php
