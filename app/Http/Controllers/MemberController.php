@@ -771,7 +771,6 @@ class MemberController extends Controller
             //     return view('auth/login');
             // }
         } catch (Exception $ex) {
-            dd($ex->getMessage());
             $msg = "Unable to process your request, Please try again!" . $ex->getMessage();
             $type = 'error';
             Session::flash($type, $msg);
