@@ -780,47 +780,73 @@ class MemberController extends Controller
     public function show($id)
     {
         try {
+            // Get the authenticated user
             $userData = Auth::user();
-            $Adminroles = ['admin', 'general_manager', 'operation_manager', 'it', 'call_center', 'finance'];
-            $collector = ['equb_collector'];
-            $member = ['member'];
 
-            if ($userData && $userData->hasAnyRole($Adminroles)) {
+            // Define roles
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'call_center', 'finance'];
+            $collectorRoles = ['equb_collector'];
+            $memberRoles = ['member'];
+
+            // Check if the user is authenticated and their role
+            if ($userData && $userData->hasAnyRole($adminRoles)) {
                 $data['member'] = $this->memberRepository->getByIdNested($id);
+
+                // Ensure member exists
+                if (!$data['member']) {
+                    throw new Exception("Member not found with ID: $id");
+                }
+
+                // Get equbs paginated
                 $data['equbs'] = $data['member']->equbs()->paginate(10);
 
-                // Check if 'equbs' exists and fetch lottery_date safely
-                $firstEqub = $data['member']->equbs->first();
-                $data['data'] = $firstEqub ? $firstEqub->lottery_date : null;
+                // Get the first lottery date
+                $data['data'] = $data['member']->equbs->pluck('lottery_date')->first();
 
                 return view('admin/member.memberDetails', $data);
-            } elseif ($userData && $userData->hasAnyRole($collector)) {
+            } elseif ($userData && $userData->hasAnyRole($collectorRoles)) {
                 $totalPayment = $this->paymentRepository->getTotalPaid($id);
+
                 $data['member'] = $this->memberRepository->getByIdNested($id);
 
-                // Check if 'equbs' exists and fetch lottery_date safely
-                $firstEqub = $data['member']->equbs->first();
-                $data['data'] = $firstEqub ? $firstEqub->lottery_date : null;
+                // Ensure member exists
+                if (!$data['member']) {
+                    throw new Exception("Member not found with ID: $id");
+                }
+
+                // Get the first lottery date
+                $data['data'] = $data['member']->equbs->pluck('lottery_date')->first();
 
                 return view('equbCollecter/member.memberDetails', $data);
-            } elseif ($userData && $userData->hasAnyRole($member)) {
+            } elseif ($userData && $userData->hasAnyRole($memberRoles)) {
                 $data['member'] = $this->memberRepository->getByIdNested($id);
 
-                // Check if 'equbs' exists and fetch lottery_date safely
-                $firstEqub = $data['member']->equbs->first();
-                $data['data'] = $firstEqub ? $firstEqub->lottery_date : null;
+                // Ensure member exists
+                if (!$data['member']) {
+                    throw new Exception("Member not found with ID: $id");
+                }
+
+                // Get the first lottery date
+                $data['data'] = $data['member']->equbs->pluck('lottery_date')->first();
 
                 return view('member/member.memberDetails', $data);
             } else {
                 return view('auth/login');
             }
         } catch (Exception $ex) {
-            $msg = "Unable to process your request, Please try again! " . $ex->getMessage();
+            // Log the error for debugging
+            \Log::error('Error in show method: ' . $ex->getMessage());
+            \Log::error($ex->getTraceAsString());
+
+            // Provide user feedback
+            $msg = "Unable to process your request, Please try again!";
             $type = 'error';
             Session::flash($type, $msg);
+
             return back();
         }
     }
+
 
     // public function updateStatus($id, Request $request)
     // {
