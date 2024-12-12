@@ -63,7 +63,7 @@
                                                             <td>{{ $taker->member->full_name }}</td>
                                                             <td>{{ $taker->member->email }}</td>
                                                             <td>{{ $taker->member->phone }}</td>
-                                                            <td>{{ $taker->equb->equbType->name }}</td>
+                                                            <td>{{ $taker->equb->equbType->id }}</td>
                                                             <td>{{ $taker->status }}</td>
                                                             <td>
                                                                 <a href="" class="btn btn-info btn-sm">View</a>
