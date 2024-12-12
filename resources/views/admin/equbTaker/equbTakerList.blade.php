@@ -52,6 +52,7 @@
                                                         <th>Email</th>
                                                         <th>Phone</th>
                                                         <th>Equb Type</th>
+                                                        <th>status</th>
                                                         <th>Actions</th>
                                                     </tr>
                                                 </thead>
@@ -63,6 +64,7 @@
                                                             <td>{{ $taker->email }}</td>
                                                             <td>{{ $taker->phone }}</td>
                                                             <td>{{ $taker->equb_type }}</td>
+                                                            <td>{{ $taker->status }}</td>
                                                             <td>
                                                                 <a href="" class="btn btn-info btn-sm">View</a>
                                                                 <a href="" class="btn btn-warning btn-sm">Edit</a>
