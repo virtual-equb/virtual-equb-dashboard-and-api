@@ -322,45 +322,47 @@
 $(document).ready(function() {
     // Set Expected Members to 100 and make it unchangeable
     $('#expected_members').val(105).prop('readonly', true).parent().removeClass('d-none');
-
     // Show or hide fields based on the selected type
     $("#type").on("change", function() {
         var type = $(this).find("option:selected").val();
 
         if (type === "Automatic") {
-            startDate.classList.remove("d-none");
-            endDate.classList.remove("d-none");
-            quota.classList.remove("d-none");
-            amount.classList.remove("d-none");
-            members.classList.remove("d-none");
-            expectedMembers.classList.remove("d-none"); // Show expected members
+            // Show fields related to Automatic type
+            $('#start_date_div').removeClass("d-none");
+            $('#end_date_div').removeClass("d-none");
+            $('#end_date_div1').removeClass("d-none");
+            $('#quota_div').removeClass("d-none");
+            $('#amount_div').removeClass("d-none"); // Show amount input
+            $('#members_div').removeClass("d-none");
+            $('#expected_members_div').removeClass("d-none"); // Show expected members
             $('#total_amount').parent().removeClass('d-none'); // Show total amount field
 
+            // Pre-fill the amount input (example value)
+            $('#amount').val(''); // Change this value as needed
+
             // Set required attributes
-            startDate.required = true;
-            endDate.required = true;
-            quota.required = true;
-            amount.required = true;
-            members.required = true;
-            expectedMembers.required = true;
+            $('#start_date').prop('required', true);
+            $('#end_date').prop('required', true);
+            $('#quota').prop('required', true);
+            $('#amount').prop('required', true);
+            $('#members').prop('required', true);
+            $('#expected_members').prop('required', true);
 
         } else if (type === "Seasonal") {
-            startDate.classList.remove("d-none");
-            endDate.classList.remove("d-none");
-            amount.classList.remove("d-none"); // Show amount input
+            $('#start_date_div').removeClass("d-none");
+            $('#end_date_div').removeClass("d-none");
+            $('#amount_div').removeClass("d-none"); // Show amount input
 
-            // Remove expected members from the DOM
-            $("#expected_members").parent().remove(); // Remove expected members input from DOM
+            // Remove expected members and total amount from the DOM
+            $("#expected_members_div").addClass("d-none"); // Hide expected members input
+            $('#total_amount').parent().addClass('d-none'); // Hide total amount field
 
-            // Remove total amount from the DOM
-            $('#total_amount').parent().remove(); // Remove total amount field from DOM
-
-            // Hide total amount display
-            totalAmountDisplay.innerText = ''; // Clear total amount display
+            // Clear total amount display
+            $('#total_amount').val(''); // Clear total amount
 
             // Set required attributes for seasonal
-            startDate.required = true;
-            amount.required = true;
+            $('#start_date').prop('required', true);
+            $('#amount').prop('required', true);
 
             // Event listener for start_date change
             $("#start_date").on("change", function() {
@@ -375,143 +377,37 @@ $(document).ready(function() {
             });
 
         } else {
-            lotteryDate.classList.add("d-none");
-            startDate.classList.add("d-none");
-            endDate.classList.add("d-none");
-            quota.classList.add("d-none");
-            amount.classList.add("d-none");
-            members.classList.add("d-none");
-            expectedMembers.classList.add("d-none"); // Ensure expected members are hidden
-            $('#total_amount').parent().removeClass('d-none'); // Show total amount field again if needed
+            // Hide all fields if neither type is selected
+            $('#lottery_date_div').addClass("d-none");
+            $('#start_date_div').addClass("d-none");
+            $('#end_date_div').addClass("d-none");
+            $('#quota_div').addClass("d-none");
+            $('#amount_div').addClass("d-none");
+            $('#members_div').addClass("d-none");
+            $('#expected_members_div').addClass("d-none"); // Ensure expected members are hidden
+            $('#total_amount').parent().addClass('d-none'); // Hide total amount field
 
             // Remove required attributes
-            startDate.required = false;
-            endDate.required = false;
-            quota.required = false;
-            amount.required = false;
-            members.required = false;
-            expectedMembers.required = false;
+            $('#start_date').prop('required', false);
+            $('#end_date').prop('required', false);
+            $('#quota').prop('required', false);
+            $('#amount').prop('required', false);
+            $('#members').prop('required', false);
+            $('#expected_members').prop('required', false);
 
             // Clear total amount display
-            totalAmountDisplay.innerText = '';
+            $('#total_amount').val('');
         }
     });
 
     // Calculate Total Amount based on Amount
     $('#amount').on('input', function() {
-        const amountValue = parseFloat($('#amount').val()) || 0;
-        const expectedMembersValue = 100; // Fixed expected members
+        const amountValue = parseFloat($(this).val()) || 0;
+        const expectedMembersValue = 105; // Fixed expected members
         const totalAmount = amountValue * expectedMembersValue; // Calculate total amount
 
         $('#total_amount').val(totalAmount); // Update Total Amount
     });
-
-    // Existing code for viewing icon
-    $(document).on('click', '.view-icon', function(e) {
-        e.preventDefault();
-
-        var adminId = $(this).attr('equb-type-id');
-        var image = $(this).attr('equb-type-image');
-
-        $("#viewImage").attr("src", "/storage/" + image);
-        $('#modaloff6').modal('show');
-    });
-
-    $('.textareaa').summernote();
-
-    const selectBox = document.getElementById("type");
-    const lotteryDate = document.getElementById("lottery_date_div");
-    const startDate = document.getElementById("start_date_div");
-    const endDate = document.getElementById("end_date_div");
-    const quota = document.getElementById("quota_div");
-    const rote = document.getElementById("rote");
-    const amount = document.getElementById("amount_div");
-    const members = document.getElementById('members_div');
-    const expectedMembers = document.getElementById('expected_members_div');
-    const totalAmountDisplay = document.getElementById('total_amount_display'); // Element to show total amount
-
-    // Additional event listener for type change
-    $("#type").on("change", function() {
-        var type = $(this).find("option:selected").val();
-
-        if (type === "Automatic") {
-            startDate.classList.remove("d-none");
-            endDate.classList.remove("d-none");
-            quota.classList.remove("d-none");
-            amount.classList.remove("d-none");
-            members.classList.remove("d-none");
-            expectedMembers.classList.remove("d-none"); // Show expected members
-            $('#total_amount').parent().removeClass('d-none'); // Show total amount field
-
-            // Set required attributes
-            startDate.required = true;
-            endDate.required = true;
-            quota.required = true;
-            amount.required = true;
-            members.required = true;
-            expectedMembers.required = true;
-
-        } else if (type === "Seasonal") {
-            startDate.classList.remove("d-none");
-            endDate.classList.remove("d-none");
-            amount.classList.remove("d-none"); // Show amount input
-
-            // Remove expected members and total amount from the DOM
-            $("#expected_members").parent().remove(); // Remove expected members input from DOM
-            $('#total_amount').parent().remove(); // Remove total amount field from DOM
-
-            // Hide total amount display
-            totalAmountDisplay.innerText = ''; // Clear total amount display
-
-            // Set required attributes for seasonal
-            startDate.required = true;
-            amount.required = true;
-
-            // Event listener for start_date change
-            $("#start_date").on("change", function() {
-                let startDateValue = $(this).val(); // Get the value of the start date input
-                if (startDateValue) {
-                    let date = new Date(startDateValue); // Create a Date object
-                    date.setDate(date.getDate() + 21); // Add 21 days for Seasonal
-
-                    // Set the end date in the datepicker
-                    $('#end_date').datepicker('setDate', date);
-                }
-            });
-
-        } else {
-            lotteryDate.classList.add("d-none");
-            startDate.classList.add("d-none");
-            endDate.classList.add("d-none");
-            quota.classList.add("d-none");
-            amount.classList.add("d-none");
-            members.classList.add("d-none");
-            expectedMembers.classList.add("d-none"); // Ensure expected members are hidden
-            $('#total_amount').parent().removeClass('d-none'); // Show total amount field again if needed
-
-            // Remove required attributes
-            startDate.required = false;
-            endDate.required = false;
-            quota.required = false;
-            amount.required = false;
-            members.required = false;
-            expectedMembers.required = false;
-
-            // Clear total amount display
-            totalAmountDisplay.innerText = '';
-        }
-    });
-
-    function updateExpectedMembers() {
-        // Assuming members input is a number, display it in expected members
-        expectedMembers.value = members.value; // Adjust logic as needed
-    }
-
-    function updateTotalAmount() {
-        const amountValue = parseFloat(amount.value) || 0; // Get the amount value
-        const quotaValue = parseInt(quota.value) || 0; // Get the quota value
-        const totalAmount = amountValue * quotaValue; // Calculate total amount
-    }
 });
 
 
@@ -533,7 +429,6 @@ $(document).ready(function() {
         } else if (type === "Seasonal") {
             date.setDate(date.getDate() + 21); // Add 21 days for Seasonal
         }
-
         // Set the end date in the datepicker
         $('#end_date').datepicker('setDate', date);
     }
@@ -560,15 +455,17 @@ $(document).ready(function() {
                 const total_amount = document.getElementById("update_total_amount_div");
                 const total_members = document.getElementById("update_total_members_div");
                 const update_options = update_rote.options;
-                $("#update_type").on("change", function() {
+                $("#update_type").on("chauthoange", function() {
                     var type = $(this).find("option:selected").val();
                     if (type === "Automatic") {
+                        
                         lotteryDate.classList.remove("d-none");
                         startDate.classList.remove("d-none");
                         endDate.classList.remove("d-none");
                         quota.classList.remove("d-none");
                         amount.classList.remove("d-none");
                         members.classList.remove("d-none");
+                        
                         //for (var i = 1; i < update_options.length; i++) {
                         //    update_options[i].disabled = false;
                         //   if (update_options[i].value !== "Weekly") {
@@ -680,6 +577,7 @@ $(document).ready(function() {
             "#update_quota_div", 
             "#update_amount_div", 
             "#update_members_div"
+            
         ],
         "Manual": [
             "#update_amount_div", 
