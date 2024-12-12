@@ -746,6 +746,37 @@ class MemberController extends Controller
             return back();
         }
     }
+    // public function show($id)
+    // {
+    //     try {
+    //         $userData = Auth::user();
+    //         $Adminroles = ['admin', 'general_manager', 'operation_manager', 'it', 'call_center', 'finance'];
+    //         $collector = ['equb_collector'];
+    //         $member = ['member'];
+    //         if ($userData && $userData->hasAnyRole($Adminroles)) {
+    //             $data['member'] = $this->memberRepository->getByIdNested($id);
+    //             $data['equbs'] = $data['member']->equbs()->paginate(10); // 
+    //             $data['data'] = $this->memberRepository->getByIdNested($id)->equbs->pluck('lottery_date')->first();
+    //             return view('admin/member.memberDetails', $data);
+    //         } elseif ($userData && $userData->hasAnyRole($collector)) {
+    //             $totalPayment = $this->paymentRepository->getTotalPaid($id);
+    //             $data['member'] = $this->memberRepository->getByIdNested($id);
+    //             $data['data'] = $this->memberRepository->getByIdNested($id)->equbs->pluck('lottery_date')->first();
+    //             return view('equbCollecter/member.memberDetails', $data);
+    //         } elseif ($userData && $userData->hasAnyRole($member)) {
+    //             $data['member'] = $this->memberRepository->getByIdNested($id);
+    //             $data['data'] = $this->memberRepository->getByIdNested($id)->equbs->pluck('lottery_date')->first();
+    //             return view('member/member.memberDetails', $data);
+    //         } else {
+    //             return view('auth/login');
+    //         }
+    //     } catch (Exception $ex) {
+    //         $msg = "Unable to process your request, Please try again!" . $ex->getMessage();
+    //         $type = 'error';
+    //         Session::flash($type, $msg);
+    //         return back();
+    //     }
+    // }
     public function show($id)
     {
         try {
@@ -753,31 +784,44 @@ class MemberController extends Controller
             $Adminroles = ['admin', 'general_manager', 'operation_manager', 'it', 'call_center', 'finance'];
             $collector = ['equb_collector'];
             $member = ['member'];
-            // if ($userData && $userData->hasAnyRole($Adminroles)) {
+
+            if ($userData && $userData->hasAnyRole($Adminroles)) {
                 $data['member'] = $this->memberRepository->getByIdNested($id);
-                $data['equbs'] = $data['member']->equbs()->paginate(10); // 
-                $data['data'] = $this->memberRepository->getByIdNested($id)->equbs->pluck('lottery_date')->first();
+                $data['equbs'] = $data['member']->equbs()->paginate(10);
+
+                // Check if 'equbs' exists and fetch lottery_date safely
+                $firstEqub = $data['member']->equbs->first();
+                $data['data'] = $firstEqub ? $firstEqub->lottery_date : null;
+
                 return view('admin/member.memberDetails', $data);
-            // } elseif ($userData && $userData->hasAnyRole($collector)) {
+            } elseif ($userData && $userData->hasAnyRole($collector)) {
                 $totalPayment = $this->paymentRepository->getTotalPaid($id);
                 $data['member'] = $this->memberRepository->getByIdNested($id);
-                $data['data'] = $this->memberRepository->getByIdNested($id)->equbs->pluck('lottery_date')->first();
+
+                // Check if 'equbs' exists and fetch lottery_date safely
+                $firstEqub = $data['member']->equbs->first();
+                $data['data'] = $firstEqub ? $firstEqub->lottery_date : null;
+
                 return view('equbCollecter/member.memberDetails', $data);
-            // } elseif ($userData && $userData->hasAnyRole($member)) {
+            } elseif ($userData && $userData->hasAnyRole($member)) {
                 $data['member'] = $this->memberRepository->getByIdNested($id);
-                $data['data'] = $this->memberRepository->getByIdNested($id)->equbs->pluck('lottery_date')->first();
+
+                // Check if 'equbs' exists and fetch lottery_date safely
+                $firstEqub = $data['member']->equbs->first();
+                $data['data'] = $firstEqub ? $firstEqub->lottery_date : null;
+
                 return view('member/member.memberDetails', $data);
-            // } else {
-            //     return view('auth/login');
-            // }
+            } else {
+                return view('auth/login');
+            }
         } catch (Exception $ex) {
-            dd($ex->getMessage());
-            $msg = "Unable to process your request, Please try again!" . $ex->getMessage();
+            $msg = "Unable to process your request, Please try again! " . $ex->getMessage();
             $type = 'error';
             Session::flash($type, $msg);
             return back();
         }
     }
+
     // public function updateStatus($id, Request $request)
     // {
     //     try {
