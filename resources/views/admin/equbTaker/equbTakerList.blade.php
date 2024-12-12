@@ -60,10 +60,10 @@
                                                     @foreach($equbTakers as $index => $taker)
                                                         <tr>
                                                             <td>{{ $index + 1 }}</td>
-                                                            <td>{{ $taker->name }}</td>
-                                                            <td>{{ $taker->email }}</td>
-                                                            <td>{{ $taker->phone }}</td>
-                                                            <td>{{ $taker->equb_type }}</td>
+                                                            <td>{{ $taker->member->full_name }}</td>
+                                                            <td>{{ $taker->member->email }}</td>
+                                                            <td>{{ $taker->member->phone }}</td>
+                                                            <td>{{ $taker->equb->equbType->name }}</td>
                                                             <td>{{ $taker->status }}</td>
                                                             <td>
                                                                 <a href="" class="btn btn-info btn-sm">View</a>

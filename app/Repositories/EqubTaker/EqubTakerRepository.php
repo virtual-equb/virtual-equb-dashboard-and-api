@@ -19,7 +19,8 @@ class EqubTakerRepository implements IEqubTakerRepository
 
     public function getAll()
     {
-        return $this->model->all();
+       // return $this->model->all();
+       return $this->model->with(['member', 'equb'])->paginate($this->limit);
     }
 
     public function getReportById()
