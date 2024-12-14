@@ -24,4 +24,4 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}               # Reference the secret for the password
           protocol: ftp                                       # Use 'ftp' or 'ftps' as needed
           local-dir: ./                                       # Directory containing files to deploy
-          server-dir: /public_html                            # Target directory on the server (optional)
+         
