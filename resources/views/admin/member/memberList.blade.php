@@ -808,7 +808,6 @@
                 }
                 $('#total_amount').val(expectedTotal);
             }
-
             function getExpectedTotalForUpdate() {
                 let amount = document.getElementById('update_amount').value;
                 let startdate = document.getElementById('update_start_date').value;
@@ -1043,14 +1042,15 @@
         var type = $(this).find("option:selected").data("info");
         
         if (type === "Manual") {
-            lotteryDate.classList.remove("d-none");
-            timeline.classList.remove("d-none");
-            lotteryDate.required = true;
-        } else if (type === "Seasonal") {
-            // Hide both timeline and lottery date for Seasonal type
-            lotteryDate.classList.add("d-none");
-            timeline.classList.add("d-none");
-            lotteryDate.required = false;
+         // Set the end date
+    $('#end_date').datepicker('destroy'); // Destroy any existing datepicker
+    $('#end_date').datepicker(); // Initialize datepicker
+    $('#end_date').datepicker('setDate', new Date(equbTypeEndDate));
+    $('#end_date').prop('readonly', true); // Make it read-only
+
+    lotteryDate.classList.add("d-none");
+    timeline.classList.add("d-none");
+    lotteryDate.required = false;
         } else {
             var equbTypeStartDate = $(this).find("option:selected").data("startdate");
             var equbTypeEndDate = $(this).find("option:selected").data("enddate");
