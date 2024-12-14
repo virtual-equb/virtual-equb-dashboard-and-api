@@ -7,6 +7,7 @@ use Exception;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
@@ -647,8 +648,8 @@ class UserController extends Controller
             $request,
             [
                 'name' => 'required',
-                'email' => 'required',
-                'phone_number' => 'required',
+                'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($id)],
+                'phone_number' => ['required',  'max:255', Rule::unique('users', 'phone_number')->ignore($id)],
                 'gender' => 'required',
                 'role' => 'required|array',
             ]
