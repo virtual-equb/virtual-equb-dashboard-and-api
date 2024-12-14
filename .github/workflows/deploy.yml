@@ -24,3 +24,4 @@ jobs:
           password: 'conzpl!OW0*u'              # Use a GitHub secret for the password
           protocol: ftp                                       # Use 'ftp' or 'ftps' as needed
           local-dir: ./     
+          server-dir: /public_html                            # Specify the target directory
