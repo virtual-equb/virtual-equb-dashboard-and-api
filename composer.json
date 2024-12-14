@@ -14,6 +14,7 @@
         "laravel/sanctum": "^2.15",
         "laravel/tinker": "^2.7",
         "livewire/livewire": "^2.5",
+        "phpseclib/phpseclib": "^3.0",
         "spatie/laravel-permission": "*",
         "tymon/jwt-auth": "^1.0"
     },
