@@ -20,7 +20,7 @@ jobs:
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ftp.virtualekubdash.com                     # FTP server address
-          username: public_html@virtualekubdash.com             # Full FTP username
-          password: 'UqeG{.2%y,WF'               # Use a GitHub secret for the password
+          username: virtuada             # Full FTP username
+          password: 'admin'               # Use a GitHub secret for the password
           protocol: ftp                                       # Use 'ftp' or 'ftps' as needed
           local-dir: ./     
