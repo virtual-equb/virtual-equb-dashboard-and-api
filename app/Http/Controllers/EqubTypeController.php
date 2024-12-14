@@ -259,6 +259,9 @@ class EqubTypeController extends Controller
                             3. The Equb lasts for 21 days, with weekly lotteries.
                             4. Number of weekly winners: total_members ÷ 3.";
                 }
+                if ($type === 'Manual') {
+                    $expected_members = null;
+                }
                 
                 if ($end_date) {
                     $endDateCheck = $this->isDateInYMDFormat($end_date);
