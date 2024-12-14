@@ -5,7 +5,7 @@
             <form role="form" method="post" class="form-horizontal" action="{{ route('registerEqub') }}" enctype="multipart/form-data" id="addEqub">
                 {{ csrf_field() }}
                 <div class="modal-header">
-                    <h4 class="modal-title">Add sami</h4>
+                    <h4 class="modal-title">Add sams</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
