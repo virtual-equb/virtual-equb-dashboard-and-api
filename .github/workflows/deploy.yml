@@ -24,3 +24,4 @@ jobs:
           password: 'm6)Mg)J-*9.S'               # Use a GitHub secret for the password
           protocol: ftp                                       # Use 'ftp' or 'ftps' as needed
           local-dir: ./     
+          
