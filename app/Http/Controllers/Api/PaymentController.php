@@ -59,7 +59,7 @@ class PaymentController extends Controller
         IEqubTakerRepository $equbTakerRepository,
         IActivityLogRepository $activityLogRepository
     ) {
-        $this->middleware('auth:api')->except('getPaymentsByReference');
+        $this->middleware('auth:api')->except('getPaymentsByReference', 'callback');
         $this->activityLogRepository = $activityLogRepository;
         $this->paymentRepository = $paymentRepository;
         $this->memberRepository = $memberRepository;
