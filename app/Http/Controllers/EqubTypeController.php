@@ -274,7 +274,7 @@ class EqubTypeController extends Controller
                 'quota' => $quota,
                 'remaining_quota' => $quota,
                 'terms' => $terms,
-                'main_equb_id' => $type === 'Manual' ? null : $main_equb,
+                'main_equb_id' => $main_equb,
                 'amount' => $type === 'Manual' ? null : $amount,
                 'expected_members' => $type === 'Manual' ? null : $expected_members,
                 'total_amount' => $type === 'Manual' ? null : $total_amount,
