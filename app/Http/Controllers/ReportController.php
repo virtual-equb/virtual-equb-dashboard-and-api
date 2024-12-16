@@ -441,7 +441,7 @@ class ReportController extends Controller
         }
     }
   
-    public function filterEqubEndDates($dateFrom, $dateTo, $equbType)
+     public function filterEqubEndDates($dateFrom, $dateTo, $equbType)
     {
         try {
             $data['offset'] = 0;
