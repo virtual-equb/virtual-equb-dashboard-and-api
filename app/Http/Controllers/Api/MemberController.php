@@ -607,7 +607,7 @@ class MemberController extends Controller
                     ->where('id', $equb['id'])
                     ->pluck('total_amount')
                     ->first();
-                    dd($totalEqubAmount);
+                    // dd($totalEqubAmount);
                 $remainingPayment = $totalEqubAmount - $totalPpayment;
 
                 if ($remainingPayment > 0) {
