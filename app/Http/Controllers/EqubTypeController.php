@@ -214,7 +214,7 @@ class EqubTypeController extends Controller
                 'round' => 'required',
                 'rote' => 'required',
                 'type' => 'required',
-                'main_equb_id' => 'required|exists:equb_type,id',
+                'main_equb_id' => 'required|exists:main_equbs,id',
                 'start_date' => 'required|date',
             ]);
         
