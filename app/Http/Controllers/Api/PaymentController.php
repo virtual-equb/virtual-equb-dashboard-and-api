@@ -841,7 +841,7 @@ class PaymentController extends Controller
             ];
 
             $telebirr = $this->paymentRepository->create($paymentData);
-            dd ($telebirr);
+            // dd ($telebirr);
             // Telebirr initialization 
             if ($telebirr) {
 
