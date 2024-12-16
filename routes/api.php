@@ -48,6 +48,7 @@ use App\Http\Controllers\EqubTypeController as ControllersEqubTypeController;
 Route::post('/drawauto', [ControllersEqubTypeController::class, 'drawSeasonedAutoWinners']);
 
 Route::post('/transaction-status', [PaymentGatewayController::class, 'transactionStatus']);
+Route::post('/payments/telebirr/callback', [PaymentController::class, 'callback'])->name('callback');
 Route::post('/notify-equb-start', [EqubController::class, 'sendStartNotifications']);
 Route::post('/notify-equb-ends', [EqubController::class, 'sendEndNotifications']);
 Route::post('/daily-payment-notification', [EqubController::class, 'sendDailyPaymentNotification']);
@@ -66,7 +67,7 @@ Route::get('/getPaymentsByReference/{reference}', [PaymentController::class, 'ge
 Route::get('/sendOtp/{phone}', [UserController::class, 'sendOtp'])->name('sendOtp');
 Route::get('/verifyOtp/{code}/{phone}', [UserController::class, 'verifyOtp'])->name('verifyOtp');
 // Route::get('/getEqubType', [EqubTypeController::class, 'getEqubType'])->name('getEqubType');
-Route::post('/payments/telebirr/callback', [PaymentController::class, 'callback'])->name('callback');
+
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
