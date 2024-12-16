@@ -441,7 +441,7 @@ class ReportController extends Controller
         }
     }
   
-     public function filterEqubEndDates($dateFrom, $dateTo, $equbType)
+    public function filterEqubEndDates($dateFrom, $dateTo, $equbType)
     {
         try {
             $data['offset'] = 0;
@@ -455,7 +455,7 @@ class ReportController extends Controller
                 $data['totalEqub'] = $this->equbRepository->countFilterEqubEndDates($dateFrom, $dateTo, $equbType);
                 // dd($data['totalEqub']);
                 $data['equbs'] = $this->equbRepository->filterEqubEndDates($dateFrom, $dateTo, $offset, $equbType);
-              dd($data);
+             
                 return view('admin/report/unPaidReport/filterUnPaids', $data);
             
         } catch (Exception $ex) {
