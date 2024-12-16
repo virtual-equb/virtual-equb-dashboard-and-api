@@ -25,8 +25,10 @@
                               ?>
                               <tr id="trm{{ $item['id'] }}">
                                   <td class="details-control_equb" id="{{ $item['id'] }}"></td>
-                                  <td>{{ $offset + $key + 1 }}</td>
-                                  <th>{{ $item->full_name }}</th>
+                                  <td>{{ $offset + $key + 1 }} </td>
+                                  <th>{{ $item->full_name }}
+                                    {{ $item->id }}
+                                  </th>
                                   <th>{{ $item->phone }}</th>
                                   <td>{{ $item->gender }}</td>
                                   <td>{{ $item->memberCity ? $item->memberCity->name : 'N/A' }}</td>

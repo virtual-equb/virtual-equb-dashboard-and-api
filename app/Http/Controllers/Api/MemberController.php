@@ -607,6 +607,7 @@ class MemberController extends Controller
                     ->where('id', $equb['id'])
                     ->pluck('total_amount')
                     ->first();
+                    dd($totalEqubAmount);
                 $remainingPayment = $totalEqubAmount - $totalPpayment;
 
                 if ($remainingPayment > 0) {
@@ -659,6 +660,69 @@ class MemberController extends Controller
             ]);
         }
     }
+
+//     public function show($id)
+// {
+//     try {
+//         $data['totalPayment'] = $this->paymentRepository->getTotalPaid($id);
+//         $data['member'] = $this->memberRepository->getByIdNested($id);
+//         $member = $data['member'];
+//         $equbs = $member->equbs; // Get all joined Equbs
+//         $equbsArray = [];
+
+//         foreach ($equbs as $equb) {
+//             // Get total payment for this equb
+//             $totalPpayment = Payment::where('equb_id', $equb->id)
+//                 ->where('status', 'paid')
+//                 ->sum('amount');
+            
+//             // Get total amount for this equb
+//             $totalEqubAmount = (int) $equb->total_amount;
+//             $remainingPayment = $totalEqubAmount - $totalPpayment;
+
+//             // Include the Equb regardless of remaining payment
+//             $lotteryDate = $equb->lottery_date;
+//             $equbType = EqubType::find($equb->equb_type_id);
+
+//             // Skip if essential data is missing
+//             if (!$equbType || !$lotteryDate) {
+//                 continue;
+//             }
+
+//             // Calculate intervals for remaining lottery date
+//             $currentDate = new DateTime(date('Y-m-d'));
+//             $lotteryDate = new DateTime($lotteryDate);
+//             $typeLotteryDate = new DateTime($equbType->lottery_date);
+
+//             $interval = $lotteryDate > $currentDate
+//                 ? $lotteryDate->diff($currentDate)->days
+//                 : ($lotteryDate == $currentDate ? 0 : "passed");
+
+//             $autoInterval = $typeLotteryDate > $currentDate
+//                 ? $typeLotteryDate->diff($currentDate)->days
+//                 : ($typeLotteryDate == $currentDate ? 0 : "passed");
+
+//             // Include equb details
+//             $equbsArray[] = [
+//                 'id' => $equb->id,
+//                 'name' => $equb->name,
+//                 'total_payment' => (int) $totalPpayment,
+//                 'remaining_payment' => (int) $remainingPayment,
+//                 'total_amount' => $totalEqubAmount,
+//                 'remaining_lottery_date' => $equbType->type == 'Automatic' ? $autoInterval : $interval,
+//             ];
+//         }
+
+//         $data['equbs'] = $equbsArray;
+
+//         return response()->json($data, 200);
+//     } catch (Exception $ex) {
+//         return response()->json([
+//             'message' => 'Unable to process your request. Please try again!',
+//             'error' => $ex->getMessage(),
+//         ], 500);
+//     }
+// }
 
     public function getPaidEqubs($id)
     {
