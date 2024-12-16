@@ -451,10 +451,7 @@ class ReportController extends Controller
             $userData = Auth::user();
          //   if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
                 $data['title'] = "Virtual Equb - Fileter Equb By End Date Report";
-                // $data['paids'] = $this->paymentRepository->getPaidByDate($dateFrom, $dateTo);
-                // $equbId = $data['paids'];
-                // $equbId = json_encode($equbId);
-                // $equbId = str_replace('"', "", $equbId);
+              
                 $data['totalEqub'] = $this->equbRepository->countFilterEqubEndDates($dateFrom, $dateTo, $equbType);
                 // dd($data['totalEqub']);
                 $data['equbs'] = $this->equbRepository->filterEqubEndDates($dateFrom, $dateTo, $offset, $equbType);
