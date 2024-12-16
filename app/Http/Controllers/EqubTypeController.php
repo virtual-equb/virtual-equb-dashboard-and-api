@@ -268,7 +268,7 @@ class EqubTypeController extends Controller
                 'rote' => $rote,
                 'type' => $type,
                 'remark' => $remark,
-                'lottery_date' => $lottery_date,
+                'lottery_date' => $type === 'Manual' ? null : $lottery_date,
                 'start_date' => $start_date,
                 'end_date' => $end_date ? Carbon::parse($end_date)->format('Y-m-d') : null,
                 'quota' => $quota,
