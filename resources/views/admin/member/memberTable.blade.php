@@ -27,7 +27,6 @@
                                   <td class="details-control_equb" id="{{ $item['id'] }}"></td>
                                   <td>{{ $offset + $key + 1 }} </td>
                                   <th>{{ $item->full_name }}
-                                    {{ $item->id }}
                                   </th>
                                   <th>{{ $item->phone }}</th>
                                   <td>{{ $item->gender }}</td>
