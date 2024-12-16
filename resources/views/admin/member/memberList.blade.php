@@ -1,4 +1,5 @@
-@extends('layouts.app')
+
+    @extends('layouts.app')
     @section('styles')
         <style type="text/css">
             td.details-control_equb {
@@ -96,13 +97,13 @@
             }
 
             /*@media (max-width: 768px) {
-                                                                                                                                                                                                                                                                                  .col-md-6 {
-                                                                                                                                                                                                                                                                                   width: 100%;
-                                                                                                                                                                                                                                                                                   padding-left: 0px;
-                                                                                                                                                                                                                                                                                   padding-right: 0px;
-                                                                                                                                                                                                                                                                                   float: left;
-                                                                                                                                                                                                                                                                                  }
-                                                                                                                                                                                                                                                                                }*/
+                                                                                                                                                                                                                                                                                              .col-md-6 {
+                                                                                                                                                                                                                                                                                               width: 100%;
+                                                                                                                                                                                                                                                                                               padding-left: 0px;
+                                                                                                                                                                                                                                                                                               padding-right: 0px;
+                                                                                                                                                                                                                                                                                               float: left;
+                                                                                                                                                                                                                                                                                              }
+                                                                                                                                                                                                                                                                                            }*/
             @media (max-width: 575.98px) {
                 #payment-list-table_in_tab {
                     display: block;
@@ -150,21 +151,17 @@
                                                 @include('admin/equb.addEqub')
                                                 @include('admin/member.addMember')
                                                 <div class="float-left checkLotteryandAddMember" id="member_table_filter">
-                                                        @can('check member_lottery_date')
-                                                            <button type="button" class=" btn btn-primary checkLottery"
-                                                                id="lotteryDatec" data-toggle="modal"
-                                                                data-target="#lotteryDateCheckModal"
-                                                                style="margin-right: 30px;"> <i class="fa fa-check-square"></i>
-                                                                Check Lottery Date
-                                                            </button>
-                                                        @endcan
-                                                        @can('create member')
-                                                            <button type="button" class=" btn btn-primary addMember"
-                                                                id="register" data-toggle="modal" data-target="#myModal"
-                                                                style="margin-right: 30px;"> <span class="fa fa-plus-circle">
-                                                                </span> Add member
-                                                            </button>
-                                                        @endcan
+                                                    @if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant' && Auth::user()->role != 'finance')
+                                                        <button type="button" class=" btn btn-primary checkLottery"
+                                                            id="lotteryDatec" data-toggle="modal"
+                                                            data-target="#lotteryDateCheckModal"
+                                                            style="margin-right: 30px;"> <i class="fa fa-check-square"></i>
+                                                            Check Lottery Date</button>
+                                                        <button type="button" class=" btn btn-primary addMember"
+                                                            id="register" data-toggle="modal" data-target="#myModal"
+                                                            style="margin-right: 30px;"> <span class="fa fa-plus-circle">
+                                                            </span> Add member</button>
+                                                    @endif
                                                 </div>
                                                 <div class="row">
                                                     <div class="float-right searchEqubandClear col-4"
@@ -263,7 +260,7 @@
             //         .then(response => response.json())
             //         .then(data => {
             //             const membersCount = data;
-            //             console.log("🚀 ~ updateMembersCount ~ membersCount:", membersCount)
+            //             console.log("ðŸš€ ~ updateMembersCount ~ membersCount:", membersCount)
             //             // Update the count element with the new count
             //             document.getElementById('members-count').textContent = membersCount;
             //         })
@@ -319,7 +316,7 @@
             });
 
             function searchForStatus(searchInput) {
-                // console.log("🚀 ~ file: memberList.blade.php:274 ~ searchForEqub ~ searchInput:", searchInput)
+                // console.log("ðŸš€ ~ file: memberList.blade.php:274 ~ searchForEqub ~ searchInput:", searchInput)
                 if (searchInput != "") {
                     $.ajax({
                         url: "{{ url('member/search-status') }}" + '/' + searchInput + '/0',
@@ -358,7 +355,7 @@
             });
 
             function searchForEqub(searchInput) {
-                // console.log("🚀 ~ file: memberList.blade.php:274 ~ searchForEqub ~ searchInput:", searchInput)
+                // console.log("ðŸš€ ~ file: memberList.blade.php:274 ~ searchForEqub ~ searchInput:", searchInput)
                 if (searchInput != "") {
                     $.ajax({
                         url: "{{ url('member/search-equb') }}" + '/' + searchInput + '/0',
@@ -529,14 +526,14 @@
             }
 
             function openApproveLotteryModal(item) {
-                console.log("🚀 ~ file: memberList.blade.php:461 ~ openApproveLotteryModal ~ item:", item)
+                console.log("ðŸš€ ~ file: memberList.blade.php:461 ~ openApproveLotteryModal ~ item:", item)
                 $('#lottery_idd').val(item.id);
                 $('#openApproveLotteryModal').modal('show');
                 $('#approveLottery').attr('action', 'equbTaker/equbTaker-change-status/approved/' + $('#lottery_idd').val())
             }
 
             function openPayLotteryModal(item) {
-                console.log("🚀 ~ file: memberList.blade.php:461 ~ openApproveLotteryModal ~ item:", item.id)
+                console.log("ðŸš€ ~ file: memberList.blade.php:461 ~ openApproveLotteryModal ~ item:", item.id)
                 $('#lottery_id_pay').val(item.id);
                 $('#openPayLotteryModal').modal('show');
                 $('#payLottery').attr('action', 'equbTaker/equbTaker-change-status/paid/' + $('#lottery_id_pay').val())
@@ -587,7 +584,7 @@
             }
 
             function openRateModal(item) {
-                console.log("🚀 ~ file: memberList.blade.php:495 ~ openRateModal ~ item:", item)
+                console.log("ðŸš€ ~ file: memberList.blade.php:495 ~ openRateModal ~ item:", item)
                 // var addressObject = JSON.parse(item.address);
                 $('#m_id').val(item.id);
                 $('#rateMemberModal').modal('show');
@@ -677,7 +674,6 @@
                 enddate = moment(enddate);
                 enddate = enddate.format("YYYY-MM-DD");
                 $('#update_total_amount').val(equb.total_amount);
-                $('#update_amount').val(equb.amount);
                 $('#update_start_date').val(startdate);
                 $('#update_end_date').val(enddate);
                 var lottery_date = new Date(equb.lottery_date);
@@ -693,7 +689,7 @@
             }
 
             function sendNotificationModal(item) {
-                console.log("🚀 ~ file: memberList.blade.php:637 ~ sendNotificationModal ~ item:", item)
+                console.log("ðŸš€ ~ file: memberList.blade.php:637 ~ sendNotificationModal ~ item:", item)
                 $('#m_phone').val(item.phone);
                 $('#sendNotificationModal').modal('show');
             }
@@ -808,6 +804,7 @@
                 }
                 $('#total_amount').val(expectedTotal);
             }
+
             function getExpectedTotalForUpdate() {
                 let amount = document.getElementById('update_amount').value;
                 let startdate = document.getElementById('update_start_date').value;
@@ -1031,72 +1028,87 @@
                     todayHighlight: true
                 };
                 $("#lottery_date").datepicker(datePickerOptions);
+                document.getElementById('type').addEventListener('change', function() {
+    const selectedType = this.value;
+    const timeline = document.getElementById('timeline_div'); // Assuming this is the correct ID for the timeline div
 
-  $(document).ready(function() {
-    const selectBox = document.getElementById("equb_type_id");
-    const updateSelectBox = document.getElementById("equb_type");
-    const lotteryDate = document.getElementById("equb_lottery_date_div");
-    const timeline = document.getElementById("timeline_div");
+    // Clear existing options in equb_type_id based on selected type
+    const equbTypeSelect = document.getElementById('equb_type_id');
+    equbTypeSelect.innerHTML = '<option value="">Choose...</option>';
 
-    $("#equb_type_id").on("change", function() {
-        var type = $(this).find("option:selected").data("info");
-        
-        if (type === "Manual") {
-         // Set the end date
-    $('#end_date').datepicker('destroy'); // Destroy any existing datepicker
-    $('#end_date').datepicker(); // Initialize datepicker
-    $('#end_date').datepicker('setDate', new Date(equbTypeEndDate));
-    $('#end_date').prop('readonly', true); // Make it read-only
+    // Update timeline visibility based on selected type
+    if (selectedType === "Manual") {
+        timeline.classList.remove("d-none");
+    } else if (selectedType === "Seasonal" || selectedType === "Automatic") {
+        timeline.classList.add("d-none");
+    }
 
-    lotteryDate.classList.add("d-none");
-    timeline.classList.add("d-none");
-    lotteryDate.required = false;
-        } else {
-            var equbTypeStartDate = $(this).find("option:selected").data("startdate");
-            var equbTypeEndDate = $(this).find("option:selected").data("enddate");
-            $('#start_date').datepicker('setDate', new Date(equbTypeStartDate));
-            $('#start_date').datepicker('destroy');
-            $('#end_date').datepicker('setDate', new Date(equbTypeEndDate));
-            $('#end_date').datepicker('destroy');
-            lotteryDate.classList.add("d-none");
-            timeline.classList.add("d-none");
-            lotteryDate.required = false;
+    // Populate equb_type_id based on selected type
+    @foreach ($equbTypes as $equbType)
+        if (selectedType === "{{ $equbType->type }}") {
+            const option = document.createElement('option');
+            option.value = "{{ $equbType->id }}";
+            option.textContent = "{{ $equbType->name }} round {{ $equbType->round }}";
+            option.setAttribute('data-info', "{{ $equbType->type }}");
+            option.setAttribute('data-startdate', "{{ $equbType->start_date }}");
+            option.setAttribute('data-enddate', "{{ $equbType->end_date }}");
+            option.setAttribute('data-rote', "{{ $equbType->rote }}");
+            option.setAttribute('data-quota', "{{ $equbType->quota }}");
+            option.setAttribute('data-amount', "{{ $equbType->amount }}");
+            option.setAttribute('data-expected-total', "{{ $equbType->expected_total }}");
+            equbTypeSelect.appendChild(option);
         }
-
-        $("#lottery_date").datepicker("destroy");
-        $("#lottery_date").datepicker(datePickerOptions);
-    });
-
-    $("#update_equb_type").on("change", function() {
-        var type = $(this).find("option:selected").data("info");
-        const lotteryDate = document.getElementById("update_equb_lottery_date_div");
-        const timeline = document.getElementById("update_timeline_div");
-
-        if (type !== "Automatic") {
-            lotteryDate.classList.remove("d-none");
-            timeline.classList.remove("d-none");
-            lotteryDate.required = true;
-        } else if (type === "Seasonal") {
-            // Hide both timeline and lottery date for Seasonal type
-            lotteryDate.classList.add("d-none");
-            timeline.classList.add("d-none");
-            lotteryDate.required = false;
-        } else {
-            var equbTypeStartDate = $(this).find("option:selected").data("startdate");
-            var equbTypeEndDate = $(this).find("option:selected").data("enddate");
-            $('#update_start_date').datepicker('setDate', new Date(equbTypeStartDate));
-            $('#update_start_date').datepicker('destroy');
-            $('#update_end_date').datepicker('setDate', new Date(equbTypeEndDate));
-            $('#update_end_date').datepicker('destroy');
-            lotteryDate.classList.add("d-none");
-            timeline.classList.add("d-none");
-            lotteryDate.required = false;
-        }
-
-        $("#update_lottery_date").datepicker("destroy");
-        $("#update_lottery_date").datepicker(datePickerOptions);
-    });
+    @endforeach
 });
+
+                $(document).ready(function() {
+                    const selectBox = document.getElementById("equb_type_id");
+                    const updateSelectBox = document.getElementById("equb_type");
+                    const lotteryDate = document.getElementById("equb_lottery_date_div");
+                    const timeline = document.getElementById("timeline_div");
+                    $("#equb_type_id").on("change", function() {
+                        var type = $(this).find("option:selected").data("info");
+                        if (type === "Manual" || type === "Manual") {
+                            lotteryDate.classList.remove("d-none");
+                            timeline.classList.remove("d-none");
+                            lotteryDate.required = true;
+                        } else {
+                            var equbTypeStartDate = $(this).find("option:selected").data("startdate");
+                            var equbTypeEndDate = $(this).find("option:selected").data("enddate");
+                            $('#start_date').datepicker('setDate', new Date(equbTypeStartDate));
+                            $('#start_date').datepicker('destroy');
+                            $('#end_date').datepicker('setDate', new Date(equbTypeEndDate));
+                            $('#end_date').datepicker('destroy');
+                            lotteryDate.classList.add("d-none");
+                            timeline.classList.add("d-none");
+                            lotteryDate.required = false;
+                        }
+                        $("#lottery_date").datepicker("destroy");
+                        $("#lottery_date").datepicker(datePickerOptions);
+                    });
+                    $("#update_equb_type").on("change", function() {
+                        var type = $(this).find("option:selected").data("info");
+                        const lotteryDate = document.getElementById("update_equb_lottery_date_div");
+                        const timeline = document.getElementById("update_timeline_div");
+                        if (type !== "Automatic") {
+                            lotteryDate.classList.remove("d-none");
+                            timeline.classList.remove("d-none");
+                            lotteryDate.required = true;
+                        } else {
+                            var equbTypeStartDate = $(this).find("option:selected").data("startdate");
+                            var equbTypeEndDate = $(this).find("option:selected").data("enddate");
+                            $('#update_start_date').datepicker('setDate', new Date(equbTypeStartDate));
+                            $('#update_start_date').datepicker('destroy');
+                            $('#update_end_date').datepicker('setDate', new Date(equbTypeEndDate));
+                            $('#update_end_date').datepicker('destroy');
+                            lotteryDate.classList.add("d-none");
+                            timeline.classList.add("d-none");
+                            lotteryDate.required = false;
+                        }
+                        $("#update_lottery_date").datepicker("destroy");
+                        $("#update_lottery_date").datepicker(datePickerOptions);
+                    });
+                });
                 $("#lottery_date_check").datepicker({
                     format: 'yyyy-mm-dd',
                     //multidate: true,
@@ -1744,4 +1756,4 @@
                 });
             });
         </script>
-@endSection
+    @endSection
