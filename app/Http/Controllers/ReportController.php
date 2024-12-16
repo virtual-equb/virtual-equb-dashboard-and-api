@@ -455,6 +455,7 @@ class ReportController extends Controller
                 $data['totalEqub'] = $this->equbRepository->countFilterEqubEndDates($dateFrom, $dateTo, $equbType);
                 // dd($data['totalEqub']);
                 $data['equbs'] = $this->equbRepository->filterEqubEndDates($dateFrom, $dateTo, $offset, $equbType);
+              dd($data);
                 return view('admin/report/unPaidReport/filterUnPaids', $data);
             
         } catch (Exception $ex) {
