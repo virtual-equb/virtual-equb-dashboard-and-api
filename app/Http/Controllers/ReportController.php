@@ -440,7 +440,34 @@ class ReportController extends Controller
             return back();
         }
     }
-  
+    /*public function filterEqubEndDates($dateFrom, $dateTo, $equbType)
+    {
+        try {
+            $data['offset'] = 0;
+            $offset = 0;
+            $data['limit'] = 50;
+            $data['pageNumber'] = 1;
+            $userData = Auth::user();
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
+                $data['title'] = "Virtual Equb - Fileter Equb By End Date Report";
+                // $data['paids'] = $this->paymentRepository->getPaidByDate($dateFrom, $dateTo);
+                // $equbId = $data['paids'];
+                // $equbId = json_encode($equbId);
+                // $equbId = str_replace('"', "", $equbId);
+                $data['totalEqub'] = $this->equbRepository->countFilterEqubEndDates($dateFrom, $dateTo, $equbType);
+                // dd($data['totalEqub']);
+                $data['equbs'] = $this->equbRepository->filterEqubEndDates($dateFrom, $dateTo, $offset, $equbType);
+                return view('admin/report/unPaidReport/filterUnPaids', $data);
+            // } else {
+            //     return view('auth/login');
+            // }
+        } catch (Exception $ex) {
+            $msg = "Unknown Error Occurred, Please try again!";
+            $type = 'error';
+            Session::flash($type, $msg);
+            return back();
+        }
+    }*/
     public function filterEqubEndDates($dateFrom, $dateTo, $equbType)
     {
         try {
@@ -451,11 +478,13 @@ class ReportController extends Controller
             $userData = Auth::user();
          //   if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
                 $data['title'] = "Virtual Equb - Fileter Equb By End Date Report";
-              
+                // $data['paids'] = $this->paymentRepository->getPaidByDate($dateFrom, $dateTo);
+                // $equbId = $data['paids'];
+                // $equbId = json_encode($equbId);
+                // $equbId = str_replace('"', "", $equbId);
                 $data['totalEqub'] = $this->equbRepository->countFilterEqubEndDates($dateFrom, $dateTo, $equbType);
                 // dd($data['totalEqub']);
                 $data['equbs'] = $this->equbRepository->filterEqubEndDates($dateFrom, $dateTo, $offset, $equbType);
-             
                 return view('admin/report/unPaidReport/filterUnPaids', $data);
             
         } catch (Exception $ex) {
