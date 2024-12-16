@@ -841,6 +841,7 @@ class PaymentController extends Controller
             ];
 
             $telebirr = $this->paymentRepository->create($paymentData);
+            dd ($telebirr);
             // Telebirr initialization 
             if ($telebirr) {
 
@@ -932,7 +933,7 @@ class PaymentController extends Controller
                 // $dataFromTele = $this->decrypt_RSA($pkey_public, $request->getContent());
                 // $dataObj = json_decode($dataFromTele, true);
                 $merch_order_id = $request['merch_order_id'];
-                $payment = Payment::find($merch_order_id);  // Find the record by ID
+                $payment = Payment::findOrFail($merch_order_id);  // Find the record by ID
                 Log::info($payment);
 
                 if ($request['trade_status'] == 'Completed') {
