@@ -205,130 +205,252 @@ class EqubTypeController extends Controller
             return back();
         }
     }
-    public function store(Request $request)
-    {
-       
+    public function store(Request $request) {
         try {
-                $userData = Auth::user();
-            
-                $this->validate($request, [
-                    'name' => 'required',
-                    'round' => 'required',
-                    'rote' => 'required',
-                    'type' => 'required',
-                    'main_equb_id' => 'required',
-                    'start_date' => 'required|date'
-                ]);
-                $name = $request->input('name');
-                $round = $request->input('round');
-                $rote = $request->input('rote');
-                $type = $request->input('type');
-                $remark = $request->input('remark');
-                $lottery_date = $request->input('lottery_date');
-                $start_date = $request->input('start_date');
-                $end_date = $request->input('end_date');
-                $quota = $request->input('quota');
-                $terms = $request->input('terms');
-                $main_equb = $request->input('main_equb_id');
-                $amount = $request->input('amount');
-                $total_amount = $request->input('total_amount');
-                // $expected_members = $request->input('quota');
-                
-                // Ensure start_date is in YMD format
-                $formattedStartDate = Carbon::parse($start_date)->format('Y-m-d');
-
-                // check if type is 'Automatic' and set lottery_date to 7 days after start_date
-                $lottery_date = $request->input('lottery_date');
-                if ($type === 'Automatic' && !$lottery_date) {
-                    $lottery_date = Carbon::parse($formattedStartDate)->addDays(7)->format('Y-m-d');
-                    $total_amount = $quota * $amount;
-                    $expected_members = 105;
-                }
-                if ($type === 'Seasonal') {
-                    // set default values for a 21-day equb
-                    $lottery_date = Carbon::parse($start_date)->addDays(7)->format('Y-m-d');
-                    $end_date = Carbon::parse($start_date)->addDays(21)->format('Y-m-d');
-                    $total_amount = $quota * $amount;
-                    $expected_members = $request->input('quota');
-
-                    // set a default quota for unlimited members
-                    $quota = null;
-                    // Override terms for this type
-                    $terms = "1. Registration is open until one day before the lottery date. 
-                            2. Members registering late must pay for missed days. 
-                            3. The Equb lasts for 21 days, with weekly lotteries.
-                            4. Number of weekly winners: total_members ÷ 3.";
-                }
-                if ($type === 'Manual') {
-                    $expected_members = null;
-                    $amount = null;
-                    $total_amount = null;
-                    $expected_members = null;
-                }
-                
-                if ($end_date) {
-                    $endDateCheck = $this->isDateInYMDFormat($end_date);
-                    $formattedEndDate = $end_date;
-                    if (!$endDateCheck) {
-                        $carbonDate = Carbon::createFromFormat('m/d/Y', $end_date);
-                        $formattedEndDate = $carbonDate->format('Y-m-d');
-                    }
-                }
-                $equbTypeData = [
-                    'name' => $name,
-                    'round' => $round,
-                    'rote' => $rote,
-                    'type' => $type,
-                    'remark' => $remark,
-                    'lottery_date' => $lottery_date,
-                    'start_date' => $start_date,
-                    'end_date' => $end_date ? $formattedEndDate : null,
-                    'quota' => $quota,
-                    'remaining_quota' => $quota,
-                    'terms' => $terms,
-                    'main_equb_id' => $main_equb,
-                    'amount' => $amount,
-                    'expected_members' => $expected_members,
-                    'total_amount' => $total_amount,
+            $userData = Auth::user();
+        
+            $this->validate($request, [
+                'name' => 'required',
+                'round' => 'required',
+                'rote' => 'required',
+                'type' => 'required',
+                'main_equb_id' => 'required|exists:main_equbs,id',
+                'start_date' => 'required|date',
+            ]);
+        
+            $name = $request->input('name');
+            $round = $request->input('round');
+            $rote = $request->input('rote');
+            $type = $request->input('type');
+            $remark = $request->input('remark');
+            $lottery_date = $request->input('lottery_date');
+            $start_date = $request->input('start_date');
+            $end_date = $request->input('end_date');
+            $quota = $request->input('quota');
+            $terms = $request->input('terms');
+            $main_equb = $request->input('main_equb_id');
+            $amount = $request->input('amount');
+            $total_amount = $request->input('total_amount');
+        
+            // Format the start_date for consistency
+            $formattedStartDate = Carbon::parse($start_date)->format('Y-m-d');
+        
+            // Set default values based on the type
+            if ($type === 'Automatic' && !$lottery_date) {
+                $lottery_date = Carbon::parse($formattedStartDate)->addDays(7)->format('Y-m-d');
+                $total_amount = $quota * $amount;
+                $expected_members = 105;
+            } elseif ($type === 'Seasonal') {
+                $lottery_date = Carbon::parse($start_date)->addDays(7)->format('Y-m-d');
+                $end_date = Carbon::parse($start_date)->addDays(21)->format('Y-m-d');
+                $total_amount = $quota * $amount;
+                $expected_members = $request->input('quota');
+                $quota = null;
+                $terms = "1. Registration is open until one day before the lottery date. 
+                          2. Members registering late must pay for missed days. 
+                          3. The Equb lasts for 21 days, with weekly lotteries.
+                          4. Number of weekly winners: total_members ÷ 3.";
+            }
+        
+            // For manual type, exclude irrelevant fields
+            if ($type === 'Manual') {
+                $lottery_date = null;
+                $quota = null;
+                $amount = null;
+                $total_amount = null;
+                $expected_members = null;
+            }
+        
+            // Prepare the data for insertion
+            $equbTypeData = [
+                'name' => $name,
+                'round' => $round,
+                'rote' => $rote,
+                'type' => $type,
+                'remark' => $remark,
+                'lottery_date' => $lottery_date,
+                'start_date' => $start_date,
+                'end_date' => $end_date ? Carbon::parse($end_date)->format('Y-m-d') : null,
+                'quota' => $quota,
+                'remaining_quota' => $quota,
+                'terms' => $terms,
+                'main_equb_id' => $type === 'Manual' ? null : $main_equb,
+                'amount' => $type === 'Manual' ? null : $amount,
+                'expected_members' => $type === 'Manual' ? null : $expected_members,
+                'total_amount' => $type === 'Manual' ? null : $total_amount,
+            ];
+        
+            // Handle file upload
+            if ($request->file('icon')) {
+                $image = $request->file('icon');
+                $imageName = time() . '.' . $image->getClientOriginalExtension();
+                $image->storeAs('public/equbTypeIcons', $imageName);
+                $equbTypeData['image'] = 'equbTypeIcons/' . $imageName;
+            }
+        
+            // Remove null fields for clean insertion
+            $equbTypeData = array_filter($equbTypeData, function ($value) {
+                return !is_null($value);
+            });
+        
+            // Insert the data
+            $create = $this->equbTypeRepository->create($equbTypeData);
+            $user = Auth::user();
+            $roleName = $user->getRoleNames()->first();
+        
+            if ($create) {
+                $activityLog = [
+                    'type' => 'equb_types',
+                    'type_id' => $create->id,
+                    'action' => 'created',
+                    'user_id' => $userData->id,
+                    'username' => $userData->name,
+                    'role' => $roleName,
                 ];
-                if ($request->file('icon')) {
-                    $image = $request->file('icon');
-                    $imageName = time() . '.' . $image->getClientOriginalExtension();
-                    $image->storeAs('public/equbTypeIcons', $imageName);
-                    $equbTypeData['image'] = 'equbTypeIcons/' . $imageName;
-                }
-
-                $create = $this->equbTypeRepository->create($equbTypeData);
-                $user = Auth::user();
-                $roleName = $user->getRoleNames()->first();
-                if ($create) {
-                    $activityLog = [
-                        'type' => 'equb_types',
-                        'type_id' => $create->id,
-                        'action' => 'created',
-                        'user_id' => $userData->id,
-                        'username' => $userData->name,
-                        'role' => $roleName,
-                    ];
-                    $this->activityLogRepository->createActivityLog($activityLog);
-                    $msg = "Equb type has been registered successfully!";
-                    $type = 'success';
-                    Session::flash($type, $msg);
-                    return redirect('/equbType');
-                } else {
-                    $msg = "Unknown Error Occurred, Please try again!";
-                    $type = 'error';
-                    Session::flash($type, $msg);
-                    redirect('/equbType');
-                }
+                $this->activityLogRepository->createActivityLog($activityLog);
+        
+                $msg = "Equb type has been registered successfully!";
+                Session::flash('success', $msg);
+                return redirect('/equbType');
+            } else {
+                $msg = "Unknown Error Occurred, Please try again!";
+                Session::flash('error', $msg);
+                return redirect('/equbType');
+            }
         } catch (Exception $ex) {
-            // dd($ex);
             $msg = $ex->getMessage();
-            $type = 'error';
-            Session::flash($type, $msg);
+            Session::flash('error', $msg);
             return back();
         }
+        
     }
+    // public function store(Request $request)
+    // {
+       
+    //     try {
+    //             $userData = Auth::user();
+            
+    //             $this->validate($request, [
+    //                 'name' => 'required',
+    //                 'round' => 'required',
+    //                 'rote' => 'required',
+    //                 'type' => 'required',
+    //                 'main_equb_id' => 'required|exists:main_equbs,id',
+    //                 'start_date' => 'required|date'
+    //             ]);
+    //             $name = $request->input('name');
+    //             $round = $request->input('round');
+    //             $rote = $request->input('rote');
+    //             $type = $request->input('type');
+    //             $remark = $request->input('remark');
+    //             $lottery_date = $request->input('lottery_date');
+    //             $start_date = $request->input('start_date');
+    //             $end_date = $request->input('end_date');
+    //             $quota = $request->input('quota');
+    //             $terms = $request->input('terms');
+    //             $main_equb = $request->input('main_equb_id');
+    //             $amount = $request->input('amount');
+    //             $total_amount = $request->input('total_amount');
+    //             // $expected_members = $request->input('quota');
+                
+    //             // Ensure start_date is in YMD format
+    //             $formattedStartDate = Carbon::parse($start_date)->format('Y-m-d');
+
+    //             // check if type is 'Automatic' and set lottery_date to 7 days after start_date
+    //             $lottery_date = $request->input('lottery_date');
+    //             if ($type === 'Automatic' && !$lottery_date) {
+    //                 $lottery_date = Carbon::parse($formattedStartDate)->addDays(7)->format('Y-m-d');
+    //                 $total_amount = $quota * $amount;
+    //                 $expected_members = 105;
+    //             } else if ($type === 'Seasonal') {
+    //                 $lottery_date = Carbon::parse($start_date)->addDays(7)->format('Y-m-d');
+    //                 $end_date = Carbon::parse($start_date)->addDays(21)->format('Y-m-d');
+    //                 $total_amount = $quota * $amount;
+    //                 $expected_members = $request->input('quota');
+
+    //                 // set a default quota for unlimited members
+    //                 $quota = null;
+    //                 // Override terms for this type
+    //                 $terms = "1. Registration is open until one day before the lottery date. 
+    //                         2. Members registering late must pay for missed days. 
+    //                         3. The Equb lasts for 21 days, with weekly lotteries.
+    //                         4. Number of weekly winners: total_members ÷ 3.";
+    //             }
+    //             // if ($type === 'Seasonal') {
+    //             //     // set default values for a 21-day equb
+                    
+    //             // }
+    //             if ($type === 'Manual') {
+    //                 $lottery_date = null;
+    //                 $expected_members = null;
+    //                 $amount = null;
+    //                 $total_amount = null;
+    //                 $expected_members = null;
+    //             }
+                
+    //             if ($end_date) {
+    //                 $endDateCheck = $this->isDateInYMDFormat($end_date);
+    //                 $formattedEndDate = $end_date;
+    //                 if (!$endDateCheck) {
+    //                     $carbonDate = Carbon::createFromFormat('m/d/Y', $end_date);
+    //                     $formattedEndDate = $carbonDate->format('Y-m-d');
+    //                 }
+    //             }
+    //             $equbTypeData = [
+    //                 'name' => $name,
+    //                 'round' => $round,
+    //                 'rote' => $rote,
+    //                 'type' => $type,
+    //                 'remark' => $remark,
+    //                 'lottery_date' => $lottery_date,
+    //                 'start_date' => $start_date,
+    //                 'end_date' => $end_date ? $formattedEndDate : null,
+    //                 'quota' => $type === 'Manual' ? null : $quota,
+    //                 'remaining_quota' => $quota,
+    //                 'terms' => $terms,
+    //                 'main_equb_id' => $type === 'Manual' ? null : $main_equb,
+    //                 'amount' => $type === 'Manual' ? null : $amount,
+    //                 'expected_members' => $type === 'Manual' ? null : $expected_members,
+    //                 'total_amount' => $type === 'Manual' ? null : $total_amount,
+    //             ];
+    //             if ($request->file('icon')) {
+    //                 $image = $request->file('icon');
+    //                 $imageName = time() . '.' . $image->getClientOriginalExtension();
+    //                 $image->storeAs('public/equbTypeIcons', $imageName);
+    //                 $equbTypeData['image'] = 'equbTypeIcons/' . $imageName;
+    //             }
+
+    //             $create = $this->equbTypeRepository->create($equbTypeData);
+    //             $user = Auth::user();
+    //             $roleName = $user->getRoleNames()->first();
+    //             if ($create) {
+    //                 $activityLog = [
+    //                     'type' => 'equb_types',
+    //                     'type_id' => $create->id,
+    //                     'action' => 'created',
+    //                     'user_id' => $userData->id,
+    //                     'username' => $userData->name,
+    //                     'role' => $roleName,
+    //                 ];
+    //                 $this->activityLogRepository->createActivityLog($activityLog);
+    //                 $msg = "Equb type has been registered successfully!";
+    //                 $type = 'success';
+    //                 Session::flash($type, $msg);
+    //                 return redirect('/equbType');
+    //             } else {
+    //                 $msg = "Unknown Error Occurred, Please try again!";
+    //                 $type = 'error';
+    //                 Session::flash($type, $msg);
+    //                 redirect('/equbType');
+    //             }
+    //     } catch (Exception $ex) {
+    //         // dd($ex);
+    //         $msg = $ex->getMessage();
+    //         $type = 'error';
+    //         Session::flash($type, $msg);
+    //         return back();
+    //     }
+    // }
     public function isDateInYMDFormat($dateString)
     {
         try {
