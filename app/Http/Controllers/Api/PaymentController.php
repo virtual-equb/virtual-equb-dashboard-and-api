@@ -742,7 +742,7 @@ class PaymentController extends Controller
             Log::info('from initialize');
             $user = Auth::user();
             $userId = $user->id;
-
+            $member = Member::where('phone', $user->phone_number)->first();
             $equbId = $request->input('equb_id');
             $amount = $request->input('amount');
             $equb = Equb::where('id', $equbId)->first();
@@ -826,7 +826,7 @@ class PaymentController extends Controller
                     $amount = $at;
                 }
             }
-            $memberData = Member::where('id', 42)->first();
+            $memberData = Member::where('id', $member->id)->first();
 
             $paymentData = [
                 'member_id' => $memberData->id,
