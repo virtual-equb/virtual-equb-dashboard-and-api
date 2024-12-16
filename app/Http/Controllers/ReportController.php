@@ -434,7 +434,7 @@ class ReportController extends Controller
             // }
         } catch (Exception $ex) {
             // dd($ex);
-            $msg = "Unknown Error Occurred, Please try again!";
+            $msg = "Unknown Error Occurred, Please try again!" . $ex->getMessage();
             $type = 'error';
             Session::flash($type, $msg);
             return back();
@@ -488,7 +488,7 @@ class ReportController extends Controller
                 return view('admin/report/unPaidReport/filterUnPaids', $data);
             
         } catch (Exception $ex) {
-            $msg = "Unknown Error Occurred, Please try again!";
+            $msg = "Unknown Error Occurred, Please try again!" . $ex->getMessage();
             $type = 'error';
             Session::flash($type, $msg);
             return back();
