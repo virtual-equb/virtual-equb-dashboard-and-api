@@ -53,7 +53,6 @@
                                                         <th>Phone</th>
                                                         <th>Equb Type</th>
                                                         <th>status</th>
-                                                        <th>Actions</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -65,15 +64,6 @@
                                                             <td>{{ $taker->member->phone }}</td>
                                                             <td>{{ $taker->equb->equbType->name }}</td>
                                                             <td>{{ $taker->status }}</td>
-                                                            <td>
-                                                                <a href="" class="btn btn-info btn-sm">View</a>
-                                                                <a href="" class="btn btn-warning btn-sm">Edit</a>
-                                                                <form action="" method="POST" style="display:inline;">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
-                                                                </form>
-                                                            </td>
                                                         </tr>
                                                     @endforeach
                                                 </tbody>

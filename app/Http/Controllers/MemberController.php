@@ -191,7 +191,7 @@ class MemberController extends Controller
                 $equbs = $this->equbRepository->getAll();
                 $payments = $this->paymentRepository->getAllPayment();
                 $title = $this->title;
-                // dd($members);
+               //  dd($members);
                 $title = $this->title;
                 $cities = $this->cityRepository->getAll();
                 return view('admin/member.pendingMemberList', compact('title', 'equbTypes', 'members', 'equbs', 'payments','cities'));

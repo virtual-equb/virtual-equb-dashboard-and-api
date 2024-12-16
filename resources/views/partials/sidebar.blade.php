@@ -6,7 +6,6 @@
     <div class="sidebar">
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image">
-                {{-- {{ Auth::user()->profile_photo_path || null }} --}}
                 @if (Auth::check() && Auth::user()->profile_photo_path)
                     <img src="{{ Auth::user()->profile_photo_path }}" alt="Profile Photo">
                 @else
@@ -16,7 +15,7 @@
             <div class="info">
                 <a href="/user/profile" class="d-block">
                     @if (Auth::check() && Auth::user()->name)
-                    {{ Auth::user()->name }}
+                        {{ Auth::user()->name }}
                     @endif
                 </a>
             </div>
@@ -35,64 +34,39 @@
                     </a>
                     <ul class="nav nav-treeview ml-2">
                         <li class="nav-item">
-                            <a href="{{ route('dashboard') }}" class="nav-link" id="mainDash" onclick="setActive('mainDash')">
+                            <a href="{{ route('dashboard') }}" class="nav-link" id="mainDash" onclick="setActive('mainDash', 'dashboardLink')">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Main Dashboard</p>
                             </a>
                         </li>
                     </ul>
-                    <ul class="nav nav-treeview ml-2">
-                        {{-- @foreach (App\Models\MainEqub::all() as $equbType)
-                            <li class="nav-item">
-                                <a href="#" class="nav-link" onclick="setActive('equb-{{ $mainEqub->id }}')">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>{{ $mainEqub->name }}<i class="fas fa-angle-left right"></i></p>
-                                </a>
-                                <ul class="nav nav-treeview ml-2">
-                                    @if ($mainEqub->subEqub && $mainEqub->subEqub->count())
-                                        @foreach ($mainEqub->subEqub as $equbType)
-                                            <li class="nav-item">
-                                                <a href="{{ url('equbTypeDashboard/' . $equbType->id) }}" class="nav-link" id="{{ $equbType->id }}">
-                                                    <i class="far fa-circle nav-icon"></i>
-                                                    <p>{{ $equbType->name }}</p>
-                                                </a>
-                                            </li>
-                                        @endforeach
-                                    @else
-                                        <li class="nav-item">
-                                            <p class="nav-link">No Equb Types available</p>
-                                        </li>
-                                    @endif
-                                </ul>
-                            </li>
-                        @endforeach --}}
-                        @foreach (App\Models\MainEqub::with('subEqub')->get() as $mainEqub)
-                        <li class="nav-item">
-                            <a href="#" class="nav-link" onclick="setActive('equb-{{ $mainEqub->id }}')">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>{{ $mainEqub->name }}<i class="fas fa-angle-left right"></i></p>
-                            </a>
-                            <ul class="nav nav-treeview ml-2">
-                                @if ($mainEqub->subEqub && $mainEqub->subEqub->count())
-                                    @foreach ($mainEqub->subEqub as $equbType)
-                                        <li class="nav-item">
-                                            <a href="{{ url('equbTypeDashboard/' . $equbType->id) }}" class="nav-link" id="{{ $equbType->id }}">
-                                                <i class="far fa-circle nav-icon"></i>
-                                                <p>{{ $equbType->name }}</p>
-                                            </a>
-                                        </li>
-                                    @endforeach
-                                @else
+                    @foreach (App\Models\MainEqub::with('subEqub')->get() as $mainEqub)
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="setActive('equb-{{ $mainEqub->id }}')">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>{{ $mainEqub->name }}<i class="fas fa-angle-left right"></i></p>
+                        </a>
+                        <ul class="nav nav-treeview ml-2">
+                            @if ($mainEqub->subEqub && $mainEqub->subEqub->count())
+                                @foreach ($mainEqub->subEqub as $equbType)
                                     <li class="nav-item">
-                                        <p class="nav-link">No Equb Types available</p>
+                                        <a href="{{ url('equbTypeDashboard/' . $equbType->id) }}" class="nav-link" id="{{ $equbType->id }}" onclick="setActive('{{ $equbType->id }}', 'equb-{{ $mainEqub->id }}')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>{{ $equbType->name }}</p>
+                                        </a>
                                     </li>
-                                @endif
-                            </ul>
-                        </li>
+                                @endforeach
+                            @else
+                                <li class="nav-item">
+                                    <p class="nav-link">No Equb Types available</p>
+                                </li>
+                            @endif
+                        </ul>
+                    </li>
                     @endforeach
-                    </ul>
                 </li>
                 @endcan
+
                 <!-- Members Section -->
                 @can('view member')
                 <li class="nav-item">
@@ -105,13 +79,13 @@
                     </a>
                     <ul class="nav nav-treeview ml-2">
                         <li class="nav-item">
-                            <a href="{{ route('showMember') }}" class="nav-link" id="nav-mem" onclick="setActive('nav-mem')">
+                            <a href="{{ route('showMember') }}" class="nav-link" id="nav-mem" onclick="setActive('nav-mem', 'membersLink')">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>All Members</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('showPendingMembers') }}" class="nav-link" id="pendingMem" onclick="setActive('pendingMem')">
+                            <a href="{{ route('showPendingMembers') }}" class="nav-link" id="pendingMem" onclick="setActive('pendingMem', 'membersLink')">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Pending Members</p>
                             </a>
@@ -132,20 +106,20 @@
                     </a>
                     <ul class="nav nav-treeview ml-2">
                         <li class="nav-item">
-                            <a href="{{ route('showAllPendingPayments') }}" class="nav-link" id="pendingPayments" onclick="setActive('pendingPayments')">
+                            <a href="{{ route('showAllPendingPayments') }}" class="nav-link" id="pendingPayments" onclick="setActive('pendingPayments', 'paymentsLink')">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Pending Payments</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('showAllPaidPayments') }}" class="nav-link" id="paidPayments" onclick="setActive('paidPayments')">
+                            <a href="{{ route('showAllPaidPayments') }}" class="nav-link" id="paidPayments" onclick="setActive('paidPayments', 'paymentsLink')">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Paid Payments</p>
                             </a>
                         </li>
                         @can('view equb_taker')
                         <li class="nav-item">
-                            <a href="{{ route('showEqubTaker') }}" class="nav-link" id="showEqubTaker" onclick="setActive('showEqubTaker')">
+                            <a href="{{ route('showEqubTaker') }}" class="nav-link" id="showEqubTaker" onclick="setActive('showEqubTaker', 'paymentsLink')">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Equb Taker</p>
                             </a>
@@ -196,13 +170,13 @@
                     </a>
                     <ul class="nav nav-treeview ml-2">
                         <li class="nav-item">
-                            <a href="{{ route('showNotifations') }}" class="nav-link" id="notification" onclick="setActive('notification')">
+                            <a href="{{ route('showNotifations') }}" class="nav-link" id="notification" onclick="setActive('notification', 'notificationsLink')">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>View Notifications</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('showSentNotifications') }}" class="nav-link" id="sentNotification" onclick="setActive('sentNotification')">
+                            <a href="{{ route('showSentNotifications') }}" class="nav-link" id="sentNotification" onclick="setActive('sentNotification', 'notificationsLink')">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Sent Notifications</p>
                             </a>
@@ -231,7 +205,7 @@
                     </a>
                     <ul class="nav nav-treeview ml-2" style="{{ request()->is('cities*') ? 'display: block;' : 'display: none;' }}">
                         <li class="nav-item">
-                            <a href="{{ route('cities.index') }}" class="nav-link {{ request()->is('cities') ? 'active' : '' }}" id="cityLink" onclick="setActive('cityLink')">
+                            <a href="{{ route('cities.index') }}" class="nav-link {{ request()->is('cities') ? 'active' : '' }}" id="cityLink" onclick="setActive('cityLink', 'locationsLink')">
                                 <i class="nav-icon fas fa-city"></i>
                                 <p>City</p>
                             </a>
@@ -251,12 +225,11 @@
                     </a>
                     <ul class="nav nav-treeview ml-2" style="{{ request()->is('permission') || request()->is('roles') ? 'display: block;' : 'display: none;' }}">
                         <li class="nav-item">
-                            <a href="{{ url('settings/permission') }}" class="nav-link {{ request()->is('permission') ? 'active' : '' }}" id="nav-permissions" onclick="setActive('nav-permissions')">
+                            <a href="{{ url('settings/permission') }}" class="nav-link {{ request()->is('permission') ? 'active' : '' }}" id="nav-permissions" onclick="setActive('nav-permissions', 'settingsLink')">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Permissions</p>
                             </a>
                         </li>
-                     
                     </ul>
                 </li>
                 @endcan
@@ -277,12 +250,63 @@
 </aside>
 
 <script>
-    function setActive(id) {
-        // Remove 'active' class from all nav links
-        document.querySelectorAll('.nav-link').forEach(link => {
+    function setActive(id, parentId = null) {
+        // Remove 'active' class from all links
+        const links = document.querySelectorAll('.nav-link');
+        links.forEach(link => {
             link.classList.remove('active');
         });
+
         // Add 'active' class to the clicked link
-        document.getElementById(id).classList.add('active');
+        const activeLink = document.getElementById(id);
+        if (activeLink) {
+            activeLink.classList.add('active');
+        }
+
+        // If a parent ID is provided, add 'active' class to the parent link
+        if (parentId) {
+            const parentLink = document.getElementById(parentId);
+            if (parentLink) {
+                parentLink.classList.add('active');
+                // Show the submenu if the clicked link has a submenu
+                const parentLi = parentLink.closest('.nav-item');
+                if (parentLi) {
+                    const submenu = parentLi.querySelector('.nav-treeview');
+                    if (submenu) {
+                        submenu.style.display = 'block'; // Show submenu
+                    }
+                }
+            }
+        }
+
+        // Expand the parent menu item if the clicked item is a submenu
+        const parentLi = activeLink.closest('.nav-item');
+        if (parentLi) {
+            const parentMenu = parentLi.closest('.nav-treeview');
+            if (parentMenu) {
+                parentMenu.style.display = 'block'; // Ensure the dropdown is open
+            }
+        }
     }
+
+    // Optional: Add hover effect for active links
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        link.addEventListener('mouseover', () => {
+            link.classList.add('hover');
+        });
+        link.addEventListener('mouseout', () => {
+            link.classList.remove('hover');
+        });
+    });
 </script>
+
+<style>
+    /* Add hover effect styles */
+    .nav-link.hover {
+        background-color: rgba(255, 255, 255, 0.1); /* Change background color on hover */
+    }
+    .nav-link.active {
+        background-color: rgba(0, 123, 255, 0.2); /* Highlight active link */
+    }
+</style>
