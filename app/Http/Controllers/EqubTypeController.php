@@ -261,6 +261,9 @@ class EqubTypeController extends Controller
                 }
                 if ($type === 'Manual') {
                     $expected_members = null;
+                    $amount = null;
+                    $total_amount = null;
+                    $expected_members = null;
                 }
                 
                 if ($end_date) {
