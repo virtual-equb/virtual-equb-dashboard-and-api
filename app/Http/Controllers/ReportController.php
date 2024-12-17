@@ -584,7 +584,8 @@ class ReportController extends Controller
                 $data['title'] = "Virtual Equb - Collected By Report";
                 $data['collecters'] = $this->userRepository->getCollecters();
                 $data['equbTypes'] = $this->equbTypeRepository->getActive();
-                
+               // return response()->json( $data['collecters'] );
+
                 return view('admin/report/collectedByReport/collectedByReports', $data);
             // } else {
             //     return view('auth/login');
@@ -880,9 +881,10 @@ class ReportController extends Controller
          //   if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
                 $data['title'] = "Virtual Equb - Reserved Lottery Dates Report";
                 $data['equbTypes'] = $this->equbTypeRepository->getActive();
-              //  dd($data);
-                return view('admin/report/reservedLotteryDates/lotterys', $data);
-        
+                return response()->json($data);
+
+              //  return view('admin/report/reservedLotteryDates/lotterys', $data);
+          
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
