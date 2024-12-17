@@ -25,6 +25,7 @@ use App\Http\Controllers\Api\MainEqubController;
 use App\Http\Controllers\Api\EqubTakerController;
 use App\Http\Controllers\Api\PermissionController;
 use App\Http\Controllers\Api\ActivityLogController;
+use App\Http\Controllers\Api\CbeMiniAppController;
 use App\Http\Controllers\Api\CountryCodeController;
 use App\Http\Controllers\Api\PaymentTypeController;
 use App\Http\Controllers\Api\RejectedDateController;
@@ -44,6 +45,11 @@ use App\Http\Controllers\EqubTypeController as ControllersEqubTypeController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+// mini app
+Route::get('/validate-token', [CbeMiniAppController::class, 'validateToken']);
+Route::post('/process-payment', [CbeMiniAppController::class, 'processPayment']);
+Route::post('/callback', [CbeMiniAppController::class, 'paymentCallback']);
 
 Route::post('/drawauto', [ControllersEqubTypeController::class, 'drawSeasonedAutoWinners']);
 
