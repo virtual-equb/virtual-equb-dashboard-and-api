@@ -315,24 +315,24 @@ class ReportController extends Controller
         }
     }
     public function paymentFilter()
-    {
-        try {
-            $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
-                $data['title'] = "Virtual Equb - Payments Report";
-                $data['members'] = $this->memberRepository->getAll();
-                $data['equbTypes'] = $this->equbTypeRepository->getActive();
-                return view('admin/report/paymentReport/payments', $data);
-            // } else {
-            //     return view('auth/login');
-            // }
-        } catch (Exception $ex) {
-            $msg = "Unknown Error Occurred, Please try again!";
-            $type = 'error';
-            Session::flash($type, $msg);
-            return back();
-        }
+{
+    try {
+            $data['title'] = "Virtual Equb - Payments Report";
+            $data['members'] = $this->memberRepository->getAll();
+            $data['equbTypes'] = $this->equbTypeRepository->getActive();
+            
+            // Render the view directly instead of returning JSON
+            return view('admin.report.paymentReport.payments', $data);
+        // } else {
+        //     return view('auth/login');
+        // }
+    } catch (Exception $ex) {
+        $msg = "Unknown Error Occurred, Please try again!";
+        $type = 'error';
+        Session::flash($type, $msg);
+        return back();
     }
+}
     public function payments($dateFrom, $dateTo, $member_id, $equb_id)
     {
         try {
@@ -881,7 +881,7 @@ class ReportController extends Controller
          //   if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
                 $data['title'] = "Virtual Equb - Reserved Lottery Dates Report";
                 $data['equbTypes'] = $this->equbTypeRepository->getActive();
-             //   return response()->json($data);
+            //    return response()->json($data);
 
                return view('admin/report/reservedLotteryDates/lotterys', $data);
           

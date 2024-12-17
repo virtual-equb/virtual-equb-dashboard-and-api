@@ -235,7 +235,9 @@ Route::middleware([
         Route::get('/paginateMembersByEqubType/{dateFrom}/{dateTo}/{equbType}/{offsetVal}/{pageNumberVal}', [ReportController::class, 'paginateMembersByEqubType']);
         Route::get('/equbTypeFilter', [ReportController::class, 'equbTypeFilter'])->name('equbTypeFilter');
         Route::get('/equbTypes/{dateFrom}/{dateTo}', [ReportController::class, 'equbTypes'])->name('equbTypes');
-        Route::get('/paymentFilter', [ReportController::class, 'paymentFilter'])->name('paymentFilter');
+       // Route::get('/paymentFilter', [ReportController::class, 'paymentFilter'])->name('paymentFilter');
+       Route::get('/paymentFilter', [ReportController::class, 'paymentFilter'])->name('paymentFilter');
+
         Route::get('/payments', [ReportController::class, 'payments'])->name('payments');
 
         Route::get('/equbFilter', [ReportController::class, 'equbFilter'])->name('equbFilter');
