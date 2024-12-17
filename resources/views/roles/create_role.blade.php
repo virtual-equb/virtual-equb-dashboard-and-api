@@ -1,13 +1,10 @@
-@can('create role')
 @extends('layouts.app')
 
 @section('title')
     {{ get_label('create_role', 'Create Role') }}
 @endsection
 
-<?php
-use Spatie\Permission\Models\Permission;
-?>
+<?php use Spatie\Permission\Models\Permission; ?>
 
 @section('content')
     <div class="wrapper">
@@ -41,7 +38,7 @@ use Spatie\Permission\Models\Permission;
                                             </a>
                                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                         </div>
-                                        <form action="{{ url('/roles/store') }}" class="form-submit-event" method="POST">
+                                        <form action="{{ url('/roles/store') }}" method="POST" class="form-submit-event">
                                             @csrf
                                             <input type="hidden" name="redirect_url" value="/settings/permission">
 
@@ -49,13 +46,13 @@ use Spatie\Permission\Models\Permission;
                                                 <label for="name" class="form-label">
                                                     {{ str_replace('_', ' ', get_label('name', 'Name')) }} <span class="asterisk">*</span>
                                                 </label>
-                                                <input class="form-control" type="text" placeholder="{{ str_replace('_', ' ', get_label('please_enter_role_name', 'Please enter role name')) }}" id="name" name="name" required>
+                                                <input type="text" id="name" name="name" class="form-control" placeholder="{{ str_replace('_', ' ', get_label('please_enter_role_name', 'Please enter role name')) }}" required>
                                                 @error('name')
                                                     <p class="text-danger text-xs mt-1">{{ $message }}</p>
                                                 @enderror
                                             </div>
 
-                                            <hr class="mb-2" />
+                                            <hr class="mb-2">
 
                                             <div class="table-responsive">
                                                 <table class="table my-2 table-bordered">
@@ -73,32 +70,30 @@ use Spatie\Permission\Models\Permission;
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-    @foreach(config("roles.permissions") as $module => $permissions)
-        <tr>
-            <td class="text-start">
-                <div class="form-check">
-                    <input type="checkbox" id="selectRow{{ $module }}" class="form-check-input row-permission-checkbox" data-module="{{ $module }}">
-                    <label class="form-check-label" for="selectRow{{ $module }}" style="font-size: 1.2em; font-weight: 600;">
-                        {{ str_replace('_', ' ', $module) }}
-                    </label>
-                </div>
-            </td>
-            <td>
-                <div class="row">
-                    @foreach($permissions as $permission => $guards)
-                        <div class="col-3 mb-3">
-                            <div class="form-check">
-                                <?php $permissionModel = Permission::where('name', $permission)->where('guard_name', 'web')->first(); ?>
-                                <input type="checkbox" name="permissions[]" value="{{ optional($permissionModel)->id }}" class="form-check-input permission-checkbox" data-module="{{ $module }}">
-                                <label class="form-check-label text-capitalize" for="permission{{ optional($permissionModel)->id }}">{{ str_replace('_', ' ', $permission) }}</label>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </td>
-        </tr>
-    @endforeach
-</tbody>
+                                                        @foreach(config("roles.permissions") as $module => $permissions)
+                                                            <tr>
+                                                                <td class="text-start">
+                                                                    <div class="form-check">
+                                                                        <input type="checkbox" id="selectRow{{ $module }}" class="form-check-input row-permission-checkbox" data-module="{{ $module }}">
+                                                                        <label class="form-check-label" for="selectRow{{ $module }}" style="font-size: 1.2em; font-weight: 600;">{{ str_replace('_', ' ', $module) }}</label>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="row">
+                                                                        @foreach($permissions as $permission => $guards)
+                                                                            <div class="col-3 mb-3">
+                                                                                <div class="form-check">
+                                                                                    <?php $permissionModel = Permission::where('name', $permission)->where('guard_name', 'web')->first(); ?>
+                                                                                    <input type="checkbox" name="permissions[]" value="{{ optional($permissionModel)->id }}" class="form-check-input permission-checkbox" data-module="{{ $module }}">
+                                                                                    <label class="form-check-label text-capitalize" for="permission{{ optional($permissionModel)->id }}">{{ str_replace('_', ' ', $permission) }}</label>
+                                                                                </div>
+                                                                            </div>
+                                                                        @endforeach
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </tbody>
                                                 </table>
                                             </div>
 
@@ -153,4 +148,3 @@ use Spatie\Permission\Models\Permission;
 @endsection
 
 @endsection
-@endcan
