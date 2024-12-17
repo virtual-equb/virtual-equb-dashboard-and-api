@@ -1,4 +1,4 @@
-
+@can('view unpaid_lottories_report')
       <table id="equb-table" class="table table-bordered table-striped ">
           <thead>
               <tr>
@@ -142,4 +142,4 @@
               }).buttons().container().appendTo('#equb-table_wrapper .col-md-6:eq(0)');
           });
       </script>
-
+@endcan
