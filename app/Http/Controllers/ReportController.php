@@ -877,13 +877,12 @@ class ReportController extends Controller
     {
         try {
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
+         //   if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
                 $data['title'] = "Virtual Equb - Reserved Lottery Dates Report";
                 $data['equbTypes'] = $this->equbTypeRepository->getActive();
+                dd($data);
                 return view('admin/report/reservedLotteryDates/lotterys', $data);
-            // } else {
-            //     return view('auth/login');
-            // }
+        
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';

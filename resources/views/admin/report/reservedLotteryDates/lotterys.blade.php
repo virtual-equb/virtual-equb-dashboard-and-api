@@ -145,4 +145,4 @@
             })
         </script>
     @endSection
-@endcan
+
