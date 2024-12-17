@@ -880,7 +880,7 @@ class ReportController extends Controller
          //   if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
                 $data['title'] = "Virtual Equb - Reserved Lottery Dates Report";
                 $data['equbTypes'] = $this->equbTypeRepository->getActive();
-                dd($data);
+              //  dd($data);
                 return view('admin/report/reservedLotteryDates/lotterys', $data);
         
         } catch (Exception $ex) {
