@@ -83,6 +83,17 @@
 
 @section('scripts')
     <script>
+        function lotteries(offsetVal, pageNumberVal) {
+            let equbType = $('#equb_type').val() || 'all';
+            $.ajax({
+                url: "{{ url('reports/paginateReservedLotteryDates') }}" + '/' + $('#dateFrom').val() + '/' + $('#dateTo').val() + '/' + offsetVal + '/' + pageNumberVal + '/' + equbType,
+                type: 'get',
+                success: function(data) {
+                    $('#filterLotteryTable').html(data);
+                }
+            });
+        }
+
         function filter() {
             let dateFrom = $('#dateFrom').val();
             let dateTo = $('#dateTo').val();
@@ -91,38 +102,25 @@
             // Reset error messages
             $('#dateFromRequired, #dateToRequired, #equbTypeRequired').addClass('d-none');
 
-            // Validate inputs
             if (!dateFrom && !dateTo) {
                 $('#dateFromRequired, #dateToRequired').removeClass('d-none');
-                return;
-            }
-            if (!dateFrom) {
-                $('#dateFromRequired').removeClass('d-none');
-                return;
-            }
-            if (!dateTo) {
-                $('#dateToRequired').removeClass('d-none');
-                return;
-            }
-
-            // If all validations pass, make the AJAX call
-            $.ajax({
-                url: "{{ url('reports/reservedLotteryDates') }}",
-                method: 'GET',
-                data: {
-                    dateFrom: dateFrom,
-                    dateTo: dateTo,
-                    equbType: equbType
-                },
-                success: function(data) {
-                    $('#filterLotteryTable').html(data);
-                },
-                error: function(xhr) {
-                    // Handle error if necessary
-                    console.error(xhr);
-                    alert("An error occurred while fetching data.");
+            } else {
+                if (!dateFrom) {
+                    $('#dateFromRequired').removeClass('d-none');
                 }
-            });
+                if (!dateTo) {
+                    $('#dateToRequired').removeClass('d-none');
+                }
+                if (dateFrom && dateTo) {
+                    $.ajax({
+                        url: "{{ url('reports/reservedLotteryDates') }}" + '/' + dateFrom + '/' + dateTo + '/' + equbType,
+                        method: 'get',
+                        success: function(form) {
+                            $('#filterLotteryTable').html(form);
+                        }
+                    });
+                }
+            }
         }
 
         $(function() {
