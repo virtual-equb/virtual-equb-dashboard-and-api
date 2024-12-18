@@ -67,14 +67,12 @@
 
                                                       </li>
                                                       @endcan
-                                                      @can('update memeber')
                                                       <li>
                                                           <button href="javascript:void(0);"
                                                               class="text-secondary btn btn-flat"
                                                               onclick="openEditModal({{ $item }})"><span
                                                                   class="fa fa-edit"> </span> Edit</button>
                                                       </li>
-                                                      @endcan
                                                       @can('delete member')
                                                       <li>
                                                           <button href="javascript:void(0);"
