@@ -1,13 +1,10 @@
-@can('create role')
 @extends('layouts.app')
 
 @section('title')
     {{ get_label('create_role', 'Create Role') }}
 @endsection
 
-<?php
-use Spatie\Permission\Models\Permission;
-?>
+<?php use Spatie\Permission\Models\Permission; ?>
 
 @section('content')
     <div class="wrapper">
@@ -41,7 +38,8 @@ use Spatie\Permission\Models\Permission;
                                             </a>
                                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                         </div>
-                                        <form action="{{ url('/roles/update/' . $role->id) }}" class="form-submit-event" method="POST">
+
+                                        <form action="{{ url('/roles/update/' . $role->id) }}" method="POST" class="form-submit-event">
                                             @csrf
                                             @method('PUT')
                                             <input type="hidden" name="redirect_url" value="/settings/permission">
@@ -68,9 +66,7 @@ use Spatie\Permission\Models\Permission;
                                                                     <label class="form-check-label" for="selectAllColumnPermissions">{{ get_label('select_all', 'Select all') }}</label>
                                                                 </div>
                                                             </th>
-                                                            <th class="text-start fw-bold" style="font-size: 1.2em;">
-                                                                Permissions
-                                                            </th>
+                                                            <th class="text-start fw-bold" style="font-size: 1.2em;">Permissions</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -79,9 +75,7 @@ use Spatie\Permission\Models\Permission;
                                                             <td class="text-start">
                                                                 <div class="form-check">
                                                                     <input type="checkbox" id="selectRow{{ $module }}" class="form-check-input row-permission-checkbox" data-module="{{ $module }}">
-                                                                    <label class="form-check-label" for="selectRow{{ $module }}" style="font-size: 1.2em; font-weight: 600;">
-                                                                        {{ str_replace('_', ' ', $module) }}
-                                                                    </label>
+                                                                    <label class="form-check-label" for="selectRow{{ $module }}" style="font-size: 1.2em; font-weight: 600;">{{ str_replace('_', ' ', $module) }}</label>
                                                                 </div>
                                                             </td>
                                                             <td>
@@ -117,6 +111,7 @@ use Spatie\Permission\Models\Permission;
             </section>
         </div>
     </div>
+@endsection
 
 @section('scripts')
 <script>
@@ -152,6 +147,3 @@ use Spatie\Permission\Models\Permission;
     });
 </script>
 @endsection
-
-@endsection
-@endcan
