@@ -83,6 +83,7 @@ class MemberRepository implements IMemberRepository
     {
         return $this->model->whereDate('created_at', '>=', $dateFrom)
             ->whereDate('created_at', '<=', $dateTo)
+            ->where('gender', '!=', '')
             ->with('equbs')
             ->orderBy('created_at', 'DESC')
             ->offset($offset)

@@ -42,6 +42,7 @@ class UserRepository implements IUserRepository
     {
         return $this->model->where('name', 'LIKE', "%{$searchInput}%")
             ->orWhere('phone_number', 'LIKE', "%{$searchInput}%")
+            ->where('gender', '!=', '')
             ->offset($offset)
             ->limit($this->limit)
             ->orderBy('name', 'asc')
