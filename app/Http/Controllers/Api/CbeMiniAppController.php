@@ -53,6 +53,8 @@ class CbeMiniAppController extends Controller
         
             $payload = $validated;
         
+            $payload['tillCode'] = '4002415';
+            
             // Add your hashing key here (securely stored in .env)
             $hashingKey = env('CBE_HASHING_KEY');
         
