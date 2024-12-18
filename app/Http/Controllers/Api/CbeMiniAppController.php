@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\AppToken;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -27,6 +28,10 @@ class CbeMiniAppController extends Controller
 
             if ($response->status() === 200) {
                 return response()->json(['data' => $response->json()], 200);
+                // save the token
+                AppToken::create([
+                    'token' => $token
+                ]);
             } else {
                 return response()->json(['error' => 'Invalid Token'], 401);
             }
