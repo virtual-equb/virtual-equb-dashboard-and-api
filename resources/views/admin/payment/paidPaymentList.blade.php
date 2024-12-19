@@ -110,7 +110,7 @@
             console.log("Searching for:", searchInput);
             if (searchInput) {
                 $.ajax({
-                    url: "{{ url('payment/search-paid-payment') }}/" + searchInput + '/0', // Updated URL
+                  //  url: "{{ url('payment/search-paid-payment') }}/" + searchInput + '/0', // Updated URL
                     type: 'get',
                     success: function(data) {
                         $('#member_table_data').html(data);

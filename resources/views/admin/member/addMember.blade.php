@@ -86,7 +86,7 @@
 
 <script>
 $(document).ready(function() {
-    $('#select-city').change(function() {
+    $('#select-city1').change(function() {
         var cityId = $(this).val();
         $('#subcity1').empty().append('<option value="">Select Sub-City</option>');
         $('#addSubcity1').hide();
