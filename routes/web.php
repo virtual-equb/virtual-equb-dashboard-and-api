@@ -49,7 +49,7 @@ Route::get('/unauthorized', function () {
 
 
 // mini app
-Route::post('/validate-token', [CbeMiniAppController::class, 'validateToken']);
+Route::get('/validate-token', [CbeMiniAppController::class, 'validateToken']);
 Route::post('/process-payment', [CbeMiniAppController::class, 'processPayment']);
 Route::post('/callback', [CbeMiniAppController::class, 'paymentCallback']);
 
