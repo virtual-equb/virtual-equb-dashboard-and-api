@@ -560,40 +560,28 @@
                 $('#deleteEqub').attr('action', 'member/equb-delete/' + $('#equb_id').val())
             }
 
+           
             function openEditModal(item) {
-                // var addressObject = JSON.parse(item.address);
-                $('#m_id').val(item.id);
-                $('#editMemberModal').modal('show');
-                $('#update_full_name').val(item.full_name);
-                $('#update_phone').val(item.phone);
-                $('#update_email').val(item.email);
-                $('#update_subcity').val(item.subcity);
-                $('#update_woreda').val(item.woreda);
-                $('#update_location').val(item.specific_location);
-                $('#update_housenumber').val(item.house_number);
-                $('#update_gender>option[value="' + item.gender + '"]').prop('selected', true);
-                $('#update_city>option[value="' + item.city + '"]').prop('selected', true);
+    $('#m_id').val(item.id);
+    $('#editMemberModal').modal('show');
+    $('#update_full_name').val(item.full_name);
+    $('#update_phone').val(item.phone);
+    $('#update_email').val(item.email);
+    $('#update_woreda').val(item.woreda);
+    $('#update_location').val(item.specific_location);
+    $('#update_housenumber').val(item.house_number);
+    $('#update_gender > option[value="' + item.gender + '"]').prop('selected', true);
+    $('#select-city > option[value="' + item.city + '"]').prop('selected', true);
 
-                $('#updateMember').attr('action', 'member/update/' + $('#m_id').val());
-            }
+    // Set the profile picture preview dynamically
+    if (item.profile_photo_path) {
+        $('#profilePicPreview').attr('src', '{{ asset('storage') }}/' + item.profile_photo_path);
+    } else {
+        $('#profilePicPreview').attr('src', '{{ asset('storage/profile_pictures/default.png') }}'); // Default image path
+    }
 
-            function openEditModal(item) {
-                // var addressObject = JSON.parse(item.address);
-                $('#m_id').val(item.id);
-                $('#editMemberModal').modal('show');
-                $('#update_full_name').val(item.full_name);
-                $('#update_phone').val(item.phone);
-                $('#update_email').val(item.email);
-                $('#update_subcity').val(item.subcity);
-                $('#update_woreda').val(item.woreda);
-                $('#update_location').val(item.specific_location);
-                $('#update_housenumber').val(item.house_number);
-                $('#update_gender>option[value="' + item.gender + '"]').prop('selected', true);
-                $('#update_city>option[value="' + item.city + '"]').prop('selected', true);
-
-                $('#updateMember').attr('action', 'member/update/' + $('#m_id').val());
-            }
-
+    $('#updateMember').attr('action', 'member/update/' + $('#m_id').val());
+}
             function openRateModal(item) {
                 console.log("ðŸš€ ~ file: memberList.blade.php:495 ~ openRateModal ~ item:", item)
                 // var addressObject = JSON.parse(item.address);

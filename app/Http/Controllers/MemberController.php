@@ -1077,86 +1077,92 @@ class MemberController extends Controller
     }
     public function update($id, Request $request)
     {
-        // dd($request);
         try {
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
-                $this->validate(
-                    $request,
-                    [
-                        'full_name' => 'required',
-                        'phone' => 'required',
-                        'gender' => 'required',
-                        'update_city' => 'required',
-                        'update_location' => 'required',
-                    ]
-                );
-                $name = $request->input('full_name');
-                $phone = $request->input('phone');
-                $gender = $request->input('gender');
-                $city = $request->input('update_city');
-                $subcity = $request->input('update_subcity');
-                $woreda = $request->input('update_woreda');
-                $housenumber = $request->input('update_housenumber');
-                $location = $request->input('update_location');
-                $email = $request->input('email');
-                $member_phone = $this->memberRepository->getPhone($id);
-                $member_phone = $member_phone->phone;
-                $user_id = $this->userRepository->getUserId($member_phone);
-                $user_id = $user_id->id;
-                // $address = [
-                //     'City' => $city,
-                //     'SubCity' => $subcity,
-                //     'Woreda' => $woreda,
-                //     'House_Number' => $housenumber,
-                //     'Specific_Location' => $location
-                // ];
-                $updated = [
-                    'full_name' => $name,
-                    'phone' => $phone,
-                    'gender' => $gender,
-                    'email' => $email,
-                    'city' => $city,
-                    'subcity' => $subcity,
-                    'woreda' => $woreda,
-                    'house_number' => $housenumber,
-                    'specific_location' => $location,
-                    // 'address' => json_encode($address),
-
+    
+            // Log incoming request data for debugging
+            \Log::info('Incoming request data:', $request->all());
+    
+            // Validate request
+            $this->validate(
+                $request,
+                [
+                    'full_name' => 'required',
+                    'phone' => 'required',
+                    'gender' => 'required',
+                    'update_city' => 'required',
+                    'update_location' => 'required',
+                    'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                ]
+            );
+    
+            // Gather input data
+            $name = $request->input('full_name');
+            $phone = $request->input('phone');
+            $gender = $request->input('gender');
+            $city = $request->input('update_city');
+            $subcity = $request->input('update_subcity');
+            $woreda = $request->input('update_woreda');
+            $housenumber = $request->input('update_housenumber');
+            $location = $request->input('update_location');
+            $email = $request->input('email');
+    
+            // Get member's phone and user ID
+            $member_phone = $this->memberRepository->getPhone($id);
+            $member_phone = $member_phone->phone;
+            $user_id = $this->userRepository->getUserId($member_phone);
+            $user_id = $user_id->id;
+    
+            // Prepare data for updating
+            $updated = [
+                'full_name' => $name,
+                'phone' => $phone,
+                'gender' => $gender,
+                'email' => $email,
+                'city' => $city,
+                'subcity' => $subcity,
+                'woreda' => $woreda,
+                'house_number' => $housenumber,
+                'specific_location' => $location,
+            ];
+    
+            // Handle profile picture update
+            if ($request->hasFile('profile_picture')) {
+                $path = $request->file('profile_picture')->store('profile_pictures', 'public');
+                $updated['profile_photo_path'] = $path; // Store the new profile photo path
+            }
+    
+            // Update member and user
+            $updatedMember = $this->memberRepository->update($id, $updated);
+            $updateUser = [
+                'name' => $name,
+                'phone_number' => $phone,
+                'gender' => $gender,
+                'email' => $email
+            ];
+            $updatedUser = $this->userRepository->updateUser($user_id, $updateUser);
+    
+            if ($updatedMember && $updatedUser) {
+                $activityLog = [
+                    'type' => 'members',
+                    'type_id' => $id,
+                    'action' => 'updated',
+                    'user_id' => $userData->id,
+                    'username' => $userData->name,
+                    'role' => $userData->role,
                 ];
-                $updated = $this->memberRepository->update($id, $updated);
-                $updateUser = [
-                    'name' => $name,
-                    'phone_number' => $phone,
-                    'gender' => $gender,
-                    'email' => $email
-                ];
-                $updateUser = $this->userRepository->updateUser($user_id, $updateUser);
-                if ($updated && $updateUser) {
-                    $activityLog = [
-                        'type' => 'members',
-                        'type_id' => $id,
-                        'action' => 'updated',
-                        'user_id' => $userData->id,
-                        'username' => $userData->name,
-                        'role' => $userData->role,
-                    ];
-                    $this->activityLogRepository->createActivityLog($activityLog);
-                    $msg = "Member details has been updated successfully!";
-                    $type = 'success';
-                    Session::flash($type, $msg);
-                    return redirect('member/');
-                } else {
-                    $msg = "Unknown error occurred, Please try again!";
-                    $type = 'error';
-                    Session::flash($type, $msg);
-                    return back();
-                }
-            // } else {
-            //     return view('auth/login');
-            // }
+                $this->activityLogRepository->createActivityLog($activityLog);
+                $msg = "Member details have been updated successfully!";
+                $type = 'success';
+                Session::flash($type, $msg);
+                return redirect('member/');
+            } else {
+                $msg = "Unknown error occurred, Please try again!";
+                $type = 'error';
+                Session::flash($type, $msg);
+                return back();
+            }
         } catch (Exception $ex) {
-            // dd($ex);
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
             Session::flash($type, $msg);

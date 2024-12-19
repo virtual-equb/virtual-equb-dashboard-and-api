@@ -5,6 +5,8 @@
                           <tr>
                               <th></th>
                               <th>No</th>
+                              <td>profile</td>
+                              
                               <th>Full Name</th>
                               <th>Phone</th>
                               <th>Gender</th>
@@ -24,8 +26,13 @@
                               //   dd($address);
                               ?>
                               <tr id="trm{{ $item['id'] }}">
+                              
                                   <td class="details-control_equb" id="{{ $item['id'] }}"></td>
                                   <td>{{ $offset + $key + 1 }} </td>
+                                  <td style="background-color: rgb(76, 175, 80); width: 60px; text-align: center;">
+    <img src="{{ asset('storage/' . $item->profile_photo_path) }}" alt="{{ $item->profile_photo_path }}" 
+         style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+</td>
                                   <th>{{ $item->full_name }}
                                   </th>
                                   <th>{{ $item->phone }}</th>
