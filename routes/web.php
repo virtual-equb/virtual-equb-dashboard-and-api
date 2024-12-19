@@ -1,25 +1,26 @@
 <?php
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\EqubTypeController;
-use App\Http\Controllers\MemberController;
-use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\PaymentTypeController;
-use App\Http\Controllers\EqubController;
-use App\Http\Controllers\EqubTakerController;
-use App\Http\Controllers\RejectedDateController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\ReportController;
-use App\Http\Controllers\ActivityLogController;
-use App\Http\Controllers\BoleController;
-use App\Http\Controllers\FrontMainEqubController;
-use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\CityController;
-use App\Http\Controllers\SubCityController;
-use App\Http\Controllers\MainEqubController;
-use App\Http\Controllers\WebPermissionController;
-use App\Http\Controllers\WebRoleController;
 use App\Http\Controllers\SubController;
+use App\Http\Controllers\BoleController;
+use App\Http\Controllers\CityController;
+use App\Http\Controllers\EqubController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\RolesController;
+use App\Http\Controllers\MemberController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\SubCityController;
+use App\Http\Controllers\WebRoleController;
+use App\Http\Controllers\EqubTypeController;
+use App\Http\Controllers\MainEqubController;
+use App\Http\Controllers\EqubTakerController;
+use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\PaymentTypeController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\RejectedDateController;
+use App\Http\Controllers\FrontMainEqubController;
+use App\Http\Controllers\WebPermissionController;
+use App\Http\Controllers\Api\CbeMiniAppController;
 use App\Http\Controllers\TermsAndConditionsController;
 /*
 |--------------------------------------------------------------------------
@@ -47,7 +48,10 @@ Route::get('/unauthorized', function () {
 // });
 
 
-
+// mini app
+Route::post('/validate-token', [CbeMiniAppController::class, 'validateToken']);
+Route::post('/process-payment', [CbeMiniAppController::class, 'processPayment']);
+Route::post('/callback', [CbeMiniAppController::class, 'paymentCallback']);
 
 Route::get('/register', function () {
     return view('auth/login');

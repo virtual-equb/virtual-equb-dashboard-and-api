@@ -46,10 +46,7 @@ use App\Http\Controllers\EqubTypeController as ControllersEqubTypeController;
 |
 */
 
-// mini app
-Route::post('/validate-token', [CbeMiniAppController::class, 'validateToken']);
-Route::post('/process-payment', [CbeMiniAppController::class, 'processPayment']);
-Route::post('/callback', [CbeMiniAppController::class, 'paymentCallback']);
+
 
 Route::post('/drawauto', [ControllersEqubTypeController::class, 'drawSeasonedAutoWinners']);
 
