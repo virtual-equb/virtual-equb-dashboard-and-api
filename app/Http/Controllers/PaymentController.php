@@ -490,7 +490,7 @@ class PaymentController extends Controller
             // if ($userData->hasAnyRole($adminRoles)) {
                 $this->middleware('auth');
                 $data['title'] = $this->title;
-                $data['paids'] = Payment::all();
+                $data['paids'] = Payment::where('status', 'pending')->with('member')->get();
                // dd($data['paids']);
                 return view('admin/payment.paidPaymentList', $data);
 
