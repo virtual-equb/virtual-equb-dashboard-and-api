@@ -491,7 +491,7 @@ class PaymentController extends Controller
                 $this->middleware('auth');
                 $data['title'] = $this->title;
                 $data['paids'] = Payment::where('status', 'paid')->with('member')->get();
-                dd($data['paids']);
+               // dd($data['paids']);
                 return view('admin/payment.paidPaymentList', $data);
 
             // } else {
