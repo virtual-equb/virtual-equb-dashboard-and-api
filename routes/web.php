@@ -167,7 +167,7 @@ Route::middleware([
         Route::get('/{member_id}/{equb_id}', [PaymentController::class, 'index'])->name('showAllPayment');
         Route::get('/show-payment/{member_id}/{equb_id}/{offsetVal}/{pageNumberVal}', [PaymentController::class, 'show'])->name('showPayment');
         Route::get('/show-all-pending-payment', [PaymentController::class, 'indexAll'])->name('showAllPendingPayments');
-       // Route::get('/show-all-paid-payment', [PaymentController::class, 'paidPayment'])->name('showAllPaidPayments');
+        Route::get('/show-all-paid-payment', [PaymentController::class, 'paidPayment'])->name('showAllPaidPayments');
         Route::get('/show-pending-payment/{offsetVal}/{pageNumberVal}', [PaymentController::class, 'indexPendingPaginate'])->name('showPendingPayments');
         Route::get('/show-paid-payment/{offsetVal}/{pageNumberVal}', [PaymentController::class, 'indexPaidPaginate'])->name('showPaidPayments');
         
