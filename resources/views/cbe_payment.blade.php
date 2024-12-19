@@ -82,55 +82,59 @@
     </div>
 
     <script>
-        document.getElementById('cbePaymentForm').addEventListener('submit', function (event) {
-            event.preventDefault(); // Prevent the form from submitting the traditional way
-            const form = event.target;
+       document.getElementById('cbePaymentForm').addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent the form from submitting the traditional way
+        const form = event.target;
 
-            // Collect the form data
-            const formData = new FormData(form);
-            const paymentData = {
-                amount: formData.get('amount'),
-                transactionId: formData.get('transactionId'),
-                tillCode: formData.get('tillCode'),
-                callbackUrl: "{{ route('cbe.callback') }}" // Ensure this route exists in your Laravel application
-            };
+        // Collect the form data
+        const formData = new FormData(form);
+        const paymentData = {
+            amount: formData.get('amount'),
+            transactionId: formData.get('transactionId'),
+            tillCode: formData.get('tillCode'),
+            token: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjI1MTkxODA5NDQ1NSIsImV4cCI6MTczODI3OTU0NH0.8NrfTbeErIXyin-PH0Vgvnkq4-q2TeVvQz4P3FtBqZU",
+            callbackUrl: "{{ route('cbe.callback') }}", // Ensure this route exists in your Laravel application
+            transactionTime: new Date().toISOString(), // Current timestamp in ISO 8601 format
+            companyName: "Virtualekub", // Use your company name
+        };
 
-            // Perform AJAX request to initialize payment
-            fetch(form.action, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: JSON.stringify(paymentData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                const messageBox = document.getElementById('messageBox');
-                if (data.status === 'success') {
-                    // Send the payment token to CBE Mini App via WebView
-                    if (window.myJsChannel) {
-                        window.myJsChannel.postMessage(data.token); // Replace with the actual token field
-                        messageBox.innerHTML = 'Redirecting to payment...';
-                        messageBox.style.display = 'block';
-                    } else {
-                        messageBox.innerHTML = 'Payment initialized successfully, but the CBE Mini App communication channel is not available.';
-                        messageBox.style.display = 'block';
-                        console.error("CBE Mini App communication channel is not available.");
-                    }
-                } else {
-                    // Show error message
-                    messageBox.innerHTML = 'Error: ' + data.message;
+        // Perform AJAX request to initialize payment
+        fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify(paymentData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Processed Payload', data.processedPayload);
+            const messageBox = document.getElementById('messageBox');
+            if (data.status === 'success') {
+                // Send the payment token to CBE Mini App via WebView
+                if (window.myJsChannel) {
+                    window.myJsChannel.postMessage(data.token); // Replace with the actual token field
+                    messageBox.innerHTML = 'Redirecting to payment...';
                     messageBox.style.display = 'block';
+                } else {
+                    messageBox.innerHTML = 'Payment initialized successfully, but the CBE Mini App communication channel is not available.';
+                    messageBox.style.display = 'block';
+                    console.error("CBE Mini App communication channel is not available.");
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                const messageBox = document.getElementById('messageBox');
-                messageBox.innerHTML = 'An unexpected error occurred. Please try again.';
+            } else {
+                // Show error message
+                messageBox.innerHTML = 'Error: ' + data.message;
                 messageBox.style.display = 'block';
-            });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            const messageBox = document.getElementById('messageBox');
+            messageBox.innerHTML = 'An unexpected error occurred. Please try again.';
+            messageBox.style.display = 'block';
         });
+    });
     </script>
 </body>
 </html>
