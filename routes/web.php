@@ -32,7 +32,9 @@ use App\Http\Controllers\TermsAndConditionsController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
+Route::get('/cbe-payment', function () {
+    return view('cbe_payment');
+})->name('cbe.payment');
 Route::get('/unauthorized', function () {
     return view('errorPages.authorization'); // Replace with your unauthorized view
 })->name('unauthorized');
@@ -49,6 +51,8 @@ Route::get('/unauthorized', function () {
 
 
 // mini app
+
+
 Route::get('/validate-token', [CbeMiniAppController::class, 'validateToken']);
 Route::post('/process-payment', [CbeMiniAppController::class, 'processPayment']);
 Route::post('/callback', [CbeMiniAppController::class, 'paymentCallback']);
