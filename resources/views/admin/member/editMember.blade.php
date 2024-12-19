@@ -45,7 +45,7 @@
                             
                             <label class="control-label">Address</label>
                             <div class="col-12 row">
-                            <div class="form-group required col-6" id="addCity">
+                                <div class="form-group required col-6" id="addCity">
                                     <label class="control-label">City</label>
                                     <select class="form-control select2" name="update_city" id="update_city"
                                         name="city" placeholder="City" autocomplete="off" required="true" required>
@@ -54,7 +54,7 @@
                                         <option value="{{ $city->id }}">{{ $city->name }}</option>
                                     @endforeach
                                 </select>
-                                </div>
+                            </div>
                              
                             <div class="form-group col-6" id="addSubcity" style="display:none;">
                                 <label class="control-label">Sub-City</label>
