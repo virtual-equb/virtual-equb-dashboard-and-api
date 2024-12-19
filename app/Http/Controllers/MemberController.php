@@ -1090,7 +1090,7 @@ class MemberController extends Controller
                     'full_name' => 'required',
                     'phone' => 'required',
                     'gender' => 'required',
-                    'update_city' => 'required',
+                    'city' => 'required',
                     'update_location' => 'required',
                     'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 ]
@@ -1100,8 +1100,8 @@ class MemberController extends Controller
             $name = $request->input('full_name');
             $phone = $request->input('phone');
             $gender = $request->input('gender');
-            $city = $request->input('update_city');
-            $subcity = $request->input('update_subcity');
+            $city = $request->input('city');
+            $subcity = $request->input('subcity');
             $woreda = $request->input('update_woreda');
             $housenumber = $request->input('update_housenumber');
             $location = $request->input('update_location');

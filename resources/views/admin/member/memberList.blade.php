@@ -571,7 +571,42 @@
     $('#update_location').val(item.specific_location);
     $('#update_housenumber').val(item.house_number);
     $('#update_gender > option[value="' + item.gender + '"]').prop('selected', true);
-    $('#select-city > option[value="' + item.id + '"]').prop('selected', true);
+    
+    // Set the selected city
+    $('#select-city > option[value="' + item.city + '"]').prop('selected', true);
+
+    // Fetch sub-cities based on the selected city
+    var cityId = item.city; // Assuming item.city contains the city ID
+    $('#subcity').empty().append('<option value="">Select Sub-City</option>');
+    $('#addSubcity').hide();
+
+    if (cityId) {
+        $.ajax({
+            url: '/subcities/city/' + encodeURIComponent(cityId),
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                if (data.length > 0) {
+                    $.each(data, function(index, subcity) {
+                        $('#subcity').append('<option value="' + subcity.id + '">' + subcity.name + '</option>');
+                    });
+                    // Set the default sub-city based on the item data
+                    if (item.subcity) { // Assuming item.subcity contains the sub-city ID
+                        $('#subcity > option[value="' + item.subcity + '"]').prop('selected', true);
+                    }
+                    $('#addSubcity').show();
+                } else {
+                    $('#addSubcity').hide();
+                }
+            },
+            error: function() {
+                alert('Failed to retrieve sub-cities.');
+                $('#addSubcity').hide();
+            }
+        });
+    } else {
+        $('#addSubcity').hide();
+    }
 
     // Set the profile picture preview dynamically
     if (item.profile_photo_path) {
