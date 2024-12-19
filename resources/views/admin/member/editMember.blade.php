@@ -42,121 +42,26 @@
                                 </select>
                             </div>
                             <hr>
+                            
                             <label class="control-label">Address</label>
                             <div class="col-12 row">
-                                <div class="form-group required col-6" id="addCity">
+                            <div class="form-group required col-6" id="addCity">
                                     <label class="control-label">City</label>
                                     <select class="form-control select2" name="update_city" id="update_city"
                                         name="city" placeholder="City" autocomplete="off" required="true" required>
-                                        <option value="">City</option>
-                                        <option value="Abomsa">Abomsa</option>
-                                        <option value="Adama">Adama</option>
-                                        <option value="Addis Ababa">Addis Ababa</option>
-                                        <option value="Addis Zemen">Addis Zemen</option>
-                                        <option value="Adet">Adet</option>
-                                        <option value="Adigrat">Adigrat</option>
-                                        <option value="Agaro">Agaro</option>
-                                        <option value="Ä€reka">Ä€reka</option>
-                                        <option value="Arba Minch">Arba Minch</option>
-                                        <option value="Asaita">Asaita</option>
-                                        <option value="Assbe Tefera">Assbe Tefera</option>
-                                        <option value="Assosa">Assosa</option>
-                                        <option value="Assosa">Assosa</option>
-                                        <option value="Axum">Axum</option>
-                                        <option value="Bahir Dar">Bahir Dar</option>
-                                        <option value="Bako">Bako</option>
-                                        <option value="Bata">Bata</option>
-                                        <option value="Bedele">Bedele</option>
-                                        <option value="Bedesa">Bedesa</option>
-                                        <option value="Bichena">Bichena</option>
-                                        <option value="Bishoftu">Bishoftu</option>
-                                        <option value="Boditi">Boditi</option>
-                                        <option value="Bonga">Bonga</option>
-                                        <option value="Bure">Bure</option>
-                                        <option value="Butajira">Butajira</option>
-                                        <option value="Debark">Debark</option>
-                                        <option value="Debre Birhan">Debre Birhan</option>
-                                        <option value="Debre Markos">Debre Markos</option>
-                                        <option value="Debre Tabor">Debre Tabor</option>
-                                        <option value="Dessie">Dessie</option>
-                                        <option value="Dilla">Dilla</option>
-                                        <option value="Dire Dawa">Dire Dawa</option>
-                                        <option value="Dodola">Dodola</option>
-                                        <option value="Dubti">Dubti</option>
-                                        <option value="Felege Neway">Felege Neway</option>
-                                        <option value="Fiche">Fiche</option>
-                                        <option value="Finote Selam">Finote Selam</option>
-                                        <option value="Gambela">Gambela</option>
-                                        <option value="Gebre Guracha">Gebre Guracha</option>
-                                        <option value="Gelemso">Gelemso</option>
-                                        <option value="Genet">Genet</option>
-                                        <option value="Gimbi">Gimbi</option>
-                                        <option value="Ginir">Ginir</option>
-                                        <option value="Goba">Goba</option>
-                                        <option value="Gondar">Gondar</option>
-                                        <option value="Golwayn">Golwayn</option>
-                                        <option value="Hagere Hiywet">Hagere Hiywet</option>
-                                        <option value="Hagere Maryam">Hagere Maryam</option>
-                                        <option value="Harar">Harar</option>
-                                        <option value="Hosaaina">Hosaaina</option>
-                                        <option value="Inda Silase">Inda Silase</option>
-                                        <option value="Jijiga">Jijiga</option>
-                                        <option value="Jimma">Jimma</option>
-                                        <option value="Jinka">Jinka</option>
-                                        <option value="Kahandhale">Kahandhale</option>
-                                        <option value="Kemise">Kemise</option>
-                                        <option value="Kibre Mengist">Kibre Mengist</option>
-                                        <option value="Korem">Korem</option>
-                                        <option value="Lasoano">Lasoano</option>
-                                        <option value="Maychew">Maychew</option>
-                                        <option value="Mek'ele">Mek'ele</option>
-                                        <option value="Metahara">Metahara</option>
-                                        <option value="Metu">Metu</option>
-                                        <option value="Mojo">Mojo</option>
-                                        <option value="Nazret">Nazret</option>
-                                        <option value="Neefkuceliye">Neefkuceliye</option>
-                                        <option value="Nejo">Nejo</option>
-                                        <option value="Qorof">Qorof</option>
-                                        <option value="Raqo">Raqo</option>
-                                        <option value="Robit">Robit</option>
-                                        <option value="Sodo">Sodo</option>
-                                        <option value="Sebeta">Sebeta</option>
-                                        <option value="Shakiso">Shakiso</option>
-                                        <option value="Shambu">Shambu</option>
-                                        <option value="Shashemene">Shashemene</option>
-                                        <option value="Waliso">Waliso</option>
-                                        <option value="Wenji">Wenji</option>
-                                        <option value="Werota">Werota</option>
-                                        <option value="Yabelo">Yabelo</option>
-                                        <option value="Yamarugley">Yamarugley</option>
-                                        <option value="Yirga Alem">Yirga Alem</option>
-                                        <option value="Ziway">Ziway</option>
-                                        <option value="Waal">Waal</option>
-                                        <option value="Fadhigaradle">Fadhigaradle</option>
-                                        <option value="Gedo">Gedo</option>
-                                        <option value="Digih Habar Es">Digih Habar Es</option>
-                                    </select>
+                                    <option value="">Select City</option>
+                                    @foreach ($cities as $city)
+                                        <option value="{{ $city->id }}">{{ $city->name }}</option>
+                                    @endforeach
+                                </select>
                                 </div>
-                                <div class="form-group col-6" id="addSubcity">
-                                    <label class="control-label">Sub-City</label>
-                                    {{-- <select class="form-control select2" id="update_subcity" name="update_subcity"
-                                        placeholder="Subcity" autocomplete="off">
-                                        <option value="">Subcity</option>
-                                        <option value="Addis Ketema">Addis Ketema</option>
-                                        <option value="Akaky Kaliti">Akaky Kaliti</option>
-                                        <option value="Arada">Arada</option>
-                                        <option value="Bole">Bole</option>
-                                        <option value="Gullele">Gullele</option>
-                                        <option value="Kirkos">Kirkos</option>
-                                        <option value="Kolfe Keranio">Kolfe Keranio</option>
-                                        <option value="Lideta">Lideta</option>
-                                        <option value="Lemi Kura">Lemi Kura</option>
-                                        <option value="Nifas Silk-Lafto">Nifas Silk-Lafto</option>
-                                        <option value="Yeka">Yeka</option>
-                                    </select> --}}
-                                    <input type="text" class="form-control" id="update_subcity"
-                                        name="update_subcity"placeholder="Subcity">
-                                </div>
+                             
+                            <div class="form-group col-6" id="addSubcity" style="display:none;">
+                                <label class="control-label">Sub-City</label>
+                                <select class="form-control select2" id="subcity" name="subcity" required>
+                                    <option value="">Select Sub-City</option>
+                                </select>
+                            </div>
                             </div>
                             <div class="col-12 row">
                                 <div class="form-group col-6" id="addWoreda">
@@ -214,7 +119,41 @@
             </div>
         </div>
     </div>
-    <script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    $('#select-city').change(function() {
+        var cityId = $(this).val();
+        $('#subcity').empty().append('<option value="">Select Sub-City</option>');
+        $('#addSubcity').hide();
+
+        if (cityId) {
+            $.ajax({
+                url: '/subcities/city/' + encodeURIComponent(cityId),
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    if (data.length > 0) {
+                        $.each(data, function(index, subcity) {
+                            $('#subcity').append('<option value="' + subcity.id + '">' + subcity.name + '</option>');
+                        });
+                        $('#addSubcity').show();
+                    } else {
+                        $('#addSubcity').hide();
+                    }
+                },
+                error: function() {
+                    alert('Failed to retrieve sub-cities.');
+                    $('#addSubcity').hide();
+                }
+            });
+        } else {
+            $('#addSubcity').hide();
+        }
+    });
+});
+
 function previewImage(event) {
     const file = event.target.files[0];
     const reader = new FileReader();
