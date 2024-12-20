@@ -49,64 +49,107 @@ class CbeMiniAppController extends Controller
         }
     }
 
+    // public function processPayment(Request $request)
+    // {
+    //     // dd($request->all());
+    //     try {
+    //         $validated = $request->validate([
+    //             'amount' => 'required|numeric',
+    //             'transactionId' => 'required|string',
+    //             'tillCode' => 'required|string',
+    //             // 'callBackURL' => 'required|url',
+    //             // 'transactionTime' => 'required|date',
+    //             // 'companyName' => 'required|string',
+    //             // 'token' => 'required|string',
+    //         ]);
+
+    //         $payload = [
+    //             'amount' => $validated['amount'], // Transaction amount
+    //             'callBackURL' => route('cbe.callback'), // Your callback URL
+    //             'companyName' => 'Virtualekub', // Company name
+    //             'transactionId' => $validated['transactionId'], // Unique transaction ID
+    //             'tillCode' => $validated['tillCode'], // Merchant's till code
+    //             'key' => env('CBE_HASHING_KEY'), // Hashing key from CBE
+    //             'token' => "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjI1MTkxODA5NDQ1NSIsImV4cCI6MTczODI3OTU0NH0.8NrfTbeErIXyin-PH0Vgvnkq4-q2TeVvQz4P3FtBqZU", // Authorization token
+    //             'transactionTime' => now()->toIso8601String(), // Current timestamp
+    //         ];
+        
+    //         // $payload['tillCode'] = '4002415';
+        
+    //         // Sort payload by keys
+    //         ksort($payload);
+    //         // Convert to query string format
+    //         $processedPayload = http_build_query($payload);
+    //         // dd($processedPayload);
+    //         // Hash the payload
+    //         $signature = hash_hmac('sha256', $processedPayload, env('CBE_HASHING_KEY'));
+    //         // dd($signature);
+    //         $payload['signature'] = $signature;
+        
+    //         // Send request to CBE Birr
+    //         $response = Http::withHeaders([
+    //             'Content-Type' => 'application/json',
+    //             'Accept' => 'application/json',
+    //             // 'Authorization' => $payload['token'],
+    //             'Authorization' => "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjI1MTkxODA5NDQ1NSIsImV4cCI6MTczODI3OTU0NH0.8NrfTbeErIXyin-PH0Vgvnkq4-q2TeVvQz4P3FtBqZU",
+    //         ])->post('https://cbebirrpaymentgateway.cbe.com.et:8888/auth/pay', $payload);
+        
+    //         if ($response->status() === 200) {
+    //             return response()->json(['token' => $response->json('token')], 200);
+    //         } else {
+    //             return response()->json(['error' => 'Transaction failed'], 401);
+    //         } 
+
+    //     } catch (Exception $ex) {
+    //         // dd($ex);
+    //         $msg = $ex->getMessage();
+    //         Session::flash('error', $msg);
+    //         return back();
+    //     }
+    // }
     public function processPayment(Request $request)
     {
-        // dd($request->all());
         try {
             $validated = $request->validate([
                 'amount' => 'required|numeric',
                 'transactionId' => 'required|string',
                 'tillCode' => 'required|string',
-                // 'callBackURL' => 'required|url',
-                // 'transactionTime' => 'required|date',
-                // 'companyName' => 'required|string',
-                // 'token' => 'required|string',
             ]);
-        
+    
             $payload = [
-                'token' => "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjI1MTkxODA5NDQ1NSIsImV4cCI6MTczODI3OTU0NH0.8NrfTbeErIXyin-PH0Vgvnkq4-q2TeVvQz4P3FtBqZU",
-                'callBackURL' => route('cbe.callback'),
                 'amount' => $validated['amount'],
-                'companyName' => "Virtualekub",
-                'trasnactionId' => $validated['transactionId'],
-                'tillCode' => $validated['tillCode'],
+                'callBackURL' => route('cbe.callback'),
+                'companyName' => 'Virtualekub',
                 'key' => env('CBE_HASHING_KEY'),
-                'transactionTime' => now()->toIso8601String(), 
+                // 'key' => 'x9pBKzQBj45uWWlkID0w6CZISM0lkg',
+                'tillCode' => $validated['tillCode'],
+                'token' => "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                'transactionId' => $validated['transactionId'],
+                'transactionTime' => now()->toIso8601String(),
             ];
-        
-            // $payload['tillCode'] = '4002415';
-        
-            // Sort payload by keys
+    
             ksort($payload);
-            // Convert to query string format
             $processedPayload = http_build_query($payload);
             dd($processedPayload);
-            // Hash the payload
             $signature = hash_hmac('sha256', $processedPayload, env('CBE_HASHING_KEY'));
-            // dd($signature);
             $payload['signature'] = $signature;
-        
-            // Send request to CBE Birr
+    
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
-                'Authorization' => $payload['token'],
+                'Authorization' => "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
             ])->post('https://cbebirrpaymentgateway.cbe.com.et:8888/auth/pay', $payload);
-        
+    
             if ($response->status() === 200) {
-                return response()->json(['token' => $response->json('token')], 200);
+                return response()->json(['status' => 'success', 'token' => $response->json('token')], 200);
             } else {
-                return response()->json(['error' => 'Transaction failed'], 401);
-            } 
-
-        } catch (Exception $ex) {
-            // dd($ex);
-            $msg = $ex->getMessage();
-            Session::flash('error', $msg);
-            return back();
+                \Log::error('CBE API Error:', [$response->json()]);
+                return response()->json(['status' => 'error', 'message' => 'Transaction failed'], $response->status());
+            }
+        } catch (\Exception $ex) {
+            return response()->json(['status' => 'error', 'message' => $ex->getMessage()], 500);
         }
     }
-
     public function paymentCallback(Request $request)
     {
         try {
