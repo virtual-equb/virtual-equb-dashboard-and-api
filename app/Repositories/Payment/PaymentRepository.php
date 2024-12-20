@@ -37,6 +37,11 @@ class PaymentRepository implements IPaymentRepository
     public function getAllPendingByPaginate($offset)
     {
         $limit = 10;
+        return $this->model->where('status', 'pending')->with('member', 'equb.equbType')->orderByDesc('created_at')->offset($offset)->limit($limit)->get();
+    }
+    public function getAllPaidByPaginate($offset)
+    {
+        $limit = 10;
         return $this->model->where('status', 'paid')->with('member', 'equb.equbType')->orderByDesc('created_at')->offset($offset)->limit($limit)->get();
     }
     public function getByDate($dateFrom, $dateTo, $offset)

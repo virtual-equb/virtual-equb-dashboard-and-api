@@ -727,7 +727,7 @@ class PaymentController extends Controller
             $collector = ['equb_collector'];
             if ($userData->hasAnyRole($adminRoles)) {
                 // $totalMember = $this->memberRepository->getPendingMembers();
-                $payments = $this->paymentRepository->getAllPendingByPaginate($offset);
+                $payments = $this->paymentRepository->getAllPaidByPaginate($offset);
                 // $totalPaid = $this->paymentRepository->getTotalPaid($equb_id);
                 // $equbTypes = $this->equbTypeRepository->getActive();
                 // $equbs = $this->equbRepository->getAll();
