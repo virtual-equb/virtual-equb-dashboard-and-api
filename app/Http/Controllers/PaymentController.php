@@ -491,7 +491,7 @@ class PaymentController extends Controller
                 $this->middleware('auth');
                 $data['title'] = $this->title;
                 $data['paids'] = Payment::where('status', 'pending')->with('member')->get();
-                return view('admin/payment.pendingPaymentList', $data);
+                return view('admin/payment.paidPaymentList', $data);
             // } else {
             //     return view('auth/login');
             // }
