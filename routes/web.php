@@ -133,6 +133,7 @@ Route::middleware([
         Route::get('/clearPendingSearchEntry', [MemberController::class, 'clearPendingSearchEntry'])->name('clearPendingSearchEntry');
         Route::get('/member/{offsetVal}/{pageNumberVal}', [MemberController::class, 'member']);
         Route::get('/pendingMember/{offsetVal}/{pageNumberVal}', [MemberController::class, 'pendingMember']);
+
         Route::get('/get-equbs/{id}', [MemberController::class, 'getEqubs'])->name('getEqub');
         Route::get('/search-member/{searchInput}/{offset}/{pageNumber?}', [MemberController::class, 'searchMember'])->name('searchMember');
         Route::get('/search-pending-member/{searchInput}/{offset}/{pageNumber?}', [MemberController::class, 'searchPendingMember'])->name('searchPendingMember');
