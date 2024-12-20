@@ -716,7 +716,7 @@ class PaymentController extends Controller
     }
     public function indexPaidPaginate($offsetVal, $pageNumberVal)
     {
-      
+        // dd("hello");
         try {
             $limit = 10;
             $offset = $offsetVal;
@@ -755,6 +755,7 @@ class PaymentController extends Controller
             return back();
         }
     }
+ 
     public function show($member_id, $equb_id, $offsetVal, $pageNumberVal)
     {
         try {
