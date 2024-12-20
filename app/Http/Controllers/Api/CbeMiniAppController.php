@@ -130,7 +130,7 @@ class CbeMiniAppController extends Controller
     
             ksort($payload);
             $processedPayload = http_build_query($payload);
-            dd($processedPayload);
+            // dd($processedPayload);
             $signature = hash_hmac('sha256', $processedPayload, env('CBE_HASHING_KEY'));
             $payload['signature'] = $signature;
     
