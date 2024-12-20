@@ -505,29 +505,7 @@ class PaymentController extends Controller
             return back();
         }
     }
-    public function paidPaymentl()
-    {
-        try {
-            $userData = Auth::user();
-            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'equb_collector'];
-            $member = ['member'];
-            // if ($userData->hasAnyRole($adminRoles)) {
-                $this->middleware('auth');
-                $data['title'] = $this->title;
-                $data['paids'] = Payment::where('status', 'pending')->with('member')->get();
-               // dd($data['paids']);
-                return view('admin/payment.paidPaymentList', $data);
-
-            // } else {
-            //     return view('auth/login');
-            // }
-        } catch (Exception $ex) {
-            $msg = $ex->getMessage();
-            $type = 'error';
-            Session::flash($type, $msg);
-            return back();
-        }
-    }
+ 
     // public function indexPendingPaginate($offsetVal, $pageNumberVal)
     // {
     //     try {
