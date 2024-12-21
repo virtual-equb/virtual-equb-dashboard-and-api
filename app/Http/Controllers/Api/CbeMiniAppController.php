@@ -49,9 +49,20 @@ class CbeMiniAppController extends Controller
                 })->get();
                 // dd($equb);
                 if ($equb->count() === 0) {
-                    return response()->json(['error' => 'No equb found for the user'], 404);
+                    // return response()->json(['error' => 'No equb found for the user'], 404);
+                    return view('cbe_payment', [
+                        'token' => $token, 
+                        'phone' => $response->json('phone'), 
+                        'equbs' => [], 
+                        'error' => 'No equb found for the user'
+                    ]);
                 }
-                return view('cbe_payment', ['token' => $token, 'phone' => $response->json('phone'), 'equbs' => $equb]);
+                return view('cbe_payment', [
+                    'token' => $token, 
+                    'phone' => $response->json('phone'), 
+                    'equbs' => $equb,
+                    'error' => ''
+                ]);
             } else {
                 return response()->json(['error' => 'Invalid Token'], 401);
             }

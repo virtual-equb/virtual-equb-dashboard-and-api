@@ -74,7 +74,13 @@
 <body>
     <div id="app">
         <h1 style="text-align: center;">Virtual Equb</h1>
+        @if (!empty($error))
+            <div style="color: red; text-align: center; margin-bottom: 20px;">
+                {{ $error }}
+            </div>
+        @endif
         <!-- Payment Form -->
+        @if (empty($error))
         <form id="cbePaymentForm" action="{{ route('cbe.initialize') }}" method="POST">
             @csrf
             <label for="equb">Select Equb:</label>
@@ -97,6 +103,7 @@
             <input type="hidden" name="phone" value="{{ $phone }}">
             <button type="submit">Pay Now</button>
         </form>
+        @endif
 
         <!-- Success or Error Message -->
         <div class="message" id="messageBox"></div>
