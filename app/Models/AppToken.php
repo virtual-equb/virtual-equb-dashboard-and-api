@@ -9,5 +9,5 @@ class AppToken extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['token'];
+    protected $fillable = ['token', 'phone'];
 }

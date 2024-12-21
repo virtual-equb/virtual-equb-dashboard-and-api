@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('app_tokens', function (Blueprint $table) {
             $table->id();
             $table->string('token');
+            $table->string('phone')->unique();
             $table->timestamps();
         });
     }

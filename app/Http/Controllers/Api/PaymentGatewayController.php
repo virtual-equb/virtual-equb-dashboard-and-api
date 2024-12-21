@@ -88,14 +88,6 @@ class PaymentGatewayController extends Controller {
             // Decrypt the data using Triple DES (3DES-ECB)
             return openssl_decrypt($encryptedData, 'des-ede3', $securityKeyArray, OPENSSL_RAW_DATA);
         }
-        // private function decrypt($encryptedText, $securityKey)
-        // {
-        //     $securityKeyHash = md5($securityKey, true);
-        //     $securityKeyArray = $securityKeyHash . substr($securityKeyHash, 0, 8);
-        //     // null = openssl_random_pseudo_bytes(openssl_cipher_iv_length('des-ede3'));
-
-        //     return openssl_decrypt($encryptedText, 'des-ede3', $securityKeyArray, OPENSSL_RAW_DATA);
-        // }
 
         private $storedAmount;
         private $memberId;
@@ -109,14 +101,11 @@ class PaymentGatewayController extends Controller {
         {
             try {
 
-                    // Validate that the 'amount' field (A) is present in the request
+                // Validate that the 'amount' field (A) is present in the request
                 $request->validate([
                     'amount' => 'required|numeric',
                     'member_id' => 'required|exists:members,id',
                     'equb_id' => 'required|exists:equbs,id',
-                    // 'payment_type' => 'nullable',
-                    // 'balance' => 'nullable',
-                    // 'collector' => 'nullable'
                 ]);
 
                 // Call encryptData
@@ -139,7 +128,6 @@ class PaymentGatewayController extends Controller {
                     'collecter' => $request->input('member_id')
                 ]);
                 
-                // dd($this->memberId);
                 // Call the `encryptData` function and get the URL
                 return $this->encryptData();
 
