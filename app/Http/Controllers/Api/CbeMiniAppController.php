@@ -74,16 +74,16 @@ class CbeMiniAppController extends Controller
             $equb = Equb::findOrFail($validated['equb_id']);
             $transactionId = uniqid();
             $payload = [
-                'amount' => $validated['amount'],
-                'callBackURL' => route('cbe.callback'),
-                'companyName' => env('CBE_COMPANY_NAME'),
-                'key' => env('CBE_HASHING_KEY'),
-                'tillCode' => env('CBE_TILL_CODE'),
-                'token' => $validated['token'],
-                'transactionId' => $transactionId,
-                'transactionTime' => now()->toIso8601String(),
+                "amount" => $validated['amount'],
+                "callBackURL" => route('cbe.callback'),
+                "companyName" => env('CBE_MINI_COMPANY_NAME'),
+                "key" => env('CBE_MINI_HASHING_KEY'),
+                "tillCode" => env('CBE_MINI_TILL_CODE'),
+                "token" => $validated['token'],
+                "transactionId" => $transactionId,
+                "transactionTime" => now()->toIso8601String(),
             ];
-
+            
             ksort($payload);
             $processedPayload = http_build_query($payload);
             // dd($processedPayload);
@@ -95,11 +95,11 @@ class CbeMiniAppController extends Controller
                 'Accept' => 'application/json',
                 'Authorization' => $payload['token'],
             ])->post('https://cbebirrpaymentgateway.cbe.com.et:8888/auth/pay', $payload);
-                dd($response);
+                // dd($response);
             if ($response->status() === 200) {
                 return response()->json(['status' => 'success', 'token' => $response->json('token')], 200);
             } else {
-                dd($response->status());
+                // dd($response->status());
                 \Log::error('CBE API Error:', [$response->json()]);
                 return response()->json(['status' => 'error', 'message' => 'Transaction failed'], $response->status());
             }
