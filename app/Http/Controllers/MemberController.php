@@ -193,6 +193,7 @@ class MemberController extends Controller
                 $payments = $this->paymentRepository->getAllPayment();
                 $title = $this->title;
                //  dd($members);
+               936830043  SR6Afn
                 $title = $this->title;
                 $cities = $this->cityRepository->getAll();
                 return view('admin/member.memberList', compact('title', 'equbTypes', 'members', 'equbs', 'payments','cities'));
