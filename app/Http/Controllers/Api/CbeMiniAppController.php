@@ -31,7 +31,7 @@ class CbeMiniAppController extends Controller
                 'Accept' => 'application/json',
                 'Authorization' => $token,
             ])->get('https://cbebirrpaymentgateway.cbe.com.et:8888/auth/user');
-
+            return response()->json(['data' => $response->json()], 200);
             if ($response->status() === 200) {
                 return response()->json(['data' => $response->json()], 200);
                 // save the token
@@ -119,7 +119,7 @@ class CbeMiniAppController extends Controller
             $payload = [
                 'amount' => $validated['amount'],
                 'callBackURL' => route('cbe.callback'),
-                'companyName' => 'Virtualekub',
+                'companyName' => 'virtualequb',
                 'key' => env('CBE_HASHING_KEY'),
                 // 'key' => 'x9pBKzQBj45uWWlkID0w6CZISM0lkg',
                 'tillCode' => $validated['tillCode'],
