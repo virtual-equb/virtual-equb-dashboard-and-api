@@ -14,12 +14,11 @@ class CbeMiniAppController extends Controller
     public function index(){
         return view('cbe_payment');
     }
-    public function validateToken(Request $request) {
-
+    public function validateToken(Request $request)
+    {
         try {
             $token = $request->header('Authorization');
-            // $token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjI1MTkxODA5NDQ1NSIsImV4cCI6MTczODI3OTU0NH0.8NrfTbeErIXyin-PH0Vgvnkq4-q2TeVvQz4P3FtBqZU";
-            // dd($token);
+
             if (!$token) {
                 return response()->json([
                     'error' => 'Token is missing'
@@ -31,17 +30,17 @@ class CbeMiniAppController extends Controller
                 'Accept' => 'application/json',
                 'Authorization' => $token,
             ])->get('https://cbebirrpaymentgateway.cbe.com.et:8888/auth/user');
-            return response()->json(['data' => $response->json()], 200);
+
             if ($response->status() === 200) {
-                return response()->json(['data' => $response->json()], 200);
-                // save the token
+                // Save the token to the database
                 AppToken::create([
                     'token' => $token
                 ]);
+
+                return response()->json(['data' => $response->json()], 200);
             } else {
                 return response()->json(['error' => 'Invalid Token'], 401);
             }
-
         } catch (Exception $ex) {
             return response()->json([
                 'error' => $ex->getMessage()
