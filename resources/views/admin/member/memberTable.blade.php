@@ -42,7 +42,7 @@
                                   <td>{{ $item->memberCity ? $item->memberCity->name : 'N/A' }}</td>
                                   <td>{{ $item->memberSubcity ? $item->memberSubcity->name : 'N/A' }}</td>
                                   <td>{{ $item->woreda }}</td>
-                                  <td>{{ $item->kebele }}</td>
+                                  <td>{{ $item->house_number }}</td>
                                   <td>{{ $item->specific_location }}</td>
                                   <td>{{ $item->status }}</td>
                                   <td>{{ $item->rating }}</td>
