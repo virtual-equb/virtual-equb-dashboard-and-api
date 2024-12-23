@@ -18,8 +18,8 @@ class CbeMiniAppController extends Controller
     public function validateToken(Request $request)
     {
         try {
-            // $token = $request->header('Authorization');
-            $token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjI1MTkxODA5NDQ1NSIsImV4cCI6MTczODQ0NjI5NX0.OitEAlGrtZrOIqHI5BNFLpqcp5xAhYy8YjIe3OdU9KE";
+            $token = $request->header('Authorization');
+            // $token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjI1MTkxODA5NDQ1NSIsImV4cCI6MTczODQ0NjI5NX0.OitEAlGrtZrOIqHI5BNFLpqcp5xAhYy8YjIe3OdU9KE";
             if (!$token) {
                 return response()->json([
                     'error' => 'Token is missing'
