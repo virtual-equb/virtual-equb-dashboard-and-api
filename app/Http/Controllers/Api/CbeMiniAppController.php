@@ -26,6 +26,9 @@ class CbeMiniAppController extends Controller
                 ], 400);
             }
 
+            // Remove the 'Bearer' prefix
+            $cleanedToken = str_replace('Bearer ', '', $token);
+
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
@@ -45,7 +48,7 @@ class CbeMiniAppController extends Controller
                 }
                 AppToken::create([
                     'phone' => $Phone,
-                    'token' => $token
+                    'token' => $cleanedToken
                 ]);
                 $phone = $response->json('phone');
                 $equb = Equb::with('equbType')->whereHas('member', function ($query) use ($phone) {
@@ -62,7 +65,7 @@ class CbeMiniAppController extends Controller
                     ]);
                 }
                 return view('cbe_payment', [
-                    'token' => $token, 
+                    'token' => $cleanedToken, 
                     'phone' => $response->json('phone'), 
                     'equbs' => $equb,
                     'error' => ''
@@ -147,7 +150,7 @@ class CbeMiniAppController extends Controller
                 'token' => 'required|exists:app_tokens,token',
                 'phone' => 'required|exists:app_tokens,phone',
             ]);
-
+            // dd($validated['token']);
             $transactionId = uniqid(); // Generate unique transaction ID
             $transactionTime = now()->toIso8601String(); // Get current timestamp in ISO8601 format
             $callbackUrl = route('cbe.callback'); // Callback URL for response handling
@@ -172,14 +175,15 @@ class CbeMiniAppController extends Controller
             $processedPayload = http_build_query($payload); // Convert sorted payload to query string
 
             // Step 2.3.3: Hash the processed payload
-            $signature = hash_hmac('sha256', $processedPayload, env('CBE_HASHING_KEY'));
+            // $signature = hash_hmac('sha256', $processedPayload, env('CBE_HASHING_KEY'));
+            $signature = hash_hmac('sha256', $processedPayload, $hashingKey);
 
             // // Step 2.4: Preparing final payload
             // $finalPayload = array_merge($payload, ['signature' => $signature]);
             $payload['signature'] = $signature;
 
-    //         // Sort the payload again, including the signature
-    //         // Custom sort the payload to move "signature" before "key"
+             // Sort the payload again, including the signature
+             // Custom sort the payload to move "signature" before "key"
             $orderedKeys = [
                 "amount",
                 "callBackURL",
@@ -197,9 +201,10 @@ class CbeMiniAppController extends Controller
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
-                'Authorization' => $validated['token'],
+                // 'Authorization' => $validated['token'],
+                'Authorization' => "Bearer " . $validated['token'],
             ])->post('https://cbebirrpaymentgateway.cbe.com.et:8888/auth/pay', $sortedPayload);
-                // dd($response);
+                // dd($response->status());
             // Check the response status
             if ($response->status() === 200) {
                 return response()->json(['status' => 'success', 'token' => $response->json('token')], 200);
@@ -211,6 +216,65 @@ class CbeMiniAppController extends Controller
             return response()->json(['status' => 'error', 'message' => $ex->getMessage()], 500);
         }
     }
+    // public function processPayment(Request $request)
+    // {
+    //     try {
+    //         // Step 2.1: Preparing data to be sent
+    //         $validated = $request->validate([
+    //             'amount' => 'required|numeric',
+    //             'equb_id' => 'required|exists:equbs,id',
+    //             'token' => 'required|exists:app_tokens,token',
+    //             'phone' => 'required|exists:app_tokens,phone',
+    //         ]);
+
+    //         $transactionId = uniqid(); // Generate unique transaction ID
+    //         $transactionTime = now()->toIso8601String(); // Get current timestamp in ISO8601 format
+    //         $callbackUrl = route('cbe.callback'); // Callback URL for response handling
+    //         $companyName = env('CBE_MINI_COMPANY_NAME'); // Provided company name
+    //         $hashingKey = env('CBE_MINI_HASHING_KEY'); // Provided hashing key
+    //         $tillCode = env('CBE_MINI_TILL_CODE'); // Provided till code
+
+    //         // Prepare payload as per guideline
+    //         $payload = [
+    //             "amount" => $validated['amount'],
+    //             "callBackURL" => $callbackUrl,
+    //             "companyName" => $companyName,
+    //             "key" => $hashingKey,
+    //             "tillCode" => $tillCode,
+    //             "token" => $validated['token'],
+    //             "transactionId" => $transactionId,
+    //             "transactionTime" => $transactionTime,
+    //         ];
+
+    //         // Step 2.3: Sorting payload and preparing hashing payload
+    //         ksort($payload); // Sort payload by keys
+    //         $processedPayload = http_build_query($payload); // Convert sorted payload to query string
+
+    //         // Step 2.3.3: Hash the processed payload
+    //         $signature = hash_hmac('sha256', $processedPayload, env('CBE_HASHING_KEY'));
+
+    //         // Step 2.4: Preparing final payload
+    //         $finalPayload = array_merge($payload, ['signature' => $signature]);
+
+    //         // Step 2.5: Sending the final payload
+    //         $response = Http::withHeaders([
+    //             'Content-Type' => 'application/json',
+    //             'Accept' => 'application/json',
+    //             'Authorization' => "Bearer " . $validated['token'],
+    //         ])->post('https://cbebirrpaymentgateway.cbe.com.et:8888/auth/pay', $finalPayload);
+
+    //         // Check the response status
+    //         if ($response->status() === 200) {
+    //             return response()->json(['status' => 'success', 'token' => $response->json('token')], 200);
+    //         } else {
+    //             \Log::error('CBE API Error:', ['response' => $response->json()]);
+    //             return response()->json(['status' => 'error', 'message' => 'Transaction failed'], $response->status());
+    //         }
+    //     } catch (\Exception $ex) {
+    //         return response()->json(['status' => 'error', 'message' => $ex->getMessage()], 500);
+    //     }
+    // }
+
 
     public function paymentCallback(Request $request)
     {
