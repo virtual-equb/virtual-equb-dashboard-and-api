@@ -638,25 +638,50 @@ class MemberController extends Controller
                         continue; // Skip this equb if the required data is missing
                     }
     
-                    $lotteryDate = explode(',', $lotteryDate);
-                    $currentDate = new DateTime(); // Current date
-                    $nextDate = (clone $currentDate)->modify('+1 day'); // Exclude current day
+                    // $lotteryDate = explode(',', $lotteryDate);
+                    // $currentDate = new DateTime(); // Current date
+                    // $nextDate = (clone $currentDate)->modify('+1 day'); // Exclude current day
     
-                    $lotteryDate = new DateTime($lotteryDate[0]);
-                    $equbTypeDate = new DateTime($equbType->lottery_date);
+                    // $lotteryDate = new DateTime($lotteryDate[0]);
+                    // $equbTypeDate = new DateTime($equbType->lottery_date);
     
+                    // // Calculate remaining days excluding the current day
+                    // $interval = ($lotteryDate >= $nextDate) 
+                    //     ? $lotteryDate->diff($nextDate)->days 
+                    //     : "passed";
+    
+                    // $autoInterval = ($equbTypeDate > $nextDate) 
+                    //     ? $equbTypeDate->diff($nextDate)->days 
+                    //     : "passed";
+    
+                    // $equb['total_payment'] = $totalPpayment;
+                    // $equb['remaining_payment'] = $remainingPayment;
+                    // $equb['remaining_lottery_date'] = $equbType->type == 'Automatic' ? $autoInterval : $interval;
+                    // array_push($equbsArray, $equb);
+                    $lotteryDate = explode(',', $lotteryDate); // Extract lottery date array
+                    $currentDate = new DateTime(); // Current date: 2024-12-23
+                    $nextDate = (clone $currentDate)->modify('+1 day'); // Start from the next day (2024-12-24)
+
+                    // Convert lottery dates to DateTime objects
+                    $lotteryDateObj = new DateTime($lotteryDate[0]); // First lottery date: 2024-12-26
+                    $equbTypeDateObj = new DateTime($equbType->lottery_date); // Equb type lottery date
+
                     // Calculate remaining days excluding the current day
-                    $interval = ($lotteryDate > $nextDate) 
-                        ? $lotteryDate->diff($nextDate)->days 
+                    $interval = ($lotteryDateObj >= $nextDate) 
+                        ? $lotteryDateObj->diff($nextDate)->days // Difference starting from 2024-12-24
                         : "passed";
-    
-                    $autoInterval = ($equbTypeDate > $nextDate) 
-                        ? $equbTypeDate->diff($nextDate)->days 
+
+                    // Calculate remaining days for Automatic type, if applicable
+                    $autoInterval = ($equbTypeDateObj >= $nextDate) 
+                        ? $equbTypeDateObj->diff($nextDate)->days 
                         : "passed";
-    
+
+                    // Add calculated values to the equb object
                     $equb['total_payment'] = $totalPpayment;
                     $equb['remaining_payment'] = $remainingPayment;
                     $equb['remaining_lottery_date'] = $equbType->type == 'Automatic' ? $autoInterval : $interval;
+
+                    // Add equb to the results array
                     array_push($equbsArray, $equb);
                 }
             }
