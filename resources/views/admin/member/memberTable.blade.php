@@ -13,7 +13,7 @@
                               <th>City</th>
                               <th>Sub City</th>
                               <th>Woreda</th>
-                              <th>kebeke</th>
+                              <th>house_number</th>
                               <th>Location</th>
                               <th>Status</th>
                               <th>Rating</th>
