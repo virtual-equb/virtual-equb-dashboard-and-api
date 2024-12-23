@@ -34,9 +34,13 @@ class CbeMiniAppController extends Controller
 
             if ($response->status() === 200) {
                 // Save the token to the database
-                $Phone =  $request->json('phone');
+                $Phone =  $response->json('phone');
+
                 // Check if the phone starts with "+"
-                if (strpos($Phone, '+') !== 0) {
+                if (!$Phone) {
+                    return response()->json(['error' => 'Phone number is missing or invalid'], 400);
+                }
+                if (strpos($request->json('phone'), '+') !== 0) {
                     $Phone = '+' . $Phone;
                 }
                 AppToken::create([
@@ -73,51 +77,141 @@ class CbeMiniAppController extends Controller
         }
     }
 
+    // public function processPayment(Request $request)
+    // {
+    //     try {
+    //         $validated = $request->validate([
+    //             'amount' => 'required|numeric',
+    //             'equb_id' => 'required|exists:equbs,id',
+    //             'token' => 'required|exists:app_tokens,token',
+    //             'phone' => 'required|exists:app_tokens,phone',
+    //         ]);
+    //         $equb = Equb::findOrFail($validated['equb_id']);
+    //         $transactionId = uniqid();
+    //         $payload = [
+    //             "amount" => $validated['amount'],
+    //             "callBackURL" => route('cbe.callback'),
+    //             "companyName" => env('CBE_MINI_COMPANY_NAME'),
+    //             "key" => env('CBE_MINI_HASHING_KEY'),
+    //             "tillCode" => env('CBE_MINI_TILL_CODE'),
+    //             "token" => $validated['token'],
+    //             "transactionId" => $transactionId,
+    //             "transactionTime" => now()->toIso8601String(),
+    //         ];
+    //         // dd($payload);
+    //         ksort($payload);
+    //         $processedPayload = http_build_query($payload);
+
+    //         $signature = hash_hmac('sha256', $processedPayload, env('CBE_HASHING_KEY'));
+    //         $payload['signature'] = $signature;
+
+    //         // Sort the payload again, including the signature
+    //         // Custom sort the payload to move "signature" before "key"
+    //         $orderedKeys = [
+    //             "amount",
+    //             "callBackURL",
+    //             "companyName",
+    //             "signature", // Place "signature" before "key"
+    //             "key",
+    //             "tillCode",
+    //             "token",
+    //             "transactionId",
+    //             "transactionTime",
+    //         ];
+    //         $sortedPayload = array_merge(array_flip($orderedKeys), $payload);
+    //         dd($sortedPayload, $signature);
+    //         $response = Http::withHeaders([
+    //             'Content-Type' => 'application/json',
+    //             'Accept' => 'application/json',
+    //             'Authorization' => $payload['token'],
+    //         ])->post('https://cbebirrpaymentgateway.cbe.com.et:8888/auth/pay', $sortedPayload);
+    //             // dd($response->json());
+    //         if ($response->status() === 200) {
+    //             return response()->json(['status' => 'success', 'token' => $response->json('token')], 200);
+    //         } else {
+    //             // dd($response->status());
+    //             \Log::error('CBE API Error:', [$response->json()]);
+    //             return response()->json(['status' => 'error', 'message' => 'Transaction failed'], $response->status());
+    //         }
+    //     } catch (\Exception $ex) {
+    //         return response()->json(['status' => 'error', 'message' => $ex->getMessage()], 500);
+    //     }
+    // }
     public function processPayment(Request $request)
     {
         try {
+            // Step 2.1: Preparing data to be sent
             $validated = $request->validate([
                 'amount' => 'required|numeric',
                 'equb_id' => 'required|exists:equbs,id',
                 'token' => 'required|exists:app_tokens,token',
                 'phone' => 'required|exists:app_tokens,phone',
             ]);
-            $equb = Equb::findOrFail($validated['equb_id']);
-            $transactionId = uniqid();
+
+            $transactionId = uniqid(); // Generate unique transaction ID
+            $transactionTime = now()->toIso8601String(); // Get current timestamp in ISO8601 format
+            $callbackUrl = route('cbe.callback'); // Callback URL for response handling
+            $companyName = env('CBE_MINI_COMPANY_NAME'); // Provided company name
+            $hashingKey = env('CBE_MINI_HASHING_KEY'); // Provided hashing key
+            $tillCode = env('CBE_MINI_TILL_CODE'); // Provided till code
+
+            // Prepare payload as per guideline
             $payload = [
                 "amount" => $validated['amount'],
-                "callBackURL" => route('cbe.callback'),
-                "companyName" => env('CBE_MINI_COMPANY_NAME'),
-                "key" => env('CBE_MINI_HASHING_KEY'),
-                "tillCode" => env('CBE_MINI_TILL_CODE'),
+                "callBackURL" => $callbackUrl,
+                "companyName" => $companyName,
+                "key" => $hashingKey,
+                "tillCode" => $tillCode,
                 "token" => $validated['token'],
                 "transactionId" => $transactionId,
-                "transactionTime" => now()->toIso8601String(),
+                "transactionTime" => $transactionTime,
             ];
-            
-            ksort($payload);
-            $processedPayload = http_build_query($payload);
-            // dd($processedPayload);
+
+            // Step 2.3: Sorting payload and preparing hashing payload
+            ksort($payload); // Sort payload by keys
+            $processedPayload = http_build_query($payload); // Convert sorted payload to query string
+
+            // Step 2.3.3: Hash the processed payload
             $signature = hash_hmac('sha256', $processedPayload, env('CBE_HASHING_KEY'));
+
+            // // Step 2.4: Preparing final payload
+            // $finalPayload = array_merge($payload, ['signature' => $signature]);
             $payload['signature'] = $signature;
-    
+
+    //         // Sort the payload again, including the signature
+    //         // Custom sort the payload to move "signature" before "key"
+            $orderedKeys = [
+                "amount",
+                "callBackURL",
+                "companyName",
+                "signature", // Place "signature" before "key"
+                "key",
+                "tillCode",
+                "token",
+                "transactionId",
+                "transactionTime",
+            ];
+            $sortedPayload = array_merge(array_flip($orderedKeys), $payload);
+            // dd($sortedPayload, $signature);
+            // Step 2.5: Sending the final payload
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
-                'Authorization' => $payload['token'],
-            ])->post('https://cbebirrpaymentgateway.cbe.com.et:8888/auth/pay', $payload);
+                'Authorization' => $validated['token'],
+            ])->post('https://cbebirrpaymentgateway.cbe.com.et:8888/auth/pay', $sortedPayload);
                 // dd($response);
+            // Check the response status
             if ($response->status() === 200) {
                 return response()->json(['status' => 'success', 'token' => $response->json('token')], 200);
             } else {
-                // dd($response->status());
-                \Log::error('CBE API Error:', [$response->json()]);
+                \Log::error('CBE API Error:', ['response' => $response->json()]);
                 return response()->json(['status' => 'error', 'message' => 'Transaction failed'], $response->status());
             }
         } catch (\Exception $ex) {
             return response()->json(['status' => 'error', 'message' => $ex->getMessage()], 500);
         }
     }
+
     public function paymentCallback(Request $request)
     {
         try {
