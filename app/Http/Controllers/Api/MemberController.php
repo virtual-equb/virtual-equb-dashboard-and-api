@@ -1152,7 +1152,7 @@ class MemberController extends Controller
      */
     public function register(Request $request)
     {
-        return 12;
+        // return 12;
         $shortcode = config('key.SHORT_CODE');
         try {
             // Validation rules
