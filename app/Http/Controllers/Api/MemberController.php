@@ -426,6 +426,7 @@ class MemberController extends Controller
      */
     public function store(Request $request)
     {
+        return 123;
         $shortcode = config('key.SHORT_CODE');
         try {
                 $userData = Auth::user();
@@ -1151,6 +1152,7 @@ class MemberController extends Controller
      */
     public function register(Request $request)
     {
+        return 12;
         $shortcode = config('key.SHORT_CODE');
         try {
             // Validation rules

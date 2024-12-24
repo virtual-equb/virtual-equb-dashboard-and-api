@@ -80,80 +80,6 @@ class CbeMiniAppController extends Controller
         }
     }
 
-    // public function processPayment(Request $request)
-    // {
-    //     try {
-    //         // Step 2.1: Preparing data to be sent
-    //         $validated = $request->validate([
-    //             'amount' => 'required|numeric',
-    //             'equb_id' => 'required|exists:equbs,id',
-    //             'token' => 'required|exists:app_tokens,token',
-    //             'phone' => 'required|exists:app_tokens,phone',
-    //         ]);
-            
-    //         $transactionId = uniqid(); // Generate unique transaction ID
-    //         $transactionTime = now()->toIso8601String(); // Get current timestamp in ISO8601 format
-    //         $callbackUrl = route('cbe.callback'); // Callback URL for response handling
-    //         $companyName = env('CBE_MINI_COMPANY_NAME'); // Provided company name
-    //         $hashingKey = env('CBE_MINI_HASHING_KEY'); // Provided hashing key
-    //         $tillCode = env('CBE_MINI_TILL_CODE'); // Provided till code
-
-    //         // Prepare payload as per guideline
-    //         $payload = [
-    //             "amount" => $validated['amount'],
-    //             "callBackURL" => $callbackUrl,
-    //             "companyName" => $companyName,
-    //             "key" => $hashingKey,
-    //             "tillCode" => $tillCode,
-    //             "token" => $validated['token'],
-    //             "transactionId" => $transactionId,
-    //             "transactionTime" => $transactionTime,
-    //         ];
-
-    //         // Step 2.3: Sorting payload and preparing hashing payload
-    //         ksort($payload); // Sort payload by keys
-    //         $processedPayload = http_build_query($payload); // Convert sorted payload to query string
-    //         dd($processedPayload);
-    //         // Step 2.3.3: Hash the processed payload
-    //         $signature = hash_hmac('sha256', $processedPayload, $hashingKey);
-
-    //         // Add the signature to the payload
-    //         $payload['signature'] = $signature;
-
-    //         // Remove the key from the payload before sorting for the final payload
-    //         unset($payload['key']);
-
-    //         // Sort the payload again, excluding the key
-    //         $orderedKeys = [
-    //             "amount",
-    //             "callBackURL",
-    //             "companyName",
-    //             "signature", // Place "signature" before "key"
-    //             "tillCode",
-    //             "token",
-    //             "transactionId",
-    //             "transactionTime",
-    //         ];
-    //         $sortedPayload = array_merge(array_flip($orderedKeys), $payload);
-    //         // dd($sortedPayload);
-    //         // Step 2.5: Sending the final payload
-    //         $response = Http::withHeaders([
-    //             'Content-Type' => 'application/json',
-    //             'Accept' => 'application/json',
-    //             'Authorization' => "Bearer " . $validated['token'],
-    //         ])->post('https://cbebirrpaymentgateway.cbe.com.et:8888/auth/pay', $sortedPayload);
-    //             // dd($response->json());
-    //         // Check the response status
-    //         if ($response->status() === 200) {
-    //             return response()->json(['status' => 'success', 'token' => $response->json('token')], 200);
-    //         } else {
-    //             \Log::error('CBE API Error:', ['response' => $response->json()]);
-    //             return response()->json(['status' => 'error', 'message' => 'Transaction failed'], $response->status());
-    //         }
-    //     } catch (\Exception $ex) {
-    //         return response()->json(['status' => 'error', 'message' => $ex->getMessage()], 500);
-    //     }
-    // }
 
     public function processPayment(Request $request)
     {
@@ -184,10 +110,11 @@ class CbeMiniAppController extends Controller
                 "transactionId" => $transactionId,
                 "transactionTime" => $transactionTime,
             ];
-    
+
             // Step 2.3: Sorting payload and preparing hashing payload
             ksort($payloadForHashing); // Sort payload by keys
-            $processedPayload = http_build_query($payloadForHashing); // Convert sorted payload to query string
+
+            $processedPayload = urldecode(http_build_query($payloadForHashing)); // Convert sorted payload to query string
     
             // Step 2.3.3: Hash the processed payload
             $signature = hash_hmac('sha256', $processedPayload, $hashingKey);
