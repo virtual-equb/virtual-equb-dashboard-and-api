@@ -215,16 +215,17 @@ class CbeMiniAppController extends Controller
                 "transactionId",
                 "transactionTime",
             ];
-            // dd($payload)
+            
             $sortedPayload = array_merge(array_flip($orderedKeys), $payload);
-            // dd($sortedPayload, $signature);
+            // ksort($sortedPayload);
+            // $finalPayload = http_build_query($sortedPayload);
             // Step 2.5: Sending the final payload
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
                 'Authorization' => "Bearer " . $validated['token'],
             ])->post('https://cbebirrpaymentgateway.cbe.com.et:8888/auth/pay', $sortedPayload);
-                // dd($response);
+                
             // Check the response status
             if ($response->status() === 200) {
                 return response()->json(['status' => 'success', 'token' => $response->json('token')], 200);
