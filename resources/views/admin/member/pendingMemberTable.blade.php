@@ -77,7 +77,7 @@
 
                                                       </li> --}}
                                                       @if ($item->status == 'Pending')
-                                                       @can('approve member')
+                                                      
                                                           <li>
                                                               <a href="javascript:void(0);"
                                                                   class="text-secondary btn btn-flat"
@@ -87,8 +87,7 @@
                                                                   Approve
                                                               </a>
                                                           </li>
-                                                        @endcan
-                                                        @can('reject member')
+                                                     
                                                           <li>
                                                               <a href="javascript:void(0);"
                                                                   class="text-secondary btn btn-flat"
@@ -98,7 +97,7 @@
                                                                   Reject
                                                               </a>
                                                           </li>
-                                                        @endcan
+                                                      
                                                       @endif
                                                       {{-- <li>
                                                           <a href="javascript:void(0);"
