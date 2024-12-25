@@ -5,8 +5,7 @@
                           <tr>
                               <th></th>
                               <th>No</th>
-                              <td>profile</td>
-                              
+                              <td>profile</td>   
                               <th>Full Name</th>
                               <th>Phone</th>
                               <th>Gender</th>

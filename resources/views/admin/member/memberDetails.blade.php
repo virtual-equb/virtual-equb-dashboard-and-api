@@ -161,7 +161,7 @@
                     }
 
                     ?>
-                    {{-- @if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant') --}}
+                   @can('view member')
                         <td>
                             <div class='dropdown'>
                                 <button class='btn btn-secondary btn-sm btn-flat dropdown-toggle' type='button'
@@ -241,7 +241,7 @@
                                 </ul>
                             </div>
                         </td>
-                    {{-- @endif --}}
+                  @endcan
                 </tr>
             @endforeach
         </tbody>
