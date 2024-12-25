@@ -94,7 +94,7 @@
 
                                                       </li>
                                                       @endcan
-                                                      @can('deactivate member')
+                                                     
                                                       <li>
                                                           <a href="javascript:void(0);"
                                                               class="text-secondary btn btn-flat"
@@ -109,8 +109,8 @@
                                                               ?>
                                                           </a>
                                                       </li>
-                                                      @endcan
-                                                      @can('rate member')
+                                                     
+                                             
                                                         <li>
                                                             <button href="javascript:void(0);"
                                                                 class="text-secondary btn btn-flat"
@@ -119,7 +119,7 @@
                                                                 </button>
 
                                                         </li>
-                                                       @endcan
+                                                     
                                               </ul>
                                           </div>
                                       </td>
