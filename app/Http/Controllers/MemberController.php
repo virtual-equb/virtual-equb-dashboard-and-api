@@ -195,7 +195,7 @@ class MemberController extends Controller
                //  dd($members);
                 $title = $this->title;
                 $cities = $this->cityRepository->getAll();
-                return view('admin/member.memberList', compact('title', 'equbTypes', 'members', 'equbs', 'payments','cities'));
+                return view('admin/member.pendingMemberList', compact('title', 'equbTypes', 'members', 'equbs', 'payments','cities'));
             // } elseif ($userData && ($userData['role'] == "equb_collector")) {
                 $totalMember = $this->memberRepository->getPendingMembers();
                 $members = $this->memberRepository->getAllPendingByPaginate($offset);
@@ -269,28 +269,28 @@ class MemberController extends Controller
             $pageNumber = $pageNumberVal;
             $userData = Auth::user();
             // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "finance" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
-                $totalMember = $this->memberRepository->getPendingMembers();
-                $members = $this->memberRepository->getAllPendingByPaginate($offset);
+                $totalMember = $this->memberRepository->getMember();
+                $members = $this->memberRepository->getAllPendingMembers($offset);
                 $equbTypes = $this->equbTypeRepository->getActive();
                 $equbs = $this->equbRepository->getAll();
                 $payments = $this->paymentRepository->getAllPayment();
                 $title = $this->title;
-                return view('admin/member.pendingMemberTable', compact('title', 'equbTypes', 'members', 'equbs', 'payments', 'pageNumber', 'offset', 'limit', 'totalMember'));
+                return view('admin/member.memberTable', compact('title', 'equbTypes', 'members', 'equbs', 'payments', 'pageNumber', 'offset', 'limit', 'totalMember'));
             // } elseif ($userData && ($userData['role'] == "equb_collector")) {
-                $totalMember = $this->memberRepository->getPendingMembers();
-                $members = $this->memberRepository->getAllPendingByPaginate($offset);
+                $totalMember = $this->memberRepository->getMember();
+                $members = $this->memberRepository->getAllByPaginate($offset);
                 $equbTypes = $this->equbTypeRepository->getActive();
                 $equbs = $this->equbRepository->getAll();
                 $payments = $this->paymentRepository->getAllPayment();
                 $title = $this->title;
-                return view('equbCollecter/member.pendingMemberTable', compact('title', 'members', 'equbTypes', 'equbs', 'payments', 'pageNumber', 'offset', 'limit', 'totalMember'));
+                return view('equbCollecter/member.memberTable', compact('title', 'members', 'equbTypes', 'equbs', 'payments', 'pageNumber', 'offset', 'limit', 'totalMember'));
             // } elseif ($userData && ($userData['role'] == "member")) {
                 $members = $this->memberRepository->getByPhone($userData['phone_number']);
                 $equbTypes = $this->equbTypeRepository->getActive();
                 $equbs = $this->equbRepository->getAll();
                 $payments = $this->paymentRepository->getAllPayment();
                 $title = $this->title;
-                return view('member/member.pendingMemberTable', compact('title', 'members', 'equbTypes', 'equbs', 'payments'));
+                return view('member/member.memberList', compact('title', 'members', 'equbTypes', 'equbs', 'payments'));
             // } else {
             //     return view('auth/login');
             // }
