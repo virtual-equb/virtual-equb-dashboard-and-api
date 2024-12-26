@@ -142,19 +142,10 @@
             })
             .then(response => response.json())
             .then(data => {
-                // console.log('Processed Payload', data); // Log the full payload
+                console.log('Processed Payload', data); // Log the full payload
                 const messageBox = document.getElementById('messageBox');
                 if (data.status === 'success') {
-                    // Send the payment token to CBE Mini App via WebView
-                    // if (window.myJsChannel) {
-                    //     window.myJsChannel.postMessage(data.token); // Replace with the actual token field
-                    //     messageBox.innerHTML = 'Redirecting to payment...';
-                    //     messageBox.style.display = 'block';
-                    // } else {
-                    //     messageBox.innerHTML = 'Payment initialized successfully, but the CBE Mini App communication channel is not available.';
-                    //     messageBox.style.display = 'block';
-                    //     console.error("CBE Mini App communication channel is not available.");
-                    // }
+                    
                     if (window.myJsChannel) {
                         window.myJsChannel.postMessage(data.token); // Send the token via the communication channel
                         messageBox.innerHTML = 'Redirecting to payment...';
