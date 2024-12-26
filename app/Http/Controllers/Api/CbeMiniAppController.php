@@ -118,7 +118,8 @@ class CbeMiniAppController extends Controller
             $processedPayload = urldecode(http_build_query($payloadForHashing)); // Convert sorted payload to query string
     
             // Step 2.3.3: Hash the processed payload
-            $signature = hash_hmac('sha256', $processedPayload, $hashingKey);
+            // $signature = hash_hmac('sha256', $processedPayload, $hashingKey);
+            $signature = hash('sha256', $processedPayload);
             // dd($signature);
             // Prepare final payload (excluding 'key')
             $payload = [
