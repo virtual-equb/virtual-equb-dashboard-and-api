@@ -84,6 +84,7 @@ class CbeMiniAppController extends Controller
     public function processPayment(Request $request)
     {
         try {
+            // Step 2: Process the payment
             // Step 2.1: Preparing data to be sent
             $validated = $request->validate([
                 'amount' => 'required|numeric',
