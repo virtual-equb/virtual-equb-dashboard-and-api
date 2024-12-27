@@ -30,6 +30,7 @@
                                 @foreach ($equbTypes as $equbType)
                                     <option data-amount="{{ $equbType->amount }}" 
                                             data-expected-total="{{ $equbType->expected_total }}" 
+                                            data-expected-members="{{ $equbType->expected_members }}"
                                             value="{{ $equbType->id }}">
                                         {{ $equbType->name }} round {{ $equbType->round }}
                                     </option>
@@ -107,17 +108,18 @@
 
         if (selectedOption.value) {
             const amountFromDB = parseFloat(selectedOption.getAttribute('data-amount')) || 0;
-            const timeline = parseFloat(document.getElementById('timeline').value) || 0;
+            const expectedTotalFromDB = parseFloat(selectedOption.getAttribute('data-expected-total')) || 0;
+            const expectedMembers = parseFloat(selectedOption.getAttribute('data-expected-members')) || 0;
 
-            // Calculate Expected Total
-            const expectedTotal = amountFromDB * timeline;
+            // Calculate Expected Total based on expected_total and expected_members
+            const expectedTotal = expectedTotalFromDB * expectedMembers;
 
             // Update the input fields
-            document.getElementById('total_amount').value = expectedTotal;
-            document.getElementById('amount_per_day').value = amountFromDB; // Optionally update this field too
+            document.getElementById('total_amount').value = expectedTotal; // Set Expected Total from DB calculation
+            document.getElementById('amount_per_day').value = amountFromDB; // Update Amount field
         } else {
             // Reset values if no option is selected
-            document.getElementById('total_amount').value = 0;
+            document.getElementById('total_amount').value = '';
             document.getElementById('amount_per_day').value = 0;
         }
     }
@@ -138,6 +140,7 @@
                 option.textContent = "{{ $equbType->name }} round {{ $equbType->round }}";
                 option.setAttribute('data-amount', "{{ $equbType->amount }}");
                 option.setAttribute('data-expected-total', "{{ $equbType->expected_total }}");
+                option.setAttribute('data-expected-members', "{{ $equbType->expected_members }}");
                 equbTypeSelect.appendChild(option);
             }
         @endforeach
