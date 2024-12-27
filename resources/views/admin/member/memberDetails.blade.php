@@ -104,10 +104,7 @@
                         $createdDate = $toCreatedAt->format('M-j-Y');
                         echo $createdDate; ?>
                     </td>
-                    <td> {{ number_format($totalPpayment) }}</td>
-                    <td> {{ number_format($remainingPayment) }}</td>
-                    <td> {{ number_format($equb->total_amount) }}</td>
-
+                   
                     <td>
                         <?php
                         if ($equb->lottery_date !== null) {
