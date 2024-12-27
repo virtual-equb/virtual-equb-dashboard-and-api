@@ -249,18 +249,30 @@ class HomeController extends Controller
             $totalMember = $this->memberRepository->getMember();
             $totalUser = $this->userRepository->getUser();
             $tudayPaidMember = $this->equbRepository->tudayPaidMember();
-            $automaticMembersArray = [];
-            $automaticWinnerMembers = LotteryWinner::where('created_at', ">", Carbon::today()->format('Y-m-d'))->orderBy('created_at', 'desc')->get();
-            foreach ($automaticWinnerMembers as $member) {
-                $memberInfo = Member::where('id', $member->member_id)->first();
-                if ($memberInfo) {
-                    array_push($automaticMembersArray, [
-                        "full_name" => $memberInfo->full_name,
-                        "phone" => $memberInfo->phone,
-                        "gender" => $memberInfo->gender
-                    ]);
-                }
-            }
+            // $automaticMembersArray = [];
+            // $automaticWinnerMembers = LotteryWinner::where('created_at', ">", Carbon::today()->format('Y-m-d'))->orderBy('created_at', 'desc')->get();
+            // foreach ($automaticWinnerMembers as $member) {
+            //     $memberInfo = Member::where('id', $member->member_id)->first();
+            //     if ($memberInfo) {
+            //         array_push($automaticMembersArray, [
+            //             "full_name" => $memberInfo->full_name,
+            //             "phone" => $memberInfo->phone,
+            //             "gender" => $memberInfo->gender
+            //         ]);
+            //     }
+            // }
+            $automaticWinnerMembers = LotteryWinner::with('member')
+                        ->whereDate('created_at', Carbon::today())
+                        ->get();
+            $automaticMembersArray = $automaticWinnerMembers->filter(function ($winner) {
+                            return $winner->member; // Include only winners with a related member
+                        })->map(function ($winner) {
+                            return [
+                                'full_name' => $winner->member->full_name,
+                                'phone' => $winner->member->phone,
+                                'gender' => $winner->member->gender
+                            ];
+                        });
                 return view('admin/home', compact(
                            'automaticMembersArray',  
                            'title', 
