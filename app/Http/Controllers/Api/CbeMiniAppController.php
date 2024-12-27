@@ -99,7 +99,7 @@ class CbeMiniAppController extends Controller
             $companyName = env('CBE_MINI_COMPANY_NAME'); // Provided company name
             $hashingKey = env('CBE_MINI_HASHING_KEY'); // Provided hashing key
             $tillCode = env('CBE_MINI_TILL_CODE'); // Provided till code
-    
+            // dd($callbackUrl);
             // Prepare payload for hashing (including 'key')
             $payloadForHashing = [
                 "amount" => $validated['amount'],
@@ -157,7 +157,7 @@ class CbeMiniAppController extends Controller
                 
             // Check the response status
             if ($response->status() === 200) {
-                return response()->json(['status' => 'success', 'token' => $response->json('token')], 200);
+                return response()->json(['status' => 'success', 'token' => $response->json('token'), 'signature' => $signature], 200);
             } else {
                 \Log::error('CBE API Error:', ['response' => $response->json()]);
                 return response()->json(['status' => 'error', 'message' => 'Transaction failed'], $response->status());

@@ -56,7 +56,7 @@ Route::get('/unauthorized', function () {
 Route::get('/cbe-payment', [CbeMiniAppController::class, 'index']);
 Route::get('/validate-token', [CbeMiniAppController::class, 'validateToken']);
 Route::post('/process-payment', [CbeMiniAppController::class, 'processPayment'])->name('cbe.initialize');
-Route::post('/callback', [CbeMiniAppController::class, 'paymentCallback'])->name('cbe.callback');
+// Route::post('/callback', [CbeMiniAppController::class, 'paymentCallback'])->name('cbe.callback');
 
 Route::get('/register', function () {
     return view('auth/login');
