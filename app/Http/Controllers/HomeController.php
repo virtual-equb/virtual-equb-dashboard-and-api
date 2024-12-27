@@ -17,6 +17,7 @@ use App\Repositories\MainEqub\MainEqubRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 
 class HomeController extends Controller
@@ -41,7 +42,7 @@ class HomeController extends Controller
         // $this->middleware('permission_check_logout:view dashboard', ['only' => ['index', 'show', 'equbTypeIndex']]);
     }
     //Projection chart updated here
-    public function index()
+    public function index1()
     {
         try {
             $userData = Auth::user();
@@ -293,7 +294,7 @@ class HomeController extends Controller
             return back();
         }
     }
-    public function index1()
+    public function index()
     {
         try {
             $title = $this->title;
@@ -305,20 +306,33 @@ class HomeController extends Controller
             $totalMember = $this->memberRepository->getMember();
             $totalUser = $this->userRepository->getUser();
             $tudayPaidMember = $this->equbRepository->tudayPaidMember();
-
+            // dd($tudayPaidMember);
             // Fetch winner data
-            $automaticWinnerMembers = LotteryWinner::whereDate('created_at', Carbon::today())->get();
-            $automaticMembersArray = $automaticWinnerMembers->map(function ($winner) {
-                if ($winner->member) { // Check if the related member exists
-                    return [
-                        'full_name' => $winner->member->full_name,
-                        'phone' => $winner->member->phone,
-                        'gender' => $winner->member->gender,
-                    ];
-                }
-                return null; // Return a placeholder or skip null members
-            })->filter(); // Remove null values from the collection
+            // $automaticWinnerMembers = LotteryWinner::whereDate('created_at', Carbon::today())->get();
+            $automaticWinnerMembers = LotteryWinner::with('member')
+                        ->whereDate('created_at', Carbon::today())
+                        ->get();
 
+            // $automaticMembersArray = $automaticWinnerMembers->map(function ($winner) {
+            //     if ($winner->member) { // Check if the related member exists
+            //         return [
+            //             'full_name' => $winner->member->full_name,
+            //             'phone' => $winner->member->phone,
+            //             'gender' => $winner->member->gender,
+            //         ];
+            //     }
+            //     return null; // Return a placeholder or skip null members
+            // })->filter(); // Remove null values from the collection
+            $automaticMembersArray = $automaticWinnerMembers->filter(function ($winner) {
+                return $winner->member; // Include only winners with a related member
+            })->map(function ($winner) {
+                return [
+                    'full_name' => $winner->member->full_name,
+                    'phone' => $winner->member->phone,
+                    'gender' => $winner->member->gender
+                ];
+            });
+            // dd($automaticMembersArray);
             // Daily Payments and Expected Amount
             $fullDaylyPaidAmount = $this->paymentRepository->getDaylyPaidAmount();
             $daylyPendingAmount = $this->paymentRepository->getDaylyPendingAmount();

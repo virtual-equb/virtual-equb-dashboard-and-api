@@ -203,7 +203,7 @@
                                                     </div>
                                                 </div>
                                             @endforeach
-
+                                                {{-- {{ $automaticMembersArray }} --}}
                                             @foreach ($automaticMembersArray as $item)
                                                 <tr>
                                                     <td>{{ $item['full_name'] }}</td>

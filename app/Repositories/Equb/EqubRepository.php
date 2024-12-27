@@ -488,7 +488,8 @@ class EqubRepository implements IEqubRepository
     }
     public function tudayEqubTypePaidMember($equbTypeId)
     {
-        return $this->model->where('status', 'Active')
+        return $this->model
+            ->where('status', 'Active')
             ->where('equb_type_id', $equbTypeId)
             ->whereRaw('FIND_IN_SET("' . Carbon::today()->format('Y-m-d') . '",lottery_date)')
             ->with('member')
