@@ -5,11 +5,14 @@
                           <tr>
                               <th></th>
                               <th>No</th>
+                              <td>profile</td>   
                               <th>Full Name</th>
                               <th>Phone</th>
                               <th>Gender</th>
                               <th>City</th>
                               <th>Sub City</th>
+                              <th>Woreda</th>
+                              <th>house_number</th>
                               <th>Location</th>
                               <th>Status</th>
                               <th>Rating</th>
@@ -24,14 +27,21 @@
                               //   dd($address);
                               ?>
                               <tr id="trm{{ $item['id'] }}">
+                              
                                   <td class="details-control_equb" id="{{ $item['id'] }}"></td>
                                   <td>{{ $offset + $key + 1 }} </td>
+                                  <td style="background-color: rgb(76, 175, 80); width: 60px; text-align: center;">
+    <img src="{{ asset('storage/' . $item->profile_photo_path) }}" alt="{{ $item->profile_photo_path }}" 
+         style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+</td>
                                   <th>{{ $item->full_name }}
                                   </th>
                                   <th>{{ $item->phone }}</th>
                                   <td>{{ $item->gender }}</td>
                                   <td>{{ $item->memberCity ? $item->memberCity->name : 'N/A' }}</td>
                                   <td>{{ $item->memberSubcity ? $item->memberSubcity->name : 'N/A' }}</td>
+                                  <td>{{ $item->woreda }}</td>
+                                  <td>{{ $item->house_number }}</td>
                                   <td>{{ $item->specific_location }}</td>
                                   <td>{{ $item->status }}</td>
                                   <td>{{ $item->rating }}</td>
@@ -67,14 +77,12 @@
 
                                                       </li>
                                                       @endcan
-                                                      @can('update memeber')
                                                       <li>
                                                           <button href="javascript:void(0);"
                                                               class="text-secondary btn btn-flat"
                                                               onclick="openEditModal({{ $item }})"><span
                                                                   class="fa fa-edit"> </span> Edit</button>
                                                       </li>
-                                                      @endcan
                                                       @can('delete member')
                                                       <li>
                                                           <button href="javascript:void(0);"

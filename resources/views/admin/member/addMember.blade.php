@@ -40,7 +40,7 @@
                         <div class="col-12 row">
                             <div class="form-group required col-6" id="addCity">
                                 <label class="control-label">City</label>
-                                <select class="form-control select2" name="city" required id="select-city">
+                                <select class="form-control select2" name="city" required id="select-city1">
                                     <option value="">Select City</option>
                                     @foreach ($cities as $city)
                                         <option value="{{ $city->id }}">{{ $city->name }}</option>
@@ -48,9 +48,9 @@
                                 </select>
                             </div>
 
-                            <div class="form-group col-6" id="addSubcity" style="display:none;">
+                            <div class="form-group col-6" id="addSubcity1" style="display:none;">
                                 <label class="control-label">Sub-City</label>
-                                <select class="form-control select2" id="subcity" name="subcity" required>
+                                <select class="form-control select2" id="subcity1" name="subcity" required>
                                     <option value="">Select Sub-City</option>
                                 </select>
                             </div>
@@ -86,10 +86,10 @@
 
 <script>
 $(document).ready(function() {
-    $('#select-city').change(function() {
+    $('#select-city1').change(function() {
         var cityId = $(this).val();
-        $('#subcity').empty().append('<option value="">Select Sub-City</option>');
-        $('#addSubcity').hide();
+        $('#subcity1').empty().append('<option value="">Select Sub-City</option>');
+        $('#addSubcity1').hide();
 
         if (cityId) {
             $.ajax({
@@ -99,20 +99,20 @@ $(document).ready(function() {
                 success: function(data) {
                     if (data.length > 0) {
                         $.each(data, function(index, subcity) {
-                            $('#subcity').append('<option value="' + subcity.id + '">' + subcity.name + '</option>');
+                            $('#subcity1').append('<option value="' + subcity.id + '">' + subcity.name + '</option>');
                         });
-                        $('#addSubcity').show();
+                        $('#addSubcity1').show();
                     } else {
-                        $('#addSubcity').hide();
+                        $('#addSubcity1').hide();
                     }
                 },
                 error: function() {
                     alert('Failed to retrieve sub-cities.');
-                    $('#addSubcity').hide();
+                    $('#addSubcity1').hide();
                 }
             });
         } else {
-            $('#addSubcity').hide();
+            $('#addSubcity1').hide();
         }
     });
 });

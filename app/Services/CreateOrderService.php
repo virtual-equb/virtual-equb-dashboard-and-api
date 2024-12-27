@@ -2,14 +2,12 @@
 
 namespace App\Services;
 
-use Exception;
-use App\Services\ApplyFabricToken;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
-
-use App\Services\ApplyFabricTokenService;
+use App\Services\ApplyFabricToken;
 use App\Helpers\SignHelper; // Make sure to include the SignHelper class
+use Exception;
 
+use Illuminate\Support\Facades\Log;
 class CreateOrderService
 {
     protected $baseUrl;

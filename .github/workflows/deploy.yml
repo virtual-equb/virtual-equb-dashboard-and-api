@@ -20,7 +20,8 @@ jobs:
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ftp.virtualekubdash.com                     # FTP server address
-          username: test@test.virtualekubdash.com             # Full FTP username
-          password: ${{ secrets.FTP_PASSWORD }}               # Use a GitHub secret for the password
+          username: main@virtualekubdash.com           # Full FTP username
+          password: 'ql2c]a*l.MVN'                            # Hard-coded FTP password
           protocol: ftp                                       # Use 'ftp' or 'ftps' as needed
-          local-dir: ./     
+          local-dir: ./                                       # Directory containing files to deploy
+         

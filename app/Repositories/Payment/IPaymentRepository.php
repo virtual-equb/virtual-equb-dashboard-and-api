@@ -12,7 +12,7 @@ interface IPaymentRepository
 
     public function getAllPendingPayments();
     public function getAllPendingByPaginate($offset);
-
+    public function getAllPaidByPaginate($offset);
     public function getAllPaidPayments();
 
     public function getTotalPayment();

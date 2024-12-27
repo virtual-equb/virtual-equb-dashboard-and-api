@@ -406,12 +406,12 @@ class PaymentController extends Controller
         /** @var App\Models\User */
         try {
             $offset = 0;
-            $limit = 10;
+            $limit = 100;
             $pageNumber = 1;
             $userData = Auth::user();
             
             if ($userData) {
-                $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance'];
+                $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance','call_center'];
                 $member = ['member'];
                 $collector = ['equb_collector'];
                 if ($userData->hasAnyRole($adminRoles)) {
@@ -469,7 +469,7 @@ class PaymentController extends Controller
             // if ($userData->hasAnyRole($adminRoles)) {
                 $this->middleware('auth');
                 $data['title'] = $this->title;
-                $data['paids'] = Payment::where('status', 'paid')->with('member')->get();
+                $data['paids'] = Payment::where('status', 'pending')->with('member')->get();
                 return view('admin/payment.pendingPaymentList', $data);
             // } else {
             //     return view('auth/login');
@@ -490,8 +490,11 @@ class PaymentController extends Controller
             // if ($userData->hasAnyRole($adminRoles)) {
                 $this->middleware('auth');
                 $data['title'] = $this->title;
-                $data['paids'] = Payment::where('status', 'paid')->with('member')->get();
+                $data['paids'] = Payment::where('status', 'pending')->with('member')->get();
                 return view('admin/payment.paidPaymentList', $data);
+            // } else {
+            //     return view('auth/login');
+            // }
             // } else {
             //     return view('auth/login');
             // }
@@ -502,6 +505,7 @@ class PaymentController extends Controller
             return back();
         }
     }
+ 
     // public function indexPendingPaginate($offsetVal, $pageNumberVal)
     // {
     //     try {
@@ -712,7 +716,7 @@ class PaymentController extends Controller
     }
     public function indexPaidPaginate($offsetVal, $pageNumberVal)
     {
-      
+        // dd("hello");
         try {
             $limit = 10;
             $offset = $offsetVal;
@@ -723,7 +727,7 @@ class PaymentController extends Controller
             $collector = ['equb_collector'];
             if ($userData->hasAnyRole($adminRoles)) {
                 // $totalMember = $this->memberRepository->getPendingMembers();
-                $payments = $this->paymentRepository->getAllPaidPayments($offset);
+                $payments = $this->paymentRepository->getAllPaidByPaginate($offset);
                 // $totalPaid = $this->paymentRepository->getTotalPaid($equb_id);
                 // $equbTypes = $this->equbTypeRepository->getActive();
                 // $equbs = $this->equbRepository->getAll();
@@ -751,6 +755,7 @@ class PaymentController extends Controller
             return back();
         }
     }
+ 
     public function show($member_id, $equb_id, $offsetVal, $pageNumberVal)
     {
         try {

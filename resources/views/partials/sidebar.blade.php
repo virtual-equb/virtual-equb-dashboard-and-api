@@ -187,24 +187,24 @@
                 @can('view notification')
                 <!-- Notifications Section -->
                 <li class="nav-item">
-                    <a href="#" class="nav-link" id="notificationsLink" onclick="setActive('notificationsLink')">
-                        <i class="nav-icon fa fa-bell"></i>
+                    <a href="#" class="nav-link" id="notificationLink" onclick="setActive('notificationLink')">
+                    <i class="nav-icon fa fa-bell"></i>
                         <p>
-                            Notifications
+                        Notifications
                             <i class="fas fa-angle-left right"></i>
                         </p>
                     </a>
-                    <ul class="nav nav-treeview ml-2">
+                    <ul class="nav nav-treeview ml-2" style="{{ request()->is('notification/sent*') ? 'display: block;' : 'display: none;' }}">
                         <li class="nav-item">
-                            <a href="{{ route('showNotifations') }}" class="nav-link" id="notification" onclick="setActive('notification')">
-                                <i class="far fa-circle nav-icon"></i>
+                            <a href="{{ route('showSentNotifications') }}" class="nav-link {{ request()->is('notification/sent') ? 'active' : '' }}" id="cityLink" onclick="setActive('cityLink')">
+                            <i class="far fa-circle nav-icon"></i>
                                 <p>View Notifications</p>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a href="{{ route('showSentNotifications') }}" class="nav-link" id="sentNotification" onclick="setActive('sentNotification')">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Sent Notifications</p>
+                         <li class="nav-item">
+                            <a href="{{ route('showNotifations') }}" class="nav-link {{ request()->is('notification/view') ? 'active' : '' }}" id="cityLink" onclick="setActive('cityLink')">
+                            <i class="far fa-circle nav-icon"></i>
+                                <p>View Notifications</p>
                             </a>
                         </li>
                     </ul>
@@ -239,28 +239,25 @@
                     </ul>
                 </li>
                 @endcan
-
                 @can('view permission')
                 <li class="nav-item">
-                    <a href="#" class="nav-link" id="settingsLink" onclick="setActive('settingsLink')">
-                        <i class="nav-icon fas fa-cog"></i>
+                    <a href="#" class="nav-link" id="settingLink" onclick="setActive('settingLink')">
+                        <i class="nav-icon fas fa-map-marker-alt"></i>
                         <p>
                             Settings
                             <i class="fas fa-angle-left right"></i>
                         </p>
                     </a>
-                    <ul class="nav nav-treeview ml-2" style="{{ request()->is('permission') || request()->is('roles') ? 'display: block;' : 'display: none;' }}">
+                    <ul class="nav nav-treeview ml-2" style="{{ request()->is('settings/permission*') ? 'display: block;' : 'display: none;' }}">
                         <li class="nav-item">
-                            <a href="{{ url('settings/permission') }}" class="nav-link {{ request()->is('permission') ? 'active' : '' }}" id="nav-permissions" onclick="setActive('nav-permissions')">
-                                <i class="far fa-circle nav-icon"></i>
+                            <a href="{{ route('permissions.index') }}" class="nav-link {{ request()->is('settings/permission') ? 'active' : '' }}" id="cityLink" onclick="setActive('cityLink')">
+                            <i class="far fa-circle nav-icon"></i>
                                 <p>Permissions</p>
                             </a>
                         </li>
-                     
                     </ul>
                 </li>
                 @endcan
-
                 <!-- Logout Section -->
                 <li class="nav-item">
                     <a href="#" onclick="$('#logout').submit(); return false;" class="nav-link" id="logoutLink">

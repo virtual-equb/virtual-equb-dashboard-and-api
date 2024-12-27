@@ -121,7 +121,6 @@
                         <label for="expected_members" class="control-label">Expected Members</label>
                         <input type="number" class="form-control" id="expected_members" name="expected_members" placeholder="Expected Members" readonly>
                     </div>
-
                     <div id="total_amount_div" class="form-group d-none">
                         <label for="total_amount" class="control-label">Total Amount</label>
                         <input type="number" class="form-control" id="total_amount" name="total_amount" placeholder="Total Amount" readonly>
