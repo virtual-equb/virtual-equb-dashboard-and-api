@@ -6,6 +6,7 @@ use Exception;
 use App\Models\Equb;
 use App\Models\AppToken;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
@@ -159,7 +160,7 @@ class CbeMiniAppController extends Controller
             if ($response->status() === 200) {
                 return response()->json(['status' => 'success', 'token' => $response->json('token'), 'signature' => $signature], 200);
             } else {
-                \Log::error('CBE API Error:', ['response' => $response->json()]);
+                Log::error('CBE API Error:', ['response' => $response->json()]);
                 return response()->json(['status' => 'error', 'message' => 'Transaction failed'], $response->status());
             }
         } catch (\Exception $ex) {
