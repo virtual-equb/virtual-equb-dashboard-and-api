@@ -260,14 +260,6 @@
                     </ul>
                 </li>
                 @endcan
-                <li class="nav-item" id="nav-ety">
-                    <a href="{{ route('showActivityLog') }}" class="nav-link" id="activity_log">
-                        <i class="nav-icon fa fa-chart-line"></i>
-                        <p>
-                            Activity Log
-                        </p>
-                    </a>
-                </li>
 
                 <!-- Logout Section -->
                 <li class="nav-item">
