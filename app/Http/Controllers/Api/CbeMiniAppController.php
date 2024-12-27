@@ -172,7 +172,8 @@ class CbeMiniAppController extends Controller
     {
         try {
             // return 123;
-            $token = $request->header('Authorization');
+            // $token = $request->header('Authorization');
+            $token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjI1MTkxODA5NDQ1NSIsImV4cCI6MTczODYzMjEzMH0.cN95szHJNoJwp8tdtpDOk29vPmQeVoYP8dbKFBFy4_M";
             if (!$token) {
                 return response()->json([
                     'error' => 'Token is missing'

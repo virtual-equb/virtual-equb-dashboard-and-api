@@ -484,7 +484,14 @@ class EqubRepository implements IEqubRepository
 
     public function tudayPaidMember()
     {
-        return $this->model->where('status', 'Active')->whereRaw('FIND_IN_SET("' . Carbon::today()->format('Y-m-d') . '",lottery_date)')->with('member')->get();
+        // return $this->model->where('status', 'Active')->whereRaw('FIND_IN_SET("' . Carbon::today()->format('Y-m-d') . '",lottery_date)')->with('member')->get();
+        $today = Carbon::today()->format('Y-m-d');
+        
+        return $this->model
+            ->where('status', 'Active')
+            ->whereRaw('FIND_IN_SET(?, lottery_date)', [$today])
+            ->with('member')
+            ->get();
     }
     public function tudayEqubTypePaidMember($equbTypeId)
     {
