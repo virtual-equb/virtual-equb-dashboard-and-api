@@ -1,4 +1,3 @@
-@can('view unpaid_payment_report')
 @extends('layouts.app')
 
 @section('styles')
@@ -45,21 +44,31 @@
                                 <div class="card-body">
                                     <div class="tab-content" id="custom-tabs-two-tabContent">
                                         <div class="tab-pane fade show active" id="custom-tabs-two-member" role="tabpanel" aria-labelledby="custom-tabs-two-member-tab">
-                                            @include('admin/payment.addPayment')
-                                            <div class="float-left checkLotteryandAddMember" id="member_table_filter"></div>
-                                            <div class="row">
-                                                <div class="col-7"></div>
-                                                <div class="float-right searchandClear row col-5 mb-2">
-                                                    <input class="form-control col-10" type="text" id="memberSearchText" placeholder="Search Member">
-                                                    <button class="btn btn-default clear col-2" id="clearActiveSearch" onclick="clearSearchEntry()">Clear</button>
-                                                </div>
-                                            </div>
-                                            <div id="member_table_data_w" class="col-md-8"></div>
-                                            <div id="equbtaker_table_data"></div>
+                                            <table id="equbTakerTable" class="table table-bordered table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>Name</th>
+                                                        <th>Email</th>
+                                                        <th>Phone</th>
+                                                        <th>Equb Type</th>
+                                                        <th>status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach($equbTakers as $index => $taker)
+                                                        <tr>
+                                                            <td>{{ $index + 1 }}</td>
+                                                            <td>{{ $taker->member->full_name }}</td>
+                                                            <td>{{ $taker->member->email }}</td>
+                                                            <td>{{ $taker->member->phone }}</td>
+                                                            <td>{{ $taker->equb->equbType->name }}</td>
+                                                            <td>{{ $taker->status }}</td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
                                         </div>
-                                        <div class="tab-pane fade" id="custom-tabs-two-profile" role="tabpanel" aria-labelledby="custom-tabs-two-profile-tab"></div>
-                                        <div class="tab-pane fade" id="custom-tabs-two-messages" role="tabpanel" aria-labelledby="custom-tabs-two-messages-tab"></div>
-                                        <div class="tab-pane fade" id="custom-tabs-two-settings" role="tabpanel" aria-labelledby="custom-tabs-two-settings-tab"></div>
                                     </div>
                                 </div>
                             </div>
@@ -69,82 +78,28 @@
             </section>
         </div>
     </div>
-
-    @include('admin/payment.deletePayment')
-    @include('admin/equb.deleteEqub')
-    @include('admin/payment.deleteAllPayment')
-    @include('admin/payment.editPayment')
-
-    <div class="modal modal-danger fade" id="lotteryDetailModal" tabindex="-1" role="dialog" aria-labelledby="Delete" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <p class="modal-title">Reserved Lottery Detail</p>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body" id="lotteryDetail"></div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                </div>
-            </div>
-        </div>
-    </div>
 @endsection
 
 @section('scripts')
     <script>
-        const memberSearchField = document.getElementById('memberSearchText');
-
-        memberSearchField.addEventListener("keydown", function(e) {
-            if (e.key === "Enter") {
-                $.LoadingOverlay("show");
-                searchForMember(memberSearchField.value);
-            }
-        });
-
-        function searchForMember(searchInput) {
-            if (searchInput) {
-                $.ajax({
-                    url: "{{ url('payment/search-paid-payment') }}/" + searchInput + '/0',
-                    type: 'get',
-                    success: function(data) {
-                        $('#equbtaker_table_data').html(data);
-                        $.LoadingOverlay("hide");
-                    }
-                });
-            } else {
-                clearSearchEntry();
-            }
-        }
-
-        function clearSearchEntry() {
-            $.LoadingOverlay("show");
-            document.getElementById('memberSearchText').value = "";
-            $.ajax({
-                url: "{{ url('payment/clearPaidSearchEntry') }}",
-                type: 'get',
-                success: function(data) {
-                    $('#equbtaker_table_data').html(data);
-                    $.LoadingOverlay("hide");
-                }
-            });
-        }
-        $(function() {
-    $.LoadingOverlay("show");
-    $(function() {  
-            $.LoadingOverlay("show");
-            $.ajax({
-                url: "{{ url('payment/show-paid-payment') }}/0/1", // Updated URL
-                type: 'get',
-                success: function(data) {
-                    $('#member_table_data').html(data);
-                    $.LoadingOverlay("hide");
+        $(document).ready(function() {
+            $('#equbTakerTable').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": true,
+                "ordering": true,
+                "info": false,
+                "autoWidth": false,
+                "responsive": true,
+                "language": {
+                    "emptyTable": "No data available in table",
+                    "info": "Showing _START_ to _END_ of _TOTAL_ entries",
+                    "infoEmpty": "Showing 0 to 0 of 0 entries",
+                    "zeroRecords": "No matching records found",
+                    "lengthMenu": "Display _MENU_ records",
+                    "search": "Search:",
                 }
             });
         });
-});
     </script>
 @endsection
-@endCan

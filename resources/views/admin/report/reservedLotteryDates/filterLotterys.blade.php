@@ -1,4 +1,4 @@
-@extends('layouts.app')
+
     <?php
     $total_amount = 0;
     $total_remaining_amount = 0;
@@ -143,12 +143,8 @@
                     search: "",
                     searchPlaceholder: "Search",
                 },
-                @can('export reports_data')
                 "buttons": ["excel", "pdf", "print", "colvis"],
-                @else 
-                "buttons": []
-                @endcan
             }).buttons().container().appendTo('#lottery-table_wrapper .col-md-6:eq(0)');
         });
     </script>
-@endcan
+

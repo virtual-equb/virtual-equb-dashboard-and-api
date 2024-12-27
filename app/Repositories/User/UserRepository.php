@@ -55,22 +55,8 @@ class UserRepository implements IUserRepository
 
     public function getCollecters()
     {
-        // return $this->model
-        //     ->where('role', 'admin')
-        //     ->orWhere('role', 'equb_collector')
-        //     ->orWhere('role', 'finance')
-        //     ->orWhere('role', 'customer_service')
-        //     ->get();
-
-        // Alternative User Helper
-        // $users = User::all()->filter(function ($user) {
-        //     return $user->hasAnyRole(['admin', 'equb_collector', 'finance', 'call_center']);
-        // });
-        // return $users;
-
-        return User::whereHas('roles', function ($query) {
-            $query->whereIn('name', ['admin', 'equb_collector', 'finance', 'call_center']);
-        });
+       
+        return User::role(['admin', 'equb_collector', 'finance', 'call_center'])->get();
     }
     public function getUsersWithRoles(array $roles)
     {

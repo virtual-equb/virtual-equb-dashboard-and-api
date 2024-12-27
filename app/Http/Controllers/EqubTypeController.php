@@ -238,7 +238,7 @@ class EqubTypeController extends Controller
             // Set default values based on the type
             if ($type === 'Automatic' && !$lottery_date) {
                 $lottery_date = Carbon::parse($formattedStartDate)->addDays(7)->format('Y-m-d');
-                $total_amount = $quota * $amount;
+                $total_amount = $total_amount;
                 $expected_members = 105;
             } elseif ($type === 'Seasonal') {
                 $lottery_date = Carbon::parse($start_date)->addDays(7)->format('Y-m-d');

@@ -434,24 +434,36 @@ class EqubController extends Controller
     {
         try {
             $userData = Auth::user();
-            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance'];
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance','call_center'];
             $memberRole = ['member'];
             $collectorRole = ['equb_collector'];
+    
+            // Fetch equb data based on user role
             if ($userData->hasAnyRole($adminRoles)) {
                 $equbTakerData['equb'] = $this->equbRepository->getByIdNestedForLottery($id);
-                $equbTakerData['total'] = $this->paymentRepository->getTotal($id);
-                return view('admin/equb.equbDetails', $equbTakerData);
             } elseif ($userData->hasRole($collectorRole)) {
                 $equbTakerData['equb'] = $this->equbRepository->getByIdNested($id);
-                $equbTakerData['total'] = $this->paymentRepository->getTotal($id);
-                return view('equbCollecter/equb.equbDetails', $equbTakerData);
-            } elseif ($userData->hasRole($member)) {
+            } elseif ($userData->hasRole($memberRole)) {
                 $equbTakerData['equb'] = $this->equbRepository->getByIdNested($id);
-                $equbTakerData['total'] = $this->paymentRepository->getTotal($id);
-                return view('member/equb.equbDetails', $equbTakerData);
             } else {
                 return view('auth/login');
             }
+    
+            // Fetch total payments
+            $equbTakerData['total'] = $this->paymentRepository->getTotal($id);
+    
+            // Get paginated payment details
+            $equbTakerData['payments'] = $this->paymentRepository->getPaginatedPayments($id);
+    
+            // Return appropriate view based on user role
+            if ($userData->hasAnyRole($adminRoles)) {
+                return view('admin/equb.equbDetails', $equbTakerData);
+            } elseif ($userData->hasRole($collectorRole)) {
+                return view('equbCollecter/equb.equbDetails', $equbTakerData);
+            } elseif ($userData->hasRole($memberRole)) {
+                return view('member/equb.equbDetails', $equbTakerData);
+            }
+    
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';

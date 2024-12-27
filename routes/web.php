@@ -133,6 +133,7 @@ Route::middleware([
         Route::get('/clearPendingSearchEntry', [MemberController::class, 'clearPendingSearchEntry'])->name('clearPendingSearchEntry');
         Route::get('/member/{offsetVal}/{pageNumberVal}', [MemberController::class, 'member']);
         Route::get('/pendingMember/{offsetVal}/{pageNumberVal}', [MemberController::class, 'pendingMember']);
+
         Route::get('/get-equbs/{id}', [MemberController::class, 'getEqubs'])->name('getEqub');
         Route::get('/search-member/{searchInput}/{offset}/{pageNumber?}', [MemberController::class, 'searchMember'])->name('searchMember');
         Route::get('/search-pending-member/{searchInput}/{offset}/{pageNumber?}', [MemberController::class, 'searchPendingMember'])->name('searchPendingMember');
@@ -244,7 +245,9 @@ Route::middleware([
         Route::get('/paginateMembersByEqubType/{dateFrom}/{dateTo}/{equbType}/{offsetVal}/{pageNumberVal}', [ReportController::class, 'paginateMembersByEqubType']);
         Route::get('/equbTypeFilter', [ReportController::class, 'equbTypeFilter'])->name('equbTypeFilter');
         Route::get('/equbTypes/{dateFrom}/{dateTo}', [ReportController::class, 'equbTypes'])->name('equbTypes');
-        Route::get('/paymentFilter', [ReportController::class, 'paymentFilter'])->name('paymentFilter');
+       // Route::get('/paymentFilter', [ReportController::class, 'paymentFilter'])->name('paymentFilter');
+       Route::get('/paymentFilter', [ReportController::class, 'paymentFilter'])->name('paymentFilter');
+
         Route::get('/payments', [ReportController::class, 'payments'])->name('payments');
 
         Route::get('/equbFilter', [ReportController::class, 'equbFilter'])->name('equbFilter');

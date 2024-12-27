@@ -1,4 +1,4 @@
-
+@can('view member')
 @extends('layouts.app')
     @section('styles')
         <style type="text/css">
@@ -97,13 +97,13 @@
             }
 
             /*@media (max-width: 768px) {
-                                                                                                                                                                                                                                                                                              .col-md-6 {
-                                                                                                                                                                                                                                                                                               width: 100%;
-                                                                                                                                                                                                                                                                                               padding-left: 0px;
-                                                                                                                                                                                                                                                                                               padding-right: 0px;
-                                                                                                                                                                                                                                                                                               float: left;
-                                                                                                                                                                                                                                                                                              }
-                                                                                                                                                                                                                                                                                            }*/
+                                                                                                                                                                                                                                                                      .col-md-6 {
+                                                                                                                                                                                                                                                                       width: 100%;
+                                                                                                                                                                                                                                                                       padding-left: 0px;
+                                                                                                                                                                                                                                                                       padding-right: 0px;
+                                                                                                                                                                                                                                                                       float: left;
+                                                                                                                                                                                                                                                                      }
+                                                                                                                                                                                                                                                                    }*/
             @media (max-width: 575.98px) {
                 #payment-list-table_in_tab {
                     display: block;
@@ -132,7 +132,7 @@
                                                 <a class="nav-link active" id="custom-tabs-two-member-tab"
                                                     data-toggle="pill" href="#custom-tabs-two-member" role="tab"
                                                     aria-controls="custom-tabs-two-member" aria-selected="true"> <span
-                                                        class="fa fa-list"> </span> Member</a>
+                                                        class="fa fa-list"> </span> Pending Members</a>
                                             </li>
                                             <li class="nav-item paymentTab" id="payment-tab" style="display: none;">
                                                 <a class="nav-link" id="custom-tabs-two-messages-tab" data-toggle="pill"
@@ -151,7 +151,7 @@
                                                 @include('admin/equb.addEqub')
                                                 @include('admin/member.addMember')
                                                 <div class="float-left checkLotteryandAddMember" id="member_table_filter">
-                                                @can('view member')
+                                                    {{-- @if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant' && Auth::user()->role != 'finance')
                                                         <button type="button" class=" btn btn-primary checkLottery"
                                                             id="lotteryDatec" data-toggle="modal"
                                                             data-target="#lotteryDateCheckModal"
@@ -161,7 +161,7 @@
                                                             id="register" data-toggle="modal" data-target="#myModal"
                                                             style="margin-right: 30px;"> <span class="fa fa-plus-circle">
                                                             </span> Add member</button>
-                                                    @endcan
+                                                    @endif --}}
                                                 </div>
                                                 <div class="row">
                                                     <div class="float-right searchEqubandClear col-4"
@@ -177,7 +177,7 @@
                                                             @endforeach
                                                         </select>
                                                     </div>
-                                                    <div class="float-right searchEqubandClear col-4"
+                                                    {{-- <div class="float-right searchEqubandClear col-4"
                                                         id="member_table_filter">
                                                         <select class="form-control"id="statusSearchText"
                                                             name="member_status" placeholder="Status">
@@ -185,7 +185,7 @@
                                                             <option value="Active">Active</option>
                                                             <option value="Deactive">Deactive</option>
                                                         </select>
-                                                    </div>
+                                                    </div> --}}
                                                     <div class="float-right searchandClear row col-4"
                                                         id="member_table_filter">
                                                         <input class="form-control col-10" type="text"
@@ -254,21 +254,6 @@
     @endsection
     @section('scripts')
         <script>
-            // function updateMembersCount() {
-            //     // Send an Ajax request to fetch the updated members count
-            //     fetch('/member/countPendingMembers')
-            //         .then(response => response.json())
-            //         .then(data => {
-            //             const membersCount = data;
-            //             console.log("ðŸš€ ~ updateMembersCount ~ membersCount:", membersCount)
-            //             // Update the count element with the new count
-            //             document.getElementById('members-count').textContent = membersCount;
-            //         })
-            //         .catch(error => {
-            //             console.error('Error occurred while fetching members count:', error);
-            //         });
-            // }
-            // updateMembersCount();
             var memberSearchField = document.getElementById('memberSearchText');
             memberSearchField.addEventListener("keydown", function(e) {
                 var memberSearchInput = memberSearchField.value;
@@ -281,7 +266,7 @@
             function searchForMember(searchInput) {
                 if (searchInput != "") {
                     $.ajax({
-                        url: "{{ url('member/search-member') }}" + '/' + searchInput + '/0',
+                        url: "{{ url('member/search-pending-member') }}" + '/' + searchInput + '/0',
                         type: 'get',
                         success: function(data) {
                             $('#member_table_data').html(data);
@@ -308,44 +293,44 @@
 
                 }
             }
-            var statusSearchField = document.getElementById('statusSearchText');
-            statusSearchField.addEventListener("change", function(e) {
-                var memberSearchInput = statusSearchField.value;
-                $.LoadingOverlay("show");
-                searchForStatus(memberSearchInput);
-            });
+            // var statusSearchField = document.getElementById('statusSearchText');
+            // statusSearchField.addEventListener("change", function(e) {
+            //     var memberSearchInput = statusSearchField.value;
+            //     $.LoadingOverlay("show");
+            //     searchForStatus(memberSearchInput);
+            // });
 
-            function searchForStatus(searchInput) {
-                // console.log("ðŸš€ ~ file: memberList.blade.php:274 ~ searchForEqub ~ searchInput:", searchInput)
-                if (searchInput != "") {
-                    $.ajax({
-                        url: "{{ url('member/search-status') }}" + '/' + searchInput + '/0',
-                        type: 'get',
-                        success: function(data) {
-                            $('#member_table_data').html(data);
-                            $.LoadingOverlay("hide");
-                        }
-                    });
-                } else {
-                    clearSearchEntry();
-                    $.LoadingOverlay("hide");
-                }
-            }
+            // function searchForStatus(searchInput) {
+            //     // console.log("🚀 ~ file: memberList.blade.php:274 ~ searchForEqub ~ searchInput:", searchInput)
+            //     if (searchInput != "") {
+            //         $.ajax({
+            //             url: "{{ url('member/search-status') }}" + '/' + searchInput + '/0',
+            //             type: 'get',
+            //             success: function(data) {
+            //                 $('#member_table_data').html(data);
+            //                 $.LoadingOverlay("hide");
+            //             }
+            //         });
+            //     } else {
+            //         clearSearchEntry();
+            //         $.LoadingOverlay("hide");
+            //     }
+            // }
 
-            function loadMoreSearchStatus(searchInput, offsetVal, pageNumberVal) {
-                if (searchInput != "") {
-                    $.ajax({
-                        url: "{{ url('member/search-status') }}" + '/' + searchInput + '/' +
-                            offsetVal + '/' +
-                            pageNumberVal,
-                        type: 'get',
-                        success: function(data) {
-                            $('#member_table_data').html(data);
-                        }
-                    });
+            // function loadMoreSearchStatus(searchInput, offsetVal, pageNumberVal) {
+            //     if (searchInput != "") {
+            //         $.ajax({
+            //             url: "{{ url('member/search-status') }}" + '/' + searchInput + '/' +
+            //                 offsetVal + '/' +
+            //                 pageNumberVal,
+            //             type: 'get',
+            //             success: function(data) {
+            //                 $('#member_table_data').html(data);
+            //             }
+            //         });
 
-                }
-            }
+            //     }
+            // }
 
             var equbSearchField = document.getElementById('equbSearchText');
             equbSearchField.addEventListener("change", function(e) {
@@ -355,10 +340,10 @@
             });
 
             function searchForEqub(searchInput) {
-                // console.log("ðŸš€ ~ file: memberList.blade.php:274 ~ searchForEqub ~ searchInput:", searchInput)
+                console.log("🚀 ~ file: memberList.blade.php:274 ~ searchForEqub ~ searchInput:", searchInput)
                 if (searchInput != "") {
                     $.ajax({
-                        url: "{{ url('member/search-equb') }}" + '/' + searchInput + '/0',
+                        url: "{{ url('member/search-pending-equb') }}" + '/' + searchInput + '/0',
                         type: 'get',
                         success: function(data) {
                             $('#member_table_data').html(data);
@@ -374,7 +359,7 @@
             function loadMoreSearchEqubs(searchInput, offsetVal, pageNumberVal) {
                 if (searchInput != "") {
                     $.ajax({
-                        url: "{{ url('member/search-equb') }}" + '/' + searchInput + '/' +
+                        url: "{{ url('member/search-pending-equb') }}" + '/' + searchInput + '/' +
                             offsetVal + '/' +
                             pageNumberVal,
                         type: 'get',
@@ -392,7 +377,7 @@
                 // if (searchInput != "") {
                 document.getElementById('memberSearchText').value = "";
                 $.ajax({
-                    url: "{{ url('member/clearSearchEntry') }}",
+                    url: "{{ url('member/clearPendingSearchEntry') }}",
                     type: 'get',
                     success: function(data) {
                         $('#member_table_data').html(data);
@@ -403,7 +388,7 @@
                 // }
             }
 
-            function members(offsetVal, pageNumberVal) {
+            function pendingMembers(offsetVal, pageNumberVal) {
                 $.LoadingOverlay("show");
                 $.ajax({
                     url: "{{ url('member/pendingMember') }}" + '/' + offsetVal + '/' + pageNumberVal,
@@ -467,6 +452,13 @@
                 $('#updateStatus').attr('action', "{{ url('member/updateStatus') }}" + '/' + $('#member_id').val());
             }
 
+            function statusPendingChange(item, status) {
+                $('#member_id').val(item.id);
+                $('#statusPendingModal').modal('show');
+                $('#updatePendingStatus').attr('action', "{{ url('member/updatePendingStatus') }}" + '/' + $('#member_id')
+                .val() + '/' + status);
+            }
+
             function statusSubmit() {
                 document.getElementById("updateStatus").submit();
             }
@@ -526,14 +518,14 @@
             }
 
             function openApproveLotteryModal(item) {
-                console.log("ðŸš€ ~ file: memberList.blade.php:461 ~ openApproveLotteryModal ~ item:", item)
+                console.log("🚀 ~ file: memberList.blade.php:461 ~ openApproveLotteryModal ~ item:", item)
                 $('#lottery_idd').val(item.id);
                 $('#openApproveLotteryModal').modal('show');
                 $('#approveLottery').attr('action', 'equbTaker/equbTaker-change-status/approved/' + $('#lottery_idd').val())
             }
 
             function openPayLotteryModal(item) {
-                console.log("ðŸš€ ~ file: memberList.blade.php:461 ~ openApproveLotteryModal ~ item:", item.id)
+                console.log("🚀 ~ file: memberList.blade.php:461 ~ openApproveLotteryModal ~ item:", item.id)
                 $('#lottery_id_pay').val(item.id);
                 $('#openPayLotteryModal').modal('show');
                 $('#payLottery').attr('action', 'equbTaker/equbTaker-change-status/paid/' + $('#lottery_id_pay').val())
@@ -560,65 +552,31 @@
                 $('#deleteEqub').attr('action', 'member/equb-delete/' + $('#equb_id').val())
             }
 
-           
-            function openEditModal(item) {
-    $('#m_id').val(item.id);
-    $('#editMemberModal').modal('show');
-    $('#update_full_name').val(item.full_name);
-    $('#update_phone').val(item.phone);
-    $('#update_email').val(item.email);
-    $('#update_woreda').val(item.woreda);
-    $('#update_location').val(item.specific_location);
-    $('#update_housenumber').val(item.house_number);
-    $('#update_gender > option[value="' + item.gender + '"]').prop('selected', true);
-    
-    // Set the selected city
-    $('#select-city > option[value="' + item.city + '"]').prop('selected', true);
-
-    // Fetch sub-cities based on the selected city
-    var cityId = item.city; // Assuming item.city contains the city ID
-    $('#subcity').empty().append('<option value="">Select Sub-City</option>');
-    $('#addSubcity').hide();
-
-    if (cityId) {
-        $.ajax({
-            url: '/subcities/city/' + encodeURIComponent(cityId),
-            type: 'GET',
-            dataType: 'json',
-            success: function(data) {
-                if (data.length > 0) {
-                    $.each(data, function(index, subcity) {
-                        $('#subcity').append('<option value="' + subcity.id + '">' + subcity.name + '</option>');
-                    });
-                    // Set the default sub-city based on the item data
-                    if (item.subcity) { // Assuming item.subcity contains the sub-city ID
-                        $('#subcity > option[value="' + item.subcity + '"]').prop('selected', true);
-                    }
-                    $('#addSubcity').show();
-                } else {
-                    $('#addSubcity').hide();
-                }
-            },
-            error: function() {
-                alert('Failed to retrieve sub-cities.');
-                $('#addSubcity').hide();
+            function openDeleteModal(item) {
+                $('#id').val(item.id);
+                $('#deleteModal').modal('show');
+                $('#deleteMember').attr('action', 'member/delete/' + $('#id').val())
             }
-        });
-    } else {
-        $('#addSubcity').hide();
-    }
 
-    // Set the profile picture preview dynamically
-    if (item.profile_photo_path) {
-        $('#profilePicPreview').attr('src', '{{ asset('storage') }}/' + item.profile_photo_path);
-    } else {
-        $('#profilePicPreview').attr('src', '{{ asset('storage/profile_pictures/default.png') }}'); // Default image path
-    }
+            function openEditModal(item) {
+                // var addressObject = JSON.parse(item.address);
+                $('#m_id').val(item.id);
+                $('#editMemberModal').modal('show');
+                $('#update_full_name').val(item.full_name);
+                $('#update_phone').val(item.phone);
+                $('#update_email').val(item.email);
+                $('#update_subcity').val(item.subcity);
+                $('#update_woreda').val(item.woreda);
+                $('#update_location').val(item.specific_location);
+                $('#update_housenumber').val(item.house_number);
+                $('#update_gender>option[value="' + item.gender + '"]').prop('selected', true);
+                $('#update_city>option[value="' + item.city + '"]').prop('selected', true);
 
-    $('#updateMember').attr('action', 'member/update/' + $('#m_id').val());
-}
+                $('#updateMember').attr('action', 'member/update/' + $('#m_id').val());
+            }
+
             function openRateModal(item) {
-                console.log("ðŸš€ ~ file: memberList.blade.php:495 ~ openRateModal ~ item:", item)
+                console.log("🚀 ~ file: memberList.blade.php:495 ~ openRateModal ~ item:", item)
                 // var addressObject = JSON.parse(item.address);
                 $('#m_id').val(item.id);
                 $('#rateMemberModal').modal('show');
@@ -723,7 +681,7 @@
             }
 
             function sendNotificationModal(item) {
-                console.log("ðŸš€ ~ file: memberList.blade.php:637 ~ sendNotificationModal ~ item:", item)
+                console.log("🚀 ~ file: memberList.blade.php:637 ~ sendNotificationModal ~ item:", item)
                 $('#m_phone').val(item.phone);
                 $('#sendNotificationModal').modal('show');
             }
@@ -979,7 +937,7 @@
             $(function() {
                 $.LoadingOverlay("show");
                 $('#settingNavm').addClass('menu-is-opening menu-open');
-                $('#nav-mem').addClass('active');
+                $('#pendingMem').addClass('active');
                 $('#mem').addClass('active');
                 $.ajax({
                     url: "{{ url('member/pendingMember') }}" + '/' + 0 + '/' + 1,
@@ -1062,38 +1020,6 @@
                     todayHighlight: true
                 };
                 $("#lottery_date").datepicker(datePickerOptions);
-                document.getElementById('type').addEventListener('change', function() {
-    const selectedType = this.value;
-    const timeline = document.getElementById('timeline_div'); // Assuming this is the correct ID for the timeline div
-
-    // Clear existing options in equb_type_id based on selected type
-    const equbTypeSelect = document.getElementById('equb_type_id');
-    equbTypeSelect.innerHTML = '<option value="">Choose...</option>';
-
-    // Update timeline visibility based on selected type
-    if (selectedType === "Manual") {
-        timeline.classList.remove("d-none");
-    } else if (selectedType === "Seasonal" || selectedType === "Automatic") {
-        timeline.classList.add("d-none");
-    }
-
-    // Populate equb_type_id based on selected type
-    @foreach ($equbTypes as $equbType)
-        if (selectedType === "{{ $equbType->type }}") {
-            const option = document.createElement('option');
-            option.value = "{{ $equbType->id }}";
-            option.textContent = "{{ $equbType->name }} round {{ $equbType->round }}";
-            option.setAttribute('data-info', "{{ $equbType->type }}");
-            option.setAttribute('data-startdate', "{{ $equbType->start_date }}");
-            option.setAttribute('data-enddate', "{{ $equbType->end_date }}");
-            option.setAttribute('data-rote', "{{ $equbType->rote }}");
-            option.setAttribute('data-quota', "{{ $equbType->quota }}");
-            option.setAttribute('data-amount', "{{ $equbType->amount }}");
-            option.setAttribute('data-expected-total', "{{ $equbType->expected_total }}");
-            equbTypeSelect.appendChild(option);
-        }
-    @endforeach
-});
 
                 $(document).ready(function() {
                     const selectBox = document.getElementById("equb_type_id");
@@ -1102,7 +1028,7 @@
                     const timeline = document.getElementById("timeline_div");
                     $("#equb_type_id").on("change", function() {
                         var type = $(this).find("option:selected").data("info");
-                        if (type === "Manual" || type === "Manual") {
+                        if (type !== "Automatic") {
                             lotteryDate.classList.remove("d-none");
                             timeline.classList.remove("d-none");
                             lotteryDate.required = true;
@@ -1478,45 +1404,6 @@
                     }
 
                 });
-                $('#start_date').on('focus', function() {
-                    // Clear existing error messages
-                    $(this).removeClass('is-invalid');
-                    $(this).closest('.form-group').find('.invalid-feedback').remove();
-                });
-                $('#lottery_date').on('focus', function() {
-                    // Clear existing error messages
-                    $(this).removeClass('is-invalid');
-                    $(this).closest('.form-group').find('.invalid-feedback').remove();
-                });
-                $('#end_date').on('input', function() {
-                    clearErrorMessages($(this));
-                });
-
-                // Function to clear error messages
-                function clearErrorMessages(element) {
-                    element.removeClass('is-invalid');
-                    element.closest('.form-group').find('.invalid-feedback').remove();
-                }
-
-                // Trigger error message clearing when dependent fields are updated
-                $('#timeline').on('change', function() {
-                    $('#end_date').trigger('input');
-                });
-                $('#total_amount').on('input', function() {
-                    clearErrorMessages($(this));
-                });
-
-                // Function to clear error messages
-                function clearErrorMessages(element) {
-                    element.removeClass('is-invalid');
-                    element.closest('.form-group').find('.invalid-feedback').remove();
-                }
-
-                // Trigger error message clearing when dependent fields are updated
-                $('#amount_per_day').on('change', function() {
-                    $('#total_amount').trigger('input');
-                });
-
                 $('#addEqub').validate({
                     onfocusout: false,
                     rules: {
@@ -1609,19 +1496,9 @@
                         },
                     },
                     errorElement: 'span',
-                    // errorPlacement: function(error, element) {
-                    //     error.addClass('invalid-feedback');
-                    //     element.closest('.form-group').append(error);
-                    //     $.LoadingOverlay("hide");
-                    // },
                     errorPlacement: function(error, element) {
                         error.addClass('invalid-feedback');
-                        var errorContainer = element.closest('.form-group').find('.invalid-feedback');
-                        if (errorContainer.length) {
-                            errorContainer.html(error);
-                        } else {
-                            element.closest('.form-group').append(error);
-                        }
+                        element.closest('.form-group').append(error);
                         $.LoadingOverlay("hide");
                     },
                     highlight: function(element, errorClass, validClass) {
@@ -1791,3 +1668,4 @@
             });
         </script>
     @endSection
+@endcan

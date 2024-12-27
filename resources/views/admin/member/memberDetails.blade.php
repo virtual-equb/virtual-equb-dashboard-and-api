@@ -104,10 +104,7 @@
                         $createdDate = $toCreatedAt->format('M-j-Y');
                         echo $createdDate; ?>
                     </td>
-                    <td> {{ number_format($totalPpayment) }}</td>
-                    <td> {{ number_format($remainingPayment) }}</td>
-                    <td> {{ number_format($equb->total_amount) }}</td>
-
+                   
                     <td>
                         <?php
                         if ($equb->lottery_date !== null) {
@@ -161,7 +158,7 @@
                     }
 
                     ?>
-                    {{-- @if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant') --}}
+                   @can('view member')
                         <td>
                             <div class='dropdown'>
                                 <button class='btn btn-secondary btn-sm btn-flat dropdown-toggle' type='button'
@@ -241,7 +238,7 @@
                                 </ul>
                             </div>
                         </td>
-                    {{-- @endif --}}
+                  @endcan
                 </tr>
             @endforeach
         </tbody>

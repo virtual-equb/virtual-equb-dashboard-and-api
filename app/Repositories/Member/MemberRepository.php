@@ -41,7 +41,20 @@ class MemberRepository implements IMemberRepository
     public function getAllPendingByPaginate($offset)
     {
         $limit = 10;
-        return $this->model->where('status', 'Pending')->orderBy('full_name', 'asc')->offset($offset)->limit($limit)->get();
+        $members = $this->model->orderBy('full_name', 'asc')->offset($offset)->limit($limit)->get();
+        $membersArray = [];
+        foreach ($members as $member) {
+            $activeEqubs = $this->countActiveEqubs($member->id);
+            $inactiveEqubs = $this->countCompletedEqubs($member->id);
+            $memberArr = [
+                "member" => $member,
+                "activeEqubs" => $activeEqubs,
+                "completedEqubs" => $inactiveEqubs,
+            ];
+            array_push($membersArray, $memberArr);
+        }
+        return $membersArray;
+        
     }
     public function getAllByPaginateApp($offset)
     {
