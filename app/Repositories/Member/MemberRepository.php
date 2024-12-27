@@ -129,7 +129,7 @@ class MemberRepository implements IMemberRepository
     public function getMemberById($id)
     {
         // dd($this->model->find($id));
-        return $this->model->find($id);
+        return $this->model->with('equbs')->find($id);
     }
     public function getMembersByEqubType($equbType)
     {
