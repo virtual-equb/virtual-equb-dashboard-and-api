@@ -1,4 +1,4 @@
-@can('view unpaid_lottories_report')
+
       <table id="equb-table" class="table table-bordered table-striped ">
           <thead>
               <tr>
@@ -134,12 +134,8 @@
                       search: "",
                       searchPlaceholder: "Search",
                   },
-                  @can('export reports_date')
                   "buttons": ["excel", "pdf", "print", "colvis"]
-                  @else 
-                  "buttons": []
-                  @endcan
               }).buttons().container().appendTo('#equb-table_wrapper .col-md-6:eq(0)');
           });
       </script>
-@endcan
+
