@@ -6,12 +6,13 @@
                 action="{{ route('registerEqub') }}" enctype="multipart/form-data" id="addEqub">
                 {{ csrf_field() }}
                 <div class="modal-header">
-                    <h4 class="modal-title">Add Equb</h4>
+                    <h4 class="modal-title">Add Equb Samisams</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <div class="col-sm-12">
                         <input type="hidden" id='member_id' name="member_id" value="">
+                        
                         <div class="form-group required">
                             <label class="control-label">Type</label>
                             <select class="custom-select form-control" id="type" name="type" required>
@@ -21,17 +22,13 @@
                                 <option value="Manual">Manual</option>
                             </select>
                         </div>
+                        
                         <div class="form-group required">
                             <label class="control-label">Equb Type</label>
-                            <select class="form-control select2" id="equb_type_id" name="equb_type_id">
+                            <select class="form-control select2" id="equb_type_id" name="equb_type_id" onchange="updateAmountAndTotal()">
                                 <option value="">Choose...</option>
                                 @foreach ($equbTypes as $equbType)
-                                    <option data-info="{{ $equbType->type }}"
-                                            data-startdate="{{ $equbType->start_date }}"
-                                            data-enddate="{{ $equbType->end_date }}" 
-                                            data-rote="{{ $equbType->rote }}" 
-                                            data-quota="{{ $equbType->quota }}"
-                                            data-amount="{{ $equbType->amount }}" 
+                                    <option data-amount="{{ $equbType->amount }}" 
                                             data-expected-total="{{ $equbType->expected_total }}" 
                                             value="{{ $equbType->id }}">
                                         {{ $equbType->name }} round {{ $equbType->round }}
@@ -39,30 +36,30 @@
                                 @endforeach
                             </select>
                         </div>
+                        
                         <div class="form-group required">
                             <label class="control-label">Start Date</label>
-                            <input type="text" onchange="getExpectedTotal()" class="form-control" id="start_date"
+                            <input type="text" class="form-control" id="start_date"
                                 name="start_date" placeholder="Start date" autocomplete="off">
                         </div>
+                        
                         <div id="timeline_div" class="form-group required">
                             <label class="control-label">Timeline</label>
-                            <select class="form-control select2" id="timeline" name="timeline"
-                                placeholder="Timeline">
+                            <select class="form-control select2" id="timeline" name="timeline" onchange="updateAmountAndTotal()">
                                 <option value="">Choose Timeline</option>
-                                <option value="105" data-info="105">105 days</option>
-                                <option value="210" data-info="210">210 days</option>
-                                <option value="315" data-info="315">315 days</option>
-                                <option value="420" data-info="420">420 days</option>
-
-                                <option value="350" data-info="350">50 Weeks</option>
-                                <option value="700" data-info="700">100 Weeks</option>
-                                <option value="1050" data-info="1050">150 Weeks</option>
-
-                                <option value="365" data-info="365">12 Months</option>
-                                <option value="730" data-info="730">24 Months</option>
-                                <option value="1095" data-info="1095">36 Months</option>
+                                <option value="105">105 days</option>
+                                <option value="210">210 days</option>
+                                <option value="315">315 days</option>
+                                <option value="420">420 days</option>
+                                <option value="350">50 Weeks</option>
+                                <option value="700">100 Weeks</option>
+                                <option value="1050">150 Weeks</option>
+                                <option value="365">12 Months</option>
+                                <option value="730">24 Months</option>
+                                <option value="1095">36 Months</option>
                             </select>
                         </div>
+                        
                         <div class="form-group">
                             <label class="control-label">End Date</label>
                             <input type="text" class="form-control disabled" id="end_date"
@@ -84,11 +81,11 @@
 
                         <div class="form-group required">
                             <label class="control-label">Amount</label>
-                            <input type="number" value="0" onkeyup="getExpectedTotal()" class="form-control"
-                                id="amount_per_day" name="amount" placeholder="Amount" required>
+                            <input type="number" value="0" class="form-control" id="amount_per_day" name="amount" placeholder="Amount" required>
                         </div>
+                        
                         <div class="form-group required">
-                            <label class="control-label">Expected Total </label>
+                            <label class="control-label">Expected Total</label>
                             <input type="number" class="form-control" id="total_amount"
                                 name="total_amount" placeholder="Total equb amount" readonly min="1">
                         </div>
@@ -104,10 +101,32 @@
 </div>
 
 <script>
+    function updateAmountAndTotal() {
+        const equbTypeSelect = document.getElementById('equb_type_id');
+        const selectedOption = equbTypeSelect.options[equbTypeSelect.selectedIndex];
+
+        if (selectedOption.value) {
+            const amountFromDB = parseFloat(selectedOption.getAttribute('data-amount')) || 0;
+            const timeline = parseFloat(document.getElementById('timeline').value) || 0;
+
+            // Calculate Expected Total
+            const expectedTotal = amountFromDB * timeline;
+
+            // Update the input fields
+            document.getElementById('total_amount').value = expectedTotal;
+            document.getElementById('amount_per_day').value = amountFromDB; // Optionally update this field too
+        } else {
+            // Reset values if no option is selected
+            document.getElementById('total_amount').value = 0;
+            document.getElementById('amount_per_day').value = 0;
+        }
+    }
+
+    document.getElementById('equb_type_id').addEventListener('change', updateAmountAndTotal);
     document.getElementById('type').addEventListener('change', function() {
         const selectedType = this.value;
         const equbTypeSelect = document.getElementById('equb_type_id');
-        
+
         // Clear existing options
         equbTypeSelect.innerHTML = '<option value="">Choose...</option>';
 
@@ -117,11 +136,6 @@
                 const option = document.createElement('option');
                 option.value = "{{ $equbType->id }}";
                 option.textContent = "{{ $equbType->name }} round {{ $equbType->round }}";
-                option.setAttribute('data-info', "{{ $equbType->type }}");
-                option.setAttribute('data-startdate', "{{ $equbType->start_date }}");
-                option.setAttribute('data-enddate', "{{ $equbType->end_date }}");
-                option.setAttribute('data-rote', "{{ $equbType->rote }}");
-                option.setAttribute('data-quota', "{{ $equbType->quota }}");
                 option.setAttribute('data-amount', "{{ $equbType->amount }}");
                 option.setAttribute('data-expected-total', "{{ $equbType->expected_total }}");
                 equbTypeSelect.appendChild(option);
