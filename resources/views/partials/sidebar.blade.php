@@ -258,7 +258,7 @@
                     </ul>
                 </li>
                 @endcan
-                @can('activity log')
+               
                 <li class="nav-item" id="nav-ety">
                         <a href="{{ route('showActivityLog') }}" class="nav-link" id="activity_log">
                             <i class="nav-icon fa fa-chart-line"></i>
@@ -267,7 +267,7 @@
                             </p>
                         </a>
                     </li>
-                    @endcan
+             
                 <!-- Logout Section -->
                 <li class="nav-item">
                     <a href="#" onclick="$('#logout').submit(); return false;" class="nav-link" id="logoutLink">
