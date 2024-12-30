@@ -8,11 +8,37 @@ use App\Models\AppToken;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Models\Payment;
+use App\Repositories\ActivityLog\IActivityLogRepository;
+use App\Repositories\Equb\IEqubRepository;
+use App\Repositories\EqubTaker\IEqubTakerRepository;
+use App\Repositories\Member\IMemberRepository;
+use App\Repositories\Payment\IPaymentRepository;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
 
 class CbeMiniAppController extends Controller
 {
+    private $activityLogRepository;
+    private $paymentRepository;
+    private $equbRepository;
+    private $equbTakerRepository;
+    private $memberRepository;
+    public function __construct(
+        IPaymentRepository $paymentRepository,
+        IMemberRepository $memberRepository,
+        IEqubRepository $equbRepository,
+        IEqubTakerRepository $equbTakerRepository,
+        IActivityLogRepository $activityLogRepository
+    )
+    {
+        $this->activityLogRepository = $activityLogRepository;
+        $this->paymentRepository = $paymentRepository;
+        $this->memberRepository = $memberRepository;
+        $this->equbRepository = $equbRepository;
+        $this->equbTakerRepository = $equbTakerRepository;
+
+    }
     public function index(){
         return view('cbe_payment');
     }
@@ -100,6 +126,10 @@ class CbeMiniAppController extends Controller
             $companyName = env('CBE_MINI_COMPANY_NAME'); // Provided company name
             $hashingKey = env('CBE_MINI_HASHING_KEY'); // Provided hashing key
             $tillCode = env('CBE_MINI_TILL_CODE'); // Provided till code
+
+            // Payment data
+            $equb = Equb::with('equbType')->findOrFail($validated['equb_id']);
+            $member = $equb->member->where('phone', $validated['phone'])->first();
             // dd($callbackUrl);
             // Prepare payload for hashing (including 'key')
             $payloadForHashing = [
@@ -158,6 +188,18 @@ class CbeMiniAppController extends Controller
                 
             // Check the response status
             if ($response->status() === 200) {
+
+                Payment::create([
+                    'member_id' => $member->id,
+                    'equb_id' => $equb->id,
+                    'transaction_number' => $transactionId,
+                    'amount' => $validated['amount'],
+                    'status' => 'pending',
+                    'payment_type' => 'CBE Mini App',
+                    'collecter' => $member->id,
+                    'signature' => $signature,
+                ]);
+
                 return response()->json(['status' => 'success', 'token' => $response->json('token'), 'signature' => $signature], 200);
             } else {
                 Log::error('CBE API Error:', ['response' => $response->json()]);
@@ -194,16 +236,116 @@ class CbeMiniAppController extends Controller
 
             // Verify the signature
             $data = $request->all();
-            $hashingKey = env('CBE_HASHING_KEY');
-            ksort($data);
+            $signature = Payment::where('transaction_number', $data['transactionId'])->where('signature', $data['signature'])->first();
+            // $hashingKey = env('CBE_HASHING_KEY');
+            // ksort($data);
 
-            $processedPayload = http_build_query($data);
+            // $processedPayload = http_build_query($data);
             // $calculatedSignature = hash_hmac('sha256', $processedPayload, $hashingKey);
-            $calculatedSignature = hash('sha256', $processedPayload);
+            // $calculatedSignature = hash('sha256', $processedPayload);
 
-            if ($calculatedSignature !== $data['signature']) {
+            // if ($calculatedSignature !== $data['signature']) {
+            //     return response()->json(['error' => 'Invalid Signature'], 400);
+            // }
+            if (!$signature) {
                 return response()->json(['error' => 'Invalid Signature'], 400);
             }
+            $payment = Payment::where('transaction_number', $data['transactionId'])->first();
+            if (!$payment) {
+                return response()->json(['message' => 'Payment record not found'], 404);
+            }
+            // payment calculations
+            $equbId = $payment->equb_id;
+            $memberId = $payment->member_id;
+            $amount = $payment->amount;
+            $credit = $payment->creadit;
+
+            // Compute total credit and balance
+            $totalCredit = $this->paymentRepository->getTotalCredit($equbId) ?? 0;
+            $equbAmount = $this->equbRepository->getEqubAmount($memberId, $equbId);
+            $availableBalance = $this->paymentRepository->getTotalBalance($equbId) ?? 0;
+
+            $creditData = ['creadit' => 0];
+            $this->paymentRepository->updateCredit($equbId, $creditData);
+
+            $lastTc = $totalCredit;
+            $totalCredit += $credit;
+
+            $balanceData = ['balance' => 0];
+            $this->paymentRepository->updateBalance($equbId, $balanceData);
+
+            $at = $amount;
+            $amount += $availableBalance;
+
+            if ($amount > $equbAmount) {
+                if ($totalCredit > 0) {
+                    if ($totalCredit < $amount) {
+                        if ($at < $equbAmount) {
+                            $availableBalance -= $totalCredit;
+                            $totalCredit = 0;
+                        } elseif ($at > $equbAmount) {
+                            $diff = $at - $equbAmount;
+                            $totalCredit -= $diff;
+                            $availableBalance = ($availableBalance + $diff) - $totalCredit;
+                            $totalCredit = 0;
+                        }
+                    }
+                    $amount = $at;
+                }
+            } elseif ($amount == $equbAmount) {
+                $amount = $at;
+                $totalCredit = $lastTc;
+                $availableBalance = 0;
+            } elseif ($amount < $equbAmount) {
+                if ($lastTc == 0) {
+                    $totalCredit = $equbAmount - $amount;
+                    $availableBalance = 0;
+                } else {
+                    $totalCredit = $totalCredit;
+                    $availableBalance = 0;
+                }
+                $amount = $at;
+            }
+            // Update the payment record with the CBE details
+            $payment->update([
+                'transaction_number' => $data['transactionId'],
+                'status' => 'paid',
+                'paid_date' => now(),
+                'amount' => $amount,
+                'creadit' => $totalCredit,
+                'balance' => $availableBalance,
+                'payment_type' => 'CBE Gateway',
+                'collecter' => $memberId,
+                'signature' => $data['signature'],
+            ]);
+            // Update equb total payment and remaining payment
+            $totalPaid = $this->paymentRepository->getTotalPaid($equbId);
+            $totalEqubAmount = $this->equbRepository->getTotalEqubAmount($equbId);
+            $remainingPayment = $totalEqubAmount - $totalPaid;
+
+            $updated = [
+                'total_payment' => $totalPaid,
+                'remaining_payment' => $remainingPayment,
+            ];
+            $this->equbTakerRepository->updatePayment($equbId, $updated);
+
+            // Mark equb as deactivated if fully paid
+            if ($remainingPayment == 0) {
+                $this->equbRepository->update($equbId, ['status' => 'Deactive']);
+            }
+
+            // Log the activity
+            $activityLog = [
+                'type' => 'payments',
+                'type_id' => $payment->id,
+                'action' => 'updated',
+                'user_id' => $payment->member_id,
+                'username' => $payment->member->name,
+                'role' => $payment->member->role,
+            ];
+            $this->activityLogRepository->createActivityLog($activityLog);
+            Log::info('Transaction verified successfully.');
+           
 
             // Process the transaction
             return response()->json(['status' => 'success'], 200);
