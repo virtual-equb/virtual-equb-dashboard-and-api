@@ -8,11 +8,38 @@ use App\Models\AppToken;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Models\Member;
+use App\Models\Payment;
+use App\Repositories\ActivityLog\IActivityLogRepository;
+use App\Repositories\Equb\IEqubRepository;
+use App\Repositories\EqubTaker\IEqubTakerRepository;
+use App\Repositories\Member\IMemberRepository;
+use App\Repositories\Payment\IPaymentRepository;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
 
 class CbeMiniAppController extends Controller
 {
+    private $activityLogRepository;
+    private $paymentRepository;
+    private $memberRepository;
+    private $equbRepository;
+    private $equbTakerRepository;
+
+    public function __construct(
+        IPaymentRepository $paymentRepository,
+        IMemberRepository $memberRepository,
+        IEqubRepository $equbRepository,
+        IEqubTakerRepository $equbTakerRepository,
+        IActivityLogRepository $activityLogRepository
+    )
+    {
+        $this->activityLogRepository = $activityLogRepository;
+        $this->paymentRepository = $paymentRepository;
+        $this->memberRepository = $memberRepository;
+        $this->equbRepository = $equbRepository;
+        $this->equbTakerRepository = $equbTakerRepository;
+    }
     public function index(){
         return view('cbe_payment');
     }
@@ -93,7 +120,9 @@ class CbeMiniAppController extends Controller
                 'token' => 'required|exists:app_tokens,token',
                 'phone' => 'required|exists:app_tokens,phone',
             ]);
-    
+            
+            $equbId = Equb::findOrFail($validated['equb_id']);
+            $memberId = Member::where('phone', $validated['phone'])->first()->id;
             $transactionId = uniqid(); // Generate unique transaction ID
             $transactionTime = now()->toIso8601String(); // Get current timestamp in ISO8601 format
             $callbackUrl = route('cbe.callback'); // Callback URL for response handling
@@ -158,6 +187,16 @@ class CbeMiniAppController extends Controller
                 
             // Check the response status
             if ($response->status() === 200) {
+                $payment = Payment::create([
+                    'member_id' => $memberId,
+                    'equb_id' => $equbId,
+                    'transaction_id' => $transactionId,
+                    'amount' => $validated['amount'],
+                    'status' => 'pending',
+                    'payment_type' => 'CBE Mini App',
+                    'collecter' => $memberId
+                ]);
+                
                 return response()->json(['status' => 'success', 'token' => $response->json('token'), 'signature' => $signature], 200);
             } else {
                 Log::error('CBE API Error:', ['response' => $response->json()]);
@@ -204,7 +243,76 @@ class CbeMiniAppController extends Controller
             if ($calculatedSignature !== $data['signature']) {
                 return response()->json(['error' => 'Invalid Signature'], 400);
             }
+            // Update payment
+            $payment = Payment::where('transaction_number', $data['transactionId'])->first();
+            if (!$payment) {
+                return response()->json(['error' => 'Payment not found'], 404);
+            }
+            // payment calculations
+            $equbId = $payment->equb_id;
+            $memberId = $payment->member_id;
+            $amount = $payment->amount;
+            $credit = $payment->creadit;
 
+            // Compute total credit and balance
+            $totalCredit = $this->paymentRepository->getTotalCredit($equbId) ?? 0;
+            $equbAmount = $this->equbRepository->getEqubAmount($memberId, $equbId);
+            $availableBalance = $this->paymentRepository->getTotalBalance($equbId) ?? 0;
+
+            $creditData = ['creadit' => 0];
+            $this->paymentRepository->updateCredit($equbId, $creditData);
+
+            $lastTc = $totalCredit;
+            $totalCredit += $credit;
+
+            $balanceData = ['balance' => 0];
+            $this->paymentRepository->updateBalance($equbId, $balanceData);
+
+            $at = $amount;
+            $amount += $availableBalance;
+
+            if ($amount > $equbAmount) {
+                if ($totalCredit > 0) {
+                    if ($totalCredit < $amount) {
+                        if ($at < $equbAmount) {
+                            $availableBalance -= $totalCredit;
+                            $totalCredit = 0;
+                        } elseif ($at > $equbAmount) {
+                            $diff = $at - $equbAmount;
+                            $totalCredit -= $diff;
+                            $availableBalance = ($availableBalance + $diff) - $totalCredit;
+                            $totalCredit = 0;
+                        }
+                    }
+                    $amount = $at;
+                }
+            } elseif ($amount == $equbAmount) {
+                $amount = $at;
+                $totalCredit = $lastTc;
+                $availableBalance = 0;
+            } elseif ($amount < $equbAmount) {
+                if ($lastTc == 0) {
+                    $totalCredit = $equbAmount - $amount;
+                    $availableBalance = 0;
+                } else {
+                    $totalCredit = $totalCredit;
+                    $availableBalance = 0;
+                }
+                $amount = $at;
+            }
+            $status = '';
+            $paidDate = null;
+            // Update the payment status
+            $payment->update([
+                'transaction_number' => $data['transactionId'],
+                // 'status' => $status,
+                'status' => 'paid',
+                'amount' => $amount,
+                'credit' => $totalCredit,
+                'balance' => $availableBalance,
+                'payment_type' => 'CBE Mini App',
+                'collecter' => $memberId,
+            ]);
             // Process the transaction
             return response()->json(['status' => 'success'], 200);
 
