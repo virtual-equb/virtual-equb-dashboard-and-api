@@ -236,20 +236,20 @@ class CbeMiniAppController extends Controller
 
             // Verify the signature
             $data = $request->all();
-            $signature = Payment::where('transaction_number', $data['transactionId'])->where('signature', $data['signature'])->first();
-            // $hashingKey = env('CBE_HASHING_KEY');
-            // ksort($data);
+            // $signature = Payment::where('transaction_number', $data['transactionId'])->where('signature', $data['signature'])->first();
+            $hashingKey = env('CBE_HASHING_KEY');
+            ksort($data);
 
-            // $processedPayload = http_build_query($data);
-            // $calculatedSignature = hash_hmac('sha256', $processedPayload, $hashingKey);
+            $processedPayload = http_build_query($data);
+            $calculatedSignature = hash_hmac('sha256', $processedPayload, $hashingKey);
             // $calculatedSignature = hash('sha256', $processedPayload);
 
-            // if ($calculatedSignature !== $data['signature']) {
-            //     return response()->json(['error' => 'Invalid Signature'], 400);
-            // }
-            if (!$signature) {
+            if ($calculatedSignature !== $data['signature']) {
                 return response()->json(['error' => 'Invalid Signature'], 400);
             }
+            // if (!$signature) {
+            //     return response()->json(['error' => 'Invalid Signature'], 400);
+            // }
             $payment = Payment::where('transaction_number', $data['transactionId'])->first();
             if (!$payment) {
                 return response()->json(['message' => 'Payment record not found'], 404);
