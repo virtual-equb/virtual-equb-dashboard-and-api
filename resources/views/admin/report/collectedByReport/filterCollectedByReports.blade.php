@@ -20,6 +20,7 @@
                        </tr>
                    </thead>
                    <tbody>
+                    {{-- {{'test'}} --}}
                        @foreach ($collecters as $key => $item)
                            <tr id="trm{{ $item['id'] }}">
                                <td>{{ $offset + $key + 1 }}</td>
