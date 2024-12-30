@@ -241,8 +241,8 @@ class CbeMiniAppController extends Controller
             ksort($data);
 
             $processedPayload = http_build_query($data);
-            $calculatedSignature = hash_hmac('sha256', $processedPayload, $hashingKey);
-            // $calculatedSignature = hash('sha256', $processedPayload);
+            // $calculatedSignature = hash_hmac('sha256', $data, $hashingKey);
+            $calculatedSignature = hash('sha256', $processedPayload);
 
             if ($calculatedSignature !== $data['signature']) {
                 return response()->json(['error' => 'Invalid Signature'], 400);
