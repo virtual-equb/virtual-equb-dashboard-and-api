@@ -25,6 +25,7 @@ return new class extends Migration
             $table->enum('status', ['paid','unpaid','pending'])->default('paid');
             $table->foreign('member_id')->references('id')->on('members');
             $table->foreign('equb_id')->references('id')->on('equbs');
+            $table->string('signature')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
