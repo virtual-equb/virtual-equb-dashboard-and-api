@@ -240,10 +240,10 @@ class CbeMiniAppController extends Controller
             // $calculatedSignature = hash_hmac('sha256', $processedPayload, $hashingKey);
             $calculatedSignature = hash('sha256', $processedPayload);
 
-            if ($calculatedSignature !== $data['signature']) {
-                return view('cbe_payment', ['error' => 'Invalid Signature']);
-                // return response()->json(['error' => 'Invalid Signature'], 400);
-            }
+            // if ($calculatedSignature !== $data['signature']) {
+            //     return view('cbe_payment', ['error' => 'Invalid Signature']);
+            //     // return response()->json(['error' => 'Invalid Signature'], 400);
+            // }
             // Update payment
             $payment = Payment::where('transaction_number', $data['transactionId'])->first();
             if (!$payment) {
