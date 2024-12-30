@@ -236,15 +236,17 @@ class CbeMiniAppController extends Controller
 
             // Verify the signature
             $data = $request->all();
-            // $signature = Payment::where('transaction_number', $data['transactionId'])->where('signature', $data['signature'])->first();
+            $receivedSignature = $data['signature'] ?? null;
+            unset($data['signature']);
+
             $hashingKey = env('CBE_HASHING_KEY');
             ksort($data);
 
-            $processedPayload = http_build_query($data);
-            // $calculatedSignature = hash_hmac('sha256', $data, $hashingKey);
-            $calculatedSignature = hash('sha256', $processedPayload);
+            $processedPayload = urldecode(http_build_query($data));
+            $calculatedSignature = hash_hmac('sha256', $processedPayload, $hashingKey);
+            // $calculatedSignature = hash('sha256', $processedPayload);
 
-            if ($calculatedSignature !== $data['signature']) {
+            if ($calculatedSignature !== $receivedSignature) {
                 return response()->json(['error' => 'Invalid Signature'], 400);
             }
             // if (!$signature) {
