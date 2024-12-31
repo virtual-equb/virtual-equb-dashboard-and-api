@@ -150,6 +150,7 @@ class ReportController extends Controller
             // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
                 $data['title'] = "Virtual Equb - Members Report";
                 $data['equbTypes'] = $this->equbTypeRepository->getActive();
+              //  dd($data);
                 return view('admin/report/memberReportByEqubType/membersByEqubType', $data);
             // } else {
             //     return view('auth/login');
@@ -161,15 +162,16 @@ class ReportController extends Controller
             return back();
         }
     }
-    public function membersByEqubType($dateFrom, $dateTo, $equbType)
+    public function membersByEqubType($dateFrom, $dateTo, $equbType, $offset = 0, $pageNumber = 1)
     {
         try {
-            $data['offset'] = 0;
-            $offset = 0;
-            $data['limit'] = 50;
-            $data['pageNumber'] = 1;
+            $data['limit'] = 50; // Set the limit of items per page
+            $data['offset'] = $offset; // Current offset
+            $data['pageNumber'] = $pageNumber; // Current page number
+    
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
+            // Uncomment the following line if you need role checks
+            // if ($userData && in_array($userData['role'], ['admin', 'general_manager', 'operation_manager', 'assistant', 'finance'])) {
                 $data['title'] = "Virtual Equb - Members Report";
                 $data['totalMember'] = $this->equbRepository->getCountByDateAndEqubType($dateFrom, $dateTo, $equbType);
                 $data['members'] = $this->equbRepository->getByDateAndEqubType($dateFrom, $dateTo, $equbType, $offset);
