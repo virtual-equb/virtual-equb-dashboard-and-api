@@ -48,15 +48,9 @@ class CbeMiniAppController extends Controller
             $token = $request->header('Authorization');
             // $token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjI1MTkxODA5NDQ1NSIsImV4cCI6MTczODYzMjEzMH0.cN95szHJNoJwp8tdtpDOk29vPmQeVoYP8dbKFBFy4_M";
             if (!$token) {
-                // return response()->json([
-                //     'error' => 'Token is missing'
-                // ], 400);
-                return view('cbe_payment', [
-                    'token' => '', 
-                    'phone' => '', 
-                    'equbs' => [], 
+                return response()->json([
                     'error' => 'Token is missing'
-                ]);
+                ], 400);
             }
 
             // Remove the 'Bearer' prefix
