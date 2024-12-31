@@ -3,10 +3,11 @@
 
 namespace App\Repositories\Member;
 
-use App\Models\Member;
-use App\Models\Equb;
 use App\Models\City;
+use App\Models\Equb;
+use App\Models\Member;
 use App\Models\Payment;
+use Illuminate\Support\Facades\Cache;
 
 class MemberRepository implements IMemberRepository
 {
@@ -139,10 +140,18 @@ class MemberRepository implements IMemberRepository
         return $this->model->find($id);
     }
 
+    // public function getMemberById($id)
+    // {
+    //     // dd($this->model->find($id));
+    //     return $this->model->with('equbs')->find($id);
+    // }
     public function getMemberById($id)
     {
-        // dd($this->model->find($id));
-        return $this->model->with('equbs')->find($id);
+        return Cache::remember("member_{$id}", 60, function () use ($id) {
+            return $this->model
+                ->with('equbs')
+                ->find($id);
+        });
     }
     public function getMembersByEqubType($equbType)
     {
