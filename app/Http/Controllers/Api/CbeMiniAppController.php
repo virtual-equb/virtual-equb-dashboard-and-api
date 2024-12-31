@@ -8,6 +8,7 @@ use App\Models\AppToken;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Models\CallbackData;
 use App\Models\Payment;
 use App\Repositories\ActivityLog\IActivityLogRepository;
 use App\Repositories\Equb\IEqubRepository;
@@ -234,8 +235,19 @@ class CbeMiniAppController extends Controller
                 return response()->json(['error' => 'Invalid Token'], 401);
             }
 
+            
+
             // Verify the signature
             $data = $request->all();
+            $callbackData = CallbackData::create([
+                'paidAmount' => $data['paidAmount'],
+                'paidByNumber' => $data['paidByNumber'],
+                'transactionId' => $data['transactionId'],
+                'transactionTime' => $data['transactionTime'],
+                'tillCode' => $data['tillCode'],
+                'token' => $data['token'],
+                'signature' => $data['signature']
+            ]);
             $receivedSignature = $data['signature'] ?? null;
             unset($data['signature']);
 
@@ -244,8 +256,9 @@ class CbeMiniAppController extends Controller
 
             ksort($data);
 
-           $processedPayload = http_build_query($data);
-           $calculatedSignature = hash('sha256', $processedPayload);
+            $processedPayload = http_build_query($data);
+            $calculatedSignature = hash_hmac('sha256', $processedPayload, $hashingKey);
+            // $calculatedSignature = hash('sha256', $processedPayload);
 
             if ($calculatedSignature !== $receivedSignature) {
                 return response()->json(['error' => 'Invalid Signature'], 400);
