@@ -3,8 +3,9 @@
 
 namespace App\Repositories\Payment;
 
-use App\Models\Payment;
 use Carbon\Carbon;
+use App\Models\Payment;
+use Illuminate\Support\Facades\DB;
 
 
 class PaymentRepository implements IPaymentRepository
@@ -53,6 +54,7 @@ class PaymentRepository implements IPaymentRepository
             ->join('equbs', 'payments.equb_id', '=', 'equbs.id')
             ->join('members', 'payments.member_id', '=', 'members.id')
             ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
+            ->where('payments.status', 'paid')
             ->groupBy('payments.id')
             ->offset($offset)
             ->limit($this->limit)
@@ -88,73 +90,105 @@ class PaymentRepository implements IPaymentRepository
             ->limit($this->limit)
             ->get();
     }
-    public function getCollectedByUser($dateFrom, $dateTo, $collecter, $offset, $equbType)
+    // public function getCollectedByUser($dateFrom, $dateTo, $collecter, $offset, $equbType)
+    // {
+    //     if ($collecter != "all" && $equbType != "all") {
+    //         \DB::statement("SET SQL_MODE=''");
+    //         return $this->model->selectRaw('full_name,equb_types.name,equb_types.round,payments.id,payments.creadit,payments.balance,payments.member_id,payments.equb_id,payments.payment_type,payments.amount,payments.status,payments.created_at')
+    //             ->where('payments.collecter', $collecter)
+    //             ->whereDate('payments.created_at', '>=', $dateFrom)
+    //             ->whereDate('payments.created_at', '<=', $dateTo)
+    //             ->join('equbs', 'payments.equb_id', '=', 'equbs.id')
+    //             ->join('members', 'payments.member_id', '=', 'members.id')
+    //             ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
+    //             ->where('equb_types.id', $equbType)
+    //             ->groupBy('payments.id')
+    //             ->offset($offset)
+    //             ->limit($this->limit)
+    //             ->get();
+    //     } elseif ($collecter == "all" && $equbType != "all") {
+    //         \DB::statement("SET SQL_MODE=''");
+    //         return $this->model->selectRaw('full_name,equb_types.name,equb_types.round,payments.id,payments.creadit,payments.balance,payments.member_id,payments.equb_id,payments.payment_type,payments.amount,payments.status,payments.created_at')
+    //             ->whereDate('payments.created_at', '>=', $dateFrom)
+    //             ->whereDate('payments.created_at', '<=', $dateTo)
+    //             ->join('equbs', 'payments.equb_id', '=', 'equbs.id')
+    //             ->join('members', 'payments.member_id', '=', 'members.id')
+    //             ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
+    //             ->where('equb_types.id', $equbType)
+    //             ->groupBy('payments.id')
+    //             ->offset($offset)
+    //             ->limit($this->limit)
+    //             ->get();
+    //     } elseif ($collecter != "all" && $equbType == "all") {
+    //         \DB::statement("SET SQL_MODE=''");
+    //         return $this->model->selectRaw('full_name,equb_types.name,equb_types.round,payments.id,payments.creadit,payments.balance,payments.member_id,payments.equb_id,payments.payment_type,payments.amount,payments.status,payments.created_at')
+    //             ->where('payments.collecter', $collecter)
+    //             ->whereDate('payments.created_at', '>=', $dateFrom)
+    //             ->whereDate('payments.created_at', '<=', $dateTo)
+    //             ->join('equbs', 'payments.equb_id', '=', 'equbs.id')
+    //             ->join('members', 'payments.member_id', '=', 'members.id')
+    //             ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
+    //             ->groupBy('payments.id')
+    //             ->offset($offset)
+    //             ->limit($this->limit)
+    //             ->get();
+    //     } else {
+    //         \DB::statement("SET SQL_MODE=''");
+    //         return $this->model->selectRaw('full_name,equb_types.name,equb_types.round,payments.id,payments.creadit,payments.balance,payments.member_id,payments.equb_id,payments.payment_type,payments.amount,payments.status,payments.created_at')
+    //             ->whereDate('payments.created_at', '>=', $dateFrom)
+    //             ->whereDate('payments.created_at', '<=', $dateTo)
+    //             ->join('equbs', 'payments.equb_id', '=', 'equbs.id')
+    //             ->join('members', 'payments.member_id', '=', 'members.id')
+    //             ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
+    //             ->groupBy('payments.id')
+    //             ->offset($offset)
+    //             ->limit($this->limit)
+    //             ->get();
+    //     }
+    // }
+    public function getCollectedByUser($dateFrom, $dateTo, $collector, $offset, $equbType)
     {
-        // \DB::statement("SET SQL_MODE=''");
-        // return $this->model->selectRaw('full_name,equb_types.name,payments.id,payments.creadit,payments.balance,payments.member_id,payments.equb_id,payments.payment_type,payments.amount,payments.status,payments.created_at')
-        //     ->where('payments.collecter', $collecter)
-        //     ->whereDate('payments.created_at', '>=', $dateFrom)
-        //     ->whereDate('payments.created_at', '<=', $dateTo)
-        //     ->join('equbs', 'payments.equb_id', '=', 'equbs.id')
-        //     ->join('members', 'payments.member_id', '=', 'members.id')
-        //     ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
-        //     ->groupBy('payments.id')
-        //     ->offset($offset)
-        //     ->limit($this->limit)
-        //     ->get();
-        if ($collecter != "all" && $equbType != "all") {
-            \DB::statement("SET SQL_MODE=''");
-            return $this->model->selectRaw('full_name,equb_types.name,equb_types.round,payments.id,payments.creadit,payments.balance,payments.member_id,payments.equb_id,payments.payment_type,payments.amount,payments.status,payments.created_at')
-                ->where('payments.collecter', $collecter)
-                ->whereDate('payments.created_at', '>=', $dateFrom)
-                ->whereDate('payments.created_at', '<=', $dateTo)
-                ->join('equbs', 'payments.equb_id', '=', 'equbs.id')
-                ->join('members', 'payments.member_id', '=', 'members.id')
-                ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
-                ->where('equb_types.id', $equbType)
-                ->groupBy('payments.id')
-                ->offset($offset)
-                ->limit($this->limit)
-                ->get();
-        } elseif ($collecter == "all" && $equbType != "all") {
-            \DB::statement("SET SQL_MODE=''");
-            return $this->model->selectRaw('full_name,equb_types.name,equb_types.round,payments.id,payments.creadit,payments.balance,payments.member_id,payments.equb_id,payments.payment_type,payments.amount,payments.status,payments.created_at')
-                ->whereDate('payments.created_at', '>=', $dateFrom)
-                ->whereDate('payments.created_at', '<=', $dateTo)
-                ->join('equbs', 'payments.equb_id', '=', 'equbs.id')
-                ->join('members', 'payments.member_id', '=', 'members.id')
-                ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
-                ->where('equb_types.id', $equbType)
-                ->groupBy('payments.id')
-                ->offset($offset)
-                ->limit($this->limit)
-                ->get();
-        } elseif ($collecter != "all" && $equbType == "all") {
-            \DB::statement("SET SQL_MODE=''");
-            return $this->model->selectRaw('full_name,equb_types.name,equb_types.round,payments.id,payments.creadit,payments.balance,payments.member_id,payments.equb_id,payments.payment_type,payments.amount,payments.status,payments.created_at')
-                ->where('payments.collecter', $collecter)
-                ->whereDate('payments.created_at', '>=', $dateFrom)
-                ->whereDate('payments.created_at', '<=', $dateTo)
-                ->join('equbs', 'payments.equb_id', '=', 'equbs.id')
-                ->join('members', 'payments.member_id', '=', 'members.id')
-                ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
-                ->groupBy('payments.id')
-                ->offset($offset)
-                ->limit($this->limit)
-                ->get();
-        } else {
-            \DB::statement("SET SQL_MODE=''");
-            return $this->model->selectRaw('full_name,equb_types.name,equb_types.round,payments.id,payments.creadit,payments.balance,payments.member_id,payments.equb_id,payments.payment_type,payments.amount,payments.status,payments.created_at')
-                ->whereDate('payments.created_at', '>=', $dateFrom)
-                ->whereDate('payments.created_at', '<=', $dateTo)
-                ->join('equbs', 'payments.equb_id', '=', 'equbs.id')
-                ->join('members', 'payments.member_id', '=', 'members.id')
-                ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
-                ->groupBy('payments.id')
-                ->offset($offset)
-                ->limit($this->limit)
-                ->get();
+        \DB::statement("SET SQL_MODE=''");
+    
+        // Start building the query
+        $query = $this->model->selectRaw('
+            full_name,
+            equb_types.name,
+            equb_types.round,
+            payments.id,
+            payments.creadit,
+            payments.balance,
+            payments.member_id,
+            payments.equb_id,
+            payments.payment_type,
+            payments.amount,
+            payments.status,
+            payments.created_at
+        ')
+        ->join('equbs', 'payments.equb_id', '=', 'equbs.id')
+        ->join('members', 'payments.member_id', '=', 'members.id')
+        ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
+        ->whereDate('payments.created_at', '>=', $dateFrom)
+        ->whereDate('payments.created_at', '<=', $dateTo)
+        ->whereRaw('LOWER(payments.status) = ?', ['paid']) // Case-insensitive check
+        ->groupBy('payments.id')
+        ->offset($offset)
+        ->limit($this->limit);
+    
+        // Apply additional filters dynamically
+        if ($collector != "all") {
+            $query->where('payments.collecter', $collector);
         }
+    
+        if ($equbType != "all") {
+            $query->where('equb_types.id', $equbType);
+        }
+    
+        // Log the SQL query for debugging
+        Log::info($query->toSql());
+    
+        // Execute the query and return the result
+        return $query->get();
     }
     public function getWithDateMemberAndEqub($dateFrom, $dateTo, $member_id, $equb_id, $offset)
     {
@@ -410,6 +444,7 @@ class PaymentRepository implements IPaymentRepository
     {
         return $this->model->whereDate('created_at', '>=', $dateFrom)
             ->whereDate('created_at', '<=', $dateTo)
+            ->where('status', 'paid')
             ->count();
     }
     public function getCountCollectedBysWithCollecter($dateFrom, $dateTo, $collecter = 'all', $equbType = 'all')
@@ -418,21 +453,25 @@ class PaymentRepository implements IPaymentRepository
             return $this->model->whereDate('created_at', '>=', $dateFrom)
                 ->whereDate('created_at', '<=', $dateTo)
                 ->where('collecter', $collecter)
+                ->where('status', 'paid')
                 ->whereHas('equb', fn ($q) =>  $q->where('equb_type_id', "=", $equbType))
                 ->count();
         } elseif ($collecter == "all" && $equbType != "all") {
             return $this->model->whereDate('created_at', '>=', $dateFrom)
                 ->whereDate('created_at', '<=', $dateTo)
+                ->where('status', 'paid')
                 ->whereHas('equb', fn ($q) =>  $q->where('equb_type_id', "=", $equbType))
                 ->count();
         } elseif ($collecter != "all" && $equbType == "all") {
             return $this->model->whereDate('created_at', '>=', $dateFrom)
                 ->whereDate('created_at', '<=', $dateTo)
                 ->where('collecter', $collecter)
+                ->where('status', 'paid')
                 ->count();
         } else {
             return $this->model->whereDate('created_at', '>=', $dateFrom)
                 ->whereDate('created_at', '<=', $dateTo)
+                ->where('status', 'paid')
                 ->count();
         }
         // return $this->model->whereDate('created_at', '>=', $dateFrom)

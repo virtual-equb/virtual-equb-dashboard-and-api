@@ -28,6 +28,7 @@ class Payment extends Model
         'tradeDate',
         'tradeNo',
         'tradeStatus',
+        'signature',
     ];
 
     public function member()
