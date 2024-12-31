@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Support\Facades\Log;
 
 use Exception;
 use App\Repositories\Member\IMemberRepository;
@@ -607,20 +608,21 @@ class ReportController extends Controller
             $data['limit'] = 50;
             $data['pageNumber'] = 1;
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
-                $data['title'] = "Virtual Equb - Collected by Report";
-                if ($collecter != "all" || $equbType != "all") {
-                    $data['totalPayments'] = $this->paymentRepository->getCountCollectedBysWithCollecter($dateFrom, $dateTo, $collecter, $equbType);
-                    $data['collecters'] = $this->paymentRepository->getCollectedByUser($dateFrom, $dateTo, $collecter, $offset, $equbType);
-                } else {
-                    $data['totalPayments'] = $this->paymentRepository->getCountCollectedBys($dateFrom, $dateTo);
-                    $data['collecters'] = $this->paymentRepository->getByDate($dateFrom, $dateTo, $offset);
-                }
-                return view('admin/report/collectedByReport/filterCollectedByReports', $data);
-            // } else {
-            //     return view('auth/login');
-            // }
+            $data['title'] = "Virtual Equb - Collected by Report";
+    
+            if ($collecter != "all" || $equbType != "all") {
+                Log::info('Fetching collected by data with collector: ' . $collecter . ' and equbType: ' . $equbType);
+                $data['totalPayments'] = $this->paymentRepository->getCountCollectedBysWithCollecter($dateFrom, $dateTo, $collecter, $equbType);
+                $data['collecters'] = $this->paymentRepository->getCollectedByUser($dateFrom, $dateTo, $collecter, $offset, $equbType);
+            } else {
+                Log::info('Fetching collected by data for all collectors and equbType.');
+                $data['totalPayments'] = $this->paymentRepository->getCountCollectedBys($dateFrom, $dateTo);
+                $data['collecters'] = $this->paymentRepository->getByDate($dateFrom, $dateTo, $offset);
+            }
+    
+            return view('admin/report/collectedByReport/filterCollectedByReports', $data);
         } catch (Exception $ex) {
+            Log::error('Error in collectedBys: ' . $ex->getMessage());
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
             Session::flash($type, $msg);
