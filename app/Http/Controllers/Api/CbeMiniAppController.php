@@ -352,15 +352,15 @@ class CbeMiniAppController extends Controller
             }
 
             // Log the activity
-            $activityLog = [
-                'type' => 'payments',
-                'type_id' => $payment->id,
-                'action' => 'updated',
-                'user_id' => Auth::id(),
-                'username' => Auth::user()->name,
-                'role' => Auth::user()->role,
-            ];
-            $this->activityLogRepository->createActivityLog($activityLog);
+            // $activityLog = [
+            //     'type' => 'payments',
+            //     'type_id' => $payment->id,
+            //     'action' => 'updated',
+            //     'user_id' => Auth::id(),
+            //     'username' => Auth::user()->name,
+            //     'role' => Auth::user()->role,
+            // ];
+            // $this->activityLogRepository->createActivityLog($activityLog);
             Log::info('Transaction verified successfully.');
            
 
