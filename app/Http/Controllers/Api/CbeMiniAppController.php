@@ -235,21 +235,34 @@ class CbeMiniAppController extends Controller
                 return response()->json(['error' => 'Invalid Token'], 401);
             }
 
+            
+
             // Verify the signature
             $data = $request->all();
-            
+            $callbackData = CallbackData::create([
+                'paidAmount' => $data['paidAmount'],
+                'paidByNumber' => $data['paidByNumber'],
+                'transactionId' => $data['transactionId'],
+                'transactionTime' => $data['transactionTime'],
+                'tillCode' => $data['tillCode'],
+                'token' => $data['token'],
+                'signature' => $data['signature']
+            ]);
             $receivedSignature = $data['signature'] ?? null;
             unset($data['signature']);
 
-            $hashingKey = env('CBE_HASHING_KEY');
+            $hashingKey = 'XLcFp4RASjDwvTsH0DxeM06s5sOrHe0eSJwb7pB';
             $data['key'] = $hashingKey;
 
             ksort($data);
 
             $processedPayload = http_build_query($data);
-            $calculatedSignature = hash_hmac('sha256', $processedPayload, $hashingKey);
-            // $calculatedSignature = hash('sha256', $processedPayload);
+            // $calculatedSignature = hash_hmac('sha256', $processedPayload, $hashingKey);
+            $calculatedSignature = hash('sha256', $processedPayload);
 
+            if ($calculatedSignature !== $receivedSignature) {
+                return response()->json(['error' => 'Invalid Signature'], 400);
+            }
             // if (!$signature) {
             //     return response()->json(['error' => 'Invalid Signature'], 400);
             // }
