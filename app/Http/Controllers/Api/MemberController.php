@@ -17,6 +17,7 @@ use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\Api\MemberResource;
@@ -159,18 +160,48 @@ class MemberController extends Controller
      *
      * @return JsonResponse
      */
+    // public function getMemberById($id)
+    // {
+    //     try {
+    //         $userData = Auth::user();
+    //         // dd($userData);
+    //             $data['member'] = $this->memberRepository->getMemberById($id);
+    //             return response()->json([
+    //                 'member' => new MemberResource($data['member'])
+    //             ]);
+           
+    //     } catch (Exception $ex) {
+    //         // dd($ex);
+    //         return response()->json([
+    //             'code' => 500,
+    //             'message' => 'Unable to process your request, Please try again!',
+    //             "error" => $ex->getMessage()
+    //         ]);
+    //     }
+    // }
     public function getMemberById($id)
     {
         try {
             $userData = Auth::user();
-            // dd($userData);
-                $data['member'] = $this->memberRepository->getMemberById($id);
+
+            // Retrieve member data from the repository
+            $member = $this->memberRepository->getMemberById($id);
+
+            // Handle case where member is not found
+            if (!$member) {
                 return response()->json([
-                    'member' => new MemberResource($data['member'])
-                ]);
-           
+                    'code' => 404,
+                    'message' => 'Member not found'
+                ], 404);
+            }
+
+            // Return response
+            return response()->json([
+                'member' => new MemberResource($member)
+            ]);
+
         } catch (Exception $ex) {
-            // dd($ex);
+            // Handle exceptions
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
@@ -1296,17 +1327,49 @@ class MemberController extends Controller
     //         "error" => "Image not found"
     //     ]);
     // }
+    // public function getProfilePicture1($userId)
+    // {
+    //     try {
+    //         // Retrieve the member data
+    //         $member = Member::findOrFail($userId);
+
+    //         // Return the member resource, which includes the profile picture information
+    //         return new MemberResource($member);
+
+    //     } catch (\Exception $ex) {
+    //         // Handle exceptions and return a JSON error response
+    //         return response()->json([
+    //             'code' => 500,
+    //             'message' => 'Failed to retrieve profile picture',
+    //             'error' => $ex->getMessage()
+    //         ], 500);
+    //     }
+    // }
     public function getProfilePicture($userId)
     {
         try {
-            // Retrieve the member data
-            $member = Member::findOrFail($userId);
+            // Use caching to optimize frequent requests
+            $profilePhotoPath = Cache::remember("user_{$userId}_profile_photo_path", 60, function () use ($userId) {
+                return Member::where('id', $userId)->value('profile_photo_path');
+            });
 
-            // Return the member resource, which includes the profile picture information
-            return new MemberResource($member);
+            if (!$profilePhotoPath) {
+                return response()->json([
+                    'code' => 404,
+                    'message' => 'Profile picture not found'
+                ], 404);
+            }
+
+            // Build the URL for the profile picture
+            $profilePhotoUrl = asset('storage/' . $profilePhotoPath);
+
+            return response()->json([
+                'code' => 200,
+                'message' => 'Profile picture retrieved successfully',
+                'data' => ['profile_photo_url' => $profilePhotoUrl]
+            ], 200);
 
         } catch (\Exception $ex) {
-            // Handle exceptions and return a JSON error response
             return response()->json([
                 'code' => 500,
                 'message' => 'Failed to retrieve profile picture',
@@ -1314,6 +1377,8 @@ class MemberController extends Controller
             ], 500);
         }
     }
+
+
     /**
      * Update profile
      *
