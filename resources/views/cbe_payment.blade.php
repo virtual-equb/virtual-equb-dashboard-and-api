@@ -80,7 +80,7 @@
             </div>
         @endif
         <!-- Payment Form -->
-        {{-- @if (empty($error)) --}}
+        @if (empty($error))
         <form id="cbePaymentForm" action="{{ route('cbe.initialize') }}" method="POST">
             @csrf
             <label for="equb">Select Equb:</label>
@@ -91,9 +91,6 @@
                         {{ $item->equbType->name }}, {{ $item->amount }} {{'ETB'}}
                     </option>
                 @endforeach
-                <option value="2" data-amount="500">
-                    {{ 'Test' }}, {{ '500' }} {{'ETB'}}
-                </option>
             </select>
             <label for="amount">Amount:</label>
             <input type="number" name="amount" id="amount" placeholder="Enter amount (ETB)" required>
@@ -106,7 +103,7 @@
             <input type="hidden" name="phone" value="{{ $phone }}">
             <button type="submit">Pay Now</button>
         </form>
-        {{-- @endif --}}
+        @endif
 
         <!-- Success or Error Message -->
         <div class="message" id="messageBox"></div>
