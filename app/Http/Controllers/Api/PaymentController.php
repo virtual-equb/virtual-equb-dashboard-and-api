@@ -955,21 +955,13 @@ class PaymentController extends Controller
                         'transaction_number' => $request['payment_order_id'],
                         'status' => 'paid'
                     ];
-                    $payment->update([
-                        'amount' => $telebirrObj['amount'],
-                        'tradeDate' => $telebirrObj['tradeDate'],
-                        'tradeNo' => $telebirrObj['tradeNo'],
-                        'tradeStatus' => $telebirrObj['tradeStatus'],
-                        'transaction_number' => $telebirrObj['transaction_number'],
-                        'status' => $telebirrObj['status']
-                    ]);
-                    // $payment->amount = $telebirrObj['amount'];
-                    // $payment->tradeDate = $telebirrObj['tradeDate'];
-                    // $payment->tradeNo = $telebirrObj['tradeNo'];
-                    // $payment->tradeStatus = $telebirrObj['tradeStatus'];
-                    // $payment->transaction_number = $telebirrObj['transaction_number'];
-                    // $payment->status = $telebirrObj['status'];
-                    // $payment->save();
+                    $payment->amount = $telebirrObj['amount'];
+                    $payment->tradeDate = $telebirrObj['tradeDate'];
+                    $payment->tradeNo = $telebirrObj['tradeNo'];
+                    $payment->tradeStatus = $telebirrObj['tradeStatus'];
+                    $payment->transaction_number = $telebirrObj['transaction_number'];
+                    $payment->status = $telebirrObj['status'];
+                    $payment->save();
 
                     Log::info($telebirrObj);
                     // $payment->save($telebirrObj);
