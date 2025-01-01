@@ -14,6 +14,7 @@
                             <th>Amount</th>
                             <th>Credit</th>
                             <th>Balance</th>
+                            <th>Status</th>
                             <th>Payment Date</th>
                         </tr>
                     </thead>
@@ -27,6 +28,7 @@
                                 <td> {{ number_format($item->amount) }}</td>
                                 <td> {{ number_format($item->creadit) }}</td>
                                 <td> {{ number_format($item->balance) }}</td>
+                                <td> {{ $item->status }}</td>
                                 <td>
                                     <?php
                                     $toCreatedAt = new DateTime($item['created_at']);
