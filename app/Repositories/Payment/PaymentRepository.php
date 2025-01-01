@@ -291,7 +291,7 @@ class PaymentRepository implements IPaymentRepository
     public function getSinglePayment($member_id, $equb_id, $offset)
     {
         $limit = 10;
-        return $this->model->where('member_id', $member_id)->where('status', '!=', 'unpaid')->where('equb_id', $equb_id)->with('collecter', 'member', 'equb')->orderBy('created_at', 'DESC')->offset($offset)->limit($limit)->get();
+        return $this->model->where('member_id', $member_id)->where('status', '!=', 'unpaid')->where('status', '!=', 'pending')->where('equb_id', $equb_id)->with('collecter', 'member', 'equb')->orderBy('created_at', 'DESC')->offset($offset)->limit($limit)->get();
     }
     ////
     public function getPaidAmount()
