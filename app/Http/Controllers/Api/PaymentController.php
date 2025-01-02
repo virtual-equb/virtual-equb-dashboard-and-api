@@ -835,7 +835,7 @@ class PaymentController extends Controller
                 'amount' => $amount,
                 'creadit' => $totalCredit,
                 'balance' => $availableBalance,
-                'collecter' => $memberData->id,
+                'collecter' => $memberData->id || 709,
                 // 'transaction_number' => $reference,
                 'status' => 'pending'
             ];
