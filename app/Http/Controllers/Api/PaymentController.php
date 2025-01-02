@@ -835,7 +835,7 @@ class PaymentController extends Controller
                 'amount' => $amount,
                 'creadit' => $totalCredit,
                 'balance' => $availableBalance,
-                'collecter' => $memberData->id || 'telebirr',
+                'collecter' => $memberData->id,
                 // 'transaction_number' => $reference,
                 'status' => 'pending'
             ];
@@ -961,6 +961,7 @@ class PaymentController extends Controller
                     $payment->tradeStatus = $telebirrObj['tradeStatus'];
                     $payment->transaction_number = $telebirrObj['transaction_number'];
                     $payment->status = $telebirrObj['status'];
+                    $payment->collecter = $payment->member_id;
                     $payment->save();
 
                     Log::info($telebirrObj);
