@@ -827,7 +827,7 @@ class PaymentController extends Controller
                 }
             }
             $memberData = Member::where('phone', $user->phone_number)->first();
-
+            $collector = User::where('name', 'telebirr')->first();
             $paymentData = [
                 'member_id' => $memberData->id,
                 'equb_id' => $equb_id,
@@ -835,7 +835,7 @@ class PaymentController extends Controller
                 'amount' => $amount,
                 'creadit' => $totalCredit,
                 'balance' => $availableBalance,
-                'collecter' => $memberData->id,
+                'collecter' => $collector->id,
                 // 'transaction_number' => $reference,
                 'status' => 'pending'
             ];
