@@ -955,13 +955,14 @@ class PaymentController extends Controller
                         'transaction_number' => $request['payment_order_id'],
                         'status' => 'paid'
                     ];
+                    $collector = User::where('name', 'telebirr')->first();
                     $payment->amount = $telebirrObj['amount'];
                     $payment->tradeDate = $telebirrObj['tradeDate'];
                     $payment->tradeNo = $telebirrObj['tradeNo'];
                     $payment->tradeStatus = $telebirrObj['tradeStatus'];
                     $payment->transaction_number = $telebirrObj['transaction_number'];
                     $payment->status = $telebirrObj['status'];
-                    $payment->collecter = $payment->member_id;
+                    $payment->collecter = $collector->id;
                     $payment->save();
 
                     Log::info($telebirrObj);
