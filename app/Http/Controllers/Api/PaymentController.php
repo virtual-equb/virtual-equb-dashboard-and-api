@@ -743,15 +743,15 @@ class PaymentController extends Controller
             $user = Auth::user();
             $userId = $user->id;
 
-            // $equbId = $request->input('equb_id');
+            $equbId = $request->input('equb_id');
             // $amount = $request->input('amount');
             // $equb = Equb::where('id', $equbId)->first();
 
             // $equb_amount = $equb->amount;
             // $credit = $equb_amount - $amount;
             // $member = $userId;
-            // $equb_id = $equbId;
-            // $paymentType = "telebirr";
+            $equb_id = $equbId;
+            $paymentType = "telebirr";
             // if ($credit <= 0) {
             //     $credit = 0;
             // }
