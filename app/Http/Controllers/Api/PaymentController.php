@@ -744,7 +744,7 @@ class PaymentController extends Controller
             $userId = $user->id;
 
             $equbId = $request->input('equb_id');
-            // $amount = $request->input('amount');
+            $amount = $request->input('amount');
             // $equb = Equb::where('id', $equbId)->first();
 
             // $equb_amount = $equb->amount;
@@ -832,7 +832,7 @@ class PaymentController extends Controller
                 'member_id' => $memberData->id,
                 'equb_id' => $equb_id,
                 'payment_type' => $paymentType,
-                // 'amount' => $amount,
+                'amount' => $amount,
                 // 'creadit' => $totalCredit,
                 // 'balance' => $availableBalance,
                 'collecter' => $collector->id,
