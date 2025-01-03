@@ -629,6 +629,7 @@ class MemberController extends Controller
                     $equb['remaining_payment'] = $remainingPayment;
                     $equb['remaining_lottery_date'] = $equbType->type == 'Automatic' ? $autoInterval : $interval;
                     array_push($equbsArray, $equb);
+                    
                 }
             }
 
