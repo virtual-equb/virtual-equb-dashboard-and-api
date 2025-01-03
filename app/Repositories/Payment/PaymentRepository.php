@@ -331,6 +331,7 @@ class PaymentRepository implements IPaymentRepository
         })
             ->whereDate('created_at', '>=', Carbon::now()->subDays(7))
             ->whereDate('created_at', '<=', Carbon::now())
+            ->where('status', 'paid')
             ->sum('amount');
     }
     public function getWeeklyUnpaidAmount()
