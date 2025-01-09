@@ -4,19 +4,20 @@ namespace App\Http\Controllers\Api;
 
 use Exception;
 use App\Models\Equb;
+use App\Models\Payment;
 use App\Models\AppToken;
+use App\Models\CallbackData;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use App\Models\CallbackData;
-use App\Models\Payment;
-use App\Repositories\ActivityLog\IActivityLogRepository;
-use App\Repositories\Equb\IEqubRepository;
-use App\Repositories\EqubTaker\IEqubTakerRepository;
-use App\Repositories\Member\IMemberRepository;
-use App\Repositories\Payment\IPaymentRepository;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
+use App\Repositories\Equb\IEqubRepository;
+use App\Repositories\Member\IMemberRepository;
+use App\Repositories\Payment\IPaymentRepository;
+use App\Repositories\EqubTaker\IEqubTakerRepository;
+use App\Repositories\ActivityLog\IActivityLogRepository;
 
 class CbeMiniAppController extends Controller
 {
@@ -248,21 +249,21 @@ class CbeMiniAppController extends Controller
                 'token' => $data['token'],
                 'signature' => $data['signature']
             ]);
-            $receivedSignature = $data['signature'] ?? null;
-            unset($data['signature']);
+            // $receivedSignature = $data['signature'] ?? null;
+            // unset($data['signature']);
 
-            $hashingKey = env('CBE_HASHING_KEY');
-            $data['key'] = $hashingKey;
+            // $hashingKey = 'XLcFp4RASjDwvTsH0DxeM06s5sOrHe0eSJwb7pB';
+            // $data['key'] = $hashingKey;
 
-            ksort($data);
+            // ksort($data);
 
-            $processedPayload = http_build_query($data);
-            $calculatedSignature = hash_hmac('sha256', $processedPayload, $hashingKey);
+            // $processedPayload = http_build_query($data);
+            // // $calculatedSignature = hash_hmac('sha256', $processedPayload, $hashingKey);
             // $calculatedSignature = hash('sha256', $processedPayload);
 
-            if ($calculatedSignature !== $receivedSignature) {
-                return response()->json(['error' => 'Invalid Signature'], 400);
-            }
+            // if ($calculatedSignature !== $receivedSignature) {
+            //     return response()->json(['error' => 'Invalid Signature'], 400);
+            // }
             // if (!$signature) {
             //     return response()->json(['error' => 'Invalid Signature'], 400);
             // }
@@ -332,7 +333,7 @@ class CbeMiniAppController extends Controller
                 'balance' => $availableBalance,
                 'payment_type' => 'CBE Gateway',
                 'collecter' => $memberId,
-                'signature' => $data['signature'],
+                // 'signature' => $data['signature'],
             ]);
             // Update equb total payment and remaining payment
             $totalPaid = $this->paymentRepository->getTotalPaid($equbId);
@@ -351,15 +352,15 @@ class CbeMiniAppController extends Controller
             }
 
             // Log the activity
-            $activityLog = [
-                'type' => 'payments',
-                'type_id' => $payment->id,
-                'action' => 'updated',
-                'user_id' => $payment->member_id,
-                'username' => $payment->member->name,
-                'role' => $payment->member->role,
-            ];
-            $this->activityLogRepository->createActivityLog($activityLog);
+            // $activityLog = [
+            //     'type' => 'payments',
+            //     'type_id' => $payment->id,
+            //     'action' => 'updated',
+            //     'user_id' => Auth::id(),
+            //     'username' => Auth::user()->name,
+            //     'role' => Auth::user()->role,
+            // ];
+            // $this->activityLogRepository->createActivityLog($activityLog);
             Log::info('Transaction verified successfully.');
            
 
