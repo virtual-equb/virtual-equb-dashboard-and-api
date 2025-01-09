@@ -39,7 +39,7 @@
                                             <form role="form" method="post" class="form-horizontal form-group nn"
                                                 action="" enctype="multipart/form-data" id="equbReport">
                                                 <div class="row justify-content-center" style="margin-bottom: 20px;">
-                                                    <h4>Equb Report Based on Start and End Date</h4>
+                                                    <h4>Virtual Equb - Filter By Payment Method</h4>
                                                 </div>
                                                 <div class="row justify-content-center">
                                                     <label>Date range:</label>
@@ -64,8 +64,7 @@
                                                             <option value="">Select Equb Type</option>
                                                             <option value="all">All</option>
                                                             @foreach ($equbTypes as $equbType)
-                                                                <option value="{{ $equbType->id }}">{{ $equbType->name }} -
-                                                                    Round {{ $equbType->round }}
+                                                                <option value="{{ $equbType->id }}">{{ $equbType->name }}
                                                                 </option>
                                                             @endforeach
                                                         </select>

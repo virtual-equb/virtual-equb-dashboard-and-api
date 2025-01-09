@@ -604,20 +604,28 @@ class ReportController extends Controller
     {
         try {
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
-                $data['title'] = "Virtual Equb - Filliter By Payment Method";
+    
+            // Check user role permissions
+            if ($userData && in_array($userData['role'], ["admin", "general_manager", "operation_manager", "assistant", "finance"])) {
+                $data['title'] = "Virtual Equb - Filter By Payment Method";
                 $data['collecters'] = $this->userRepository->getCollecters();
-                $data['equbTypes'] = $this->equbTypeRepository->getActive();
-               // return response()->json( $data['collecters'] );
-            //   dd($data);
-               return view('admin/report/filterByMethod/methodReport', $data);
-            // } else {
-            //     return view('auth/login');
-            // }
+                $data['equbTypes'] = [
+                    (object) ['id' => 1, 'name' => 'telebirr'],
+                    (object) ['id' => 2, 'name' => 'Cbebirr'],
+                ];
+    
+                // Return the view with the collected data
+                return view('admin.report.filterByMethod.methodReport', $data);
+                
+
+            } else {
+                // If the user doesn't have permission, redirect to login
+                return view('auth.login');
+            }
         } catch (Exception $ex) {
-            $msg = "Unknown Error Occurred, Please try again!" . $ex->getMessage();
-            $type = 'error';
-            Session::flash($type, $msg);
+            // Handle exceptions and flash an error message
+            $msg = "Unknown error occurred. Please try again! Error: " . $ex->getMessage();
+            Session::flash('error', $msg);
             return back();
         }
     }
