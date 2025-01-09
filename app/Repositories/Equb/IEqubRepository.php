@@ -71,6 +71,8 @@ interface IEqubRepository
     public function getStatusById($id);
 
     public function getByDate($dateFrom, $dateTo, $equbType, $offset);
+    
+    public function getByPaymentMethod($dateFrom, $dateTo, $equbType, $offset);
 
     public function getUnPaidByDate($dateFrom, $dateTo, $equbId, $offset, $equbType);
 
@@ -121,6 +123,6 @@ interface IEqubRepository
     public function delete($id);
 
     public function filterEqubEndDates($dateFrom, $dateTo, $offset, $equbType);
-
+    public function filterEqubByPaymentMethod($dateFrom, $dateTo, $offset, $equbType);
     public function countFilterEqubEndDates($dateFrom, $dateTo, $equbType);
 }

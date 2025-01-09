@@ -333,6 +333,29 @@ class EqubRepository implements IEqubRepository
                 ->get();
         }
     }
+    public function getByPaymentMethod($dateFrom, $dateTo, $equbType, $offset)
+    {
+        if ($equbType != 'all') {
+            return $this->model
+                ->where('status', 'Active')
+                ->where('equb_type_id', $equbType)
+                ->whereDate('start_date', '>=', $dateFrom)
+                ->whereDate('end_date', '<=', $dateTo)
+                ->with('member')
+                ->offset($offset)
+                ->limit($this->limit)
+                ->get();
+        } else {
+            return $this->model
+                ->where('status', 'Active')
+                ->whereDate('start_date', '>=', $dateFrom)
+                ->whereDate('end_date', '<=', $dateTo)
+                ->with('member')
+                ->offset($offset)
+                ->limit($this->limit)
+                ->get();
+        }
+    }
     public function getUnPaidByDate($dateFrom, $dateTo, $equbId, $offset, $equbType)
     {
         // return $this->model->where('status', 'Active')
@@ -725,6 +748,20 @@ class EqubRepository implements IEqubRepository
                 ->limit($this->limit)
                 ->with('member')->get();
         }
+    }
+    public function filterEqubByPaymentMethod($dateFrom, $dateTo, $offset, $equbType)
+    {
+        $query = Payment::query(); // Start building the query
+    
+        if ($equbType != 'all') {
+            $query->where('payment_type', $equbType);
+        }else{
+    
+       $query->where('payment_type', $equbType);
+    
+            }
+    
+        return $query->get(); // Execute the query and return results
     }
     public function countFilterEqubEndDates($dateFrom, $dateTo, $equbType)
     {

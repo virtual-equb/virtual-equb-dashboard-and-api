@@ -103,7 +103,7 @@
                         </div>
                         <div id="start_date_div" class="form-group d-none">
                             <label for="start_date" class="control-label">Start Date</label>
-                            <input type="date" id="" name="start_date" placeholder="Start Date" autocomplete="off">
+                            <input type="date"  class="form-control" id="start_date" name="start_date" placeholder="Start Date" autocomplete="off">
                         </div>
                         <div id="quota_div" class="form-group d-none">
                             <label class="control-label">Quota</label>

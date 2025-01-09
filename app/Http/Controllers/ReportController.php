@@ -442,6 +442,7 @@ class ReportController extends Controller
             return back();
         }
     }
+    
     /*public function filterEqubEndDates($dateFrom, $dateTo, $equbType)
     {
         try {
@@ -592,6 +593,53 @@ class ReportController extends Controller
             // } else {
             //     return view('auth/login');
             // }
+        } catch (Exception $ex) {
+            $msg = "Unknown Error Occurred, Please try again!" . $ex->getMessage();
+            $type = 'error';
+            Session::flash($type, $msg);
+            return back();
+        }
+    }
+    public function filterByMethod()
+    {
+        try {
+            $userData = Auth::user();
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
+                $data['title'] = "Virtual Equb - Filliter By Payment Method";
+                $data['collecters'] = $this->userRepository->getCollecters();
+                $data['equbTypes'] = $this->equbTypeRepository->getActive();
+               // return response()->json( $data['collecters'] );
+            //   dd($data);
+               return view('admin/report/filterByMethod/methodReport', $data);
+            // } else {
+            //     return view('auth/login');
+            // }
+        } catch (Exception $ex) {
+            $msg = "Unknown Error Occurred, Please try again!" . $ex->getMessage();
+            $type = 'error';
+            Session::flash($type, $msg);
+            return back();
+        }
+    }
+    public function filterPaymentMethod($dateFrom, $dateTo, $equbType)
+    {
+        try {
+            $data['offset'] = 0;
+            $offset = 0;
+            $data['limit'] = 50;
+            $data['pageNumber'] = 1;
+            $userData = Auth::user();
+         //   if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
+                $data['title'] = "Virtual Equb - Fileter Equb By End Date Report";
+                // $data['paids'] = $this->paymentRepository->getPaidByDate($dateFrom, $dateTo);
+                // $equbId = $data['paids'];
+                // $equbId = json_encode($equbId);
+                // $equbId = str_replace('"', "", $equbId);
+                $data['totalEqub'] = $this->equbRepository->countFilterEqubEndDates($dateFrom, $dateTo, $equbType);
+                
+                $data['equbs'] = $this->equbRepository->filterEqubByPaymentMethod($dateFrom, $dateTo, $offset, $equbType);
+              //  return response()->json($data);
+                return view('admin/report/filterByMethod/filterByMethodReport', $data);         
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!" . $ex->getMessage();
             $type = 'error';
@@ -773,6 +821,29 @@ class ReportController extends Controller
                 $data['title'] = "Virtual Equb - Equbs Report";
                 $data['totalEqub'] = $this->equbRepository->getCountByDate($dateFrom, $dateTo, $equbType);
                 $data['equbs'] = $this->equbRepository->getByDate($dateFrom, $dateTo, $equbType, $offset);
+                return view('admin/report/equbReport/filterEqubs', $data);
+            // } else {
+            //     return view('auth/login');
+            // }
+        } catch (Exception $ex) {
+            $msg = "Unknown Error Occurred, Please try again!";
+            $type = 'error';
+            Session::flash($type, $msg);
+            return back();
+        }
+    }
+    public function reportByMethod($dateFrom, $dateTo, $equbType)
+    {
+        try {
+            $data['offset'] = 0;
+            $offset = 0;
+            $data['limit'] = 50;
+            $data['pageNumber'] = 1;
+            $userData = Auth::user();
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
+                $data['title'] = "Virtual Equb - Equbs Report";
+                $data['totalEqub'] = $this->equbRepository->getCountByDate($dateFrom, $dateTo, $equbType);
+                $data['equbs'] = $this->equbRepository->getByPaymentMethod($dateFrom, $dateTo, $equbType, $offset);
                 return view('admin/report/equbReport/filterEqubs', $data);
             // } else {
             //     return view('auth/login');
