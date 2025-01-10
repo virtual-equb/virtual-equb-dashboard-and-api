@@ -75,11 +75,11 @@ class CreateOrderService
 
 
         try {
-            $response = Http::withHeaders([
+            $response = Http::timeout(60)->withHeaders([
                 'Content-Type' => 'application/json',
                 'X-APP-Key' => $this->fabricAppId,
                 'Authorization' => $fabricToken,
-            ])->timeout(60)->post($this->baseUrl . '/payment/v1/merchant/preOrder', $this->createRequestObject($title, $amount));
+            ])->post($this->baseUrl . '/payment/v1/merchant/preOrder', $this->createRequestObject($title, $amount));
             
             Log::info('API Response' . $response->body());
             return $response->body();
