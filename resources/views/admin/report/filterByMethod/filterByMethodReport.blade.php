@@ -1,5 +1,5 @@
 
-      <table id="equb-table" class="table table-bordered table-striped ">
+<table id="equb-table" class="table table-bordered table-striped ">
           <thead>
               <tr>
                   <th>No</th>

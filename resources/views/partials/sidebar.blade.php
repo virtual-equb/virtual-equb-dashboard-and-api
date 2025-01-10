@@ -185,30 +185,14 @@
                 @endcan
 
                 @can('view notification')
-                <!-- Notifications Section -->
-                <li class="nav-item">
-                    <a href="#" class="nav-link" id="notificationLink" onclick="setActive('notificationLink')">
-                    <i class="nav-icon fa fa-bell"></i>
-                        <p>
-                        Notifications
-                            <i class="fas fa-angle-left right"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview ml-2" style="{{ request()->is('notification/sent*') ? 'display: block;' : 'display: none;' }}">
-                        <li class="nav-item">
-                            <a href="{{ route('showSentNotifications') }}" class="nav-link {{ request()->is('notification/sent') ? 'active' : '' }}" id="cityLink" onclick="setActive('cityLink')">
-                            <i class="far fa-circle nav-icon"></i>
-                                <p>View Notifications</p>
-                            </a>
-                        </li>
-                         <li class="nav-item">
-                            <a href="{{ route('showNotifations') }}" class="nav-link {{ request()->is('notification/view') ? 'active' : '' }}" id="cityLink" onclick="setActive('cityLink')">
-                            <i class="far fa-circle nav-icon"></i>
-                                <p>View Notifications</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
+                <li class="nav-item" id="nav-ety">
+                        <a href="{{ route('showNotifations') }}" class="nav-link " id="notification">
+                            <i class="nav-icon fa fa-bell"></i>
+                            <p>
+                                Notification
+                            </p>
+                        </a>
+                    </li>
                 @endcan
 
                 @can('view user')
@@ -258,6 +242,16 @@
                     </ul>
                 </li>
                 @endcan
+               
+                <li class="nav-item" id="nav-ety">
+                        <a href="{{ route('showActivityLog') }}" class="nav-link" id="activity_log">
+                            <i class="nav-icon fa fa-chart-line"></i>
+                            <p>
+                                Activity Log
+                            </p>
+                        </a>
+                    </li>
+             
                 <!-- Logout Section -->
                 <li class="nav-item">
                     <a href="#" onclick="$('#logout').submit(); return false;" class="nav-link" id="logoutLink">

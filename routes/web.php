@@ -252,6 +252,7 @@ Route::middleware([
 
         Route::get('/equbFilter', [ReportController::class, 'equbFilter'])->name('equbFilter');
         Route::get('/equbs/{dateFrom}/{dateTo}/{equbType}', [ReportController::class, 'equbs'])->name('equbs');
+        Route::get('/reportByMethod/{dateFrom}/{dateTo}/{equbType}', [ReportController::class, 'reportByMethod'])->name('equbs');
         Route::get('/paginateEqubs/{dateFrom}/{dateTo}/{offsetVal}/{pageNumberVal}/{equbType}', [ReportController::class, 'paginateEqubs']);
 
         Route::get('/lotteryDateFilter', [ReportController::class, 'lotteryDateFilter'])->name('lotteryDateFilter');
@@ -282,11 +283,13 @@ Route::middleware([
         Route::get('/collectedBys/{dateFrom}/{dateTo}/{collecter}/{equbType}', [ReportController::class, 'collectedBys'])->name('collectedBys');
 
         Route::get('/unPaidFilter', [ReportController::class, 'unPaidFilter'])->name('unPaidFilter');
+        Route::get('/filterByMethod', [ReportController::class, 'filterByMethod'])->name('filterByMethod');
+        
         Route::get('/unPaids/{dateFrom}/{dateTo}/{equbType}', [ReportController::class, 'unPaids'])->name('unPaids');
         Route::get('/loadMoreUnPaids/{dateFrom}/{dateTo}/{offsetVal}/{pageNumberVal}/{equbType}', [ReportController::class, 'loadMoreUnPaids']);
 
         Route::get('/filterEqubEndDates', [ReportController::class, 'equbEndDates'])->name('unPaidFilter');
-        Route::get('/filterEqubEndDates/{dateFrom}/{dateTo}/{equbType}', [ReportController::class, 'filterEqubEndDates'])->name('filterEqubEndDates');
+        Route::get('/filterPaymentMethod/{dateFrom}/{dateTo}/{equbType}', [ReportController::class, 'filterPaymentMethod'])->name('filterPaymentMethod');
         Route::get('/loadMoreFilterEqubEndDates/{dateFrom}/{dateTo}/{offsetVal}/{pageNumberVal}/{equbType}', [ReportController::class, 'loadMoreFilterEqubEndDates']);
     });
     Route::group(['prefix' => 'activityLog'], function () {

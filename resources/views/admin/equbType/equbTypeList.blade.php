@@ -417,23 +417,30 @@ $(document).ready(function() {
             $('#end_date').datepicker();
 
             // Event listener for start_date change
-            $("#start_date").on("change", function() {
-    let startDateValue = $(this).val(); // Get the value of the start date input
-    let type = $("#type").find("option:selected").val(); // Get the selected type value
+            $('#start_date, #end_date').datepicker({
+        format: 'yyyy-mm-dd',
+        autoclose: true
+    });
 
-    if (startDateValue) {
-        let date = new Date(startDateValue); // Create a Date object
+    // Event listener for start_date changes
+    $("#start_date").on("change", function() {
+        let startDateValue = $(this).val();
+        let type = $("#type").find("option:selected").val();
 
-        // Determine end date based on the selected type
-        if (type === "Automatic") {
-            date.setDate(date.getDate() + 105); // Add 105 days for Automatic
-        } else if (type === "Seasonal") {
-            date.setDate(date.getDate() + 21); // Add 21 days for Seasonal
+        if (startDateValue) {
+            let date = new Date(startDateValue);
+
+            // Adjust end date based on type
+            if (type === "Automatic") {
+                date.setDate(date.getDate() + 105);
+            } else if (type === "Seasonal") {
+                date.setDate(date.getDate() + 21);
+            }
+
+            // Set calculated end date
+            $('#end_date').datepicker('setDate', date);
         }
-        // Set the end date in the datepicker
-        $('#end_date').datepicker('setDate', date);
-    }
-});
+    });
         });
             $("#update_quota").on("keyup", function() {
                 let startdate = document.getElementById('update_start_date').value;

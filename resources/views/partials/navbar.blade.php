@@ -99,6 +99,12 @@
                             <i class="fas fa-chart-bar"></i> Filter Equbs By End Date Report
                         </a>
                     @endcan
+                    @can('view filter_equb_by_end_date_reports')
+                        <a class="nav-link dropdown-item" href="{{ url('reports/filterByMethod') }}">
+                            <i class="fas fa-chart-bar"></i>Filter Equbs by Payment Method
+                            
+                        </a>
+                    @endcan
                     {{-- @endif --}}
                 </div>
             </li>

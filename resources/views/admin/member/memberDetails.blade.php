@@ -1,4 +1,3 @@
-@can('view member')
     <table id="equb-list-table" class="table table-bordered table-striped">
         <thead>
             <tr>
@@ -83,7 +82,7 @@
                     }
                     // dd($equb->lottery_date != null);
                     $finalLotteryInterval = $equbType->type == 'Automatic' ? $typeInterval : ($equb->lottery_date != null ? $interval : 'Unassigned');
-                   ?>
+                    ?>
                     <td class="details-control_payment" id="{{ $equb['id'] }}"></td>
                     <td>{{ $key + 1 }}</td>
                     <td>
@@ -104,7 +103,10 @@
                         $createdDate = $toCreatedAt->format('M-j-Y');
                         echo $createdDate; ?>
                     </td>
-                   
+                    <td> {{ number_format($totalPpayment) }}</td>
+                    <td> {{ number_format($remainingPayment) }}</td>
+                    <td> {{ number_format($equb->total_amount) }}</td>
+
                     <td>
                         <?php
                         if ($equb->lottery_date !== null) {
@@ -143,7 +145,7 @@
                     } else {
                         $indexP = 0;
                     }
-
+                    
                     $sum = 0;
                     for ($i = 0; $i < $indexP; $i++) {
                         if ($p[$i]->status == 'paid' || $p[$i]->status == 'pending') {
@@ -156,13 +158,20 @@
                     } else {
                         $remainingAmount = $equb->total_amount;
                     }
-
+                    
                     ?>
-                   @can('view member')
+                    @if (Auth::user()->role != 'operation_manager' &&
+                            Auth::user()->role != 'assistant' &&
+                            Auth::user()->role != 'legal_affair_officer')
                         <td>
                             <div class='dropdown'>
-                                <button class='btn btn-secondary btn-sm btn-flat dropdown-toggle' type='button'
-                                    data-toggle='dropdown'>Menu<span class='caret'></span></button>
+    @if (Auth::user()->role != 'marketing_manager') 
+    <button class='btn btn-secondary btn-sm btn-flat dropdown-toggle' type='button' data-toggle='dropdown'>
+        Menu <span class='caret'></span>
+    </button>
+@else
+    <span>N/A</span>
+@endif
                                 <ul class='dropdown-menu p-4'>
                                     {{-- <li>
                                     <a href="javascript:void(0);"
@@ -170,15 +179,13 @@
                                         onclick="addUnpaid({{ $equb }})" id="addUnpaidButton"><i
                                             class="fas fa-plus-circle"></i> Add Unpaid</a>
                                 </li> --}}
-                                        @can('add equb_payment')
+                                    @if (Auth::user()->role != 'finance')
                                         <li>
                                             <a href="javascript:void(0);"
                                                 class="text-secondary btn btn-flat {{ $member->status == 'Deactive' ? 'disabled' : ($equb->status == 'Deactive' ? 'disabled' : ($sum >= $expectedTotal ? 'disabled' : '')) }}"
                                                 onclick="openPaymentModal({{ $equb }})" id="paymentButton"><i
                                                     class="fas fa-plus-circle"></i> Payment</a>
                                         </li>
-                                        @endcan
-                                        @can('add equb_lottery')
                                         <li>
                                             <a href="javascript:void(0);"
                                                 class="text-secondary btn btn-flat {{ $member->status == 'Deactive' ? 'disabled' : ($equb->status == 'Deactive' ? 'disabled' : ($remainingAmount == 0 ? 'disabled' : '')) }}"
@@ -186,8 +193,6 @@
                                                 onclick="openLotteryModal({{ $equb }})"><i
                                                     class="fas fa-plus-circle"></i> Lottery</a>
                                         </li>
-                                        @endcan
-                                        @can('update equb')
                                         <li>
                                             <a href="javascript:void(0);"
                                                 class="text-secondary btn btn-flat {{ $member->status == 'Deactive' ? 'disabled' : ($equb->status == 'Deactive' ? 'disabled' : ($remainingAmount == 0 && $sum == $expectedTotal ? 'disabled' : '')) }}"
@@ -196,16 +201,12 @@
                                                 </span>
                                                 Edit</a>
                                         </li>
-                                        @endcan
-                                        @can('delete equb')
                                         <li>
                                             <a href="javascript:void(0);"
                                                 class="text-secondary btn btn-flat {{ $member->status == 'Deactive' ? 'disabled' : ($equb->status == 'Deactive' ? 'disabled' : ($remainingAmount == 0 && $sum == $expectedTotal ? 'disabled' : '')) }}"
                                                 onclick="openEqubDeleteModal({{ $equb }})"
                                                 id="paymentDelete"><i class="fas fa-trash-alt"></i> Delete</a>
                                         </li>
-                                        @endcan
-                                        @can('deactivate equb')
                                         <li>
                                             <a href="javascript:void(0);" class="text-secondary btn btn-flat"
                                                 onclick="equbStatusChange({{ $equb }})"
@@ -219,8 +220,6 @@
                                                 ?>
                                             </a>
                                         </li>
-                                        @endcan
-                                        @can('deactivate equb_for_draw')
                                         <li>
                                             <a href="javascript:void(0);" class="text-secondary btn btn-flat"
                                                 onclick="equbDrawCheckChange({{ $equb }})"
@@ -234,11 +233,11 @@
                                                 ?>
                                             </a>
                                         </li>
-                                        @endcan
+                                    @endif
                                 </ul>
                             </div>
                         </td>
-                  @endcan
+                    @endif
                 </tr>
             @endforeach
         </tbody>
@@ -286,7 +285,6 @@
                         @method('PUT')
                         <p class="text-center">Are you sure you want to update status?</p>
                     </div>
-                    <h1></h1>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-sm btn-danger">update</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -364,4 +362,3 @@
             });
         });
     </script>
-@endcan
