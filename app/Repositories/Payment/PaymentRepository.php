@@ -146,6 +146,45 @@ class PaymentRepository implements IPaymentRepository
     //             ->get();
     //     }
     // }
+
+    public function getCollectedByUser($dateFrom, $dateTo, $collector, $offset, $equbType)
+    {
+        \DB::statement("SET SQL_MODE=''");
+    
+        // Start building the query
+        $query = $this->model->selectRaw('
+            full_name,
+            equb_types.name,
+            equb_types.round,
+            payments.id,
+            payments.creadit,
+            payments.balance,
+            payments.member_id,
+            payments.equb_id,
+            payments.payment_type,
+            payments.amount,
+            payments.status,
+            payments.created_at
+        ')
+        ->join('equbs', 'payments.equb_id', '=', 'equbs.id')
+        ->join('members', 'payments.member_id', '=', 'members.id')
+        ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
+        ->whereDate('payments.created_at', '>=', $dateFrom)
+        ->whereDate('payments.created_at', '<=', $dateTo)
+        ->whereRaw('LOWER(payments.status) = ?', ['paid']) // Case-insensitive check
+        ->groupBy('payments.id')
+        ->where('payments.status', 'paid')
+        ->offset($offset)
+        ->limit($this->limit);
+    
+        // Apply additional filters dynamically
+        if ($collector != "all") {
+            $query->where('payments.collecter', $collector);
+        }
+    
+        if ($equbType != "all") {
+            $query->where('equb_types.id', $equbType);
+
     public function getCollectedByUser($dateFrom, $dateTo, $collecter, $offset, $equbType)
     {
         // \DB::statement("SET SQL_MODE=''");
