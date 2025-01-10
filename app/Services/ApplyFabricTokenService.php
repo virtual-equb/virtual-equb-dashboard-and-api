@@ -36,12 +36,12 @@ class ApplyFabricTokenService
                 'appSecret' => $this->appSecret,
             ]);
             // retry
-            $response = Http::retry(3, 2000)
-            ->timeout(60)
-            ->post($this->BASE_URL . '/payment/v1/token', [
-                'appSecret' => $this->appSecret,
-                'appid' => $this->fabricAppId
-            ]);
+            // $response = Http::retry(3, 2000)
+            // ->timeout(60)
+            // ->post($this->BASE_URL . '/payment/v1/token', [
+            //     'appSecret' => $this->appSecret,
+            //     'appid' => $this->fabricAppId
+            // ]);
             if ($response->successful()) {
                 return $response->body(); // or $response->json() if you need an array
             }
