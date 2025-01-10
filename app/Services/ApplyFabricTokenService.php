@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Exception;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 
 class ApplyFabricTokenService
@@ -31,25 +32,25 @@ class ApplyFabricTokenService
             $response = Http::withHeaders([
                 "Content-Type" => "application/json",
                 "X-APP-Key" => $this->fabricAppId,
-                "timeout" => 30,
-                "connection_timeout" => 15,
-                "debug" => true,
-                "verify" => false,
             ])->post($this->BASE_URL . '/payment/v1/token', [
                 'appSecret' => $this->appSecret,
             ]);
             // retry
-            $response = Http::retry(3, 1000)->post($this->BASE_URL . '/payment/v1/token', [
-                'appSecret' => $this->appSecret,
-                'appid' => $this->fabricAppId
-            ]);
+            // $response = Http::retry(3, 1000)->post($this->BASE_URL . '/payment/v1/token', [
+            //     'appSecret' => $this->appSecret,
+            //     'appid' => $this->fabricAppId
+            // ]);
             if ($response->successful()) {
                 return $response->body(); // or $response->json() if you need an array
             }
+            Log::error("Failed to retrieve Fabric token", ['status' => $response->status(), 
+                'body' => $response->body()
+            ]);
 
             // Handle errors
             throw new \Exception('Error retrieving the Fabric token: ' . $response->status());
         } catch (Exception $e) {
+            Log::error('Exception in applyFabricToken', ['error' => $e->getMessage()]);
             throw new \Exception('Error retrieving the Fabric token: ' . $e);
         }
     }

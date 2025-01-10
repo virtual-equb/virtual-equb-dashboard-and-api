@@ -79,7 +79,7 @@ class CreateOrderService
                 'Content-Type' => 'application/json',
                 'X-APP-Key' => $this->fabricAppId,
                 'Authorization' => $fabricToken,
-            ])->post($this->baseUrl . '/payment/v1/merchant/preOrder', $this->createRequestObject($title, $amount));
+            ])->timeout(30)->post($this->baseUrl . '/payment/v1/merchant/preOrder', $this->createRequestObject($title, $amount));
             
             Log::info('API Response' . $response->body());
             return $response->body();
