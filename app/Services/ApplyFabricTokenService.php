@@ -32,9 +32,16 @@ class ApplyFabricTokenService
                 "Content-Type" => "application/json",
                 "X-APP-Key" => $this->fabricAppId,
                 "timeout" => 30,
-                "connection_timeout" => 15
+                "connection_timeout" => 15,
+                "debug" => true,
+                "verify" => false,
             ])->post($this->BASE_URL . '/payment/v1/token', [
                 'appSecret' => $this->appSecret,
+            ]);
+            // retry
+            $response = Http::retry(3, 1000)->post($this->BASE_URL . '/payment/v1/token', [
+                'appSecret' => $this->appSecret,
+                'appid' => $this->fabricAppId
             ]);
             if ($response->successful()) {
                 return $response->body(); // or $response->json() if you need an array
