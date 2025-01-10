@@ -74,18 +74,37 @@ class CreateOrderService
         // Use Laravel's HTTP client to send a POST request
 
 
+        // try {
+        //     $response = Http::timeout(60)->withHeaders([
+        //         'Content-Type' => 'application/json',
+        //         'X-APP-Key' => $this->fabricAppId,
+        //         'Authorization' => $fabricToken,
+        //     ])->post($this->baseUrl . '/payment/v1/merchant/preOrder', $this->createRequestObject($title, $amount));
+            
+        //     Log::info('API Response' . $response->body());
+        //     return $response->body();
+        // } catch (Exception $e) {
+        //     Log::info('log from requestCreateOrder');
+        //      Log::info($e);
+        // }
         try {
             $response = Http::timeout(60)->withHeaders([
                 'Content-Type' => 'application/json',
                 'X-APP-Key' => $this->fabricAppId,
                 'Authorization' => $fabricToken,
             ])->post($this->baseUrl . '/payment/v1/merchant/preOrder', $this->createRequestObject($title, $amount));
-            
-            Log::info('API Response' . $response->body());
+        
+            Log::info('API Response Status:', ['status' => $response->status()]);
+            Log::info('API Response Body:', ['response' => $response->body()]);
+        
+            if ($response->failed()) {
+                throw new Exception('API request failed with status: ' . $response->status() . ' and body: ' . $response->body());
+            }
+        
             return $response->body();
         } catch (Exception $e) {
-            Log::info('log from requestCreateOrder');
-             Log::info($e);
+            Log::error('Error in requestCreateOrder:', ['exception' => $e->getMessage()]);
+            throw $e;
         }
     }
 
