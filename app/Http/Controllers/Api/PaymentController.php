@@ -738,8 +738,8 @@ class PaymentController extends Controller
     public function initialize(Request $request)
     {
         try {
-
-            Log::info('from initialize');
+            $req = $request->all();
+            Log::info('from initialize', $req);
             $user = Auth::user();
             $userId = $user->id;
 
