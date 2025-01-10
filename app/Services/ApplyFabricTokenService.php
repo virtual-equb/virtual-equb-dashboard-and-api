@@ -52,7 +52,7 @@ class ApplyFabricTokenService
     public function applyFabricToken()
     {
         try {
-            $response = Http::retry(5, 2000) // Retry 5 times with 2 seconds between retries
+            $response = Http::retry(2, 2000) // Retry 5 times with 2 seconds between retries
                 ->withHeaders([
                     "Content-Type" => "application/json",
                     "X-APP-Key" => $this->fabricAppId,
