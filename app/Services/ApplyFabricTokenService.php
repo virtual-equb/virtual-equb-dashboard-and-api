@@ -43,6 +43,16 @@ class ApplyFabricTokenService
             ]);
 
             // Handle errors
+            Log::info('Apply Fabric Token Request', [
+                'url' => $this->BASE_URL . '/payment/v1/token',
+                'headers' => [
+                    "Content-Type" => "application/json",
+                    "X-APP-Key" => $this->fabricAppId,
+                ],
+                'body' => ['appSecret' => $this->appSecret],
+            ]);
+            
+            Log::info('Fabric Token API Response', ['response' => $response->body()]);
             throw new \Exception('Error retrieving the Fabric token: ' . $response->status());
         } catch (Exception $e) {
             Log::error('Exception in applyFabricToken', ['error' => $e->getMessage()]);
