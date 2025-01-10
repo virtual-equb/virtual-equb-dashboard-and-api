@@ -31,6 +31,8 @@ class ApplyFabricTokenService
             $response = Http::withHeaders([
                 "Content-Type" => "application/json",
                 "X-APP-Key" => $this->fabricAppId,
+                "timeout" => 30,
+                "connection_timeout" => 15
             ])->post($this->BASE_URL . '/payment/v1/token', [
                 'appSecret' => $this->appSecret,
             ]);
