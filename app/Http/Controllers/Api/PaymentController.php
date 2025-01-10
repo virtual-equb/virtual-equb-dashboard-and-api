@@ -752,80 +752,7 @@ class PaymentController extends Controller
             // $member = $userId;
             $equb_id = $equbId;
             $paymentType = "telebirr";
-            // if ($credit <= 0) {
-            //     $credit = 0;
-            // }
-            // $totalCredit = $this->paymentRepository->getTotalCredit($equb_id);
-            // if ($totalCredit == null) {
-            //     $totalCredit = 0;
-            // }
-            // $creditData = [
-            //     'creadit' => 0
-            // ];
-            // $this->paymentRepository->updateCredit($equb_id, $creditData);
-            // $lastTc = $totalCredit;
-            // $totalCredit = $credit + $totalCredit;
-            // $tc = $totalCredit;
-            // $equbAmount = $this->equbRepository->getEqubAmount($member, $equb_id);
-            // $availableBalance = $this->paymentRepository->getTotalBalance($equb_id);
-            // $balanceData = [
-            //     'balance' => 0
-            // ];
-            // $this->paymentRepository->updateBalance($equb_id, $balanceData);
-            // if ($availableBalance == null) {
-            //     $availableBalance = 0;
-            // }
-            // $at = $amount;
-            // $amount = $availableBalance + $amount;
-
-            // if ($amount > $equbAmount) {
-            //     if ($totalCredit > 0) {
-            //         if ($totalCredit < $amount) {
-            //             if ($at < $equbAmount) {
-            //                 $availableBalance = $availableBalance - $totalCredit;
-            //                 $totalCredit = 0;
-            //             } elseif ($at > $equbAmount) {
-            //                 $diff = $at - $equbAmount;
-            //                 $totalCredit = $totalCredit - $diff;
-            //                 $availableBalance = $availableBalance + $diff - $tc;
-            //                 $totalCredit = 0;
-            //             } elseif ($at = $equbAmount) {
-            //                 $availableBalance = $availableBalance;
-            //             }
-            //             $amount = $at;
-            //         } else {
-            //             $amount = $at;
-            //             $totalCredit = $totalCredit;
-            //         }
-            //     } else {
-            //         $totalCredit = $totalCredit;
-            //         if ($at < $equbAmount) {
-            //             $availableBalance = $availableBalance - $totalCredit;
-            //         } elseif ($at > $equbAmount) {
-            //             $diff = $at - $equbAmount;
-            //             $totalCredit = $totalCredit - $diff;
-            //             $availableBalance = $availableBalance + $diff;
-            //             $totalCredit = 0;
-            //         } elseif ($at = $equbAmount) {
-            //             $availableBalance = $availableBalance;
-            //         }
-            //         $amount = $at;
-            //     }
-            // } elseif ($amount == $equbAmount) {
-            //     $amount = $at;
-            //     $totalCredit = $lastTc;
-            //     $availableBalance = 0;
-            // } elseif ($amount < $equbAmount) {
-            //     if ($lastTc == 0) {
-            //         $totalCredit = $equbAmount - $amount;
-            //         $availableBalance = 0;
-            //         $amount = $at;
-            //     } else {
-            //         $totalCredit = $totalCredit;
-            //         $availableBalance = 0;
-            //         $amount = $at;
-            //     }
-            // }
+            
             $memberData = Member::where('phone', $user->phone_number)->first();
             $collector = User::where('name', 'telebirr')->first();
             $paymentData = [
@@ -876,28 +803,6 @@ class PaymentController extends Controller
                 $parsedResult["paymentId"] = $telebirr->id;
                 // Return the filtered array as JSON
                 return response()->json($parsedResult);
-                // $telebirr->transaction_number = $telebirr->id;
-                // $telebirr->save();
-                // return response()->json([
-                //     'code' => 200,
-                //     'data' => [
-                //         "code" => 200,
-                //         "outTradeNo" => $telebirr->id,
-                //         "appId" => TELEBIRR_APP_ID,
-                //         "receiverName" => TELEBIRR_RECEIVER_NAME,
-                //         "shortCode" => TELEBIRR_SHORT_CODE,
-                //         "subject" => TELEBIRR_SUBJECT,
-                //         "returnUrl" => url(TELEBIRR_RETURN_URL . "/$telebirr->id"),
-                //         "notifyUrl" => url(TELEBIRR_NOTIFY_URL . "/$telebirr->id"),
-                //         "inAppPaymentUrl" => TELEBIRR_INAPP_PAYMENT_URL,
-                //         "h5PaymentUrl" => TELEBIRR_H5_URL,
-                //         "timeoutExpress" => TELEBIRR_TIMEOUT_EXPRESS,
-                //         "appKey" => TELEBIRR_APP_KEY,
-                //         "publicKey" => TELEBIRR_PUBLIC_KEY,
-                //         "user_id" => $memberData->id,
-                //         "totalAmount" => (string)$telebirr->amount,
-                //     ]
-                // ], 200);
             } else {
                 return response()->json([
                     'code' => 400,
