@@ -48,13 +48,21 @@ class CreateOrderService
 
         // Get the fabric token
         $tokenResult = json_decode($applyFabricTokenService->applyFabricToken());
+        if (!$tokenResult || !isset($tokenResult->token)) {
+            throw new Exception('Failed to retrive Fabric token :' . json_encode($tokenResult));
+        }
         $fabricToken = $tokenResult->token;
 
         // Create the order request
         $createOrderResult = $this->requestCreateOrder($fabricToken, TELEBIRR_TITLE, $amount);
+        Log::info('Create Order API Response:' . $createOrderResult);
 
-
-        $prepayId = json_decode($createOrderResult)->biz_content->prepay_id;
+        $decodedResult = json_decode($createOrderResult);
+        if (!$decodedResult || !isset($decodedResult->biz_content->prepay_id)) {
+            throw new Exception('Invalid response from API:' . $createOrderResult);
+        }
+        // $prepayId = json_decode($createOrderResult)->biz_content->prepay_id;
+        $prepayId = $decodedResult->biz_content->prepay_id;
 
         return $this->createRawRequest($prepayId);
     }
@@ -72,7 +80,8 @@ class CreateOrderService
                 'X-APP-Key' => $this->fabricAppId,
                 'Authorization' => $fabricToken,
             ])->post($this->baseUrl . '/payment/v1/merchant/preOrder', $this->createRequestObject($title, $amount));
-
+            
+            Log::info('API Response' . $response->body());
             return $response->body();
         } catch (Exception $e) {
             Log::info('log from requestCreateOrder');
