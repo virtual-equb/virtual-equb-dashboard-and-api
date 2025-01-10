@@ -48,28 +48,20 @@ class CreateOrderService
 
         // Get the fabric token
         $tokenResult = json_decode($applyFabricTokenService->applyFabricToken());
-        if (!$tokenResult || !isset($tokenResult->token)) {
-            throw new Exception('Fabric token retrieval failed:' . json_encode($tokenResult));
-        }
         $fabricToken = $tokenResult->token;
 
         // Create the order request
         $createOrderResult = $this->requestCreateOrder($fabricToken, TELEBIRR_TITLE, $amount);
-        Log::info('Create Order Api response' . $createOrderResult);
-
-        $decodedResult = json_decode($createOrderResult);
-        if (!$decodedResult || !isset($decodedResult->biz_content->prepay_id)) {
-            throw new Exception('Invalid API response: ' . $createOrderResult);
-        }
 
 
-        // $prepayId = json_decode($createOrderResult)->biz_content->prepay_id;
-        $prepayId = $decodedResult->biz_content->prepay_id;
+        $prepayId = json_decode($createOrderResult)->biz_content->prepay_id;
 
         return $this->createRawRequest($prepayId);
     }
 
     public function requestCreateOrder($fabricToken, $title, $amount)
+
+
     {
         // Use Laravel's HTTP client to send a POST request
 
