@@ -26,55 +26,27 @@ class ApplyFabricTokenService
      *
      * @return string authToken
      */
-    // public function applyFabricToken()
-    // {
-    //     try {
-    //         $response = Http::withHeaders([
-    //             "Content-Type" => "application/json",
-    //             "X-APP-Key" => $this->fabricAppId,
-    //         ])->timeout(60)->post($this->BASE_URL . '/payment/v1/token', [
-    //             'appSecret' => $this->appSecret,
-    //         ]);
-    //         if ($response->successful()) {
-    //             return $response->body(); // or $response->json() if you need an array
-    //         }
-    //         Log::error("Failed to retrieve Fabric token", ['status' => $response->status(), 
-    //             'body' => $response->body()
-    //         ]);
-
-    //         // Handle errors
-    //         throw new \Exception('Error retrieving the Fabric token: ' . $response->status());
-    //     } catch (Exception $e) {
-    //         Log::error('Exception in applyFabricToken', ['error' => $e->getMessage()]);
-    //         throw new \Exception('Error retrieving the Fabric token: ' . $e);
-    //     }
-    // }
     public function applyFabricToken()
     {
         try {
-            $response = Http::retry(2, 2000) // Retry 5 times with 2 seconds between retries
-                ->withHeaders([
-                    "Content-Type" => "application/json",
-                    "X-APP-Key" => $this->fabricAppId,
-                ])
-                ->timeout(60) // Allow up to 60 seconds for a response
-                ->post($this->BASE_URL . '/payment/v1/token', [
-                    'appSecret' => $this->appSecret,
-                ]);
-
-            if ($response->successful()) {
-                return $response->body();
-            }
-
-            Log::error('Failed to retrieve Fabric token', [
-                'status' => $response->status(),
-                'body' => $response->body(),
+            $response = Http::withHeaders([
+                "Content-Type" => "application/json",
+                "X-APP-Key" => $this->fabricAppId,
+            ])->timeout(60)->post($this->BASE_URL . '/payment/v1/token', [
+                'appSecret' => $this->appSecret,
             ]);
+            if ($response->successful()) {
+                return $response->body(); // or $response->json() if you need an array
+            }
+            Log::error("Failed to retrieve Fabric token", ['status' => $response->status(), 
+                'body' => $response->body()
+            ]);
+
+            // Handle errors
             throw new \Exception('Error retrieving the Fabric token: ' . $response->status());
         } catch (Exception $e) {
             Log::error('Exception in applyFabricToken', ['error' => $e->getMessage()]);
-            throw new \Exception('Error retrieving the Fabric token: ' . $e->getMessage());
+            throw new \Exception('Error retrieving the Fabric token: ' . $e);
         }
     }
-
 }
