@@ -6,6 +6,7 @@ namespace App\Repositories\Payment;
 use Carbon\Carbon;
 use App\Models\Payment;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 
 class PaymentRepository implements IPaymentRepository
@@ -172,6 +173,7 @@ class PaymentRepository implements IPaymentRepository
         ->whereDate('payments.created_at', '<=', $dateTo)
         ->whereRaw('LOWER(payments.status) = ?', ['paid']) // Case-insensitive check
         ->groupBy('payments.id')
+        ->where('payments.status', 'paid')
         ->offset($offset)
         ->limit($this->limit);
     
