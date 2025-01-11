@@ -172,6 +172,7 @@ class PaymentRepository implements IPaymentRepository
         ->whereDate('payments.created_at', '<=', $dateTo)
         ->whereRaw('LOWER(payments.status) = ?', ['paid']) // Case-insensitive check
         ->groupBy('payments.id')
+        ->where('payments.status', 'paid')
         ->offset($offset)
         ->limit($this->limit);
     
