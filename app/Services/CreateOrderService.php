@@ -57,12 +57,12 @@ class CreateOrderService
         $createOrderResult = $this->requestCreateOrder($fabricToken, TELEBIRR_TITLE, $amount);
         Log::info('Create Order API Response:' . $createOrderResult);
 
-        $decodedResult = json_decode($createOrderResult);
-        if (!$decodedResult || !isset($decodedResult->biz_content->prepay_id)) {
-            throw new Exception('Invalid response from API:' . $createOrderResult);
-        }
-        // $prepayId = json_decode($createOrderResult)->biz_content->prepay_id;
-        $prepayId = $decodedResult->biz_content->prepay_id;
+        // $decodedResult = json_decode($createOrderResult);
+        // if (!$decodedResult || !isset($decodedResult->biz_content->prepay_id)) {
+        //     throw new Exception('Invalid response from API:' . $createOrderResult);
+        // }
+        $prepayId = json_decode($createOrderResult)->biz_content->prepay_id;
+        // $prepayId = $decodedResult->biz_content->prepay_id;
 
         return $this->createRawRequest($prepayId);
     }
@@ -87,25 +87,7 @@ class CreateOrderService
             Log::info('log from requestCreateOrder');
              Log::info($e->getMessage());
         }
-        // try {
-        //     $response = Http::timeout(60)->withHeaders([
-        //         'Content-Type' => 'application/json',
-        //         'X-APP-Key' => $this->fabricAppId,
-        //         'Authorization' => $fabricToken,
-        //     ])->post($this->baseUrl . '/payment/v1/merchant/preOrder', $this->createRequestObject($title, $amount));
-        
-        //     Log::info('API Response Status:', ['status' => $response->status()]);
-        //     Log::info('API Response Body:', ['response' => $response->body()]);
-        
-        //     if ($response->failed()) {
-        //         throw new Exception('API request failed with status: ' . $response->status() . ' and body: ' . $response->body());
-        //     }
-        
-        //     return $response->body();
-        // } catch (Exception $e) {
-        //     Log::error('Error in requestCreateOrder:', ['exception' => $e->getMessage()]);
-        //     throw $e;
-        // }
+      
     }
 
     // Inside your CreateOrderService class
