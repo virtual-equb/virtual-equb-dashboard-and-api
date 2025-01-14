@@ -848,6 +848,37 @@ class ReportController extends Controller
             return back();
         }
     }
+    public function updateToPaidLotterys()
+    {
+        try {
+            $offset = 0;
+            $userData = Auth::user();
+
+            $member_id = $this->equbTakerRepository->getMemberId();
+            $member_id = json_encode($member_id);
+            $member_id = str_replace('"', "", $member_id);
+
+            // Fetch the total count of unpaid lotteries for logging
+            $totalUnpaidLotteries = $this->equbRepository->getUnPaidLotteryCount($member_id);
+
+            if ($totalUnpaidLotteries > 0) {
+                // update the records to paid
+                $updatedCount = $this->equbRepository->updateUnPaidLotteryToPaid($member_id, $offset);
+
+                Session::flash('success', "Successfully updated {$updatedCount} records to 'paid'.");
+            } else {
+                Session::flash('info', "No unpaid lotteries found to update.");
+            }
+            return redirect()->route('admin.report.unpaidLotteryReport');
+
+        } catch (Exception $ex) {
+            // return response()->json($ex->getMessage());
+            $msg = "Unknown Error Occurred, Please try again!";
+            $type = 'error';
+            Session::flash($type, $msg);
+            return back();
+        }
+    }
     public function paginateUnPaidLotterys($offsetVal, $pageNumberVal)
     {
         try {
