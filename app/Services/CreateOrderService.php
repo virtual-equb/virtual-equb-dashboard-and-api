@@ -57,12 +57,12 @@ class CreateOrderService
         $createOrderResult = $this->requestCreateOrder($fabricToken, TELEBIRR_TITLE, $amount);
         Log::info('Create Order API Response:' . $createOrderResult);
 
-        // $decodedResult = json_decode($createOrderResult);
-        // if (!$decodedResult || !isset($decodedResult->biz_content->prepay_id)) {
-        //     throw new Exception('Invalid response from API:' . $createOrderResult);
-        // }
-        $prepayId = json_decode($createOrderResult)->biz_content->prepay_id;
-        // $prepayId = $decodedResult->biz_content->prepay_id;
+        $decodedResult = json_decode($createOrderResult);
+        if (!$decodedResult || !isset($decodedResult->biz_content->prepay_id)) {
+            throw new Exception('Invalid response from API:' . $createOrderResult);
+        }
+        // $prepayId = json_decode($createOrderResult)->biz_content->prepay_id;
+        $prepayId = $decodedResult->biz_content->prepay_id;
 
         return $this->createRawRequest($prepayId);
     }
@@ -75,7 +75,7 @@ class CreateOrderService
 
 
         try {
-            $response = Http::timeout(60)->withHeaders([
+            $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
                 'X-APP-Key' => $this->fabricAppId,
                 'Authorization' => $fabricToken,
@@ -85,7 +85,7 @@ class CreateOrderService
             return $response->body();
         } catch (Exception $e) {
             Log::info('log from requestCreateOrder');
-             Log::info($e);
+             Log::info($e->getMessage());
         }
         // try {
         //     $response = Http::timeout(60)->withHeaders([
