@@ -87,25 +87,41 @@ class CreateOrderService
         //     Log::info('log from requestCreateOrder');
         //      Log::info($e);
         // }
+        // try {
+        //     $response = Http::timeout(60)->withHeaders([
+        //         'Content-Type' => 'application/json',
+        //         'X-APP-Key' => $this->fabricAppId,
+        //         'Authorization' => $fabricToken,
+        //     ])->post($this->baseUrl . '/payment/v1/merchant/preOrder', $this->createRequestObject($title, $amount));
+        
+        //     Log::info('API Response Status:', ['status' => $response->status()]);
+        //     Log::info('API Response Body:', ['response' => $response->body()]);
+        
+        //     if ($response->failed()) {
+        //         throw new Exception('API request failed with status: ' . $response->status() . ' and body: ' . $response->body());
+        //     }
+        
+        //     return $response->body();
+        // } catch (Exception $e) {
+        //     Log::error('Error in requestCreateOrder:', ['exception' => $e->getMessage()]);
+        //     throw $e;
+        // }
         try {
-            $response = Http::timeout(60)->withHeaders([
-                'Content-Type' => 'application/json',
-                'X-APP-Key' => $this->fabricAppId,
+            $response = Http::retry(3, 200)
+            ->timeout(60)
+            ->withHeaders([
+                "Content-Type" => "application/json",
+                "X-APP-Key" => $this->fabricAppId,
                 'Authorization' => $fabricToken,
-            ])->post($this->baseUrl . '/payment/v1/merchant/preOrder', $this->createRequestObject($title, $amount));
-        
-            Log::info('API Response Status:', ['status' => $response->status()]);
-            Log::info('API Response Body:', ['response' => $response->body()]);
-        
-            if ($response->failed()) {
-                throw new Exception('API request failed with status: ' . $response->status() . ' and body: ' . $response->body());
-            }
-        
+            ])->post($this->baseUrl . '/payment/v1/token', [
+                'appSecret' => $this->appSecret
+            ]);
             return $response->body();
-        } catch (Exception $e) {
-            Log::error('Error in requestCreateOrder:', ['exception' => $e->getMessage()]);
-            throw $e;
+
+        } catch (Exception $ex) {
+            return response()->json($ex->getMessage());
         }
+        
     }
 
     // Inside your CreateOrderService class
