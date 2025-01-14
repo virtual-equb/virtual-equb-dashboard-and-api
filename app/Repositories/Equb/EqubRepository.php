@@ -170,6 +170,19 @@ class EqubRepository implements IEqubRepository
             ->limit($this->limit)
             ->with('member', 'equbType', 'equbTakers')
             ->get();
+            
+    }
+    public function updateUnPaidLotteryToPaid($member_id, $offset)
+    {
+        // Find and update unpaid lotteries
+        return $this->model->where('status', 'Active')
+            ->whereBetween('lottery_date', [Carbon::now()->subDays(180), Carbon::now()])
+            ->whereHas('equbTakers', function ($q) {
+                $q->where('status', "!=", "paid")->where('status', "!=", "void");
+            })
+            ->offset($offset)
+            ->limit($this->limit)
+            ->update(['status' => 'paid']);
     }
     public function getUnPaidLotteryByEqubType($member_id, $equbType, $offset)
     {

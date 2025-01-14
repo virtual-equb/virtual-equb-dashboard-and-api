@@ -50,6 +50,8 @@ interface IEqubRepository
 
     public function getUnPaidLottery($member_id, $offset);
 
+    public function updateUnPaidLotteryToPaid($member_id, $offset);
+
     public function getUnPaidLotteryByEqubType($member_id, $equbType, $offset);
 
     public function getUnPaidLotteryByLotteryDateCount($member_id, $lotteryDate, $equbType);

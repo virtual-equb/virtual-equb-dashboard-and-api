@@ -39,7 +39,14 @@
                                             <div class="row justify-content-center" style="margin-bottom: 20px;">
                                                 <h4>UnPaid Lotteries Report</h4>
                                             </div>
-
+                                            <div class="row justify-content-center mb-3">
+                                                <form method="POST" action="{{ route('lotteries.updateToPaid') }}">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-primary">
+                                                        Update All UnPaid Lotteries to Paid
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </div>
                                         <div id="filterLotteryTable"></div>
 
