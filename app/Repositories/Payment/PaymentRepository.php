@@ -147,6 +147,32 @@ class PaymentRepository implements IPaymentRepository
     //             ->get();
     //     }
     // }
+    public function getByPaymentMethod($dateFrom, $dateTo, $equbType, $offset)
+    {
+        // Start building the query
+    //$query = Payment::query();
+
+    // Execute the query and return all results
+    //return $query->get(); 
+        // Execute the query and return results
+        if ($equbType != 'all') {
+            return $this->model
+                ->where('status', 'paid')
+                ->where('payment_type', $equbType)
+                ->with('member')
+                ->offset($offset)
+                ->limit($this->limit)
+                ->get();
+        } else {
+            return $this->model
+                ->where('status', 'paid')
+                ->with('member')
+                ->offset($offset)
+                ->limit($this->limit)
+                ->get();
+        } 
+     
+    }
     public function getCollectedByUser($dateFrom, $dateTo, $collector, $offset, $equbType)
     {
         \DB::statement("SET SQL_MODE=''");

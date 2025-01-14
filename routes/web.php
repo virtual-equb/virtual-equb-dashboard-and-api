@@ -251,9 +251,14 @@ Route::middleware([
         Route::get('/payments', [ReportController::class, 'payments'])->name('payments');
 
         Route::get('/equbFilter', [ReportController::class, 'equbFilter'])->name('equbFilter');
+
         Route::get('/equbs/{dateFrom}/{dateTo}/{equbType}', [ReportController::class, 'equbs'])->name('equbs');
+        Route::get('/equbs1/{dateFrom}/{dateTo}/{equbType}', [ReportController::class, 'equbs1'])->name('equbs1');
+
         Route::get('/reportByMethod/{dateFrom}/{dateTo}/{equbType}', [ReportController::class, 'reportByMethod'])->name('equbs');
         Route::get('/paginateEqubs/{dateFrom}/{dateTo}/{offsetVal}/{pageNumberVal}/{equbType}', [ReportController::class, 'paginateEqubs']);
+        Route::get('/paginatePaymentMethod/{dateFrom}/{dateTo}/{offsetVal}/{pageNumberVal}/{equbType}', [ReportController::class, 'paginatePaymentMethod']);
+
 
         Route::get('/lotteryDateFilter', [ReportController::class, 'lotteryDateFilter'])->name('lotteryDateFilter');
         Route::get('/lotteryDate/{dateFrom}/{dateTo}', [ReportController::class, 'lotteryDate'])->name('lotteryDate');

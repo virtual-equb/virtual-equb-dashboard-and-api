@@ -52,11 +52,14 @@ interface IPaymentRepository
     public function getCountWithDate($dateFrom, $dateTo);
 
     public function getCountDateAndMember($dateFrom, $dateTo, $member_id);
-
+   
     public function getCountWithDateMemberAndEqub($dateFrom, $dateTo, $member_id, $equb_id);
 
     public function getCollectedByUser($dateFrom, $dateTo, $collecter, $offset, $equbType);
 
+    public function getByPaymentMethod($dateFrom, $dateTo, $equbType, $offset);
+
+    
     public function getCountCollectedBys($dateFrom, $dateTo);
 
     public function getCountCollectedBysWithCollecter($dateFrom, $dateTo, $collecter, $equbtype);
