@@ -74,19 +74,19 @@ class CreateOrderService
         // Use Laravel's HTTP client to send a POST request
 
 
-        // try {
-        //     $response = Http::timeout(60)->withHeaders([
-        //         'Content-Type' => 'application/json',
-        //         'X-APP-Key' => $this->fabricAppId,
-        //         'Authorization' => $fabricToken,
-        //     ])->post($this->baseUrl . '/payment/v1/merchant/preOrder', $this->createRequestObject($title, $amount));
+        try {
+            $response = Http::timeout(60)->withHeaders([
+                'Content-Type' => 'application/json',
+                'X-APP-Key' => $this->fabricAppId,
+                'Authorization' => $fabricToken,
+            ])->post($this->baseUrl . '/payment/v1/merchant/preOrder', $this->createRequestObject($title, $amount));
             
-        //     Log::info('API Response' . $response->body());
-        //     return $response->body();
-        // } catch (Exception $e) {
-        //     Log::info('log from requestCreateOrder');
-        //      Log::info($e);
-        // }
+            Log::info('API Response' . $response->body());
+            return $response->body();
+        } catch (Exception $e) {
+            Log::info('log from requestCreateOrder');
+             Log::info($e);
+        }
         // try {
         //     $response = Http::timeout(60)->withHeaders([
         //         'Content-Type' => 'application/json',
@@ -106,22 +106,6 @@ class CreateOrderService
         //     Log::error('Error in requestCreateOrder:', ['exception' => $e->getMessage()]);
         //     throw $e;
         // }
-        try {
-            $response = Http::retry(3, 200)
-            ->timeout(60)
-            ->withHeaders([
-                "Content-Type" => "application/json",
-                "X-APP-Key" => $this->fabricAppId,
-                'Authorization' => $fabricToken,
-            ])->post($this->baseUrl . '/payment/v1/token', [
-                'appSecret' => $this->appSecret
-            ]);
-            return $response->body();
-
-        } catch (Exception $ex) {
-            return response()->json($ex->getMessage());
-        }
-        
     }
 
     // Inside your CreateOrderService class
