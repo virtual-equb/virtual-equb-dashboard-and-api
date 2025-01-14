@@ -783,12 +783,10 @@ class MemberController extends Controller
         try {
             // Get the authenticated user
             $userData = Auth::user();
-
             // Define roles
             $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'call_center', 'finance'];
             $collectorRoles = ['equb_collector'];
             $memberRoles = ['member'];
-
             // Check if the user is authenticated and their role
             if ($userData && $userData->hasAnyRole($adminRoles)) {
                 $data['member'] = $this->memberRepository->getByIdNested($id);

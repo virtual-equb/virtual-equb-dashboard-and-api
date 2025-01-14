@@ -62,7 +62,7 @@ interface IPaymentRepository
     
     public function getCountCollectedBys($dateFrom, $dateTo);
 
-    public function getCountCollectedBysWithCollecter($dateFrom, $dateTo, $collecter, $equbtype);
+    public function getCountCollectedBysWithCollecter($dateFrom, $dateTo, $collecter,$paymentMethod, $equbtype);
 
     public function getEqub($id);
 

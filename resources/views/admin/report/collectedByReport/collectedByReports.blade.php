@@ -69,7 +69,7 @@
                                                     <p class="text-red d-none" id="collecterRequired">Please enter collecter
                                                     </p>
                                                 </div>
-                                                <div class="form-group col-md-3">
+                                                <div class="form-group col-md-2">
                                                     <select class="form-control select2" id="equb_type" name="equb_type"
                                                         placeholder="Equb Type" required>
                                                         <option value="">Select Equb Type</option>
@@ -82,6 +82,18 @@
                                                     <p class="text-red d-none" id="equbTypeRequired">Please select equb
                                                         type</p>
                                                 </div>
+                                                <div class="form-group col-md-2">
+                                                        <select class="form-control select2" id="paymentMethod" name="payment_method"
+                                                            placeholder="payment_method" required>
+                                                            <option value="">Select Payment Method</option>
+                                                            <option value="all">All</option>
+                                                            @foreach ($paymentMethod as $method)
+                                                            <option value="{{ $method['name'] }}">{{ $method['name'] }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        
+                                                        <p class="text-red d-none" id="payment_method">Please select Payment Method</p>
+                                                    </div>
                                             </div>
                                             <div class="form-group row justify-content-center">
                                                 <button type="button" class="btn btn-primary col-md-3"
@@ -104,7 +116,7 @@
                 let equbType = $('#equb_type').val() != "" ? $('#equb_type').val() : 'all';
                 $.ajax({
                     url: "{{ url('reports/paginateCllectedBys') }}" + '/' + $('#dateFrom').val() + '/' + $('#dateTo')
-                        .val() + '/' + $('#collecter').val() + '/' + offsetVal + '/' + pageNumberVal + '/' + equbType,
+                        .val() + '/' + $('#collecter').val()  + '/' + $('#paymentMethod').val() + '/' + offsetVal + '/' + pageNumberVal + '/' + equbType,
                     type: 'get',
                     success: function(data) {
                         $('#filterCollectedByTable').html(data);

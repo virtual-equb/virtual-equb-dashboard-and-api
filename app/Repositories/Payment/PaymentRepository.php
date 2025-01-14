@@ -476,13 +476,14 @@ class PaymentRepository implements IPaymentRepository
             ->where('status', 'paid')
             ->count();
     }
-    public function getCountCollectedBysWithCollecter($dateFrom, $dateTo, $collecter = 'all', $equbType = 'all')
+    public function getCountCollectedBysWithCollecter($dateFrom, $dateTo, $collecter = 'all',$paymentMethod, $equbType = 'all')
     {
-        if ($collecter != "all" && $equbType != "all") {
+        if ($collecter != "all" && $equbType != "all" && $paymentMethod != "all") {
             return $this->model->whereDate('created_at', '>=', $dateFrom)
                 ->whereDate('created_at', '<=', $dateTo)
                 ->where('collecter', $collecter)
                 ->where('status', 'paid')
+                ->where('payment_type', 'payment_method')
                 ->whereHas('equb', fn ($q) =>  $q->where('equb_type_id', "=", $equbType))
                 ->count();
         } elseif ($collecter == "all" && $equbType != "all") {
@@ -491,7 +492,15 @@ class PaymentRepository implements IPaymentRepository
                 ->where('status', 'paid')
                 ->whereHas('equb', fn ($q) =>  $q->where('equb_type_id', "=", $equbType))
                 ->count();
-        } elseif ($collecter != "all" && $equbType == "all") {
+        }elseif ($paymentMethod != "all" && $collecter == "all" && $equbType == "all") {
+            return $this->model->whereDate('created_at', '>=', $dateFrom)
+                ->whereDate('created_at', '<=', $dateTo)
+                ->where('status', 'paid')
+                ->where('payment_type', 'payment_method')
+                ->whereHas('equb', fn ($q) =>  $q->where('equb_type_id', "=", $equbType))
+                ->count();
+        }
+         elseif ($collecter != "all" && $equbType == "all") {
             return $this->model->whereDate('created_at', '>=', $dateFrom)
                 ->whereDate('created_at', '<=', $dateTo)
                 ->where('collecter', $collecter)

@@ -283,7 +283,7 @@ Route::middleware([
         Route::get('/paginatePayments/{dateFrom}/{dateTo}/{member_id}/{equb_id}/{offsetVal}/{pageNumberVal}', [ReportController::class, 'paginatePayments']);
         Route::get('/paymentFilter', [ReportController::class, 'paymentFilter'])->name('paymentFilter');
         Route::get('/payments/{dateFrom}/{dateTo}/{member_id}/{equb_id}', [ReportController::class, 'payments'])->name('payments');
-        Route::get('/paginateCllectedBys/{dateFrom}/{dateTo}/{collecter}/{offsetVal}/{pageNumberVal}/{equbType}', [ReportController::class, 'paginateCllectedBys']);
+        Route::get('/paginateCllectedBys/{dateFrom}/{dateTo}/{collecter}/{paymentMethod}/{offsetVal}/{pageNumberVal}/{equbType}', [ReportController::class, 'paginateCllectedBys']);
         Route::get('/collectedByFilter', [ReportController::class, 'collectedByFilter'])->name('collectedByFilter');
         Route::get('/collectedBys/{dateFrom}/{dateTo}/{collecter}/{equbType}', [ReportController::class, 'collectedBys'])->name('collectedBys');
 

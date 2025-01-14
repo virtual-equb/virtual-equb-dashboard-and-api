@@ -1,3 +1,4 @@
+
     <table id="equb-list-table" class="table table-bordered table-striped">
         <thead>
             <tr>
@@ -165,13 +166,8 @@
                             Auth::user()->role != 'legal_affair_officer')
                         <td>
                             <div class='dropdown'>
-    @if (Auth::user()->role != 'marketing_manager') 
-    <button class='btn btn-secondary btn-sm btn-flat dropdown-toggle' type='button' data-toggle='dropdown'>
-        Menu <span class='caret'></span>
-    </button>
-@else
-    <span>N/A</span>
-@endif
+                                <button class='btn btn-secondary btn-sm btn-flat dropdown-toggle' type='button'
+                                    data-toggle='dropdown'>Menu<span class='caret'></span></button>
                                 <ul class='dropdown-menu p-4'>
                                     {{-- <li>
                                     <a href="javascript:void(0);"

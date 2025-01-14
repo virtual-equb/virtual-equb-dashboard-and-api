@@ -430,7 +430,7 @@ class EqubController extends Controller
             return back();
         }
     }
-    public function show($id)
+    /*public function show($id)
     {
         try {
             $userData = Auth::user();
@@ -464,6 +464,36 @@ class EqubController extends Controller
                 return view('member/equb.equbDetails', $equbTakerData);
             }
     
+        } catch (Exception $ex) {
+            $msg = "Unable to process your request, Please try again!";
+            $type = 'error';
+            Session::flash($type, $msg);
+            return back();
+        }
+    }*/
+    public function show($id)
+    {
+        try {
+            $userData = Auth::user();
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance','call_center'];
+            $memberRole = ['member'];
+            $collectorRole = ['equb_collector'];
+         //   $userData = Auth::user();
+         if ($userData->hasAnyRole($adminRoles)) {
+                $equbTakerData['equb'] = $this->equbRepository->getByIdNestedForLottery($id);
+                $equbTakerData['total'] = $this->paymentRepository->getTotal($id);
+                return view('admin/equb.equbDetails', $equbTakerData);
+            } elseif ($userData && ($userData['role'] == "equb_collector")) {
+                $equbTakerData['equb'] = $this->equbRepository->getByIdNested($id);
+                $equbTakerData['total'] = $this->paymentRepository->getTotal($id);
+                return view('equbCollecter/equb.equbDetails', $equbTakerData);
+            } elseif ($userData && ($userData['role'] == "member")) {
+                $equbTakerData['equb'] = $this->equbRepository->getByIdNested($id);
+                $equbTakerData['total'] = $this->paymentRepository->getTotal($id);
+                return view('member/equb.equbDetails', $equbTakerData);
+            } else {
+                return view('auth/login');
+            }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';

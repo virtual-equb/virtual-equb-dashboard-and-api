@@ -631,6 +631,12 @@ class ReportController extends Controller
                 $data['title'] = "Virtual Equb - Collected By Report";
                 $data['collecters'] = $this->userRepository->getCollecters();
                 $data['equbTypes'] = $this->equbTypeRepository->getActive();
+                $data['paymentMethod'] = [
+                    ['id' => 1, 'name' => 'bank transfer'],
+                    ['id' => 2, 'name' => 'cbebirr'],
+                    ['id' => 3, 'name' => 'telebirr'],
+                    ['id' => 3, 'name' => 'cash'],
+                ];
                // return response()->json( $data['collecters'] );
 
                 return view('admin/report/collectedByReport/collectedByReports', $data);
@@ -672,7 +678,7 @@ class ReportController extends Controller
             return back();
         }
     }
-    public function paginateCllectedBys($dateFrom, $dateTo, $collecter, $offsetVal, $pageNumberVal, $equbType)
+    public function paginateCllectedBys($dateFrom, $dateTo, $collecter,$paymentMethod, $offsetVal, $pageNumberVal, $equbType)
     {
         try {
             $data['offset'] = $offsetVal;
@@ -683,8 +689,8 @@ class ReportController extends Controller
             // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
                 $data['title'] = "Virtual Equb - Collected by Report";
                 if ($collecter != "all" || $equbType != "all") {
-                    $data['totalPayments'] = $this->paymentRepository->getCountCollectedBysWithCollecter($dateFrom, $dateTo, $collecter, $equbType);
-                    $data['collecters'] = $this->paymentRepository->getCollectedByUser($dateFrom, $dateTo, $collecter, $offset, $equbType);
+                    $data['totalPayments'] = $this->paymentRepository->getCountCollectedBysWithCollecter($dateFrom, $dateTo, $collecter,$paymentMethod, $equbType);
+                    $data['collecters'] = $this->paymentRepository->getCollectedByUser($dateFrom, $dateTo, $collecter,$paymentMethod, $offset, $equbType);
                 } else {
                     $data['totalPayments'] = $this->paymentRepository->getCountCollectedBys($dateFrom, $dateTo);
                     $data['collecters'] = $this->paymentRepository->getByDate($dateFrom, $dateTo, $offset);
