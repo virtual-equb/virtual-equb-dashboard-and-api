@@ -690,26 +690,26 @@ class EqubController extends Controller
             $userData = Auth::user();
             $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it'];
             $memberRoles = ['equb_collector', 'member'];
-            if ($userData && $userData->hasAnyRole($adminRoles)){
+            // if ($userData && $userData->hasAnyRole($adminRoles)){
 
                 $equbTakerData['equb'] = $this->equbRepository->getByIdNestedForLottery($id);
                 $equbTakerData['total'] = $this->paymentRepository->getTotal($id);
 
                 return response()->json($equbTakerData);
 
-            } elseif ($userData && $userData->hasAnyRole($memberRoles)) {
+            // } elseif ($userData && $userData->hasAnyRole($memberRoles)) {
 
                 $equbTakerData['equb'] = $this->equbRepository->getByIdNested($id);
                 $equbTakerData['total'] = $this->paymentRepository->getTotal($id);
 
                 return response()->json($equbTakerData);
 
-            } else {
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'You can\'t perform this action!'
-                ]);
-            }
+            // } else {
+            //     return response()->json([
+            //         'code' => 403,
+            //         'message' => 'You can\'t perform this action!'
+            //     ]);
+            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
