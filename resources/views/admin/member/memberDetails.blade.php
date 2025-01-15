@@ -36,6 +36,7 @@
                         ->where('id', $equb['id'])
                         ->pluck('lottery_date')
                         ->first();
+                        dd($lotteryDates)
                     $equbType = App\Models\EqubType::where('id', $equb->equb_type_id)->first();
                     $endDate = App\Models\Equb::where('status', 'Active')
                         ->where('id', $equb['id'])
@@ -165,13 +166,13 @@
                             Auth::user()->role != 'legal_affair_officer')
                         <td>
                             <div class='dropdown'>
-    @if (Auth::user()->role != 'marketing_manager') 
-    <button class='btn btn-secondary btn-sm btn-flat dropdown-toggle' type='button' data-toggle='dropdown'>
-        Menu <span class='caret'></span>
-    </button>
-@else
-    <span>N/A</span>
-@endif
+                            @if (Auth::user()->role != 'marketing_manager') 
+                            <button class='btn btn-secondary btn-sm btn-flat dropdown-toggle' type='button' data-toggle='dropdown'>
+                                Menu <span class='caret'></span>
+                            </button>
+                            @else
+                                <span>N/A</span>
+                            @endif
                                 <ul class='dropdown-menu p-4'>
                                     {{-- <li>
                                     <a href="javascript:void(0);"
