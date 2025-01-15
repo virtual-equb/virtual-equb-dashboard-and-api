@@ -570,45 +570,49 @@ class MemberController extends Controller
      *
      * @return JsonResponse
      */
-
     public function show($id)
-    {
-        try {
-            $data['totalPayment'] = $this->paymentRepository->getTotalPaid($id);
-            $data['member'] = $this->memberRepository->getByIdNested($id);
-            $member = $data['member'];
-            $equbs = $member->equbs;
-            $equbsArray = [];
+{
+    try {
+        $data['totalPayment'] = $this->paymentRepository->getTotalPaid($id);
+        $data['member'] = $this->memberRepository->getByIdNested($id);
+        $member = $data['member'];
+        $equbs = $member->equbs;
+        $equbsArray = [];
 
-            foreach ($equbs as $equb) {
-                $totalPpayment = Payment::where('equb_id', $equb['id'])
-                    ->where('status', 'paid')
-                    ->sum('amount');
-                $totalEqubAmount = Equb::select('total_amount')
-                    ->where('id', $equb['id'])
-                    ->pluck('total_amount')
+        foreach ($equbs as $equb) {
+            $totalPpayment = Payment::where('equb_id', $equb['id'])
+                ->where('status', 'paid')
+                ->sum('amount');
+
+            $totalEqubAmount = Equb::select('total_amount')
+                ->where('id', $equb['id'])
+                ->pluck('total_amount')
+                ->first();
+
+            $remainingPayment = $totalEqubAmount - $totalPpayment;
+
+            if ($remainingPayment > 0) {
+                $lotteryDate = Equb::where('id', $equb['id'])
+                    ->pluck('lottery_date')
                     ->first();
-                    // dd($totalEqubAmount);
-                $remainingPayment = $totalEqubAmount - $totalPpayment;
 
-                if ($remainingPayment > 0) {
-                    $lotteryDate = Equb::where('id', $equb['id'])
-                        ->pluck('lottery_date')
-                        ->first();
-                    $equbType = EqubType::where('id', $equb['equb_type_id'])->first();
+                $equbType = EqubType::where('id', $equb['equb_type_id'])->first();
 
-                    // Check if equbType or lotteryDate is null
-                    if (!$equbType || !$lotteryDate) {
-                        continue; // Skip this equb if the required data is missing
-                    }
+                // Validate the presence of required data
+                if (!$equbType || !$lotteryDate) {
+                    continue; // Skip if required data is missing
+                }
 
-                    $lotteryDate = explode(',', $lotteryDate);
-                    $date = date('Y-m-d');
-                    $lotteryDate = $lotteryDate[0];
-                    $date1 = new DateTime($date);
-                    $date2 = new DateTime($lotteryDate);
-                    $date3 = new DateTime($equbType->lottery_date);
+                // Ensure lotteryDate is properly parsed
+                $lotteryDateArray = explode(',', $lotteryDate);
+                $lotteryDate = $lotteryDateArray[0] ?? null;
 
+                if ($lotteryDate) {
+                    $date1 = new DateTime(date('Y-m-d')); // Today's date
+                    $date2 = new DateTime($lotteryDate); // Lottery date
+                    $date3 = new DateTime($equbType->lottery_date ?? ''); // Automatic lottery date
+
+                    // Calculate remaining days to manual lottery date
                     if ($date2 > $date1) {
                         $interval = $date2->diff($date1)->days;
                     } elseif ($date2 == $date1) {
@@ -617,6 +621,7 @@ class MemberController extends Controller
                         $interval = "passed";
                     }
 
+                    // Calculate remaining days to automatic lottery date
                     if ($date3 > $date1) {
                         $autoInterval = $date3->diff($date1)->days;
                     } elseif ($date3 == $date1) {
@@ -625,23 +630,101 @@ class MemberController extends Controller
                         $autoInterval = "passed";
                     }
 
-                    $equb['total_payment'] = $totalPpayment;
-                    $equb['remaining_payment'] = $remainingPayment;
+                    // Determine the final remaining lottery date
                     $equb['remaining_lottery_date'] = $equbType->type == 'Automatic' ? $autoInterval : $interval;
-                    array_push($equbsArray, $equb);
-                    
+                } else {
+                    $equb['remaining_lottery_date'] = "Unassigned";
                 }
-            }
 
-            return response()->json($equbsArray);
-        } catch (Exception $ex) {
-            return response()->json([
-                'code' => 500,
-                'message' => 'Unable to process your request, Please try again!',
-                "error" => $ex->getMessage()
-            ]);
+                // Populate additional fields for the Equb
+                $equb['total_payment'] = $totalPpayment;
+                $equb['remaining_payment'] = $remainingPayment;
+
+                array_push($equbsArray, $equb);
+            }
         }
+
+        return response()->json($equbsArray);
+    } catch (Exception $ex) {
+        return response()->json([
+            'code' => 500,
+            'message' => 'Unable to process your request, please try again!',
+            'error' => $ex->getMessage()
+        ]);
     }
+}
+
+    // public function show($id)
+    // {
+    //     try {
+    //         $data['totalPayment'] = $this->paymentRepository->getTotalPaid($id);
+    //         $data['member'] = $this->memberRepository->getByIdNested($id);
+    //         $member = $data['member'];
+    //         $equbs = $member->equbs;
+    //         $equbsArray = [];
+
+    //         foreach ($equbs as $equb) {
+    //             $totalPpayment = Payment::where('equb_id', $equb['id'])
+    //                 ->where('status', 'paid')
+    //                 ->sum('amount');
+    //             $totalEqubAmount = Equb::select('total_amount')
+    //                 ->where('id', $equb['id'])
+    //                 ->pluck('total_amount')
+    //                 ->first();
+    //                 // dd($totalEqubAmount);
+    //             $remainingPayment = $totalEqubAmount - $totalPpayment;
+
+    //             if ($remainingPayment > 0) {
+    //                 $lotteryDate = Equb::where('id', $equb['id'])
+    //                     ->pluck('lottery_date')
+    //                     ->first();
+    //                 $equbType = EqubType::where('id', $equb['equb_type_id'])->first();
+
+    //                 // Check if equbType or lotteryDate is null
+    //                 if (!$equbType || !$lotteryDate) {
+    //                     continue; // Skip this equb if the required data is missing
+    //                 }
+
+    //                 $lotteryDate = explode(',', $lotteryDate);
+    //                 $date = date('Y-m-d');
+    //                 $lotteryDate = $lotteryDate[0];
+    //                 $date1 = new DateTime($date);
+    //                 $date2 = new DateTime($lotteryDate);
+    //                 $date3 = new DateTime($equbType->lottery_date);
+
+    //                 if ($date2 > $date1) {
+    //                     $interval = $date2->diff($date1)->days;
+    //                 } elseif ($date2 == $date1) {
+    //                     $interval = 0;
+    //                 } else {
+    //                     $interval = "passed";
+    //                 }
+
+    //                 if ($date3 > $date1) {
+    //                     $autoInterval = $date3->diff($date1)->days;
+    //                 } elseif ($date3 == $date1) {
+    //                     $autoInterval = 0;
+    //                 } else {
+    //                     $autoInterval = "passed";
+    //                 }
+
+    //                 $equb['total_payment'] = $totalPpayment;
+    //                 $equb['remaining_payment'] = $remainingPayment;
+    //                 $equb['remaining_lottery_date'] = $equbType->type == 'Automatic' ? $autoInterval : $interval;
+    //                 array_push($equbsArray, $equb);
+                    
+    //             }
+    //         }
+
+    //         return response()->json($equbsArray);
+    //     } catch (Exception $ex) {
+    //         return response()->json([
+    //             'code' => 500,
+    //             'message' => 'Unable to process your request, Please try again!',
+    //             "error" => $ex->getMessage()
+    //         ]);
+    //     }
+    // }
     // public function show($id)
     // {
     //     try {
