@@ -625,11 +625,11 @@ class MemberController extends Controller
                         $autoInterval = "passed";
                     }
                     // Additional feature
-                    if ($equbType->type == 'Automatic') {
-                        error_log("Using Automatic Interval: " . $autoInterval);
-                    } else {
-                        error_log("Using Manual Interval: " . $interval);
-                    }
+                    // if ($equbType->type == 'Automatic') {
+                    //     error_log("Using Automatic Interval: " . $autoInterval);
+                    // } else {
+                    //     error_log("Using Manual Interval: " . $interval);
+                    // }
                     $equb['total_payment'] = $totalPpayment;
                     $equb['remaining_payment'] = $remainingPayment;
                     $equb['remaining_lottery_date'] = $equbType->type == 'Automatic' ? $autoInterval : $interval;
