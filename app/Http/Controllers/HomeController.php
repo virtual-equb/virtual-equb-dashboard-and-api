@@ -101,6 +101,24 @@ class HomeController extends Controller
                 ->whereDate('payments.created_at', '>=', date('Y-m-d'))
                 ->where('payments.status', 'unpaid')
                 ->get();
+            $fullUnPaidAutomaticAmount = Payment::selectRaw('sum(payments.amount) as unpaidAmount')
+                ->join('equbs', 'payments.equb_id', '=', 'equbs.id')
+                ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
+                ->where('equb_types.name', 'Automatic')
+                ->groupBy('equb_types.name')
+                ->whereDate('payments.created_at', '>=', date('Y-m-d'))
+                ->whereDate('payments.created_at', '>=', date('Y-m-d'))
+                ->where('payments.status', 'unpaid')
+                ->get();
+            $fullUnPaidManualAmount = Payment::selectRaw('sum(payments.amount) as unpaidAmount')
+                ->join('equbs', 'payments.equb_id', '=', 'equbs.id')
+                ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
+                ->where('equb_types.name', 'Manual')
+                ->groupBy('equb_types.name')
+                ->whereDate('payments.created_at', '>=', date('Y-m-d'))
+                ->whereDate('payments.created_at', '>=', date('Y-m-d'))
+                ->where('payments.status', 'unpaid')
+                ->get();
             $Expected = $this->equbRepository->getExpected($equbTypeId);
             $ExpectedAutomatic = $this->equbRepository->getExpected($equbTypeId);
             $ExpectedManual = $this->equbRepository->getExpected($equbTypeId);
@@ -463,14 +481,19 @@ class HomeController extends Controller
             $yearlyExpected  = $this->equbRepository->getExpectedAmount();
             $fullautomaticYearlyPaidAmount = $this->paymentRepository->getAutomaticYearlyPaidAmount();
             $automaticYearlyPendingAmount = $this->paymentRepository->getAutomaticYearlyPendingAmount();
-            $automaticYearylPaidAmount = $fullautomaticYearlyPaidAmount + $automaticYearlyPendingAmount;
-            $automaticYearylExpected = $this->equbRepository->getAutomaticExpectedAmount();
-            $fullmanualYearylPaidAmount = $this->paymentRepository->getManualYearlyPaidAmount();
+            $automaticYearlyPaidAmount = $fullautomaticYearlyPaidAmount + $automaticYearlyPendingAmount;
+            $automaticYearlyExpected = $this->equbRepository->getAutomaticExpectedAmount();
+            $fullmanualYearlyPaidAmount = $this->paymentRepository->getManualYearlyPaidAmount();
             $manualYearlyPendingAmount = $this->paymentRepository->getManualYearlyPendingAmount();
-            $manualYearlyPaidAmount = $fullmanualYearylPaidAmount + $manualYearlyPendingAmount;
+            $manualYearlyPaidAmount = $fullmanualYearlyPaidAmount + $manualYearlyPendingAmount;
             $manualYearlyExpected = $this->equbRepository->getManualExpectedAmount();
+
+            $automaticSum3 = 0;
+            $manualSum3 = 0;
             $sum3 = 0;
             $index = count($yearlyExpected);
+            $automaticIndex3 = count($automaticYearlyExpected);
+            $manualIndex3 = count($manualYearlyExpected);
             for ($i = 0; $i < $index; $i++) {
                 $end_date = $yearlyExpected[$i]->end_date;
                 $end_date = \Carbon\Carbon::parse($end_date);
@@ -502,6 +525,57 @@ class HomeController extends Controller
             }
             $yearlyExpected = $sum3;
             $yearlyUnpaidAmount = $yearlyExpected - $yearlyPaidAmount;
+            for ($i = 0; $i < $automaticIndex3; $i++) {
+                $end_date = $automaticYearlyExpected[$i]->end_date;
+                $end_date = Carbon::parse($end_date);
+                $start_date = $automaticYearlyExpected[$i]->start_date;
+                $start_date = Carbon::parse($start_date);
+                $current_date = Carbon::today();
+
+                if ($start_date <= $current_date && $end_date >= $current_date) {
+                    $difference = $current_date->diffInDays($end_date, false);
+                } else {
+                    $difference = $start_date->diffInDays($end_date, false);
+                }
+                if ($difference >= 364) {
+                    $WE = $automaticYearlyExpected[$i]->amount;
+                    $WE = $WE * 365;
+                    $automaticSum3 = $automaticSum3 + $WE;
+                } else {
+                    $WE = $automaticYearlyExpected[$i]->amount;
+                    $difference = $difference + 1;
+                    $WE = $WE * $difference;
+                    $automaticSum3 = $automaticSum3 + $WE;
+                }
+            }
+            $automaticYearlyExpected = $automaticSum3;
+            $automaticYearlyUnPaidAmount = $automaticYearlyExpected - $automaticYearlyPaidAmount;
+            for ($i = 0; $i < $manualIndex3; $i++) {
+                $end_date = $manualYearlyExpected[$i]->end_date;
+                $end_date = Carbon::parse($end_date);
+                $start_date = $manualYearlyExpected[$i]->start_date;
+                $start_date = Carbon::parse($start_date);
+                $current_date = Carbon::today();
+
+                if ($start_date <= $current_date && $end_date >= $current_date) {
+                    $difference = $current_date->diffInDays($end_date, false);
+                } else {
+                    $difference = $start_date->diffInDays($end_date, false);
+                }
+                if ($difference >= 364) {
+                    $WE = $manualYearlyExpected[$i]->amount;
+                    $WE = $WE * 365;
+                    $manualSum3 = $manualSum3 + $WE;
+                } else {
+                    $WE = $manualYearlyExpected[$i]->amount;
+                    $difference = $difference + 1;
+                    $WE = $WE * $difference;
+                    $manualSum3 = $manualSum3 + $WE;
+                }
+            }
+            $manualYearlyExpected = $manualSum3;
+            $manualYearlyUnpaidAmount = $manualYearlyExpected - $manualYearlyPaidAmount;
+
             $totalMember = $this->memberRepository->getMember();
             $totalUser = $this->userRepository->getUser();
             $tudayPaidMember = $this->equbRepository->tudayPaidMember();
@@ -533,21 +607,49 @@ class HomeController extends Controller
                            'automaticMembersArray',  
                            'title', 
                            'lables', 
+                           'automaticPayments',
+                           'manualPayments',
                            'fullPaidAmount', 
                            'fullUnPaidAmount', 
+                           'fullUnPaidAutomaticAmount',
+                           'fullUnPaidManualAmount',
                            'Expected', 
+                           'ExpectedAutomatic',
+                           'ExpectedManual',
                            'daylyPaidAmount', 
                            'daylyUnpaidAmount', 
+                           'dailyAutomaticPaidAmount',
+                           'dailyManualPaidAmount',
                            'daylyExpected', 
+                           'dailyAutomaticExpected',
+                           'dailyManualExpected',
                            'weeklyPaidAmount', 
+                           'weeklyAutomaticPaidAmount',
+                           'weeklyManualPaidAmount',
                            'weeklyUnpaidAmount', 
+                           'weeklyAutomaticUnpaidAmount',
+                           'weeklyManualUnpaidAmount',
                            'weeklyExpected', 
+                           'weeklyAutomaticExpected',
+                           'weeklyManualExpected',
                            'monthlyPaidAmount', 
+                           'automaticMonthlyPaidAmount',
+                           'manualMonthlyPaidAmount',
                            'monthlyUnpaidAmount', 
+                           'automaticMonthlyUnpaidAmount',
+                           'manualMonthlyUnpaidAmount',
                            'monthlyExpected', 
+                           'automaticMonthlyExpected',
+                           'manualMonthlyExpected',
                            'yearlyPaidAmount', 
+                           'automaticYearlyPaidAmount',
+                           'manualYearlyPaidAmount',
                            'yearlyUnpaidAmount', 
+                           'automaticYearlyUnPaidAmount',
+                           'manualYearlyUnpaidAmount',
                            'yearlyExpected', 
+                           'automaticYearlyExpected',
+                           'manualYearlyExpecteds',
                            'totalMember', 
                            'tudayPaidMember', 
                            'activeMember', 
