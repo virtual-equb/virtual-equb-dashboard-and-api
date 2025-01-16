@@ -585,6 +585,41 @@ class EqubRepository implements IEqubRepository
         //     ->orderBy('equb_type_id', 'asc')
         //     ->get();
     }
+    public function getAutomaticExpectedTotal()
+    {
+        return $this->model
+                ->whereDate('start_date', '<=', Carbon::today())
+                ->where('status', 'Active')
+                ->whereIn('id', function ($query) {
+                    // Subquery to filter equbs by remaining payment not equal to 0 in equb_takers table
+                    $query->selectRaw('equb_id')
+                    ->from('equb_takers')
+                    ->whereRaw('equb_takers.equb_id = equbs.id')
+                    ->where('remaining_payment', '>', 0)
+                    ->groupBy('equb_id');
+                    })
+                ->whereHas('equbType', function ($query) {
+                    $query->where('equb_type', 'Automatic'); // Filter by equb_type name
+                })
+                ->sum('amount');
+    }
+    public function getManualExpectedTotal()
+    {
+        return $this->model
+                ->whereDate('start_date', '<=', Carbon::today())
+                ->where('status', 'Active')
+                ->whereIn('id', function ($query) {
+                    $query->selectRaw('equb_id')
+                        ->from('equb_takers')
+                        ->whereRaw('equb_takers.equb_id = equbs.id')
+                        ->where('remainig_payment', '>', 0)
+                        ->groupBy('equb_id');
+                })
+                ->whereHas('equbType', function ($query) {
+                    $query->where('equb_type', 'Manual');
+                })
+                ->sum('amount');
+    }
     public function getEqubTypeExpectedTotal($equbTypeId)
     {
         return $this->model
@@ -613,6 +648,26 @@ class EqubRepository implements IEqubRepository
             // ->whereDate('end_date', '>=', Carbon::now())
             ->get();
     }
+    public function getAutomaticExpectedAmount()
+    {
+        return $this->model
+            ->where('status', 'Active')
+            ->whereDate('start_date', '<=', Carbon::now())
+            ->whereHas('equbType', function ($query) {
+                $query->where('equb_type', 'Automatic');
+            })
+            ->get();
+    }
+    public function getManualExpectedAmount()
+    {
+        return $this->model
+            ->where('status', 'Active')
+            ->whereDate('start_date', '<=', Carbon::now())
+            ->whereHas('equbType', function ($query) {
+                $query->where('equb_type', 'Manual');
+            })
+            ->get();
+    }
     public function getEqubTypeExpectedAmount($equbTypeId)
     {
         return $this->model->where('status', 'Active')
@@ -626,6 +681,26 @@ class EqubRepository implements IEqubRepository
         return $this->model->where('status', 'Active')
             ->whereDate('start_date', '<=', Carbon::now()->subDays(7))
             ->whereDate('end_date', '>=', Carbon::now()->subDays(7))
+            ->get();
+    }
+    public function getAutomaticExpectedBackPayment()
+    {
+        return $this->model->where('status', 'Active')
+            ->whereDate('start_date', '<=', Carbon::now()->subDays(7))
+            ->whereDate('end_date', '>=', Carbon::now()->subDays(7))
+            ->whereHas('equbType', function ($query) {
+                $query->where('equb_type', 'Automatic');
+            })
+            ->get();
+    }
+    public function getManualExpectedBackPayment()
+    {
+        return $this->model->where('status', 'Active')
+            ->whereDate('start_date', '<=', Carbon::now()->subDays(7))
+            ->whereDate('end_date', '>=', Carbon::now()->subDays(7))
+            ->whereHas('equbType', function ($query) {
+                $query->where('equb_type', 'Manual');
+            })
             ->get();
     }
     public function getEqubTypeExpectedBackPayment($equbTypeId)
