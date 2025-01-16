@@ -32,19 +32,11 @@ interface IEqubRepository
 
     public function getExpectedAmount();
 
-    public function getAutomaticExpectedAmount();
-
-    public function getManualExpectedAmount();
-
     public function getEqubTypeExpectedAmount($equbTypeId);
 
     public function geteEubById($id);
 
     public function getExpectedTotal();
-
-    public function getAutomaticExpectedTotal();
-
-    public function getManualExpectedTotal();
 
     public function getEqubTypeExpectedTotal($equbTypeId);
 
@@ -73,10 +65,6 @@ interface IEqubRepository
     public function getExpectedByLotteryDate($lotteryDate);
 
     public function getExpectedBackPayment();
-
-    public function getAutomaticExpectedBackPayment();
-
-    public function getManualExpectedBackPayment();
 
     public function getEqubTypeExpectedBackPayment($equbTypeId);
 

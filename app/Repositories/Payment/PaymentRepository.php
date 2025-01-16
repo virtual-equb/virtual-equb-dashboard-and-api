@@ -286,24 +286,6 @@ class PaymentRepository implements IPaymentRepository
     {
         return $this->model->where('status', 'paid')->sum('amount');
     }
-    public function getTotalAutomaticPayment()
-    {
-        return $this->model
-            ->where('status', 'paid')
-            ->whereHas('equb.equbType', function ($query) {
-                $query->where('equb_type', 'Automatic');
-            })
-            ->sum('amount');
-    }
-    public function getTotalManualPayment()
-    {
-        return $this->model
-            ->where('status', 'paid')
-            ->whereHas('equb.equbType', function ($query) {
-                $query->where('equb_type', 'Manual');
-            })
-            ->sum('amount');
-    }
     public function getEqubTypeTotalPayment($equbTypeId)
     {
         return $this->model->whereHas('equb', function ($query) use ($equbTypeId) {
@@ -338,28 +320,6 @@ class PaymentRepository implements IPaymentRepository
     {
         return $this->model->where('status', 'paid')->whereDate('created_at', Carbon::now())->sum('amount');
     }
-    // new function
-    public function getDailyAutomaticPaidAmount()
-    {
-        return $this->model
-            ->where('status', 'paid') // Filter by status
-            ->whereDate('created_at', Carbon::now()) // Filter for today's date
-            ->whereHas('equb.equbType', function ($query) {
-                $query->where('equb_type', 'Automatic'); // Filter by equb_type name
-            })
-            ->sum('amount'); 
-    }
-    public function getDailyManualPaidAmount()
-    {
-        return $this->model 
-                ->where('status', 'paid')
-                ->whereDate('created_at', Carbon::now())
-                ->whereHas('equb.equbType', function ($query) {
-                    $query->where('equb_type', 'Manual');
-                })
-                ->sum('amount');
-    }
-
     public function getEqubTypeDaylyPaidAmount($equbTypeId)
     {
         return $this->model->where('status', 'paid')
@@ -377,26 +337,6 @@ class PaymentRepository implements IPaymentRepository
     {
         return $this->model->where('status', 'pending')->whereDate('created_at', Carbon::now())->sum('amount');
     }
-    // new function
-    public function getDailyAutoMaticPendingAmount()
-    {
-        return $this->model->where('status', 'pending')
-                    ->whereDate('created_at', Carbon::now())
-                    ->whereHas('equb.equbType', function ($query) {
-                        $query->where('equb_type', 'Automatic'); // Filter by equb_type name
-                    })
-                    ->sum('amount');
-    }
-    public function getDailyManualPendingAmount()
-    {
-        return $this->model->where('status', 'pending')
-                ->whereDate('created_at', Carbon::now())
-                ->whereHas('equb.equbType', function ($query) {
-                    $query->where('equb_type', 'Manual');
-                })
-                ->sum('amount');
-    }
-    //
     public function getEqubTypeDaylyPendingAmount($equbTypeId)
     {
         return $this->model->where('status', 'pending')
@@ -411,24 +351,6 @@ class PaymentRepository implements IPaymentRepository
         return $this->model->whereDate('created_at', '>=', Carbon::now()->subDays(7))
             ->whereDate('created_at', '<=', Carbon::now())
             ->sum('amount');
-    }
-    public function getWeeklyAutomaticPaidAmount()
-    {
-        return $this->model
-                ->whereDate('created_at', '>=', Carbon::now()->subDays(7))
-                ->whereHas('equb.equbType', function ($query) {
-                    $query->where('equb_type', 'Automatic');
-                })
-                ->sum('amount');
-    }
-    public function getWeeklyManualPaidAmount()
-    {
-        return $this->model
-                ->whereDate('created_at', '>=', Carbon::now()->subDays(7))
-                ->whereHas('equb.equbType', function ($query) {
-                    $query->where('equb_type', 'Manual');
-                })
-                ->sum('amount');
     }
     public function getEqubTypeWeeklyPaidAmount($equbTypeId)
     {
@@ -447,24 +369,6 @@ class PaymentRepository implements IPaymentRepository
     public function getWeeklyPendingAmount()
     {
         return $this->model->where('status', 'pending')->whereBetween('created_at', [Carbon::now()->subDays(7), Carbon::now()])->sum('amount');
-    }
-    public function getWeeklyAutomaticPendingAmount()
-    {
-        return $this->model->where('status', 'pending')
-                ->whereBetween('created_at', [Carbon::now()->subDays(7), Carbon::now()])
-                ->whereHas('equb.equbType', function ($query) {
-                    $query->where('equb_type', 'Automatic');
-                })
-                ->sum('amount');
-    }
-    public function getWeeklyManualPendingAmount()
-    {
-        return $this->model->where('status', 'pending')
-            ->whereBetween('created_at', [Carbon::now()->subDays(7), Carbon::now()])
-            ->whereHas('equb.equbType', function ($query) {
-                $query->where('equb_type', 'Manual');
-            })
-            ->sum('amount');
     }
     public function getEqubTypeWeeklyPendingAmount($equbTypeId)
     {
@@ -488,24 +392,6 @@ class PaymentRepository implements IPaymentRepository
             ->whereDate('created_at', '<=', Carbon::now())
             ->sum('amount');
     }
-    public function getAutomaticMonthlyPaidAmount()
-    {
-        return $this->model->whereDate('created_at', '>=', Carbon::now()->subDays(30))
-                ->whereDate('created_at', '<=', Carbon::now())
-                ->whereHas('equb.equbType', function ($query) {
-                    $query->where('equb_type', 'Automatic');
-                })
-                ->sum('amount');
-    }
-    public function getManualMonthlyPaidAmount()
-    {
-        return $this->model->whereDate('created_at', '>=', Carbon::now()->subDays(30))
-                ->whereDate('created_at', '<=', Carbon::now())
-                ->whereHas('equb.equbType', function ($query) {
-                    $query->where('equb_type', 'Manual');
-                })
-                ->sum('amount');
-    }
     public function getEqubTypeMonthlyPaidAmount($equbTypeId)
     {
         return $this->model->whereHas('equb', function ($query) use ($equbTypeId) {
@@ -525,26 +411,6 @@ class PaymentRepository implements IPaymentRepository
         return $this->model->where('status', 'pending')->whereMonth('created_at', date('m'))
             ->whereYear('created_at', date('Y'))->sum('amount');
     }
-    public function getAutomaticMonthlyPendingAmount()
-    {
-        return $this->model->where('status', 'pending')
-                ->whereMonth('created_at', date('m'))
-                ->whereYear('created_at', date('Y'))
-                ->whereHas('equb.equbType', function ($query) {
-                    $query->where('equb_type', 'Automatic');
-                })
-                ->sum('amount');
-    }
-    public function getManualMonthlyPendingAmount()
-    {
-        return $this->model->where('status', 'pending')
-            ->whereMonth('created_at', date('m'))
-            ->whereYear('created_at', date('Y'))
-            ->whereHas('equb.equbType', function ($query) {
-                $query->where('equb_type', 'Manual');
-            })
-            ->sum('amount');
-    }
     public function getEqubTypeMonthlyPendingAmount($equbTypeId)
     {
         return $this->model->whereHas('equb', function ($query) use ($equbTypeId) {
@@ -560,24 +426,6 @@ class PaymentRepository implements IPaymentRepository
     {
         return $this->model->whereDate('created_at', '>=', Carbon::now()->subDays(365))
             ->whereDate('created_at', '<=', Carbon::now())
-            ->sum('amount');
-    }
-    public function getAutomaticYearlyPaidAmount()
-    {
-        return $this->model->whereDate('created_at', '>=', Carbon::now()->subDays(365))
-            ->whereDate('created_at', '<=', Carbon::now())
-            ->whereHas('equb.equbType', function ($query) {
-                $query->where('equb_type', 'Automatic');
-            })
-            ->sum('amount');
-    }
-    public function getManualYearlyPaidAmount()
-    {
-        return $this->model->whereDate('created_at', '>=', Carbon::now()->subDays(365))
-            ->whereDate('created_at', '<=', Carbon::now())
-            ->whereHas('equb.equbType', function ($query) {
-                $query->where('equb_type', 'Manual');
-            })
             ->sum('amount');
     }
     public function getEqubTypeYearlyPaidAmount($equbTypeId)
@@ -596,24 +444,6 @@ class PaymentRepository implements IPaymentRepository
     public function getYearlyPendingAmount()
     {
         return $this->model->where('status', 'pending')->whereYear('created_at', date('Y'))->sum('amount');
-    }
-    public function getAutomaticYearlyPendingAmount()
-    {
-        return $this->model->where('status', 'pending')
-                ->whereYear('created_at', date('Y'))
-                ->whereHas('equb.equbType', function ($query) {
-                    $query->where('equb_type', 'Automatic');
-                })
-                ->sum('amount');
-    }
-    public function getManualYearlyPendingAmount()
-    {
-        return $this->model->where('status', 'pending')
-            ->whereYear('created_at', date('Y'))
-            ->whereHas('equb.equbType', function ($query) {
-                $query->where('equb_type', 'Manual');
-            })
-            ->sum('amount');
     }
     public function getEqubTypeYearlyPendingAmount($equbTypeId)
     {
