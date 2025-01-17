@@ -406,7 +406,7 @@ class PaymentController extends Controller
         /** @var App\Models\User */
         try {
             $offset = 0;
-            $limit = 100;
+            $limit = 30;
             $pageNumber = 1;
             $userData = Auth::user();
             
