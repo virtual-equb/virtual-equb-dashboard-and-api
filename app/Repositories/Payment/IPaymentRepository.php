@@ -17,6 +17,10 @@ interface IPaymentRepository
 
     public function getTotalPayment();
 
+    public function getAutomaticTotalPayment();
+
+    public function getManualTotalPayment();
+
     public function getEqubTypeTotalPayment($equbTypeId);
 
     public function getById($id);
@@ -86,16 +90,28 @@ interface IPaymentRepository
 
     public function getDaylyPaidAmount();
 
+    public function getAutomaticDailyPaidAmount();
+
+    public function getManualDailyPaidAmount();
+
     public function getEqubTypeDaylyPaidAmount($equbTypeId);
 
     public function getDaylyUnpaidAmount();
 
     public function getDaylyPendingAmount();
 
+    public function getAutomaticDailyPendingAmount();
+
+    public function getManualDailyPendingAmount();
+
     public function getEqubTypeDaylyPendingAmount($equbTypeId);
 
 
     public function getWeeklyPaidAmount();
+
+    public function getAutomaticWeeklyPaidAmount();
+
+    public function getManualWeeklyPaidAmount();
 
     public function getEqubTypeWeeklyPaidAmount($equbTypeId);
 
@@ -103,10 +119,18 @@ interface IPaymentRepository
 
     public function getWeeklyPendingAmount();
 
+    public function getAutomaticWeeklyPendingAmount();
+
+    public function getManualWeeklyPendingAmount();
+
     public function getEqubTypeWeeklyPendingAmount($equbTypeId);
 
 
     public function getMonthlyPaidAmount();
+
+    public function getAutomaticMonthlyPaidAmount();
+
+    public function getManualMonthlyPaidAmount();
 
     public function getEqubTypeMonthlyPaidAmount($equbTypeId);
 
@@ -114,16 +138,28 @@ interface IPaymentRepository
 
     public function getMonthlyPendingAmount();
 
+    public function getAutomaticMonthlyPendingAmount();
+
+    public function getManualMonthlyPendingAmount();
+
     public function getEqubTypeMonthlyPendingAmount($equbTypeId);
 
 
     public function getYearlyPaidAmount();
+
+    public function getAutomaticYearlyPaidAmount();
+
+    public function getManualYearlyPaidAmount();
 
     public function getEqubTypeYearlyPaidAmount($equbTypeId);
 
     public function getYearlyUnpaidAmount();
 
     public function getYearlyPendingAmount();
+
+    public function getAutomaticYearlyPendingAmount();
+
+    public function getManualYearlyPendingAmount();
 
     public function getEqubTypeYearlyPendingAmount($equbTypeId);
 

@@ -49,12 +49,33 @@ class HomeController extends Controller
             $roles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance', 'marketing_manager', 'call_center', 'it', 'assistant'];
             $profile = Auth::user();
             $title = $this->title;
+            $totalAutomaticEqubAmount = $this->equbRepository->getAutomaticExpectedTotal();
+            $totalAutomaticPayment = $this->paymentRepository->getAutomaticTotalPayment();
+            $totalManualEqubAmount = $this->equbRepository->getManualExpectedTotal();
+            $totalManualPayment = $this->paymentRepository->getManualTotalPayment();
             $totalEqubAmount = $this->equbRepository->getExpectedTotal();
             $totalEqubPayment = $this->paymentRepository->getTotalPayment();
             $activeMember = $this->memberRepository->getActiveMember();
+            
             $fullPaidAmount = Payment::selectRaw('sum(payments.amount) as paidAmount')
                 ->join('equbs', 'payments.equb_id', '=', 'equbs.id')
                 ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
+                ->groupBy('equb_types.name')
+                ->orderBy('equb_types.id', 'asc')
+                ->whereDate('payments.created_at', '>=', date('Y-m-d'))
+                ->get();
+            $fullAutomaticPaidAmount = Payment::selectRaw('sum(payments.amount) as paidAmount')
+                ->join('equbs', 'payments.equb_id', '=', 'equbs.id')
+                ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
+                ->where('equb_types.type', 'Automatic')
+                ->groupBy('equb_types.name')
+                ->orderBy('equb_types.id', 'asc')
+                ->whereDate('payments.created_at', '>=', date('Y-m-d'))
+                ->get();
+            $fullManualPaidAmount = Payment::selectRaw('sum(payments.amount) as paidAmount')
+                ->join('equbs', 'payments.equb_id', '=', 'equbs.id')
+                ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
+                ->where('equb_types.type', 'Manual')
                 ->groupBy('equb_types.name')
                 ->orderBy('equb_types.id', 'asc')
                 ->whereDate('payments.created_at', '>=', date('Y-m-d'))
@@ -79,19 +100,67 @@ class HomeController extends Controller
                 ->whereDate('payments.created_at', '>=', date('Y-m-d'))
                 ->where('payments.status', 'unpaid')
                 ->get();
+            $fullAutomaticUnPaidAmount = Payment::selectRaw('sum(payments.amount) as unpaidAmount')
+                ->join('equbs', 'payments.equb_id', '=', 'equbs.id')
+                ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
+                ->where('equb_types.type', 'Automatic')
+                ->groupBy('equb_types.name')
+                ->whereDate('payments.created_at', '>=', date('Y-m-d'))
+                ->whereDate('payments.created_at', '>=', date('Y-m-d'))
+                ->where('payments.status', 'unpaid')
+                ->get();
+            $fullManualUnPaidAmount = Payment::selectRaw('sum(payments.amount) as unpaidAmount')
+                ->join('equbs', 'payments.equb_id', '=', 'equbs.id')
+                ->join('equb_types', 'equb_types.id', '=', 'equbs.equb_type_id')
+                ->where('equb_types.type', 'Manual')
+                ->groupBy('equb_types.name')
+                ->whereDate('payments.created_at', '>=', date('Y-m-d'))
+                ->whereDate('payments.created_at', '>=', date('Y-m-d'))
+                ->where('payments.status', 'unpaid')
+                ->get();
             $Expected = $this->equbRepository->getExpected($equbTypeId);
+            $automaticExpected = $this->equbRepository->getAutomaticExpected($equbTypeId);
+            $manualExpected = $this->equbRepository->getManualExpected($equbTypeId);
             // dd($Expected);
             $lables = $lable->toArray();
             $fullPaidAmount = $fullPaidAmount->toArray();
             $Expected = $Expected->toArray();
+            $fullAutomaticPaidAmount = $fullAutomaticPaidAmount->toArray();
+            $fullManualPaidAmount = $fullManualPaidAmount->toArray();
+            $automaticExpected = $automaticExpected->toArray();
+            $manualExpected = $manualExpected->toArray();
+
             $fullPaidAmount = Arr::pluck($fullPaidAmount, 'paidAmount');
             $Expected = Arr::pluck($Expected, 'expected');
+            $fullAutomaticPaidAmount = Arr::pluck($fullAutomaticPaidAmount, 'paidAmount');
+            $fullManualPaidAmount = Arr::pluck($fullManualPaidAmount, 'paidAmount');
+            $automaticExpected = Arr::pluck($automaticExpected, 'expected');
+            $manualExpected = Arr::pluck($manualExpected, 'expected');
             $lables = json_encode($lables, JSON_UNESCAPED_UNICODE);
             $fullPaidAmount = json_encode($fullPaidAmount);
             $Expected = json_encode($Expected);
+            $fullAutomaticPaidAmount = json_encode($fullAutomaticPaidAmount);
+            $fullManualPaidAmount = json_encode($fullManualPaidAmount);
+            $automaticExpected = json_encode($automaticExpected);
+            $manualExpected = json_encode($manualExpected);
             $lables = str_replace('"', "", $lables);
             $fullPaidAmount = str_replace('"', "", $fullPaidAmount);
             $Expected = str_replace('"', "", $Expected);
+            $fullAutomaticPaidAmount = str_replace('"', "", $fullAutomaticPaidAmount);
+            $fullManualPaidAmount = str_replace('"', "", $fullManualPaidAmount);
+            $automaticExpected = str_replace('"', "", $automaticExpected);
+            $manualExpected = str_replace('"', "", $manualExpected);
+
+            $fullAutomaticDailyPaidAmount = $this->paymentRepository->getAutomaticDailyPaidAmount();
+            $dailyAutomaticPendingAmount = $this->paymentRepository->getAutomaticDailyPendingAmount();
+            $automaticDailyPaidAmount = $fullAutomaticDailyPaidAmount + $dailyAutomaticPendingAmount;
+            $automaticDailyUnPaidAmount = $totalAutomaticEqubAmount - $automaticDailyPaidAmount;
+
+            $fullManualDailyPaidAmount = $this->paymentRepository->getManualDailyPaidAmount();
+            $dailyManualPendingAmount = $this->paymentRepository->getManualDailyPendingAmount();
+            $manualDailyPaidAmount = $fullManualDailyPaidAmount + $dailyManualPendingAmount;
+            $manualDailyUnPaidAmount = $totalManualEqubAmount - $manualDailyPaidAmount;
+
             $fullDaylyPaidAmount = $this->paymentRepository->getDaylyPaidAmount();
             $daylyPendingAmount = $this->paymentRepository->getDaylyPendingAmount();
             $daylyPaidAmount = $fullDaylyPaidAmount + $daylyPendingAmount;
@@ -99,12 +168,37 @@ class HomeController extends Controller
             if ($daylyUnpaidAmount <= 0) {
                 $daylyUnpaidAmount = 0;
             }
+            if ($automaticDailyUnPaidAmount <= 0) {
+                $automaticDailyUnPaidAmount = 0;
+            }
+            if ($manualDailyUnPaidAmount <= 0) {
+                $manualDailyUnPaidAmount = 0;
+            }
             $daylyExpected = $totalEqubAmount;
+            $automaticDailyExpected = $totalAutomaticEqubAmount;
+            $manualDailyExpected = $totalManualEqubAmount;
+
+            $fullAutomaticWeeklyPaidAmount = $this->paymentRepository->getAutomaticWeeklyPaidAmount();
+            $automaticWeeklyPendingAmount = $this->paymentRepository->getAutomaticWeeklyPendingAmount();
+            $automaticWeeklyPaidAmount = $fullAutomaticWeeklyPaidAmount;
+
+            $fullManualWeeklyPaidAmount = $this->paymentRepository->getManualWeeklyPaidAmount();
+            $manualWeeklyPendingAmount = $this->paymentRepository->getManualWeeklyPendingAmount();
+            $manualWeeklyPaidAmount = $fullManualWeeklyPaidAmount;
+            //
             $fullWeeklyPaidAmount = $this->paymentRepository->getWeeklyPaidAmount();
             $weeklyPendingAmount = $this->paymentRepository->getWeeklyPendingAmount();
             $weeklyPaidAmount = $fullWeeklyPaidAmount;
+
+            $automaticWeeklyExpected = $this->equbRepository->getAutomaticExpectedAmount();
+            $manualWeeklyExpected = $this->equbRepository->getManualExpectedAmount();
             $weeklyExpected  = $this->equbRepository->getExpectedAmount();
+
             $sum = 0;
+            $automaticSum = 0;
+            $manualSum = 0;
+            $automaticIndex = count($automaticWeeklyExpected);
+            $manualIndex = count($manualWeeklyExpected);
             $index = count($weeklyExpected);
             $day = Carbon::today()->addDays(7);
             for ($i = 0; $i < $index; $i++) {
@@ -137,8 +231,66 @@ class HomeController extends Controller
                 // }
             }
             $weeklyExpected = $sum;
+            for ($i = 0; $i < $automaticIndex; $i++) {
+                $end_date = $automaticWeeklyExpected[$i]->end_date;
+                $end_date = Carbon::parse($end_date);
+                $start_date = $automaticWeeklyExpected[$i]->start_date;
+                $start_date = Carbon::parse($start_date);
+                $current_date = Carbon::today();
+
+                if ($start_date <= $current_date && $end_date >= $current_date) {
+                    $difference = $current_date->diffInDays($end_date, false);
+                } else {
+                    $difference = $start_date->diffInDays($end_date, false);
+                }
+
+                if ($difference >= 6) {
+                    $WE = $automaticWeeklyExpected[$i]->amount;
+                    $WE = $WE * 7;
+                    $automaticSum = $automaticSum + $WE;
+                } else {
+                    $WE = $automaticWeeklyExpected[$i]->amount;
+                    $difference = $difference + 1;
+                    $WE = $WE * $difference;
+                    $automaticSum = $automaticSum + $WE;
+                }
+            }
+            $automaticWeeklyExpected = $automaticSum;
+            for ($i = 0; $i < $manualIndex; $i++) {
+                $end_date = $manualWeeklyExpected[$i]->end_date;
+                $end_date = Carbon::parse($end_date);
+                $start_date = $manualWeeklyExpected[$i]->start_date;
+                $start_date = Carbon::parse($start_date);
+                $current_date = Carbon::today();
+
+                if ($start_date <= $current_date && $end_date >= $current_date) {
+                    $difference = $current_date->diffInDays($end_date, false);
+                } else {
+                    $difference = $start_date->diffInDays($end_date, false);
+                }
+
+                if($difference >= 6) {
+                    $WE = $manualWeeklyExpected[$i]->amount;
+                    $WE = $WE * 7;
+                    $manualSum = $manualSum + $WE;
+                } else {
+                    $WE = $manualWeeklyExpected[$i]->amount;
+                    $difference = $difference + 1;
+                    $WE = $WE * $difference;
+                    $manualSum = $manualSum + $WE;
+                }
+            }
+            $manualWeeklyExpected = $manualSum;
+
             $weeklyExpected1  = $this->equbRepository->getExpectedBackPayment();
+            $automaticWeeklyExpected1 = $this->equbRepository->getAutomaticExpectedBackPayment();
+            $manualWeeklyExpected1 = $this->equbRepository->getManualExpectedBackPayment();
+
             $sum1 = 0;
+            $automaticSum1 = 0;
+            $manualSum1 = 0;
+            $automaticIndex1 = count($automaticWeeklyExpected1);
+            $manualIndex1 = count($manualWeeklyExpected1);
             $index1 = count($weeklyExpected1);
             for ($i = 0; $i < $index1; $i++) {
                 $end_date = $weeklyExpected1[$i]->end_date;
@@ -171,11 +323,76 @@ class HomeController extends Controller
             }
             $lastWeeklyExpected = $sum1;
             $weeklyUnpaidAmount = $lastWeeklyExpected - $weeklyPaidAmount;
+            for ($i = 0; $i < $automaticIndex1; $i++) {
+                $end_date = $automaticWeeklyExpected1[$i]->end_date;
+                $end_date = Carbon::parse($end_date);
+                $start_date = $automaticWeeklyExpected1[$i]->start_date;
+                $start_date = Carbon::parse($start_date);
+                $current_date = Carbon::today()->subDays(7);
+
+                if ($start_date <= $current_date && $end_date >= $current_date) {
+                    $difference = $current_date->diffInDays($end_date, false);
+                } else {
+                    $difference = $start_date->diffInDays($end_date, false);
+                }
+                if ($difference <= 6) {
+                    $WE = $automaticWeeklyExpected1[$i]->amount;
+                    $WE = $WE * 7;
+                    $automaticSum1 = $automaticSum1 + $WE;
+                } else {
+                    $WE = $automaticWeeklyExpected1[$i]->amount;
+                    $difference = $difference + 1;
+                    $WE = $WE * $difference;
+                    $automaticSum1 = $automaticSum1 + $WE;
+                }
+            }
+            $lastAutomaticWeeklyExpected = $automaticSum1;
+            $automaticWeeklyUnpaidAmount = $lastAutomaticWeeklyExpected - $automaticWeeklyPaidAmount;
+            for ($i = 0; $i < $manualIndex1; $i++) {
+                $end_date = $manualWeeklyExpected1[$i]->end_date;
+                $end_date = Carbon::parse($end_date);
+                $start_date = $manualWeeklyExpected1[$i]->start_date;
+                $start_date = Carbon::parse($start_date);
+                $current_date = Carbon::today()->subDays(7);
+
+                if ($start_date <= $current_date && $end_date >= $current_date) {
+                    $difference = $current_date->diffInDays($end_date, false);
+                } else {
+                    $difference = $start_date->diffInDays($end_date, false);
+                }
+                if ($difference >= 6) {
+                    $WE = $manualWeeklyExpected1[$i]->amount;
+                    $WE = $WE * 7;
+                    $manualSum1 = $manualSum1 + $WE;
+                } else {
+                    $WE = $manualWeeklyExpected1[$i]->amount;
+                    $difference = $difference + 1;
+                    $WE = $WE * $difference;
+                    $manualSum1 = $manualSum1 + $WE;
+                }
+            }
+            $lastManualWeeklyExpected = $manualSum1;
+            $manualWeeklyUnpaidAmount = $lastManualWeeklyExpected - $manualWeeklyPaidAmount;
+
+            $fullAutomaticMonthlyPaidAmount = $this->paymentRepository->getAutomaticMonthlyPaidAmount();
+            $automaticMonthlyPendingAmount = $this->paymentRepository->getAutomaticMonthlyPendingAmount();
+            $automaticMonthlyPaidAmount = $fullAutomaticMonthlyPaidAmount + $automaticMonthlyPendingAmount;
+            $automaticMonthlyExpected = $this->equbRepository->getAutomaticExpectedAmount();
+
+            $fullManualMonthlyPaidAmount = $this->paymentRepository->getManualMonthlyPaidAmount();
+            $manualMonthlyPendingAmount = $this->paymentRepository->getManualMonthlyPendingAmount();
+            $manualMonthlyPaidAmount = $fullManualMonthlyPaidAmount + $manualMonthlyPendingAmount;
+            $manualMonthlyExpected = $this->equbRepository->getManualExpectedAmount();
+            //
             $fullMonthlyPaidAmount = $this->paymentRepository->getMonthlyPaidAmount();
             $monthlyPendingAmount = $this->paymentRepository->getMonthlyPendingAmount();
             $monthlyPaidAmount = $fullMonthlyPaidAmount + $monthlyPendingAmount;
             $monthlyExpected  = $this->equbRepository->getExpectedAmount();
+            $automaticSum2 = 0;
+            $manualSum2 = 0;
             $sum2 = 0;
+            $automaticIndex2 = count($automaticMonthlyExpected);
+            $manualIndex2 = count($manualMonthlyExpected);
             $index = count($monthlyExpected);
             for ($i = 0; $i < $index; $i++) {
                 $end_date = $monthlyExpected[$i]->end_date;
@@ -209,12 +426,78 @@ class HomeController extends Controller
             }
             $monthlyExpected = $sum2;
             $monthlyUnpaidAmount = $monthlyExpected - $monthlyPaidAmount;
+            for ($i = 0; $i < $automaticIndex2; $i++) {
+                $end_date = $automaticMonthlyExpected[$i]->end_date;
+                $end_date = Carbon::parse($end_date);
+                $start_date = $automaticMonthlyExpected[$i]->start_date;
+                $start_date = Carbon::parse($start_date);
+                $current_date = Carbon::today();
+
+                if ($start_date <= $current_date && $end_date >= $current_date) {
+                    $difference = $current_date->diffInDays($end_date, false);
+                } else {
+                    $difference = $start_date->diffInDays($end_date, false);
+                }
+                if ($difference >= 29) {
+                    $WE = $automaticMonthlyExpected[$i]->amount;
+                    $WE = $WE * 30;
+                    $automaticSum2 = $automaticSum2 + $WE;
+                } else {
+                    $WE = $automaticMonthlyExpected[$i]->amount;
+                    $difference = $difference + 1;
+                    $WE = $WE * $difference;
+                    $automaticSum2 = $automaticSum2 + $WE;
+                }
+            }
+            $automaticMonthlyExpected = $automaticSum2;
+            $automaticMonthlyUnpaidAmount = $automaticMonthlyExpected - $automaticMonthlyPaidAmount;
+            for ($i = 0; $i < $manualIndex2; $i++) {
+                $end_date = $manualMonthlyExpected[$i]->end_date;
+                $end_date = Carbon::parse($end_date);
+                $start_date = $manualMonthlyExpected[$i]->start_date;
+                $start_date = Carbon::parse($start_date);
+                $current_date = Carbon::today();
+
+                if ($start_date <= $current_date && $end_date >= $current_date) {
+                    $difference = $current_date->diffInDays($end_date, false);
+                } else {
+                    $difference = $start_date->diffInDays($end_date, false);
+                }
+
+                if ($difference >= 29) {
+                    $WE = $manualMonthlyExpected[$i]->amount;
+                    $WE = $WE * 30;
+                    $manualSum2 = $manualSum2 + $WE;
+                } else {
+                    $WE = $manualMonthlyExpected[$i]->amount;
+                    $difference = $difference + 1;
+                    $WE = $WE * $difference;
+                    $manualSum2 = $manualSum2 + $WE;
+                }
+            }
+            $manualMonthlyExpected = $manualSum2;
+            $manualMonthlyUnpaidAmount = $manualMonthlyExpected - $manualMonthlyPaidAmount;
+
+            $fullAutomaticYearlyPaidAmount = $this->paymentRepository->getAutomaticYearlyPaidAmount();
+            $automaticYearlyPendingAmount = $this->paymentRepository->getManualYearlyPendingAmount();
+            $automaticYearlyPaidAmount = $fullAutomaticYearlyPaidAmount + $automaticYearlyPendingAmount;
+            $automaticYearlyExpected = $this->equbRepository->getAutomaticExpectedAmount();
+
+            $fullManualYearlyPaidAmount = $this->paymentRepository->getManualYearlyPaidAmount();
+            $manualYearlyPendingAmount = $this->paymentRepository->getManualYearlyPendingAmount();
+            $manualYearlyPaidAmount = $fullManualYearlyPaidAmount + $manualYearlyPendingAmount;
+            $manualYearlyExpected = $this->equbRepository->getManualExpectedAmount();
+
             $fullYearlyPaidAmount = $this->paymentRepository->getYearlyPaidAmount();
             $yearlyPendingAmount = $this->paymentRepository->getYearlyPendingAmount();
             $yearlyPaidAmount =  $fullYearlyPaidAmount + $yearlyPendingAmount;
             $yearlyExpected  = $this->equbRepository->getExpectedAmount();
+            $automaticSum3 = 0;
+            $manualSum3 = 0;
             $sum3 = 0;
             $index = count($yearlyExpected);
+            $automaticIndex3 = count($automaticYearlyExpected);
+            $manualIndex3 = count($manualYearlyExpected);
             for ($i = 0; $i < $index; $i++) {
                 $end_date = $yearlyExpected[$i]->end_date;
                 $end_date = \Carbon\Carbon::parse($end_date);
@@ -246,6 +529,59 @@ class HomeController extends Controller
             }
             $yearlyExpected = $sum3;
             $yearlyUnpaidAmount = $yearlyExpected - $yearlyPaidAmount;
+
+            for ($i = 0; $i < $automaticIndex3; $i++) {
+                $end_date = $automaticYearlyExpected[$i]->end_date;
+                $end_date = Carbon::parse($end_date);
+                $start_date = $automaticYearlyExpected[$i]->start_date;
+                $start_date = Carbon::parse($start_date);
+                $current_date = Carbon::today();
+
+                if ($start_date <= $current_date && $end_date >= $current_date) {
+                    $difference = $current_date->diffInDays($end_date, false);
+                } else {
+                    $difference = $start_date->diffInDays($end_date, false);
+                }
+                if ($difference >= 364) {
+                    $WE = $automaticYearlyExpected[$i]->amount;
+                    $WE = $WE * 365;
+                    $automaticSum3 = $automaticSum3 + $WE;
+                } else {
+                    $WE = $automaticYearlyExpected[$i]->amount;
+                    $difference = $difference + 1;
+                    $WE = $WE * $difference;
+                    $automaticSum3 = $automaticSum3 + $WE;
+                }
+            }
+            $automaticYearlyExpected = $automaticSum3;
+            $automaticYearlyUnpaidAmount = $automaticYearlyExpected - $automaticYearlyPaidAmount;
+
+            for ($i = 0; $i < $manualIndex3; $i++) {
+                $end_date = $manualYearlyExpected[$i]->end_date;
+                $end_date = Carbon::parse($end_date);
+                $start_date = $manualYearlyExpected[$i]->start_date;
+                $start_date = Carbon::parse($start_date);
+                $current_date = Carbon::today();
+
+                if ($start_date <= $current_date && $end_date >= $current_date) {
+                    $difference = $current_date->diffInDays($end_date, false); 
+                } else {
+                    $difference = $start_date->diffInDays($end_date, false);
+                }
+                if ($difference >= 364) {
+                    $WE = $manualYearlyExpected[$i]->amount;
+                    $WE = $WE * 365;
+                    $manualSum3 = $manualSum3 + $WE;
+                } else {
+                    $WE = $manualYearlyExpected[$i]->amount;
+                    $difference = $difference + 1;
+                    $WE = $WE * $difference;
+                    $manualSum3 = $manualSum3 + $WE;
+                }
+            }
+            $manualYearlyExpected = $manualSum3;
+            $manualYearlyUnpaidAmount = $manualYearlyExpected - $manualYearlyPaidAmount;
+
             $totalMember = $this->memberRepository->getMember();
             $totalUser = $this->userRepository->getUser();
             $tudayPaidMember = $this->equbRepository->tudayPaidMember();
@@ -278,20 +614,50 @@ class HomeController extends Controller
                            'title', 
                            'lables', 
                            'fullPaidAmount', 
+                           'fullAutomaticPaidAmount',
+                           'fullManualPaidAmount',
                            'fullUnPaidAmount', 
+                           'fullAutomaticUnPaidAmount',
+                           'fullManualUnPaidAmount',
+                           'automaticExpected',
+                           'manualExpected',
                            'Expected', 
+                           'automaticDailyPaidAmount',
+                           'manualDailyPaidAmount',
                            'daylyPaidAmount', 
-                           'daylyUnpaidAmount', 
+                           'daylyUnpaidAmount',
+                           'automaticDailyUnPaidAmount',
+                           'manualDailyUnPaidAmount', 
                            'daylyExpected', 
+                           'automaticDailyExpected',
+                           'manualDailyExpected',
                            'weeklyPaidAmount', 
+                           'automaticWeeklyPaidAmount',
+                           'manualWeeklyPaidAmount',
                            'weeklyUnpaidAmount', 
+                           'automaticWeeklyUnpaidAmount',
+                           'manualWeeklyUnpaidAmount',
                            'weeklyExpected', 
+                           'automaticWeeklyExpected',
+                           'manualWeeklyExpected',
                            'monthlyPaidAmount', 
+                           'automaticMonthlyPaidAmount',
+                           'manualMonthlyPaidAmount',
                            'monthlyUnpaidAmount', 
+                           'automaticMonthlyUnpaidAmount',
+                           'manualMonthlyUnpaidAmount',
                            'monthlyExpected', 
+                           'automaticMonthlyExpected',
+                           'manualMonthlyExpected',
                            'yearlyPaidAmount', 
+                           'automaticYearlyPaidAmount',
+                           'manualYearlyPaidAmount',
                            'yearlyUnpaidAmount', 
+                           'automaticYearlyUnpaidAmount',
+                           'manualYearlyUnpaidAmount',
                            'yearlyExpected', 
+                           'automaticYearlyExpected',
+                           'manualYearlyExpected',
                            'totalMember', 
                            'tudayPaidMember', 
                            'activeMember', 
@@ -300,7 +666,7 @@ class HomeController extends Controller
                         ));
         } catch (Exception $ex) {
             // dd($ex);
-            $msg = "Unable to process your request, Please try again!";
+            $msg = "Unable to process your request, Please try again!" . $ex->getMessage();
             $type = 'error';
             Session::flash($type, $msg);
             return back();
