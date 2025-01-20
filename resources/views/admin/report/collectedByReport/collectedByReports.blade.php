@@ -149,9 +149,10 @@
                     $('#dateToRequired').addClass('d-none');
                     $('#collecterRequired').addClass('d-none');
                     let equbType = $('#equb_type').val() != "" ? $('#equb_type').val() : 'all';
+                    let paymentMethod =  $('#paymentMethod').val() != "" ? $('#paymentMethod').val() : 'all';
                     $.ajax({
                         url: "{{ url('reports/collectedBys') }}" + '/' + $('#dateFrom').val() + '/' + $('#dateTo')
-                            .val() + '/' + $('#collecter').val() + '/' + equbType,
+                            .val() + '/' + $('#collecter').val() + '/' + paymentMethod + '/' + equbType,
                         method: 'get',
                         success: function(form) {
                             $('#filterCollectedByTable').html(form);

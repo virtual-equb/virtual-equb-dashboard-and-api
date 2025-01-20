@@ -650,7 +650,7 @@ class ReportController extends Controller
             return back();
         }
     }
-    public function collectedBys($dateFrom, $dateTo, $collecter, $equbType)
+    public function collectedBys($dateFrom, $dateTo, $collecter,$paymentMethod,$equbType)
     {
         try {
             $data['offset'] = 0;
@@ -660,13 +660,14 @@ class ReportController extends Controller
             $userData = Auth::user();
             // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
                 $data['title'] = "Virtual Equb - Collected by Report";
-                if ($collecter != "all" || $equbType != "all") {
-                    $data['totalPayments'] = $this->paymentRepository->getCountCollectedBysWithCollecter($dateFrom, $dateTo, $collecter, $equbType);
-                    $data['collecters'] = $this->paymentRepository->getCollectedByUser($dateFrom, $dateTo, $collecter, $offset, $equbType);
+                if ($collecter != "all" || $equbType != "all" || $paymentMethod != "all") {
+                    $data['totalPayments'] = $this->paymentRepository->getCountCollectedBysWithCollecter($dateFrom, $dateTo, $collecter,$paymentMethod,$equbType);
+                    $data['collecters'] = $this->paymentRepository->getCollectedByUser($dateFrom, $dateTo, $collecter, $offset,$paymentMethod, $equbType);
                 } else {
                     $data['totalPayments'] = $this->paymentRepository->getCountCollectedBys($dateFrom, $dateTo);
                     $data['collecters'] = $this->paymentRepository->getByDate($dateFrom, $dateTo, $offset);
                 }
+              //  dd($paymentMethod);
                 return view('admin/report/collectedByReport/filterCollectedByReports', $data);
             // } else {
             //     return view('auth/login');
@@ -695,7 +696,8 @@ class ReportController extends Controller
                     $data['totalPayments'] = $this->paymentRepository->getCountCollectedBys($dateFrom, $dateTo);
                     $data['collecters'] = $this->paymentRepository->getByDate($dateFrom, $dateTo, $offset);
                 }
-                return view('admin/report/collectedByReport/filterCollectedByReports', $data);
+              //  dd($paymentMethod);
+             //   return view('admin/report/collectedByReport/filterCollectedByReports', $data);
             // } else {
             //     return view('auth/login');
             // }
