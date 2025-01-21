@@ -483,6 +483,7 @@ class EqubRepository implements IEqubRepository
         return $this->model
             ->whereDate('start_date', '<=', Carbon::now())
             // ->whereDate('end_date', '>=', Carbon::now())
+            ->whereDate('end_date', '>=', Carbon::now())
             ->whereIn('equb_type_id', $equbTypeId)
             ->where('status', 'Active')
             ->whereIn('id', function ($query) {
