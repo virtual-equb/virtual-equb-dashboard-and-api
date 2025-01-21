@@ -480,20 +480,36 @@ class EqubRepository implements IEqubRepository
 
     public function getExpected($equbTypeId)
     {
+        // return $this->model
+        //     ->whereDate('start_date', '<=', Carbon::now())
+        //     // ->whereDate('end_date', '>=', Carbon::now())
+        //     ->whereIn('equb_type_id', $equbTypeId)
+        //     ->where('status', 'Active')
+        //     ->whereIn('id', function ($query) {
+        //         // Subquery to filter equbs by remaining payment not equal to 0 in equb_takers table
+        //         $query->selectRaw('equb_id')
+        //             ->from('equb_takers')
+        //             ->whereRaw('equb_takers.equb_id = equbs.id')
+        //             ->where('remaining_payment', '>', 0)
+        //             ->groupBy('equb_id');
+        //     })
+        //     ->selectRaw("SUM(amount) as expected")
+        //     ->groupBy('equb_type_id')
+        //     ->orderBy('equb_type_id', 'asc')
+        //     ->get();
         return $this->model
             ->whereDate('start_date', '<=', Carbon::now())
             // ->whereDate('end_date', '>=', Carbon::now())
-            ->whereDate('end_date', '>=', Carbon::now())
             ->whereIn('equb_type_id', $equbTypeId)
             ->where('status', 'Active')
-            ->whereIn('id', function ($query) {
-                // Subquery to filter equbs by remaining payment not equal to 0 in equb_takers table
-                $query->selectRaw('equb_id')
-                    ->from('equb_takers')
-                    ->whereRaw('equb_takers.equb_id = equbs.id')
-                    ->where('remaining_payment', '>', 0)
-                    ->groupBy('equb_id');
-            })
+            // ->whereIn('id', function ($query) {
+            //     // Subquery to filter equbs by remaining payment not equal to 0 in equb_takers table
+            //     $query->selectRaw('equb_id')
+            //         ->from('equb_takers')
+            //         ->whereRaw('equb_takers.equb_id = equbs.id')
+            //         ->where('remaining_payment', '>', 0)
+            //         ->groupBy('equb_id');
+            // })
             ->selectRaw("SUM(amount) as expected")
             ->groupBy('equb_type_id')
             ->orderBy('equb_type_id', 'asc')
