@@ -598,7 +598,7 @@ class EqubRepository implements IEqubRepository
     {
         return $this->model
             ->whereDate('start_date', '<=', Carbon::today())
-            // ->whereDate('end_date', '>=', Carbon::today())
+            ->whereDate('end_date', '>=', Carbon::today())
             ->where('status', 'Active')
             ->whereIn('id', function ($query) {
                 // Subquery to filter equbs by remaining payment not equal to 0 in equb_takers table
@@ -629,6 +629,7 @@ class EqubRepository implements IEqubRepository
     {
         return $this->model
             ->whereDate('start_date', '<=', Carbon::today())
+            ->whereDate('end_date', '>=', Carbon::today())
             ->where('status', 'Active')
             ->whereIn('id', function ($query) {
                 $query->selectRaw('equb_id')
@@ -646,6 +647,7 @@ class EqubRepository implements IEqubRepository
     {
         return $this->model
             ->whereDate('start_date', '<=', Carbon::today())
+            ->whereDate('end_date', '>=', Carbon::today())
             ->where('status', 'Active')
             ->whereIn('id', function ($query) {
                 $query->selectRaw('equb_id')
