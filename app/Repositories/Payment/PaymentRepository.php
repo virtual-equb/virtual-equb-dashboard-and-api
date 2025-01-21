@@ -336,10 +336,14 @@ class PaymentRepository implements IPaymentRepository
     {
         return $this->model->where('status', 'pending')->selectRaw("SUM(amount) as pendingAmount")->groupBy('equb_id->equbType->id')->get();
     }
-    
+
     public function getDaylyPaidAmount()
     {
-        return $this->model->where('status', 'paid')->whereDate('created_at', Carbon::now())->sum('amount');
+        // return $this->model->where('status', 'paid')->whereDate('created_at', Carbon::now())->sum('amount');
+        return DB::table('payments')
+            ->where('status', 'paid')
+            ->whereDate('created_at', Carbon::now())
+            ->sum('amount');
     }
     public function getAutomaticDailyPaidAmount()
     {
