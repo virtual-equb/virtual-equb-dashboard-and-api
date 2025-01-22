@@ -503,13 +503,13 @@ class EqubRepository implements IEqubRepository
             ->whereDate('start_date', '<=', Carbon::now())
             ->where('status', 'Active')
             ->whereIn('equb_type_id', $equbTypeId)
-            // ->whereIn('id', function ($query) {
-            //     $query->selectRaw('equb_id')
-            //         ->from('equb_takers')
-            //         ->whereRaw('equb_takers.equb_id = equbs.id')
-            //         ->where('remaining_payment', '>', 0)
-            //         ->groupBy('equb_id');
-            // })
+            ->whereIn('id', function ($query) {
+                $query->selectRaw('equb_id')
+                    ->from('equb_takers')
+                    ->whereRaw('equb_takers.equb_id = equbs.id')
+                    ->where('remaining_payment', '>', 0)
+                    ->groupBy('equb_id');
+            })
             ->groupBy('equb_type_id')
             ->orderBy('equb_type_id', 'asc')
             ->get();
