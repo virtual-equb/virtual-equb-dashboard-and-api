@@ -546,7 +546,18 @@ class EqubController extends Controller
             // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $this->validate($request, [
                     'equb_type_id' => 'required',
-                    'amount' => 'required',
+                    'amount' => ['required', 
+                        function ($attribute, $value, $fail) use ($request) {
+                            // Check if the equb type is 'Manual'
+                            $equbType = EqubType::find($request->input('equb_type_id'));
+                            if ($equbType && $equbType->type === 'Manual') {
+                                // Validate amount range for 'Manual' equb type
+                                if ($value < 500 || $value > 15000) {
+                                    $fail("The {$attribute} must be between 500 and 15000.");
+                                }
+                            }
+                        }
+                    ],
                     'total_amount' => 'nullable',
                     'start_date' => 'required',
                     // 'end_date' => 'required',
@@ -639,24 +650,6 @@ class EqubController extends Controller
                         // Save the updated EqubType
                         $equbTypes->save();
                     }
-                    // if ($equbTypes) {
-                    //     if ($equbTypes->type == 'Automatic') {
-                    //         $equbTypes->remaining_quota -= 1;
-                    //         $equbTypes->increment('total_members', 1);
-                    //         if ($equbTypes->remaining_quota == 0) {
-                    //             $equbTypes->status = "Deactive";
-                    //         }
-                    //         $equbTypes->save();
-                    //     }
-                    //     if ($equbTypes->type == 'Seasonal') {
-                    //         $equbTypes->remaining_quota -= 1;
-                    //         $equbTypes->increment('total_members', 1);
-                    //         if ($equbTypes->remaining_quota == 0) {
-                    //             $equbTypes->status = "Deactive";
-                    //         }
-                    //         $equbTypes->save();
-                    //     }
-                    // }
                     
                 }
                 $equbTakerData = [
