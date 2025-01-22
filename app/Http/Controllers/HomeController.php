@@ -42,7 +42,7 @@ class HomeController extends Controller
         // $this->middleware('permission_check_logout:view dashboard', ['only' => ['index', 'show', 'equbTypeIndex']]);
     }
     //Projection chart updated here
-    public function index()
+    public function index1()
     {
         try {
             $userData = Auth::user();
@@ -673,7 +673,7 @@ class HomeController extends Controller
             return back();
         }
     }
-    public function index1()
+    public function index()
     {
         try {
             $title = $this->title;
