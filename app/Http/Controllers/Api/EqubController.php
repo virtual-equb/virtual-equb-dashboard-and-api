@@ -769,7 +769,18 @@ class EqubController extends Controller
             // Validate required fields
             $this->validate($request, [
                 'equb_type_id' => 'required',
-                'amount' => 'required',
+                'amount' => ['required', 
+                    function ($attribute, $value, $fail) use ($request) {
+                        // check if the equb type is 'Manual'
+                        $equbType = EqubType::find($request->input('equb_type_id'));
+                        if ($equbType && $equbType->type === 'Manual') {
+                            // validate the amount range for 'Manual' equb type
+                            if ($value < 500 || $value > 15000) {
+                                $fail("The {$attribute} must be between 500 and 15000.");
+                            }
+                        }
+                    }
+                ],
                 'total_amount' => 'required',
                 'start_date' => 'required|date_format:Y-m-d',
                 // 'timeline' => 'required',
