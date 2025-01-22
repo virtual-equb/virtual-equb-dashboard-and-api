@@ -29,7 +29,7 @@ class ApplyFabricTokenService
     public function applyFabricToken()
     {
         try {
-            $response = Http::withHeaders([
+            $response = Http::timeout(60)->withHeaders([
                     "Content-Type" => "application/json",
                     "X-APP-Key" => $this->fabricAppId,
                 ])->post($this->BASE_URL . '/payment/v1/token', [
