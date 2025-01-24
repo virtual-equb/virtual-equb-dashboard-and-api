@@ -605,34 +605,26 @@ class EqubRepository implements IEqubRepository
     }
     public function getExpectedTotal()
     {
-        return $this->model
-            ->whereDate('start_date', '<=', Carbon::today())
-            ->whereDate('end_date', '>=', Carbon::today())
-            ->where('status', 'Active')
-            ->whereIn('id', function ($query) {
-                // Subquery to filter equbs by remaining payment not equal to 0 in equb_takers table
-                $query->selectRaw('equb_id')
-                    ->from('equb_takers')
-                    ->whereRaw('equb_takers.equb_id = equbs.id')
-                    ->where('remaining_payment', '>', 0)
-                    ->groupBy('equb_id');
-            })
-            ->sum('amount');
         // return $this->model
-        //     ->whereDate('start_date', '<=', Carbon::now())
-        //     ->whereDate('end_date', '>=', Carbon::now())
+        //     ->whereDate('start_date', '<=', Carbon::today())
+        //     ->whereDate('end_date', '>=', Carbon::today())
         //     ->where('status', 'Active')
-        //     ->whereIn('id', function ($query) {
-        //         // Subquery to filter equbs by remaining payment not equal to 0 in equb_takers table
-        //         $query->selectRaw('equb_id')
-        //             ->from('equb_takers')
-        //             ->whereRaw('equb_takers.equb_id = equbs.id')
-        //             ->where('remaining_payment', '>', 0)
-        //             ->groupBy('equb_id');
-        //     })
-        //     ->selectRaw("SUM(amount) as expected")
-        //     ->orderBy('equb_type_id', 'asc')
-        //     ->get();
+        //     // ->whereIn('id', function ($query) {
+        //     //     // Subquery to filter equbs by remaining payment not equal to 0 in equb_takers table
+        //     //     $query->selectRaw('equb_id')
+        //     //         ->from('equb_takers')
+        //     //         ->whereRaw('equb_takers.equb_id = equbs.id')
+        //     //         ->where('remaining_payment', '>', 0)
+        //     //         ->groupBy('equb_id');
+        //     // })
+        //     ->sum('amount');
+            return  DB::table('equbs')
+            ->join('equb_types', 'equbs.equb_type_id', '=', 'equb_types.id')
+            ->where('equbs.status', 'Active')
+            ->whereDate('equbs.start_date', '<=', Carbon::today())
+            ->whereDate('equbs.end_date', '>=', Carbon::today())
+            ->where('equb_types.name', 'Daily')
+            ->sum('equbs.amount');
     }
     public function getAutomaticExpectedTotal()
     {
