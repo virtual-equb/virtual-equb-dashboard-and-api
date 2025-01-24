@@ -630,7 +630,7 @@ class EqubRepository implements IEqubRepository
             ->where('equbs.status', 'Active')
             ->whereDate('equbs.start_date', '<=', Carbon::today())
             ->whereDate('equbs.end_date', '>=', Carbon::today())
-            ->where('equb_types.rote', 'Daily')
+            // ->where('equb_types.rote', 'Daily')
             ->sum('equbs.amount');
     }
     public function getAutomaticExpectedTotal()
