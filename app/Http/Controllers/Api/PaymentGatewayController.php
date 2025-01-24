@@ -9,6 +9,7 @@ use App\Models\CBETransaction;
 use App\Models\TempTransaction;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use App\Repositories\Equb\IEqubRepository;
@@ -376,6 +377,7 @@ class PaymentGatewayController extends Controller {
                         $status = 'unknown';
                         break;
                 }
+                $collecter = User::where('name', '	Cbe Gateway')->first();
                 // Update the payment record with the CBE details
                 $payment->update([
                     'transaction_number' => $transactionId,
@@ -385,7 +387,7 @@ class PaymentGatewayController extends Controller {
                     'creadit' => $totalCredit,
                     'balance' => $availableBalance,
                     'payment_type' => 'CBE Gateway',
-                    'collecter' => $memberId
+                    'collecter' => $collecter->id
                 ]);
                 // Update equb total payment and remaining payment
                 $totalPaid = $this->paymentRepository->getTotalPaid($equbId);
