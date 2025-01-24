@@ -798,6 +798,7 @@ class EqubController extends Controller
 
             // Parse endDate if it doesn't match expected format
             $formattedEndDate = $endDate;
+            $formattedStartDate = $startDate;
             if (!$this->isDateInYMDFormat($endDate)) {
                 try {
                     $carbonDate = Carbon::createFromFormat('m/d/Y', $endDate);
@@ -829,6 +830,30 @@ class EqubController extends Controller
                         'code' => 400,
                         'message' => 'Equb already exists!'
                     ]);
+                }
+            }
+
+            // Automatically calculate lottery date for 'Manual' equb type
+            if ($equbTypeData->type === 'Manual') {
+                // set lottery date to 45 days after the start date if it's not provided
+                if (!$lotteryDate) {
+                    $lotteryDate = Carbon::parse($formattedStartDate)->addDays(45)->format('Y-m-d');
+                }
+
+                // Check if there are existing lotteries on the same day (to avoid conflicts)
+                $existingLottery = Equb::where('lottery_date', $lotteryDate)->exists();
+                if($existingLottery) {
+                    return response()->json([
+                        'code' => 400,
+                        'message' => 'Lottery date already exists for another equb.'
+                    ]);
+                }
+
+                // Ensure total funds available for the lottery (projection check)
+                $cashProjection = Equb::whereDate('lottery_date', $lotteryDate)->sum('amount');
+                if ($cashProjection < $totalAmount) {
+                    // if the cash projection is insufficient, extend the lottery date by 1
+                    $lotteryDate = Carbon::parse($lotteryDate)->addDay()->format('Y-m-d');
                 }
             }
 
