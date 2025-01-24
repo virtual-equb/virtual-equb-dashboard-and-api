@@ -163,8 +163,8 @@ class HomeController extends Controller
 
             $fullDaylyPaidAmount = $this->paymentRepository->getDaylyPaidAmount();
             $daylyPendingAmount = $this->paymentRepository->getDaylyPendingAmount();
-            // $daylyPaidAmount = $fullDaylyPaidAmount + $daylyPendingAmount;
-            $daylyPaidAmount = $fullDaylyPaidAmount;
+            $daylyPaidAmount = $fullDaylyPaidAmount + $daylyPendingAmount;
+            // $daylyPaidAmount = $fullDaylyPaidAmount;
             $daylyUnpaidAmount = $totalEqubAmount - $daylyPaidAmount;
             if ($daylyUnpaidAmount <= 0) {
                 $daylyUnpaidAmount = 0;
