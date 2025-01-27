@@ -631,13 +631,6 @@ class EqubRepository implements IEqubRepository
             ->whereDate('equbs.start_date', '<=', Carbon::today())
             ->whereDate('equbs.end_date', '>=', Carbon::today())
             // ->where('equb_types.rote', 'Daily')
-            ->whereIn('id', function ($query) {
-                $query->selectRaw('equb_id')
-                    ->from('equb_takers')
-                    ->whereRaw('equb_takers.equb_id = equbs.id')
-                    ->where('remaining_payment', '>', 0)
-                    ->groupBy('equb_id');
-            })
             ->sum('equbs.amount');
     }
     public function getAutomaticExpectedTotal()
