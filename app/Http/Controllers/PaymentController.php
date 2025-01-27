@@ -214,6 +214,7 @@ class PaymentController extends Controller
                     try {
                         $shortcode = config('key.SHORT_CODE');
                         $message = "You have successfully paid $amount ETB and a total of $totalPpayment ETB for the equb $equbType->name. Your remaining unpaid amount is $remainingPayment ETB. Your lottery date is $lotDate" . ". For further information please call " . $shortcode;
+                       // dd($message);
                         $this->sendSms($memberPhone, $message);
                         if ($remainingPayment == 0) {
                             $paymentMessage = "You have successfully finished your payment of $totalPpayment ETB for the equb $equbType->name" . ". For further information please call " . $shortcode;

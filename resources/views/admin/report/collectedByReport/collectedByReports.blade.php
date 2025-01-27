@@ -123,17 +123,7 @@
                     }
                 });
             }
-            function payments(offsetVal, pageNumberVal) {
-                let equbType = $('#equb_type').val() != "" ? $('#equb_type').val() : 'all';
-                $.ajax({
-                    url: "{{ url('reports/paginateCllectedBys') }}" + '/' + $('#dateFrom').val() + '/' + $('#dateTo')
-                        .val() + '/' + $('#collecter').val() + '/' + offsetVal + '/' + pageNumberVal + '/' + equbType,
-                    type: 'get',
-                    success: function(data) {
-                        $('#filterCollectedByTable').html(data);
-                    }
-                });
-            }
+
             function fiter() {
                 if ($('#dateFrom').val() == "" && $('#dateTo').val() == "" && $('#collecter').val() == "") {
                     $('#dateFromRequired').removeClass('d-none');

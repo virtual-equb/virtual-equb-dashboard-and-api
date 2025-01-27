@@ -679,7 +679,7 @@ class ReportController extends Controller
             return back();
         }
     }
-    public function paginateCllectedBys($dateFrom, $dateTo, $collecter,$paymentMethod, $offsetVal, $pageNumberVal, $equbType)
+   /*public function paginateCllectedBys($dateFrom, $dateTo, $collecter,$paymentMethod, $offsetVal, $pageNumberVal, $equbType)
     {
         try {
             $data['offset'] = $offsetVal;
@@ -701,6 +701,32 @@ class ReportController extends Controller
             // } else {
             //     return view('auth/login');
             // }
+        } catch (Exception $ex) {
+            $msg = "Unknown Error Occurred, Please try again!";
+            $type = 'error';
+            Session::flash($type, $msg);
+            return back();
+        }
+    }*/
+    public function paginateCllectedBys($dateFrom, $dateTo, $collecter,$paymentMethod, $offsetVal, $pageNumberVal, $equbType)
+    {
+        try {
+            $data['offset'] = $offsetVal;
+            $offset = $offsetVal;
+            $data['limit'] = 50;
+            $data['pageNumber'] = $pageNumberVal;
+            $userData = Auth::user();
+           // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
+                $data['title'] = "Virtual Equb - Collected by Report";
+                if ($collecter != "all" || $equbType != "all") {
+                    $data['totalPayments'] = $this->paymentRepository->getCountCollectedBysWithCollecter($dateFrom, $dateTo, $collecter,$paymentMethod, $equbType);
+                    $data['collecters'] = $this->paymentRepository->getCollectedByUser($dateFrom, $dateTo, $collecter,$paymentMethod, $offset, $equbType);
+                } else {
+                    $data['totalPayments'] = $this->paymentRepository->getCountCollectedBys($dateFrom, $dateTo);
+                    $data['collecters'] = $this->paymentRepository->getByDate($dateFrom, $dateTo, $offset);
+                }
+                return view('admin/report/collectedByReport/filterCollectedByReports', $data);
+          
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
