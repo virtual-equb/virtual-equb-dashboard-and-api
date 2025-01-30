@@ -245,6 +245,15 @@ class PaymentGatewayController extends Controller {
             
         }
 
+        public function testJWT()
+        {
+            return response()->json([
+                'JWT_SECRET' => env('JWT_SECRET'),
+                'APP_ENV' => env('APP_ENV'),
+                'APP_DEBUG' => env('APP_DEBUG'),
+            ]);
+        }
+
         // Handle transaction status
         public function transactionStatus(Request $request)
         {
@@ -377,7 +386,7 @@ class PaymentGatewayController extends Controller {
                         $status = 'unknown';
                         break;
                 }
-                $collecter = User::where('name', '	Cbe Gateway')->first();
+                $collecter = User::where('name', 'Cbe Gateway')->first();
                 // Update the payment record with the CBE details
                 $payment->update([
                     'transaction_number' => $transactionId,
@@ -410,9 +419,9 @@ class PaymentGatewayController extends Controller {
                     'type' => 'payments',
                     'type_id' => $payment->id,
                     'action' => 'updated',
-                    'user_id' => Auth::id(),
-                    'username' => Auth::user()->name,
-                    'role' => Auth::user()->role,
+                    'user_id' => $collecter->id,
+                    'username' => $collecter->name,
+                    'role' => $collecter->getRoleNames()->first(),
                 ];
                 $this->activityLogRepository->createActivityLog($activityLog);
                 Log::info('Transaction verified successfully.');
