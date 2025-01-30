@@ -112,7 +112,7 @@ class AuthController extends Controller
             }
 
             // Ensure token is valid before storing
-            if (!$token || empty($token)) {
+            if (!is_string($token) || empty($token)) {
                 return response()->json([
                     'code' => 500,
                     'message' => 'Could not generate authentication token.'
