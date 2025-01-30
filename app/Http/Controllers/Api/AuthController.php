@@ -111,6 +111,14 @@ class AuthController extends Controller
                 ], 401);
             }
 
+            // Ensure token is valid before storing
+            if (!$token || empty($token)) {
+                return response()->json([
+                    'code' => 500,
+                    'message' => 'Could not generate authentication token.'
+                ], 500);
+            }
+
             // Get authenticated user
             $user = auth()->user();
 
