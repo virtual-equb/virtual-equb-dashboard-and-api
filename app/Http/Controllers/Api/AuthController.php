@@ -26,126 +26,126 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    // public function login(Request $request)
-    // {
-    //     // dd($request);
-    //     try {
-    //         $request->validate([
-    //             'phone_number' => 'required',
-    //             'password' => 'required'
-    //         ]);
-    //         $user = [
-    //             'phone_number' => $request->input('phone_number'),
-    //             'password' => $request->input('password')
-    //         ];
-    //         if (!$token = JWTAuth::attempt($user)) {
-    //             return response()->json([
-    //                 'code' => 401,
-    //                 'message' => 'Incorrect phonenumber or Password!'
-    //             ], 200);
-    //         }
-    //         $user = request()->user();
-    //         // dd($user);
-    //         $userStatus = $user->enabled;
-    //         $olderToken = $user->token;
-    //         if (!$userStatus) {
-    //             // dd($userStatus);
-    //             JWTAuth::manager()->invalidate(new \Tymon\JWTAuth\Token($olderToken, $forceForever = false));
-    //             return response()->json([
-    //                 'code' => 403,
-    //                 'message' => 'Your account is not active, Please contact admin!'
-    //             ]);
-    //         };
-    //         $userId = $user->id;
-    //         if ($olderToken) {
-    //             JWTAuth::manager()->invalidate(new \Tymon\JWTAuth\Token($olderToken, $forceForever = false));
-    //         }
-    //         User::where('id', $userId)
-    //             ->update([
-    //                 'token' => $token,
-    //                 'fcm_id' => $request->fcm_id
-    //             ]);
-    //         $memberPhone = $user->phone_number;
-    //         $memberId = Member::where('phone', $memberPhone)->pluck('id')->first();
-    //         $userData = [
-    //             "id" => $user->id,
-    //             "name" => $user->name,
-    //             "email" => $user->email,
-    //             "phone_number" => $user->phone_number,
-    //             "gender" => $user->gender,
-    //             "role" => $user->getRoleNames()->first(),
-    //             // "roles" => $user->getRoleNames()->toArray(),
-    //             "enabled" => $user->enabled,
-    //             "member_id" => $memberId
-    //         ];
-    //         $tokenData = $this->respondWithToken($token);
-    //         return response()->json([
-    //             'message' => "Logged in successfully!",
-    //             'code' => 200,
-    //             'user' => $userData,
-    //             'token_type' => 'Bearer',
-    //             'token' => $tokenData->original['access_token'],
-    //             'fcm_id' => $request->fcm_id
-    //         ]);
-    //     } catch (Exception $error) {
-    //         // dd($error);
-    //         return response()->json([
-    //             'code' => 500,
-    //             'message' => 'Unable to process your request,Please try again!',
-    //             "error" => $error->getMessage()
-    //         ]);
-    //     }
-    // }
     public function login(Request $request)
     {
+        // dd($request);
         try {
             $request->validate([
                 'phone_number' => 'required',
                 'password' => 'required'
             ]);
-
-            if (!$token = auth()->attempt($request->only('phone_number', 'password'))) {
+            $user = [
+                'phone_number' => $request->input('phone_number'),
+                'password' => $request->input('password')
+            ];
+            if (!$token = JWTAuth::attempt($user)) {
                 return response()->json([
                     'code' => 401,
-                    'message' => 'Incorrect phone number or password!'
-                ], 401);
+                    'message' => 'Incorrect phonenumber or Password!'
+                ], 200);
             }
-
-            // Get authenticated user
-            $user = auth()->user();
-
-            // Invalidate any old token before issuing a new one
-            if ($user->token) {
-                JWTAuth::manager()->invalidate(new \Tymon\JWTAuth\Token($user->token));
+            $user = request()->user();
+            // dd($user);
+            $userStatus = $user->enabled;
+            $olderToken = $user->token;
+            if (!$userStatus) {
+                // dd($userStatus);
+                JWTAuth::manager()->invalidate(new \Tymon\JWTAuth\Token($olderToken, $forceForever = false));
+                return response()->json([
+                    'code' => 403,
+                    'message' => 'Your account is not active, Please contact admin!'
+                ]);
+            };
+            $userId = $user->id;
+            if ($olderToken) {
+                JWTAuth::manager()->invalidate(new \Tymon\JWTAuth\Token($olderToken, $forceForever = false));
             }
-
-            // Store new token
-            $user->update(['token' => $token, 'fcm_id' => $request->fcm_id]);
-
+            User::where('id', $userId)
+                ->update([
+                    'token' => $token,
+                    'fcm_id' => $request->fcm_id
+                ]);
+            $memberPhone = $user->phone_number;
+            $memberId = Member::where('phone', $memberPhone)->pluck('id')->first();
+            $userData = [
+                "id" => $user->id,
+                "name" => $user->name,
+                "email" => $user->email,
+                "phone_number" => $user->phone_number,
+                "gender" => $user->gender,
+                "role" => $user->getRoleNames()->first(),
+                // "roles" => $user->getRoleNames()->toArray(),
+                "enabled" => $user->enabled,
+                "member_id" => $memberId
+            ];
+            $tokenData = $this->respondWithToken($token);
             return response()->json([
                 'message' => "Logged in successfully!",
                 'code' => 200,
-                'user' => [
-                    "id" => $user->id,
-                    "name" => $user->name,
-                    "email" => $user->email,
-                    "phone_number" => $user->phone_number,
-                    "gender" => $user->gender,
-                    "role" => $user->getRoleNames()->first(),
-                    "enabled" => $user->enabled
-                ],
+                'user' => $userData,
                 'token_type' => 'Bearer',
-                'token' => $token,
+                'token' => $tokenData->original['access_token'],
                 'fcm_id' => $request->fcm_id
             ]);
         } catch (Exception $error) {
+            // dd($error);
             return response()->json([
                 'code' => 500,
-                'message' => 'Unable to process your request, please try again!',
-                'error' => $error->getMessage()
+                'message' => 'Unable to process your request,Please try again!',
+                "error" => $error->getMessage()
             ]);
         }
     }
+    // public function login(Request $request)
+    // {
+    //     try {
+    //         $request->validate([
+    //             'phone_number' => 'required',
+    //             'password' => 'required'
+    //         ]);
+
+    //         if (!$token = auth()->attempt($request->only('phone_number', 'password'))) {
+    //             return response()->json([
+    //                 'code' => 401,
+    //                 'message' => 'Incorrect phone number or password!'
+    //             ], 401);
+    //         }
+
+    //         // Get authenticated user
+    //         $user = auth()->user();
+
+    //         // Invalidate any old token before issuing a new one
+    //         if ($user->token) {
+    //             JWTAuth::manager()->invalidate(new \Tymon\JWTAuth\Token($user->token));
+    //         }
+
+    //         // Store new token
+    //         $user->update(['token' => $token, 'fcm_id' => $request->fcm_id]);
+
+    //         return response()->json([
+    //             'message' => "Logged in successfully!",
+    //             'code' => 200,
+    //             'user' => [
+    //                 "id" => $user->id,
+    //                 "name" => $user->name,
+    //                 "email" => $user->email,
+    //                 "phone_number" => $user->phone_number,
+    //                 "gender" => $user->gender,
+    //                 "role" => $user->getRoleNames()->first(),
+    //                 "enabled" => $user->enabled
+    //             ],
+    //             'token_type' => 'Bearer',
+    //             'token' => $token,
+    //             'fcm_id' => $request->fcm_id
+    //         ]);
+    //     } catch (Exception $error) {
+    //         return response()->json([
+    //             'code' => 500,
+    //             'message' => 'Unable to process your request, please try again!',
+    //             'error' => $error->getMessage()
+    //         ]);
+    //     }
+    // }
 
     /**
      * Get the authenticated User.
