@@ -53,7 +53,7 @@ Route::post('/callback', [CbeMiniAppController::class, 'paymentCallback'])->name
 
 
 Route::post('/drawauto', [ControllersEqubTypeController::class, 'drawSeasonedAutoWinners']);
-
+Route::get('/jwt', [PaymentGatewayController::class, 'testJWT']);
 Route::post('/transaction-status', [PaymentGatewayController::class, 'transactionStatus']);
 Route::post('/payments/telebirr/callback', [PaymentController::class, 'callback'])->name('callback');
 Route::post('/notify-equb-start', [EqubController::class, 'sendStartNotifications']);
