@@ -293,13 +293,13 @@ class PaymentGatewayController extends Controller {
             // Compare the calculated hash with the provided signature
             if ($calculatedHash === $signature) {
                 // Save transaction details
-                // $transaction = new CBETransaction();
-                // $transaction->enc_val = $encVal;
-                // $transaction->transaction_id = $transactionId;
-                // $transaction->state = $state;
-                // $transaction->tnd_date = $tndDate;
-                // $transaction->signature = $signature;
-                // $transaction->save();
+                $transaction = new CBETransaction();
+                $transaction->enc_val = $encVal;
+                $transaction->transaction_id = $transactionId;
+                $transaction->state = $state;
+                $transaction->tnd_date = $tndDate;
+                $transaction->signature = $signature;
+                $transaction->save();
 
                 // $payment = Payment::where('transaction_number', $transactionId)->latest()->first();
 
