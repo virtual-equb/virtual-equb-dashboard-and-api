@@ -301,121 +301,121 @@ class PaymentGatewayController extends Controller {
                 $transaction->signature = $signature;
                 $transaction->save();
 
-                // $payment = Payment::where('transaction_number', $transactionId)->latest()->first();
+                $payment = Payment::where('transaction_number', $transactionId)->latest()->first();
 
-                // if (!$payment) {
-                //     return response()->json(['message' => 'Payment record not found'], 404);
-                // }
-                // // payment calculations
-                // $equbId = $payment->equb_id;
-                // $memberId = $payment->member_id;
-                // $amount = $payment->amount;
-                // $credit = $payment->creadit;
+                if (!$payment) {
+                    return response()->json(['message' => 'Payment record not found'], 404);
+                }
+                // payment calculations
+                $equbId = $payment->equb_id;
+                $memberId = $payment->member_id;
+                $amount = $payment->amount;
+                $credit = $payment->creadit;
 
-                // // Compute total credit and balance
-                // $totalCredit = $this->paymentRepository->getTotalCredit($equbId) ?? 0;
-                // $equbAmount = $this->equbRepository->getEqubAmount($memberId, $equbId);
-                // $availableBalance = $this->paymentRepository->getTotalBalance($equbId) ?? 0;
+                // Compute total credit and balance
+                $totalCredit = $this->paymentRepository->getTotalCredit($equbId) ?? 0;
+                $equbAmount = $this->equbRepository->getEqubAmount($memberId, $equbId);
+                $availableBalance = $this->paymentRepository->getTotalBalance($equbId) ?? 0;
 
-                // $creditData = ['creadit' => 0];
-                // $this->paymentRepository->updateCredit($equbId, $creditData);
+                $creditData = ['creadit' => 0];
+                $this->paymentRepository->updateCredit($equbId, $creditData);
 
-                // $lastTc = $totalCredit;
-                // $totalCredit += $credit;
+                $lastTc = $totalCredit;
+                $totalCredit += $credit;
 
-                // $balanceData = ['balance' => 0];
-                // $this->paymentRepository->updateBalance($equbId, $balanceData);
+                $balanceData = ['balance' => 0];
+                $this->paymentRepository->updateBalance($equbId, $balanceData);
 
-                // $at = $amount;
-                // $amount += $availableBalance;
+                $at = $amount;
+                $amount += $availableBalance;
 
-                // if ($amount > $equbAmount) {
-                //     if ($totalCredit > 0) {
-                //         if ($totalCredit < $amount) {
-                //             if ($at < $equbAmount) {
-                //                 $availableBalance -= $totalCredit;
-                //                 $totalCredit = 0;
-                //             } elseif ($at > $equbAmount) {
-                //                 $diff = $at - $equbAmount;
-                //                 $totalCredit -= $diff;
-                //                 $availableBalance = ($availableBalance + $diff) - $totalCredit;
-                //                 $totalCredit = 0;
-                //             }
-                //         }
-                //         $amount = $at;
-                //     }
-                // } elseif ($amount == $equbAmount) {
-                //     $amount = $at;
-                //     $totalCredit = $lastTc;
-                //     $availableBalance = 0;
-                // } elseif ($amount < $equbAmount) {
-                //     if ($lastTc == 0) {
-                //         $totalCredit = $equbAmount - $amount;
-                //         $availableBalance = 0;
-                //     } else {
-                //         $totalCredit = $totalCredit;
-                //         $availableBalance = 0;
-                //     }
-                //     $amount = $at;
-                // }
-                // $status = '';
-                // $paidDate = null;
+                if ($amount > $equbAmount) {
+                    if ($totalCredit > 0) {
+                        if ($totalCredit < $amount) {
+                            if ($at < $equbAmount) {
+                                $availableBalance -= $totalCredit;
+                                $totalCredit = 0;
+                            } elseif ($at > $equbAmount) {
+                                $diff = $at - $equbAmount;
+                                $totalCredit -= $diff;
+                                $availableBalance = ($availableBalance + $diff) - $totalCredit;
+                                $totalCredit = 0;
+                            }
+                        }
+                        $amount = $at;
+                    }
+                } elseif ($amount == $equbAmount) {
+                    $amount = $at;
+                    $totalCredit = $lastTc;
+                    $availableBalance = 0;
+                } elseif ($amount < $equbAmount) {
+                    if ($lastTc == 0) {
+                        $totalCredit = $equbAmount - $amount;
+                        $availableBalance = 0;
+                    } else {
+                        $totalCredit = $totalCredit;
+                        $availableBalance = 0;
+                    }
+                    $amount = $at;
+                }
+                $status = '';
+                $paidDate = null;
 
-                // switch ($state) {
-                //     case 'COM':
-                //     case 'OTOUPD':
-                //         $status = 'paid';
-                //         $paidDate = now();
-                //         break;
-                //     case 'TNXFIL':
-                //         $status = 'failed';
-                //         break;
-                //     case 'DRAFT':
-                //         $status = 'draft';
-                //         break;
-                //     default:
-                //         $status = 'unknown';
-                //         break;
-                // }
-                // $collecter = User::where('name', '	Cbe Gateway')->first();
-                // // Update the payment record with the CBE details
-                // $payment->update([
-                //     'transaction_number' => $transactionId,
-                //     'status' => $status,
-                //     'paid_date' => $paidDate,
-                //     'amount' => $amount,
-                //     'creadit' => $totalCredit,
-                //     'balance' => $availableBalance,
-                //     'payment_type' => 'CBE Gateway',
-                //     'collecter' => $collecter->id
-                // ]);
-                // // Update equb total payment and remaining payment
-                // $totalPaid = $this->paymentRepository->getTotalPaid($equbId);
-                // $totalEqubAmount = $this->equbRepository->getTotalEqubAmount($equbId);
-                // $remainingPayment = $totalEqubAmount - $totalPaid;
+                switch ($state) {
+                    case 'COM':
+                    case 'OTOUPD':
+                        $status = 'paid';
+                        $paidDate = now();
+                        break;
+                    case 'TNXFIL':
+                        $status = 'failed';
+                        break;
+                    case 'DRAFT':
+                        $status = 'draft';
+                        break;
+                    default:
+                        $status = 'unknown';
+                        break;
+                }
+                $collecter = User::where('name', '	Cbe Gateway')->first();
+                // Update the payment record with the CBE details
+                $payment->update([
+                    'transaction_number' => $transactionId,
+                    'status' => $status,
+                    'paid_date' => $paidDate,
+                    'amount' => $amount,
+                    'creadit' => $totalCredit,
+                    'balance' => $availableBalance,
+                    'payment_type' => 'CBE Gateway',
+                    'collecter' => $collecter->id
+                ]);
+                // Update equb total payment and remaining payment
+                $totalPaid = $this->paymentRepository->getTotalPaid($equbId);
+                $totalEqubAmount = $this->equbRepository->getTotalEqubAmount($equbId);
+                $remainingPayment = $totalEqubAmount - $totalPaid;
 
-                // $updated = [
-                //     'total_payment' => $totalPaid,
-                //     'remaining_payment' => $remainingPayment,
-                // ];
-                // $this->equbTakerRepository->updatePayment($equbId, $updated);
+                $updated = [
+                    'total_payment' => $totalPaid,
+                    'remaining_payment' => $remainingPayment,
+                ];
+                $this->equbTakerRepository->updatePayment($equbId, $updated);
 
-                // // Mark equb as deactivated if fully paid
-                // if ($remainingPayment == 0) {
-                //     $this->equbRepository->update($equbId, ['status' => 'Deactive']);
-                // }
+                // Mark equb as deactivated if fully paid
+                if ($remainingPayment == 0) {
+                    $this->equbRepository->update($equbId, ['status' => 'Deactive']);
+                }
 
-                // // Log the activity
-                // $activityLog = [
-                //     'type' => 'payments',
-                //     'type_id' => $payment->id,
-                //     'action' => 'updated',
-                //     'user_id' => Auth::id(),
-                //     'username' => Auth::user()->name,
-                //     'role' => Auth::user()->role,
-                // ];
-                // $this->activityLogRepository->createActivityLog($activityLog);
-                // Log::info('Transaction verified successfully.');
+                // Log the activity
+                $activityLog = [
+                    'type' => 'payments',
+                    'type_id' => $payment->id,
+                    'action' => 'updated',
+                    'user_id' => Auth::id(),
+                    'username' => Auth::user()->name,
+                    'role' => Auth::user()->role,
+                ];
+                $this->activityLogRepository->createActivityLog($activityLog);
+                Log::info('Transaction verified successfully.');
                 return response()->json([
                     'message' => 'Transaction verified',
                     'TransactionId' => $transactionId,
