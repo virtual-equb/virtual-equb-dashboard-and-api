@@ -181,8 +181,12 @@
                                 </li> --}}
                                     @if (Auth::user()->role != 'finance')
                                         <li>
-                                            <a href="javascript:void(0);"
+                                            {{-- <a href="javascript:void(0);"
                                                 class="text-secondary btn btn-flat {{ $member->status == 'Deactive' ? 'disabled' : ($equb->status == 'Deactive' ? 'disabled' : ($sum >= $expectedTotal ? 'disabled' : '')) }}"
+                                                onclick="openPaymentModal({{ $equb }})" id="paymentButton"><i
+                                                    class="fas fa-plus-circle"></i> Payment</a> --}}
+                                                    <a href="javascript:void(0);"
+                                                class="text-secondary btn btn-flat"
                                                 onclick="openPaymentModal({{ $equb }})" id="paymentButton"><i
                                                     class="fas fa-plus-circle"></i> Payment</a>
                                         </li>
