@@ -38,6 +38,14 @@ class AuthController extends Controller
                 'phone_number' => $request->input('phone_number'),
                 'password' => $request->input('password')
             ];
+            $userExists = User::where('phone_number', $request->input('phone_number'))->first();
+
+            if (!$userExists) {
+                return response()->json([
+                    'code' => 404,
+                    'message' => 'User not found!'
+                ], 404);
+            }
             if (!$token = JWTAuth::attempt($user)) {
                 return response()->json([
                     'code' => 401,
