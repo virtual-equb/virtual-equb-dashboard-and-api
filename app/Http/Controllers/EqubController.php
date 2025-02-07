@@ -577,27 +577,51 @@ class EqubController extends Controller
                 }
 
                 // Automatically calculate lottery date for 'Manual' type
+                // if ($equbTypeData->type === 'Manual') {
+                //     // Set lottery_date to 45 days after the start date if it's not provided
+                //     if (!$lotteryDate) {
+                //         $lotteryDate = Carbon::parse($formattedStartDate)->addDays(45)->format('Y-m-d');
+                //     }
+
+                //     // check if there are existing lotteries on the same day (to avoid conflicts)
+                //     $existingLottery = Equb::where('lottery_date', $lotteryDate)->exists();
+                //     if ($existingLottery) {
+                //         $msg = 'Lottery date already exists!';
+                //         $type = 'error';
+                //         Session::flash($type, $msg);
+                //         // return response()->json([
+                //         //     'code' => 400,
+                //         //     'message' => 'Lottery date already exists!'
+                //         // ]);
+                //     }
+
+                //     // Ensure total funds available for the lottery (Projection check)
+                //     $cashProjection = Equb::whereDate('lottery_date', $lotteryDate)->sum('amount');
+                //     if ($cashProjection < $totalAmount) {
+                //         // if the cash projection is insufficient, extend the lottery date by 1 day
+                //         $lotteryDate = Carbon::parse($lotteryDate)->addDay()->format('Y-m-d');
+                //     }
+                // }
                 if ($equbTypeData->type === 'Manual') {
-                    // Set lottery_date to 45 days after the start date if it's not provided
+                    // Set initial lottery_date (45 days after start date) if not provided
                     if (!$lotteryDate) {
                         $lotteryDate = Carbon::parse($formattedStartDate)->addDays(45)->format('Y-m-d');
                     }
-
-                    // check if there are existing lotteries on the same day (to avoid conflicts)
-                    $existingLottery = Equb::where('lottery_date', $lotteryDate)->exists();
-                    if ($existingLottery) {
-                        return response()->json([
-                            'code' => 400,
-                            'message' => 'Lottery date already exists!'
-                        ]);
+                
+                    while (true) {
+                        // Check total funds available for this lottery date
+                        $cashProjection = Equb::whereDate('lottery_date', $lotteryDate)->sum('amount');
+                
+                        if ($cashProjection >= $totalAmount) {
+                            // Enough funds available, store the lottery date
+                            break;
+                        } else {
+                            // Not enough funds, check the next day
+                            $lotteryDate = Carbon::parse($lotteryDate)->addDay()->format('Y-m-d');
+                        }
                     }
-
-                    // Ensure total funds available for the lottery (Projection check)
-                    $cashProjection = Equb::whereDate('lottery_date', $lotteryDate)->sum('amount');
-                    if ($cashProjection < $totalAmount) {
-                        // if the cash projection is insufficient, extend the lottery date by 1 day
-                        $lotteryDate = Carbon::parse($lotteryDate)->addDay()->format('Y-m-d');
-                    }
+                
+                    // Store the lottery date (it will now have enough funds)
                 }
 
                 // Determine lottery_date based on equbType
