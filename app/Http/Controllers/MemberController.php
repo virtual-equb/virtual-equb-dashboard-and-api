@@ -591,6 +591,28 @@ class MemberController extends Controller
                 $email = $request->input('email');
                 $password = rand(100000, 999999);
                 $this->memberRepository->checkPhone($phone);
+
+                // Check if the phone number already exists
+                if (!empty($phone)) {
+                    $member_count = Member::where('phone', $phone)->count();
+                    if ($member_count > 0) {
+                        return response()->json([
+                            'code' => 403,
+                            'message' => 'Phone already exists',
+                        ]);
+                    }
+                }
+
+                // Check if the email already exists
+                if (!empty($email)) {
+                    $member_count = Member::where('email', $email)->count();
+                    if ($member_count > 0) {
+                        return response()->json([
+                            'code' => 403,
+                            'message' => 'Email already exists',
+                        ]);
+                    }
+                }
                 $memberData = [
                     'full_name' => $fullName,
                     'phone' => $phone,
