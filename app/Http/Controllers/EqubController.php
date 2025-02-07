@@ -638,17 +638,24 @@ class EqubController extends Controller
                         $lotteryDate = Carbon::parse($formattedStartDate)->addDays(45)->format('Y-m-d');
                     }
                 
-                    while (true) {
-                        // Check total funds available for this lottery date
-                        $cashProjection = Equb::whereDate('lottery_date', $lotteryDate)->sum('amount');
+                    // Get all upcoming lottery dates with their total funds
+                    $futureLotteries = Equb::select('lottery_date', DB::raw('SUM(amount) as total_funds'))
+                        ->whereDate('lottery_date', '>=', $lotteryDate)
+                        ->groupBy('lottery_date')
+                        ->orderBy('lottery_date', 'asc')
+                        ->get();
                 
-                        if ($cashProjection >= $totalAmount) {
-                            // Enough funds available, store the lottery date
+                    // Find the earliest date with enough funds
+                    foreach ($futureLotteries as $lottery) {
+                        if ($lottery->total_funds >= $totalAmount) {
+                            $lotteryDate = $lottery->lottery_date;
                             break;
-                        } else {
-                            // Not enough funds, check the next day
-                            $lotteryDate = Carbon::parse($lotteryDate)->addDay()->format('Y-m-d');
                         }
+                    }
+                
+                    // If no suitable date was found, pick the next available day
+                    if (!$futureLotteries->contains('lottery_date', $lotteryDate)) {
+                        $lotteryDate = Carbon::parse($lotteryDate)->addDay()->format('Y-m-d');
                     }
                 
                     // Store the lottery date (it will now have enough funds)
