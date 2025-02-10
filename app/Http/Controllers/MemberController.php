@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\LotteryWinner;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
@@ -593,26 +594,15 @@ class MemberController extends Controller
                 $this->memberRepository->checkPhone($phone);
 
                 // Check if the phone number already exists
-                if (!empty($phone)) {
-                    $member_count = Member::where('phone', $phone)->count();
-                    if ($member_count > 0) {
-                        return response()->json([
-                            'code' => 403,
-                            'message' => 'Phone already exists',
-                        ]);
-                    }
+                if (!empty($phone) && (Member::where('phone', $phone)->exists() || User::where('phone_number', $phone)->exists())) {
+                    return redirect()->back()->with('error', 'A user already exists with this phone number.');
                 }
 
                 // Check if the email already exists
-                if (!empty($email)) {
-                    $member_count = Member::where('email', $email)->count();
-                    if ($member_count > 0) {
-                        return response()->json([
-                            'code' => 403,
-                            'message' => 'Email already exists',
-                        ]);
-                    }
+                if (!empty($email) && (Member::where('email', $email)->exists() || User::where('email', $email)->exists())) {
+                    return redirect()->back()->with('error', 'A user already exists with this email address.');
                 }
+
                 $memberData = [
                     'full_name' => $fullName,
                     'phone' => $phone,
