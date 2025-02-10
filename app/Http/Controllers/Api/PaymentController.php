@@ -1029,6 +1029,7 @@ class PaymentController extends Controller
 
             // Get total paid and balance calculations
             [$totalCredit, $availableBalance] = $this->calculateCreditAndBalance($payment, $equb, $request->input('total_amount'));
+            $collector = User::where('name', 'telebirr')->first();
 
             // Update payment details
             $payment->update([
@@ -1038,7 +1039,7 @@ class PaymentController extends Controller
                 'tradeStatus'        => $request->input('trade_status'),
                 'transaction_number' => $request->input('payment_order_id'),
                 'status'             => 'paid',
-                'collecter'          => User::where('name', 'telebirr')->value('id'),
+                'collecter'          => $collector->id,
                 'payment_type'       => 'telebirr',
                 'creadit'            => $totalCredit,
                 'balance'            => $availableBalance
