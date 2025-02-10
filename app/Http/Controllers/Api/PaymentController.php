@@ -999,6 +999,110 @@ class PaymentController extends Controller
             ]);
         }
     }
+    public function callback1(Request $request)
+    {
+        try {
+            Log::info('Telebirr callback received:', $request->all());
+
+            // Validate incoming request
+            if (!$request->has(['merch_order_id', 'trade_status', 'total_amount', 'payment_order_id', 'notify_time'])) {
+                return response()->json(['code' => 400, 'message' => 'Invalid request data'], 400);
+            }
+
+            // Find payment record
+            $payment = Payment::find($request->input('merch_order_id'));
+
+            if (!$payment) {
+                return response()->json(['code' => 404, 'message' => 'Payment not found'], 404);
+            }
+
+            // Ensure transaction is completed
+            if ($request->input('trade_status') !== 'Completed') {
+                return response()->json(['code' => 400, 'message' => 'Payment failed, please try again!'], 400);
+            }
+
+            // Fetch related Equb record
+            $equb = Equb::findOrFail($payment->equb_id);
+
+            // Convert timestamp to readable date
+            $tradeDate = Carbon::createFromTimestamp($request->input('notify_time') / 1000)->format('Y-m-d H:i:s');
+
+            // Get total paid and balance calculations
+            [$totalCredit, $availableBalance] = $this->calculateCreditAndBalance($payment, $equb, $request->input('total_amount'));
+
+            // Update payment details
+            $payment->update([
+                'amount'             => $request->input('total_amount'),
+                'tradeDate'          => $tradeDate,
+                'tradeNo'            => $request->input('payment_order_id'),
+                'tradeStatus'        => $request->input('trade_status'),
+                'transaction_number' => $request->input('payment_order_id'),
+                'status'             => 'paid',
+                'collecter'          => User::where('name', 'telebirr')->value('id'),
+                'payment_type'       => 'telebirr',
+                'creadit'            => $totalCredit,
+                'balance'            => $availableBalance
+            ]);
+
+            // Update Equb payment tracking
+            $totalPaid = $this->paymentRepository->getTotalPaid($equb->id);
+            $remainingPayment = $this->equbRepository->getTotalEqubAmount($equb->id) - $totalPaid;
+
+            $this->equbTakerRepository->updatePayment($equb->id, [
+                'total_payment'     => $totalPaid,
+                'remaining_payment' => $remainingPayment,
+            ]);
+
+            // Deactivate Equb if fully paid
+            if ($remainingPayment <= 0) {
+                $this->equbRepository->update($equb->id, ['status' => 'Deactive']);
+            }
+
+            Log::info('Payment processed successfully:', $payment->toArray());
+
+            return response()->json(['code' => 200, 'message' => 'You have successfully paid!'], 200);
+
+        } catch (\Exception $e) {
+            Log::error('Payment processing error:', ['error' => $e->getMessage()]);
+
+            return response()->json([
+                'code'    => 500,
+                'message' => 'Unable to process your request, please try again!',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
+    }
+    private function calculateCreditAndBalance($payment, $equb, $amountPaid)
+    {
+        $equbAmount = $equb->amount;
+        $previousCredit = $this->paymentRepository->getTotalCredit($equb->id) ?? 0;
+        $availableBalance = $this->paymentRepository->getTotalBalance($equb->id) ?? 0;
+
+        // Adjust balance and credit based on payment
+        if ($amountPaid > $equbAmount) {
+            $excessAmount = $amountPaid - $equbAmount;
+            if ($previousCredit > 0) {
+                $remainingCredit = max(0, $previousCredit - $excessAmount);
+                $availableBalance += ($previousCredit - $remainingCredit);
+            } else {
+                $remainingCredit = 0;
+                $availableBalance += $excessAmount;
+            }
+        } elseif ($amountPaid == $equbAmount) {
+            $remainingCredit = 0;
+            $availableBalance = 0;
+        } else {
+            $remainingCredit = max(0, $equbAmount - $amountPaid);
+            $availableBalance = 0;
+        }
+
+        // Update repositories
+        $this->paymentRepository->updateCredit($equb->id, ['creadit' => $remainingCredit]);
+        $this->paymentRepository->updateBalance($equb->id, ['balance' => $availableBalance]);
+
+        return [$remainingCredit, $availableBalance];
+    }
+
 
 
 
