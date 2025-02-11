@@ -115,7 +115,7 @@ class MemberController extends Controller
             $limit = 50;
             $pageNumber = 1;
             $userData = Auth::user();
-            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance', 'call_center', 'assistant'];
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance', 'call_center', 'assistant', 'collector and finance', 'Customer service supervisor', 'Legal Affair Officers', 'Marketing Manager'];
             $memberRole = ['member'];
             $collector = ['equb_collector'];
             if ($userData && $userData->hasAnyRole($adminRoles)) {
