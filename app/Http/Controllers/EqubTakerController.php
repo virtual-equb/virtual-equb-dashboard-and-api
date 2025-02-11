@@ -55,7 +55,7 @@ class EqubTakerController extends Controller
     {
         try {
             $userData = Auth::user();
-            $adminRole = ['admin', 'general_manager', 'operation_manager', 'it'];
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance',' call_center', 'assistant', 'collector and finance', 'Customer service supervisor', 'Legal Affair Officers', 'Marketing Manager'];
             $member = ['member'];
             $equbcollector = ['equb_collector'];
             if ($userData && $userData->hasAnyRole($adminRole)){

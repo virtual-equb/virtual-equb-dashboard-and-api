@@ -412,7 +412,7 @@ class PaymentController extends Controller
             $userData = Auth::user();
             
             if ($userData) {
-                $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance','call_center'];
+                $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance','call_center', 'assistant', 'collector and finance', 'Customer service supervisor', 'Legal Affair Officers', 'Marketing Manager'];
                 $member = ['member'];
                 $collector = ['equb_collector'];
                 if ($userData->hasAnyRole($adminRoles)) {
