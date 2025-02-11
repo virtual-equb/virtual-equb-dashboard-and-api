@@ -475,7 +475,7 @@ class EqubController extends Controller
     {
         try {
             $userData = Auth::user();
-            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance','call_center'];
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance', 'call_center', 'assistant', 'collector and finance', 'Customer service supervisor', 'Legal Affair Officers', 'Marketing Manager'];
             $memberRole = ['member'];
             $collectorRole = ['equb_collector'];
          //   $userData = Auth::user();
