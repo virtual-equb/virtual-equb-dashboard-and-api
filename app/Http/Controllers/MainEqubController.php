@@ -128,7 +128,7 @@ class MainEqubController extends Controller
             'active' => 'required',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Added image validation
         ]);
-   // dd($validatedData);
+        // dd($validatedData);
         // Find the MainEqub model by ID or fail
         $equb = MainEqub::findOrFail($id);
     
@@ -152,14 +152,20 @@ class MainEqubController extends Controller
     public function destroy($id)
     {
         try {
-            $mainEqub = MainEqub::findOrFail($id);
-            $mainEqub->delete(); // Delete the Main Equb record
+            $mainEqub = MainEqub::find($id);
 
-            return redirect()->route('mainEqubs.index')->with('success', 'Main Equb deleted successfully.');
-        } catch (Exception $ex) {
-            $msg = "Unable to delete the Main Equb, please try again!";
-            Session::flash('error', $msg);
-            return back();
+            if (!$mainEqub) {
+                return response()->json(['message' => 'Equb not found.!']);
+            }
+
+            if ($mainEqub['active'] == '1') {
+                return response()->json(['message' => 'Unable to delete active Equb.!']);
+            }
+
+            // $mainEqub->delete();
+            return response()->json(['message' => 'Main Equb deleted successfully.!']);
+        } catch (\Exception $ex) {
+            return back()->with('error', 'Unable to delete the Main Equb, please try again!');
         }
     }
 }

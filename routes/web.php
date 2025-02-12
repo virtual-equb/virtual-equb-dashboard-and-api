@@ -362,7 +362,7 @@ Route::middleware([
           Route::put('{id}', [MainEqubController::class, 'update'])->name('mainEqubs.update');
         
           // Delete a main equb
-          Route::delete('{id}', [MainEqubController::class, 'delete'])->name('mainEqubs.destroy');
+          Route::delete('{id}', [MainEqubController::class, 'destroy'])->name('mainEqubs.destroy');
     });
     Route::middleware(['web','api','auth'])->group(function () {
         // Route to create a new permission
