@@ -101,7 +101,7 @@
                                                               onclick="statusChange({{ $item }})"
                                                               style="margin-right:10px;" id="statuss"
                                                               name="statuss"><i class="fab fa-shopware"></i>
-                                                              <?php if ($item->status == 'Active') {
+                                                              <?php if ($item->status == "Active") {
                                                                   echo 'Deactivate';
                                                               } else {
                                                                   echo 'Activate';

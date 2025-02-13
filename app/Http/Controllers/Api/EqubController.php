@@ -57,10 +57,10 @@ class EqubController extends Controller
         $this->title = "Virtual Equb - Equb";
 
         // Guard Permissions
-        $this->middleware('api_permission_check:update equb', ['only' => ['update', 'edit', 'updateStatus']]);
-        $this->middleware('api_permission_check:delete equb', ['only' => ['destroy']]);
-        $this->middleware('api_permission_check:view equb', ['only' => ['index', 'show', 'create']]);
-        $this->middleware('api_permission_check:create equb', ['only' => ['store', 'create']]);
+        // $this->middleware('api_permission_check:update equb', ['only' => ['update', 'edit', 'updateStatus']]);
+        // $this->middleware('api_permission_check:delete equb', ['only' => ['destroy']]);
+        // $this->middleware('api_permission_check:view equb', ['only' => ['index', 'show', 'create']]);
+        // $this->middleware('api_permission_check:create equb', ['only' => ['store', 'create']]);
     }
     /**
      * Get All Equbs
