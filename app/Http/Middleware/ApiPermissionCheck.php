@@ -17,19 +17,19 @@ class ApiPermissionCheck
      */
     public function handle(Request $request, Closure $next, $permission)
     {
-        $user = Auth::guard('api')->user();
+        // $user = Auth::guard('api')->user();
 
-        if (!$user || !$user->can($permission)) {
-            Auth::guard('api')->logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
+        // if (!$user || !$user->can($permission)) {
+        //     Auth::guard('api')->logout();
+        //     $request->session()->invalidate();
+        //     $request->session()->regenerateToken();
 
-            return response()->json([
-                'message' => 'You do not have permission to access this resource.',
-                'code' => 403,
-            ], 403);
-        }
+        //     return response()->json([
+        //         'message' => 'You do not have permission to access this resource.',
+        //         'code' => 403,
+        //     ], 403);
+        // }
 
-        return $next($request);
+        // return $next($request);
     }
 }
