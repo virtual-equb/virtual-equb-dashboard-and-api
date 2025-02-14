@@ -990,10 +990,13 @@ class EqubController extends Controller
             $timeline = $request->input('timeline');
             $lotteryDate = $request->input('lottery_date');
             $memberId = $request->input('member_id');
+            $main_equb_id = $request->input('main_equb_id');
 
             // Format end date if needed
             if (!$this->isDateInYMDFormat($endDate)) {
                 try {
+                    $carbonDate = Carbon::createFromFormat('m/d/Y', $endDate);
+                    $endDate = $carbonDate->format('Y-m-d');
 
                 } catch (Exception $e) {
                     Log::error("Date parsing error for endDate: " . $e->getMessage());
@@ -1007,6 +1010,7 @@ class EqubController extends Controller
             if ($type === 'Manual') {
                 $equbType = EqubType::create([
                     'name' => 'Manual Equb -' . now()->timestamp,
+                    'main_equb_id' => $main_equb_id,
                     'round' => 1,
                     'amount' => $amount,
                     'total_amount' => $totalAmount,
@@ -1022,7 +1026,6 @@ class EqubController extends Controller
                     'end_date' => $endDate,
                     'remaining_quota' => 0,
                     'image' => null,
-                    'main_equb_id' => null,
                     'lottery_round' => 0
                 ]);
             } else {
