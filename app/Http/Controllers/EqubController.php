@@ -783,101 +783,190 @@ class EqubController extends Controller
             return back();
         }
     }
-    // public function store1(Request $request) 
-    // {
-    //     try {
-    //         $userData = Auth::user();
+    public function store1(Request $request) 
+    {
+        try {
+            $userData = Auth::user();
 
-    //         $rules = [
-    //             'type' => 'required|in:Manual,Automatic',
-    //             'amount' => ['required', function ($attribute, $value, $fail) use ($request) {
-    //                 if ($request->input('type') === 'Manual' && ($value < 500 || $value > 15000)) {
-    //                     $fail("The {$attribute} must be between 500 and 15000.");
-    //                 }
-    //             }],
-    //             'total_amount' => 'required',
-    //             'start_date' => 'required|date_format:Y-m-d',
-    //         ];
-    //         if ($request->input('type') === 'Automatic') {
-    //             $rules['equb_type_id'] = 'required|exists:equb_types,id';
-    //         }
-    //         $this->validate($request, $rules);
+            $rules = [
+                'type' => 'required|in:Manual,Automatic',
+                'amount' => ['required', function ($attribute, $value, $fail) use ($request) {
+                    if ($request->input('type') === 'Manual' && ($value < 500 || $value > 15000)) {
+                        $fail("The {$attribute} must be between 500 and 15000.");
+                    }
+                }],
+                'total_amount' => 'required',
+                'start_date' => 'required|date_format:Y-m-d',
+            ];
+            if ($request->input('type') === 'Automatic') {
+                $rules['equb_type_id'] = 'required|exists:equb_types,id';
+            }
+            $this->validate($request, $rules);
 
-    //         $type = $request->input('type');
-    //         $amount = $request->input('amount');
-    //         $totalAmount = $request->input('total_amount');
-    //         $startDate = $request->input('start_date');
-    //         $endDate = $request->input('end_date');
-    //         $timeline = $request->input('timeline');
-    //         $lotteryDate = $request->input('lottery_date');
-    //         $memberId = $request->input('member_id');
-    //         $main_equb_id = $request->input('main_equb_id');
+            $type = $request->input('type');
+            $amount = $request->input('amount');
+            $totalAmount = $request->input('total_amount');
+            $startDate = $request->input('start_date');
+            $endDate = $request->input('end_date');
+            $timeline = $request->input('timeline');
+            $lotteryDate = $request->input('lottery_date');
+            $memberId = $request->input('member_id');
+            $main_equb_id = $request->input('main_equb_id');
 
-    //         // Format end date if needed
-    //         if (!$this->isDateInYMDFormat($endDate)) {
-    //             try {
-    //                 $carbonDate = Carbon::createFromFormat('m/d/Y', $endDate);
-    //                 $endDate = $carbonDate->format('Y-m-d');
-    //             } catch (Exception $ex) {
-    //                 $msg = "Invalid date format for end date!";
-    //                 $type = 'error';
-    //                 Session::flash($type, $msg);
-    //             }
-    //         }
-    //         // Handle Manual Equb (Create new EqubType)
-    //         if ($type === 'Manual') {
-    //             $equbType = EqubType::create([
-    //                 'name' => 'Manual Equb -' . now()->timestamp,
-    //                 'main_equb_id' => $main_equb_id,
-    //                 'round' => 1,
-    //                 'amount' => $amount,
-    //                 'total_amount' => $totalAmount,
-    //                 'total_members' => 0,
-    //                 'expected_members' => 0,
-    //                 'status' => 'active',
-    //                 'remark' => 'Auto-created Manual Equb',
-    //                 'rote' => 'Daily',
-    //                 'type' => 'Manual',
-    //                 'terms' => 'Standard terms apply',
-    //                 'quota' => 0,
-    //                 'start_date' => $startDate,
-    //                 'end_date' => $endDate,
-    //                 'remaining_quota' => 0,
-    //                 'image' => null,
-    //                 'lottery_round' => 0
-    //             ]);
-    //         } else {
-    //             $equbType = EqubType::find($request->input('equb_type_id'));
-    //             if (!$equbType) {
-    //                 $msg = "Equb type not found";
-    //                 $type = 'error';
-    //                 Session::flash($type, $msg);
-    //             }
-    //         }
+            // Format end date if needed
+            if (!$this->isDateInYMDFormat($endDate)) {
+                try {
+                    $carbonDate = Carbon::createFromFormat('m/d/Y', $endDate);
+                    $endDate = $carbonDate->format('Y-m-d');
+                } catch (Exception $ex) {
+                    $msg = "Invalid date format for end date!";
+                    $type = 'error';
+                    Session::flash($type, $msg);
+                }
+            }
+            // Handle Manual Equb (Create new EqubType)
+            if ($type === 'Manual') {
+                $equbType = EqubType::create([
+                    'name' => 'Manual Equb -' . now()->timestamp,
+                    'main_equb_id' => $main_equb_id,
+                    'round' => 1,
+                    'amount' => $amount,
+                    'total_amount' => $totalAmount,
+                    'total_members' => 0,
+                    'expected_members' => 0,
+                    'status' => 'active',
+                    'remark' => 'Auto-created Manual Equb',
+                    'rote' => 'Daily',
+                    'type' => 'Manual',
+                    'terms' => 'Standard terms apply',
+                    'quota' => 0,
+                    'start_date' => $startDate,
+                    'end_date' => $endDate,
+                    'remaining_quota' => 0,
+                    'image' => null,
+                    'lottery_round' => 0
+                ]);
+            } else {
+                $equbType = EqubType::find($request->input('equb_type_id'));
+                if (!$equbType) {
+                    $msg = "Equb type not found";
+                    $type = 'error';
+                    Session::flash($type, $msg);
+                }
+            }
 
-    //         // Prevent duplicate equb registration for the same member
-    //         if (Equb::where('equb_type_id', $equbType->id)->where('member_id', $memberId)->exists()) {
-    //             $msg = "Equb already exists for this member!";
-    //             $type = "error";
-    //             Session::flash($type, $msg);
-    //         }
+            // Prevent duplicate equb registration for the same member
+            if (Equb::where('equb_type_id', $equbType->id)->where('member_id', $memberId)->exists()) {
+                $msg = "Equb already exists for this member!";
+                $type = "error";
+                Session::flash($type, $msg);
+            }
 
-    //         // Automatically calculate lottery date for 'Manual' Equb
-    //         if ($type === 'Manual') {
-    //             if (!$lotteryDate) {
-    //                 $lotteryDate = Carbon::parse($startDate)->addDays(45)->format('Y-m-d');
-    //             }
+            // Automatically calculate lottery date for 'Manual' Equb
+            if ($type === 'Manual') {
+                if (!$lotteryDate) {
+                    $lotteryDate = Carbon::parse($startDate)->addDays(45)->format('Y-m-d');
+                }
 
-    //             // check for existing lotteries on the same date
-    //             if (Equb::where('lottery_date'))
-    //         }
+                // check for existing lotteries on the same date
+                if (Equb::where('lottery_date', $lotteryDate)->exists()) {
+                    $msg = "Lottery date already exists for another equb.";
+                    $type = "error";
+                    Session::flash($type, $msg);
+                }
 
-    //     } catch (Exception $ex) {
-    //         return response()->json([
-    //             'error' => $ex->getMessage()
-    //         ], 500);
-    //     }
-    // }
+                // Ensure sufficient funds before finalizing lottery date
+                $cashProjection = Equb::whereDate('lottery_date', $lotteryDate)->sum('amount');
+                if ($cashProjection < $totalAmount) {
+                    // if insufficient funds, extend the lottery date
+                    $lotteryDate = Carbon::parse($lotteryDate)->addDay()->format('Y-m-d');
+                }
+            }
+
+            // Create equb entry
+            $equbData = [
+                'member_id' => $memberId,
+                'equb_type_id' => $equbType->id,
+                'amount' => $amount,
+                'total_amount' => $totalAmount,
+                'start_date' => $startDate,
+                'timeline' => $timeline,
+                'end_date' => $endDate,
+                'lottery_date' => $lotteryDate
+            ];
+
+            $equb = $this->equbRepository->create($equbData);
+
+            if ($equb) {
+                // if automatic, update equbType member count
+                if ($type === 'Automatic') {
+                    $equbType->decrement('remaining_quota', 1);
+                    $equbType->increment('total_members', 1);
+                }
+
+                // Register Equb taker
+                $this->equbTakerRepository->create([
+                    'member_id' => $memberId,
+                    'equb_id' => $equb->id,
+                    'payment_type' => '',
+                    'amount' => $totalAmount,
+                    'remaining_amount' => $totalAmount,
+                    'status' => 'unpaid',
+                    'paid_by' => '',
+                    'total_payment' => 0,
+                    'remaining_payment' => $totalAmount,
+                    'cheque_amount' => '',
+                    'cheque_bank_name' => '',
+                    'cheque_description' => '',
+                ]);
+                 // Log activity
+                $this->activityLogRepository->createActivityLog([
+                    'type' => 'equbs',
+                    'type_id' => $equb->id,
+                    'action' => 'created',
+                    'user_id' => $userData->id,
+                    'username' => $userData->name,
+                    'role' => $userData->role
+                ]);
+
+                // Send Notifications for members
+                $shortcode = config('key.SHORT_CODE');
+                $member = Member::find($memberId);
+                if ($member && $member->phone) {
+                    $memberMessage = "Dear {$member->full_name}, Your Equb has been successfully registered. Our customer service will contact you soon. For more information call {$shortcode}";
+                    $this->sendSms($member->phone, $memberMessage);
+                }
+
+                // Finance Sms
+                $finances = User::role('finance')->get();
+                foreach ($finances as $finance) {
+                    if ($finance->phone_number) {
+                        $financeMessage = "Finance Alert: A New Member {$member->full_name}, has joined Equb titled {$equb->equbType->name}. Please review the details.";
+                        $this->sendSms($finance->phone_number, $financeMessage);
+                    }
+                }
+
+                // Call center sms
+                $call_centers = User::role('call_center')->get();
+                foreach($call_centers as $finance) {
+                    if ($finance->phone_number) {
+                        $financeMessage = "Call Center Alert: A New Member {$member->full_name}, has joined Equb titled {$equb->equbType->name}. Please review the details.";
+                        $this->sendSms($finance->phone_number, $financeMessage);
+                    }
+                }
+                
+                $msg = "Equb has been registered successfully!";
+                $type = 'success';
+                Session::flash($type, $msg);
+                return redirect('/member');
+            }
+
+        } catch (Exception $ex) {
+            return response()->json([
+                'error' => $ex->getMessage()
+            ], 500);
+        }
+    }
     public function isDateInYMDFormat($dateString)
     {
         try {
