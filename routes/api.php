@@ -159,7 +159,7 @@ Route::prefix('equb')->group(function () {
     Route::get('/equb-lottery-detail/{lottery_date}', [EqubController::class, 'getReservedLotteryDate'])->name('showAllEqub');
     Route::get('/equb-register', [EqubController::class, 'create'])->name('creatEqub');
     Route::get('/show-equb/{id}', [EqubController::class, 'show'])->name('showAllEkub');
-    Route::post('/equb-register', [EqubController::class, 'store'])->name('registerEqub');
+    Route::post('/equb-register', [EqubController::class, 'store1'])->name('registerEqub');
     Route::post('/equb-update/{id}', [EqubController::class, 'update'])->name('updateEqub');
     Route::put('/equbStatus-update/{id}', [EqubController::class, 'updateStatus'])->name('updateEqubStatus');
     Route::delete('/equb-delete/{id}', [EqubController::class, 'destroy'])->name('deleteEqub');
