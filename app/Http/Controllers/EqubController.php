@@ -753,101 +753,101 @@ class EqubController extends Controller
             return back();
         }
     }
-    public function store1(Request $request) 
-    {
-        try {
-            $userData = Auth::user();
+    // public function store1(Request $request) 
+    // {
+    //     try {
+    //         $userData = Auth::user();
 
-            $rules = [
-                'type' => 'required|in:Manual,Automatic',
-                'amount' => ['required', function ($attribute, $value, $fail) use ($request) {
-                    if ($request->input('type') === 'Manual' && ($value < 500 || $value > 15000)) {
-                        $fail("The {$attribute} must be between 500 and 15000.");
-                    }
-                }],
-                'total_amount' => 'required',
-                'start_date' => 'required|date_format:Y-m-d',
-            ];
-            if ($request->input('type') === 'Automatic') {
-                $rules['equb_type_id'] = 'required|exists:equb_types,id';
-            }
-            $this->validate($request, $rules);
+    //         $rules = [
+    //             'type' => 'required|in:Manual,Automatic',
+    //             'amount' => ['required', function ($attribute, $value, $fail) use ($request) {
+    //                 if ($request->input('type') === 'Manual' && ($value < 500 || $value > 15000)) {
+    //                     $fail("The {$attribute} must be between 500 and 15000.");
+    //                 }
+    //             }],
+    //             'total_amount' => 'required',
+    //             'start_date' => 'required|date_format:Y-m-d',
+    //         ];
+    //         if ($request->input('type') === 'Automatic') {
+    //             $rules['equb_type_id'] = 'required|exists:equb_types,id';
+    //         }
+    //         $this->validate($request, $rules);
 
-            $type = $request->input('type');
-            $amount = $request->input('amount');
-            $totalAmount = $request->input('total_amount');
-            $startDate = $request->input('start_date');
-            $endDate = $request->input('end_date');
-            $timeline = $request->input('timeline');
-            $lotteryDate = $request->input('lottery_date');
-            $memberId = $request->input('member_id');
-            $main_equb_id = $request->input('main_equb_id');
+    //         $type = $request->input('type');
+    //         $amount = $request->input('amount');
+    //         $totalAmount = $request->input('total_amount');
+    //         $startDate = $request->input('start_date');
+    //         $endDate = $request->input('end_date');
+    //         $timeline = $request->input('timeline');
+    //         $lotteryDate = $request->input('lottery_date');
+    //         $memberId = $request->input('member_id');
+    //         $main_equb_id = $request->input('main_equb_id');
 
-            // Format end date if needed
-            if (!$this->isDateInYMDFormat($endDate)) {
-                try {
-                    $carbonDate = Carbon::createFromFormat('m/d/Y', $endDate);
-                    $endDate = $carbonDate->format('Y-m-d');
-                } catch (Exception $ex) {
-                    $msg = "Invalid date format for end date!";
-                    $type = 'error';
-                    Session::flash($type, $msg);
-                }
-            }
-            // Handle Manual Equb (Create new EqubType)
-            if ($type === 'Manual') {
-                $equbType = EqubType::create([
-                    'name' => 'Manual Equb -' . now()->timestamp,
-                    'main_equb_id' => $main_equb_id,
-                    'round' => 1,
-                    'amount' => $amount,
-                    'total_amount' => $totalAmount,
-                    'total_members' => 0,
-                    'expected_members' => 0,
-                    'status' => 'active',
-                    'remark' => 'Auto-created Manual Equb',
-                    'rote' => 'Daily',
-                    'type' => 'Manual',
-                    'terms' => 'Standard terms apply',
-                    'quota' => 0,
-                    'start_date' => $startDate,
-                    'end_date' => $endDate,
-                    'remaining_quota' => 0,
-                    'image' => null,
-                    'lottery_round' => 0
-                ]);
-            } else {
-                $equbType = EqubType::find($request->input('equb_type_id'));
-                if (!$equbType) {
-                    $msg = "Equb type not found";
-                    $type = 'error';
-                    Session::flash($type, $msg);
-                }
-            }
+    //         // Format end date if needed
+    //         if (!$this->isDateInYMDFormat($endDate)) {
+    //             try {
+    //                 $carbonDate = Carbon::createFromFormat('m/d/Y', $endDate);
+    //                 $endDate = $carbonDate->format('Y-m-d');
+    //             } catch (Exception $ex) {
+    //                 $msg = "Invalid date format for end date!";
+    //                 $type = 'error';
+    //                 Session::flash($type, $msg);
+    //             }
+    //         }
+    //         // Handle Manual Equb (Create new EqubType)
+    //         if ($type === 'Manual') {
+    //             $equbType = EqubType::create([
+    //                 'name' => 'Manual Equb -' . now()->timestamp,
+    //                 'main_equb_id' => $main_equb_id,
+    //                 'round' => 1,
+    //                 'amount' => $amount,
+    //                 'total_amount' => $totalAmount,
+    //                 'total_members' => 0,
+    //                 'expected_members' => 0,
+    //                 'status' => 'active',
+    //                 'remark' => 'Auto-created Manual Equb',
+    //                 'rote' => 'Daily',
+    //                 'type' => 'Manual',
+    //                 'terms' => 'Standard terms apply',
+    //                 'quota' => 0,
+    //                 'start_date' => $startDate,
+    //                 'end_date' => $endDate,
+    //                 'remaining_quota' => 0,
+    //                 'image' => null,
+    //                 'lottery_round' => 0
+    //             ]);
+    //         } else {
+    //             $equbType = EqubType::find($request->input('equb_type_id'));
+    //             if (!$equbType) {
+    //                 $msg = "Equb type not found";
+    //                 $type = 'error';
+    //                 Session::flash($type, $msg);
+    //             }
+    //         }
 
-            // Prevent duplicate equb registration for the same member
-            if (Equb::where('equb_type_id', $equbType->id)->where('member_id', $memberId)->exists()) {
-                $msg = "Equb already exists for this member!";
-                $type = "error";
-                Session::flash($type, $msg);
-            }
+    //         // Prevent duplicate equb registration for the same member
+    //         if (Equb::where('equb_type_id', $equbType->id)->where('member_id', $memberId)->exists()) {
+    //             $msg = "Equb already exists for this member!";
+    //             $type = "error";
+    //             Session::flash($type, $msg);
+    //         }
 
-            // Automatically calculate lottery date for 'Manual' Equb
-            if ($type === 'Manual') {
-                if (!$lotteryDate) {
-                    $lotteryDate = Carbon::parse($startDate)->addDays(45)->format('Y-m-d');
-                }
+    //         // Automatically calculate lottery date for 'Manual' Equb
+    //         if ($type === 'Manual') {
+    //             if (!$lotteryDate) {
+    //                 $lotteryDate = Carbon::parse($startDate)->addDays(45)->format('Y-m-d');
+    //             }
 
-                // check for existing lotteries on the same date
-                if (Equb::where('lottery_date'))
-            }
+    //             // check for existing lotteries on the same date
+    //             if (Equb::where('lottery_date'))
+    //         }
 
-        } catch (Exception $ex) {
-            return response()->json([
-                'error' => $ex->getMessage()
-            ], 500);
-        }
-    }
+    //     } catch (Exception $ex) {
+    //         return response()->json([
+    //             'error' => $ex->getMessage()
+    //         ], 500);
+    //     }
+    // }
     public function isDateInYMDFormat($dateString)
     {
         try {
