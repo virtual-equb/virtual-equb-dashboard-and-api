@@ -1006,7 +1006,7 @@ class PaymentController extends Controller
                     $payment->collecter = $collector->id;
                     $payment->creadit = $totalCredit;
                     $payment->balance = $availableBalance;
-                    $payment->payment_type = $paymentType;
+                    $payment->payment_type = 'telebirr';
                     $payment->save();
 
                     Log::info($telebirrObj);
