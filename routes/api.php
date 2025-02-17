@@ -51,6 +51,7 @@ use App\Http\Controllers\EqubTypeController as ControllersEqubTypeController;
 Route::post('/registermember', [CbeMiniAppController::class, 'register']);
 Route::post('/loginmember', [CbeMiniAppController::class, 'login']);
 Route::get('/getmainEqub', [CbeMiniAppController::class, 'mainEqub']);
+Route::post('/joinequb', [CbeMiniAppController::class, 'joinEqub']);
 Route::post('/process-payment', [CbeMiniAppController::class, 'processPayment'])->name('cbe.initialize');
 Route::post('/callback', [CbeMiniAppController::class, 'paymentCallback'])->name('cbe.callback');
 
