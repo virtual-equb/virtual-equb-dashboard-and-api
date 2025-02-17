@@ -841,91 +841,142 @@ class PaymentController extends Controller
                
 
                 if ($request['trade_status'] == 'Completed') {
+                    // $equbId = $payment->equb_id;
+                    // $amount = $payment->amount;
+                    // $equb = Equb::where('id', $equbId)->first();
+    
+                    // $equb_amount = $equb->amount;
+                    // $credit = $equb_amount - $amount;
+                    // $member = $payment->member_id;
+                    // $equb_id = $equbId;
+                    // $paymentType = "telebirr";
+                    // if ($credit <= 0) {
+                    //     $credit = 0;
+                    // }
+                    // $totalCredit = $this->paymentRepository->getTotalCredit($equb_id);
+                    // if ($totalCredit == null) {
+                    //     $totalCredit = 0;
+                    // }
+                    // $creditData = [
+                    //     'creadit' => 0
+                    // ];
+                    // $this->paymentRepository->updateCredit($equb_id, $creditData);
+                    // $lastTc = $totalCredit;
+                    // $totalCredit = $credit + $totalCredit;
+                    // $tc = $totalCredit;
+                    // $equbAmount = $this->equbRepository->getEqubAmount($member, $equb_id);
+                    // $availableBalance = $this->paymentRepository->getTotalBalance($equb_id);
+                    // $balanceData = [
+                    //     'balance' => 0
+                    // ];
+                    // $this->paymentRepository->updateBalance($equb_id, $balanceData);
+                    // if ($availableBalance == null) {
+                    //     $availableBalance = 0;
+                    // }
+                    // $at = $amount;
+                    // $amount = $availableBalance + $amount;
+                    // Log::info($payment);
+    
+                    // if ($amount > $equbAmount) {
+                    //     if ($totalCredit > 0) {
+                    //         if ($totalCredit < $amount) {
+                    //             if ($at < $equbAmount) {
+                    //                 $availableBalance = $availableBalance - $totalCredit;
+                    //                 $totalCredit = 0;
+                    //             } elseif ($at > $equbAmount) {
+                    //                 $diff = $at - $equbAmount;
+                    //                 $totalCredit = $totalCredit - $diff;
+                    //                 $availableBalance = $availableBalance + $diff - $tc;
+                    //                 $totalCredit = 0;
+                    //             } elseif ($at = $equbAmount) {
+                    //                 $availableBalance = $availableBalance;
+                    //             }
+                    //             $amount = $at;
+                    //         } else {
+                    //             $amount = $at;
+                    //             $totalCredit = $totalCredit;
+                    //         }
+                    //     } else {
+                    //         $totalCredit = $totalCredit;
+                    //         if ($at < $equbAmount) {
+                    //             $availableBalance = $availableBalance - $totalCredit;
+                    //         } elseif ($at > $equbAmount) {
+                    //             $diff = $at - $equbAmount;
+                    //             $totalCredit = $totalCredit - $diff;
+                    //             $availableBalance = $availableBalance + $diff;
+                    //             $totalCredit = 0;
+                    //         } elseif ($at = $equbAmount) {
+                    //             $availableBalance = $availableBalance;
+                    //         }
+                    //         $amount = $at;
+                    //     }
+                    // } elseif ($amount == $equbAmount) {
+                    //     $amount = $at;
+                    //     $totalCredit = $lastTc;
+                    //     $availableBalance = 0;
+                    // } elseif ($amount < $equbAmount) {
+                    //     if ($lastTc == 0) {
+                    //         $totalCredit = $equbAmount - $amount;
+                    //         $availableBalance = 0;
+                    //         $amount = $at;
+                    //     } else {
+                    //         $totalCredit = $totalCredit;
+                    //         $availableBalance = 0;
+                    //         $amount = $at;
+                    //     }
+                    // }
                     $equbId = $payment->equb_id;
-                    $amount = $payment->amount;
-                    $equb = Equb::where('id', $equbId)->first();
-    
-                    $equb_amount = $equb->amount;
-                    $credit = $equb_amount - $amount;
-                    $member = $payment->member_id;
-                    $equb_id = $equbId;
-                    $paymentType = "telebirr";
-                    if ($credit <= 0) {
-                        $credit = 0;
-                    }
-                    $totalCredit = $this->paymentRepository->getTotalCredit($equb_id);
-                    if ($totalCredit == null) {
-                        $totalCredit = 0;
-                    }
-                    $creditData = [
-                        'creadit' => 0
-                    ];
-                    $this->paymentRepository->updateCredit($equb_id, $creditData);
-                    $lastTc = $totalCredit;
-                    $totalCredit = $credit + $totalCredit;
-                    $tc = $totalCredit;
-                    $equbAmount = $this->equbRepository->getEqubAmount($member, $equb_id);
-                    $availableBalance = $this->paymentRepository->getTotalBalance($equb_id);
-                    $balanceData = [
-                        'balance' => 0
-                    ];
-                    $this->paymentRepository->updateBalance($equb_id, $balanceData);
-                    if ($availableBalance == null) {
-                        $availableBalance = 0;
-                    }
-                    $at = $amount;
-                    $amount = $availableBalance + $amount;
-                    Log::info($payment);
-    
-                    if ($amount > $equbAmount) {
-                        if ($totalCredit > 0) {
-                            if ($totalCredit < $amount) {
-                                if ($at < $equbAmount) {
-                                    $availableBalance = $availableBalance - $totalCredit;
-                                    $totalCredit = 0;
-                                } elseif ($at > $equbAmount) {
-                                    $diff = $at - $equbAmount;
-                                    $totalCredit = $totalCredit - $diff;
-                                    $availableBalance = $availableBalance + $diff - $tc;
-                                    $totalCredit = 0;
-                                } elseif ($at = $equbAmount) {
-                                    $availableBalance = $availableBalance;
-                                }
-                                $amount = $at;
-                            } else {
-                                $amount = $at;
-                                $totalCredit = $totalCredit;
-                            }
-                        } else {
-                            $totalCredit = $totalCredit;
+                $memberId = $payment->member_id;
+                $amount = $payment->amount;
+                $credit = $payment->creadit;
+
+                // Compute total credit and balance
+                $totalCredit = $this->paymentRepository->getTotalCredit($equbId) ?? 0;
+                $equbAmount = $this->equbRepository->getEqubAmount($memberId, $equbId);
+                $availableBalance = $this->paymentRepository->getTotalBalance($equbId) ?? 0;
+
+                $creditData = ['creadit' => 0];
+                $this->paymentRepository->updateCredit($equbId, $creditData);
+
+                $lastTc = $totalCredit;
+                $totalCredit += $credit;
+
+                $balanceData = ['balance' => 0];
+                $this->paymentRepository->updateBalance($equbId, $balanceData);
+
+                $at = $amount;
+                $amount += $availableBalance;
+
+                if ($amount > $equbAmount) {
+                    if ($totalCredit > 0) {
+                        if ($totalCredit < $amount) {
                             if ($at < $equbAmount) {
-                                $availableBalance = $availableBalance - $totalCredit;
+                                $availableBalance -= $totalCredit;
+                                $totalCredit = 0;
                             } elseif ($at > $equbAmount) {
                                 $diff = $at - $equbAmount;
-                                $totalCredit = $totalCredit - $diff;
-                                $availableBalance = $availableBalance + $diff;
+                                $totalCredit -= $diff;
+                                $availableBalance = ($availableBalance + $diff) - $totalCredit;
                                 $totalCredit = 0;
-                            } elseif ($at = $equbAmount) {
-                                $availableBalance = $availableBalance;
                             }
-                            $amount = $at;
                         }
-                    } elseif ($amount == $equbAmount) {
                         $amount = $at;
-                        $totalCredit = $lastTc;
-                        $availableBalance = 0;
-                    } elseif ($amount < $equbAmount) {
-                        if ($lastTc == 0) {
-                            $totalCredit = $equbAmount - $amount;
-                            $availableBalance = 0;
-                            $amount = $at;
-                        } else {
-                            $totalCredit = $totalCredit;
-                            $availableBalance = 0;
-                            $amount = $at;
-                        }
                     }
-                    $memberData = Member::where('id', $member)->first();
+                } elseif ($amount == $equbAmount) {
+                    $amount = $at;
+                    $totalCredit = $lastTc;
+                    $availableBalance = 0;
+                } elseif ($amount < $equbAmount) {
+                    if ($lastTc == 0) {
+                        $totalCredit = $equbAmount - $amount;
+                        $availableBalance = 0;
+                    } else {
+                        $totalCredit = $totalCredit;
+                        $availableBalance = 0;
+                    }
+                    $amount = $at;
+                }
+                    $memberData = Member::where('id', $memberId)->first();
                     $collector = User::where('name', 'telebirr')->first();
                     $tradeDt = $request['notify_time'];
 
