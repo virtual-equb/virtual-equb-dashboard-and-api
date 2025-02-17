@@ -969,6 +969,41 @@ class PaymentController extends Controller
                     $this->paymentRepository->updateCredit($equb_id, ['credit' => $credit]);
                     $this->paymentRepository->updateBalance($equb_id, ['balance' => $availableBalance]);
 
+                    if ($amount > $equbAmount) {
+                        if ($totalCredit > 0) {
+                            if ($totalCredit < $amount) {
+                                if ($at < $equbAmount) {
+                                    $availableBalance -= $totalCredit;
+                                    $totalCredit = 0;
+                                } elseif ($at > $equbAmount) {
+                                    $diff = $at - $equbAmount;
+                                    $totalCredit = max(0, $totalCredit - $diff);
+                                    $availableBalance += ($diff - $tc); // Now tc is defined
+                                }
+                                $amount = $at;
+                            }
+                        } else {
+                            if ($at < $equbAmount) {
+                                $availableBalance -= $totalCredit;
+                            } elseif ($at > $equbAmount) {
+                                $diff = $at - $equbAmount;
+                                $totalCredit = max(0, $totalCredit - $diff);
+                                $availableBalance += $diff;
+                            }
+                            $amount = $at;
+                        }
+                    } elseif ($amount == $equbAmount) {
+                        $amount = $at;
+                        $totalCredit = $lastTc;
+                        $availableBalance = 0;
+                    } elseif ($amount < $equbAmount) {
+                        if ($lastTc == 0) {
+                            $totalCredit = $equbAmount - $amount;
+                            $availableBalance = 0;
+                        }
+                        $amount = $at;
+                    }
+
                     $memberData = Member::where('id', $member)->first();
                     $collector = User::where('name', 'telebirr')->first();
                     $tradeDt = $request['notify_time'];
