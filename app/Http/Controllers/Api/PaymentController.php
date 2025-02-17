@@ -925,64 +925,49 @@ class PaymentController extends Controller
                     //         $amount = $at;
                     //     }
                     // }
+
                     $equbId = $payment->equb_id;
                     $amount = $payment->amount;
                     $equb = Equb::where('id', $equbId)->first();
 
                     $equb_amount = $equb->amount;
-                    $credit = max(0, $equb_amount - $amount); // Ensure credit is never negative
                     $member = $payment->member_id;
                     $equb_id = $equbId;
                     $paymentType = "telebirr";
 
+                    // Get existing balance and total credit
                     $totalCredit = $this->paymentRepository->getTotalCredit($equb_id) ?? 0;
-                    $lastTc = $totalCredit; // Store the last totalCredit before modification
-                    $tc = $lastTc; // Define $tc to avoid undefined variable error
+                    $lastTc = $totalCredit;
+                    $tc = $lastTc; 
 
                     $equbAmount = $this->equbRepository->getEqubAmount($member, $equb_id);
                     $availableBalance = $this->paymentRepository->getTotalBalance($equb_id) ?? 0;
 
                     $at = $amount; // Store the original amount before modifications
-                    $amount += $availableBalance; // Update amount with balance
 
-                    // Reset balance & credit before new calculation
-                    $this->paymentRepository->updateCredit($equb_id, ['credit' => 0]);
-                    $this->paymentRepository->updateBalance($equb_id, ['balance' => 0]);
-
-                    if ($amount > $equbAmount) {
-                        if ($totalCredit > 0) {
-                            if ($totalCredit < $amount) {
-                                if ($at < $equbAmount) {
-                                    $availableBalance -= $totalCredit;
-                                    $totalCredit = 0;
-                                } elseif ($at > $equbAmount) {
-                                    $diff = $at - $equbAmount;
-                                    $totalCredit = max(0, $totalCredit - $diff);
-                                    $availableBalance += ($diff - $tc); // Now tc is defined
-                                }
-                                $amount = $at;
-                            }
+                    // First, use the available balance to reduce the required amount
+                    if ($availableBalance > 0) {
+                        if ($availableBalance >= $equbAmount) {
+                            // If balance is enough to cover full payment, reset it
+                            $availableBalance = 0;
+                            $amount = 0;
                         } else {
-                            if ($at < $equbAmount) {
-                                $availableBalance -= $totalCredit;
-                            } elseif ($at > $equbAmount) {
-                                $diff = $at - $equbAmount;
-                                $totalCredit = max(0, $totalCredit - $diff);
-                                $availableBalance += $diff;
-                            }
-                            $amount = $at;
-                        }
-                    } elseif ($amount == $equbAmount) {
-                        $amount = $at;
-                        $totalCredit = $lastTc;
-                        $availableBalance = 0;
-                    } elseif ($amount < $equbAmount) {
-                        if ($lastTc == 0) {
-                            $totalCredit = $equbAmount - $amount;
+                            // Reduce the amount by the balance amount first
+                            $amount -= $availableBalance;
                             $availableBalance = 0;
                         }
-                        $amount = $at;
                     }
+
+                    // Now calculate remaining credit only if amount is still outstanding
+                    if ($amount > $equbAmount) {
+                        $credit = $amount - $equbAmount;
+                    } else {
+                        $credit = 0; // No credit should be stored if full amount is covered
+                    }
+
+                    // Update balance & credit in the database
+                    $this->paymentRepository->updateCredit($equb_id, ['credit' => $credit]);
+                    $this->paymentRepository->updateBalance($equb_id, ['balance' => $availableBalance]);
 
                     $memberData = Member::where('id', $member)->first();
                     $collector = User::where('name', 'telebirr')->first();
