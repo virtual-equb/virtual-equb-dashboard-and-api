@@ -162,7 +162,7 @@ class MainEqubController extends Controller
                 return response()->json(['message' => 'Unable to delete active Equb.!']);
             }
 
-            // $mainEqub->delete();
+            $mainEqub->delete();
             return response()->json(['message' => 'Main Equb deleted successfully.!']);
         } catch (\Exception $ex) {
             return back()->with('error', 'Unable to delete the Main Equb, please try again!');
