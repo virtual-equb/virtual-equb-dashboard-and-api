@@ -738,6 +738,7 @@ class PaymentController extends Controller
     public function initialize(Request $request)
     {
         try {
+            return $request->all();
             $req = $request->all();
             Log::info('from initialize', $req);
             $user = Auth::user();
@@ -1007,9 +1008,6 @@ class PaymentController extends Controller
                             $amount = $at;
                         }
                     }
-
-
-
 
                     $memberData = Member::where('id', $member)->first();
                     $collector = User::where('name', 'telebirr')->first();
