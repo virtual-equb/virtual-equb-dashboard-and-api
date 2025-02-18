@@ -819,7 +819,7 @@ class PaymentController extends Controller
             ]);
         }
     }
-    public function callback1(Request $request)
+    public function callback(Request $request)
     {
         try {
             Log::info('from callback');
@@ -846,7 +846,8 @@ class PaymentController extends Controller
                     $equb = Equb::where('id', $equbId)->first();
     
                     $equb_amount = $equb->amount;
-                    $credit = $equb_amount - $amount;
+                    // $credit = $equb_amount - $amount;
+                    $credit = $payment->creadit;
                     $member = $payment->member_id;
                     $equb_id = $equbId;
                     $paymentType = "telebirr";
@@ -999,7 +1000,7 @@ class PaymentController extends Controller
             ]);
         }
     }
-    public function callback(Request $request)
+    public function callback1(Request $request)
     {
         try {
             Log::info('Telebirr callback received:', $request->all());
