@@ -264,9 +264,13 @@ class PaymentRepository implements IPaymentRepository
         return $this->model->where('equb_id', $id)->pluck('id')->last();
     }
 
+    // public function getTotalCredit($id)
+    // {
+    //     return $this->model->where('equb_id', $id)->pluck('creadit')->last();
+    // }
     public function getTotalCredit($id)
     {
-        return $this->model->where('equb_id', $id)->pluck('creadit')->last();
+        return $this->model->where('equb_id', $id)->pluck('creadit')->slice(-2, 1)->first();
     }
 
     public function getAmount($id)
@@ -274,9 +278,13 @@ class PaymentRepository implements IPaymentRepository
         return $this->model->where('id', $id)->pluck('amount')->first();
     }
 
+    // public function getTotalBalance($id)
+    // {
+    //     return $this->model->where('equb_id', $id)->pluck('balance')->last();
+    // }
     public function getTotalBalance($id)
     {
-        return $this->model->where('equb_id', $id)->pluck('balance')->last();
+        return $this->model->where('equb_id', $id)->pluck('balance')->slice(-2, 1)->first();
     }
 
     public function getTotalPaid($id)
