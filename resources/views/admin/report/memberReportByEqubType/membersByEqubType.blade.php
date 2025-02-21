@@ -86,16 +86,28 @@
     @endsection
     @section('scripts')
         <script>
-            function members(offsetVal, pageNumberVal) {
-                $.ajax({
-                    url: "{{ url('reports/paginateMembersByEqubType') }}" + '/' + $('#memberFrom').val() + '/' + $('#memberTo')
-                        .val() + '/' + offsetVal + '/' + pageNumberVal,
-                    type: 'get',
-                    success: function(data) {
-                        $('#filterMemberByEqubTypeTable').html(data);
-                    }
-                });
-            }
+             function members(offsetVal, pageNumberVal) {
+    const dateFrom = $('#memberFrom').val(); // Assuming these inputs exist
+    const dateTo = $('#memberTo').val(); // Assuming these inputs exist
+    const equbType = 50; // Set your equb type value here
+
+    // Construct the URL
+    const url = "{{ url('reports/paginateMembersByEqubType') }}" + '/' + dateFrom + '/' + dateTo + '/' + equbType + '/' + offsetVal + '/' + pageNumberVal;
+
+    console.log('AJAX URL:', url); // Log the URL for debugging
+
+    $.ajax({
+        url: url,
+        type: 'GET',
+        success: function(data) {
+            $('#filterMemberByEqubTypeTable').html(data); // Update the HTML with the returned data
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX Error:', status, error); // Log any errors
+            alert('Error loading data: ' + xhr.responseText); // Provide feedback on failure
+        }
+    });
+}
 
             function fiter() {
                 if ($('#memberFrom').val() == "" && $('#memberTo').val() == "") {

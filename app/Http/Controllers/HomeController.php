@@ -46,7 +46,7 @@ class HomeController extends Controller
     {
         try {
             $userData = Auth::user();
-            $roles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance', 'marketing_manager', 'call_center', 'it', 'assistant'];
+            $roles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance', 'marketing_manager', 'call_center', 'it', 'collector and finance', 'Customer service supervisor', 'Legal Affair Officers', 'Marketing Manager'];
             $profile = Auth::user();
             $title = $this->title;
             $totalAutomaticEqubAmount = $this->equbRepository->getAutomaticExpectedTotal();

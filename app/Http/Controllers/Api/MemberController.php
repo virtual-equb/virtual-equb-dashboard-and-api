@@ -1248,7 +1248,8 @@ class MemberController extends Controller
             // Check if the phone number already exists
             if (!empty($phone)) {
                 $member_count = Member::where('phone', $phone)->count();
-                if ($member_count > 0) {
+                $user_count = User::where('phone_number', $phone)->count();
+                if ($member_count > 0 || $user_count > 0) {
                     return response()->json([
                         'code' => 403,
                         'message' => 'Phone already exists',
@@ -1259,7 +1260,8 @@ class MemberController extends Controller
             // Check if the email already exists
             if (!empty($email)) {
                 $member_count = Member::where('email', $email)->count();
-                if ($member_count > 0) {
+                $user_count = User::where('email', $email)->count();
+                if ($member_count > 0 || $user_count > 0) {
                     return response()->json([
                         'code' => 403,
                         'message' => 'Email already exists',

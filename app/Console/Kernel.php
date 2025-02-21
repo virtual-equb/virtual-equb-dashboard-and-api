@@ -29,6 +29,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('equb:sendnotifications')->dailyAt('00:00');
         $schedule->command('equb:autoDrawLottery')->dailyAt('00:00'); // Run every day at midnight
         $schedule->command('equb:draw-winners')->dailyAt('00:00');
+        $schedule->command('remove:removeOlderPendingTelebirrPayments')->everyThreeHours($minutes = 0);
     }
 
     /**

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\LotteryWinner;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
@@ -114,7 +115,7 @@ class MemberController extends Controller
             $limit = 50;
             $pageNumber = 1;
             $userData = Auth::user();
-            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance', 'call_center', 'assistant'];
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance', 'call_center', 'assistant', 'collector and finance', 'Customer service supervisor', 'Legal Affair Officers', 'Marketing Manager'];
             $memberRole = ['member'];
             $collector = ['equb_collector'];
             if ($userData && $userData->hasAnyRole($adminRoles)) {
@@ -135,7 +136,8 @@ class MemberController extends Controller
                 $payments = $this->paymentRepository->getAllPayment();
                 $title = $this->title;
                 $cities = $this->cityRepository->getAll();
-                return view('equbCollecter/member.memberList', compact('title', 'equbTypes', 'equbs', 'payments','cities'));
+                return view('admin/member.memberList', compact('title', 'equbTypes', 'members', 'equbs', 'payments','cities'));
+                // return view('equbCollecter/member.memberList', compact('title', 'equbTypes', 'equbs', 'payments','cities'));
             } elseif ($userData && $userData->hasAnyRole($member)) {
                 $members = $this->memberRepository->getByPhone($userData['phone_number']);
                 $equbTypes = $this->equbTypeRepository->getActive();
@@ -593,26 +595,15 @@ class MemberController extends Controller
                 $this->memberRepository->checkPhone($phone);
 
                 // Check if the phone number already exists
-                if (!empty($phone)) {
-                    $member_count = Member::where('phone', $phone)->count();
-                    if ($member_count > 0) {
-                        return response()->json([
-                            'code' => 403,
-                            'message' => 'Phone already exists',
-                        ]);
-                    }
+                if (!empty($phone) && (Member::where('phone', $phone)->exists() || User::where('phone_number', $phone)->exists())) {
+                    return redirect()->back()->with('error', 'A user already exists with this phone number.');
                 }
 
                 // Check if the email already exists
-                if (!empty($email)) {
-                    $member_count = Member::where('email', $email)->count();
-                    if ($member_count > 0) {
-                        return response()->json([
-                            'code' => 403,
-                            'message' => 'Email already exists',
-                        ]);
-                    }
+                if (!empty($email) && (Member::where('email', $email)->exists() || User::where('email', $email)->exists())) {
+                    return redirect()->back()->with('error', 'A user already exists with this email address.');
                 }
+
                 $memberData = [
                     'full_name' => $fullName,
                     'phone' => $phone,
@@ -805,12 +796,10 @@ class MemberController extends Controller
         try {
             // Get the authenticated user
             $userData = Auth::user();
-
             // Define roles
-            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'call_center', 'finance'];
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'call_center', 'finance', 'assistant', 'collector and finance', 'Customer service supervisor', 'Legal Affair Officers', 'Marketing Manager'];
             $collectorRoles = ['equb_collector'];
             $memberRoles = ['member'];
-
             // Check if the user is authenticated and their role
             if ($userData && $userData->hasAnyRole($adminRoles)) {
                 $data['member'] = $this->memberRepository->getByIdNested($id);
@@ -1002,6 +991,7 @@ class MemberController extends Controller
             return back();
         }
     }
+    
     public function updatePendingStatus($id, $status, Request $request)
     {
         // dd($status);

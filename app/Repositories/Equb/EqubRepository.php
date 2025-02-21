@@ -349,6 +349,12 @@ class EqubRepository implements IEqubRepository
     }
     public function getByPaymentMethod($dateFrom, $dateTo, $equbType, $offset)
     {
+        // Start building the query
+    //$query = Payment::query();
+
+    // Execute the query and return all results
+    //return $query->get(); 
+        // Execute the query and return results
         if ($equbType != 'all') {
             return $this->model
                 ->where('status', 'Active')
@@ -368,7 +374,8 @@ class EqubRepository implements IEqubRepository
                 ->offset($offset)
                 ->limit($this->limit)
                 ->get();
-        }
+        } 
+     
     }
     public function getUnPaidByDate($dateFrom, $dateTo, $equbId, $offset, $equbType)
     {

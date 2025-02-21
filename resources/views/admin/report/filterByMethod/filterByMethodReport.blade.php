@@ -4,12 +4,9 @@
               <tr>
                   <th>No</th>
                   <th>Member</th>
-                  <th>Equb Type</th>
                   <th>Amount in Birr</th>
-                  <th>Start Date</th>
-                  <th>End Date</th>
-                  <th>Expected Total</th>
-                  <th>Lottery Date</th>
+                  <th>Payment Type</th>
+                
               </tr>
           </thead>
           <tbody>
@@ -17,31 +14,8 @@
                   <tr id="trm{{ $item['id'] }}">
                       <td>{{ $offset + $key + 1 }}</td>
                       <td>{{ $item->member->full_name }}</td>
-                      <td>{{ $item->equbType->name }} - Round {{ $item->equbType->round }}</td>
                       <td> {{ number_format($item->amount) }}</td>
-                      <td>
-                          <?php
-                          $toCreatedAt = new DateTime($item['start_date']);
-                          $createdDate = $toCreatedAt->format('M-j-Y');
-                          echo $createdDate; ?>
-                      </td>
-                      <td>
-                          <?php
-                          $toCreatedAt = new DateTime($item['end_date']);
-                          $createdDate = $toCreatedAt->format('M-j-Y');
-                          echo $createdDate; ?>
-                      </td>
-                      <td> {{ number_format($item->total_amount) }}</td>
-                      <td>
-                          <?php
-                          foreach (explode(',', $item->lottery_date) as $lottery_date) {
-                              $toCreatedAt = new DateTime($lottery_date);
-                              $createdDate = $toCreatedAt->format('M-j-Y');
-                              echo $createdDate;
-                              echo '<br>';
-                          }
-                          ?>
-                      </td>
+                      <td>{{ $item->payment_type }} </td>
                   </tr>
               @endforeach
           </tbody>

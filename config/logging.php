@@ -53,8 +53,12 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['single'],
+            'channels' => (env('APP_ENV', '') == 'production' || env('APP_ENV', '') == 'staging') ? ['larabug'] : ['single'],
             'ignore_exceptions' => false,
+        ],
+
+        'larabug' => [
+            'driver' => 'larabug',
         ],
 
         'single' => [

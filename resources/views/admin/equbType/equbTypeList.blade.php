@@ -378,7 +378,7 @@ $(document).ready(function() {
 
         } else {
             // Hide all fields if neither type is selected
-            $('#start_date_div').removeClass("d-none");
+            $('#start_date_div').addClass("d-none");
             $('#end_date_div').removeClass("d-none");
             $('#lottery_date_div').addClass("d-none");
             $('#end_date_div').addClass("d-none");

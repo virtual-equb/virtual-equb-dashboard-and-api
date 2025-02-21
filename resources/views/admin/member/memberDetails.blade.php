@@ -83,7 +83,7 @@
                     // dd($equb->lottery_date != null);
                     $finalLotteryInterval = $equbType->type == 'Automatic' ? $typeInterval : ($equb->lottery_date != null ? $interval : 'Unassigned');
                     ?>
-                    <td class="details-control_payment" id="{{ $equb['id'] }}"></td>
+                    <td class="details-control_payment" id="{{ $equb['id'] }}">{{ $equb['id'] }}</td>
                     <td>{{ $key + 1 }}</td>
                     <td>
                         <a href="javascript:void(0);"
@@ -165,13 +165,10 @@
                             Auth::user()->role != 'legal_affair_officer')
                         <td>
                             <div class='dropdown'>
-    @if (Auth::user()->role != 'marketing_manager') 
     <button class='btn btn-secondary btn-sm btn-flat dropdown-toggle' type='button' data-toggle='dropdown'>
         Menu <span class='caret'></span>
     </button>
-@else
-    <span>N/A</span>
-@endif
+
                                 <ul class='dropdown-menu p-4'>
                                     {{-- <li>
                                     <a href="javascript:void(0);"
