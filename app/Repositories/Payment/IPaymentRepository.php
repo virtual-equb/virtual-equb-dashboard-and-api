@@ -76,8 +76,10 @@ interface IPaymentRepository
     public function getTotalCount($id);
 
     public function getTotalCredit($id);
+    public function getTotalCreditAPI($id);
 
     public function getTotalBalance($id);
+    public function getTotalBalanceAPI($id);
 
     ///
 
