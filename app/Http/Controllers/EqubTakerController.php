@@ -31,7 +31,6 @@ class EqubTakerController extends Controller
         IPaymentRepository $paymentRepository,
         IActivityLogRepository $activityLogRepository
     ) {
-        //$this->middleware('auth');
         $this->activityLogRepository = $activityLogRepository;
         $this->equbTakerRepository = $equbTakerRepository;
         $this->memberRepository = $memberRepository;
@@ -39,18 +38,8 @@ class EqubTakerController extends Controller
         $this->equbTypeRepository = $equbTypeRepository;
         $this->paymentRepository = $paymentRepository;
         $this->title = "Virtual Equb - Equb Taker";
-
-        // Permission Gurad
-        // $this->middleware('permission_check_logout:update equb_taker', ['only' => ['update', 'edit', 'changeStatus', 'updateLottery']]);
-        // $this->middleware('permission_check_logout:delete equb_taker', ['only' => ['destroy']]);
-        // $this->middleware('permission_check_logout:view equb_taker', ['only' => ['index', 'show']]);
-        // $this->middleware('permission_check_logout:create equb_taker', ['only' => ['store', 'create']]);
     }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+ 
     public function index()
     {
         try {
@@ -58,26 +47,29 @@ class EqubTakerController extends Controller
             $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance',' call_center', 'assistant', 'collector and finance', 'Customer service supervisor', 'Legal Affair Officers', 'Marketing Manager'];
             $member = ['member'];
             $equbcollector = ['equb_collector'];
-            if ($userData && $userData->hasAnyRole($adminRole)){
+            if ($userData && $userData->hasAnyRole($adminRoles)){
                 $data['equbTakers']  = $this->equbTakerRepository->getAll();
                 $data['equbs']  = $this->equbRepository->getAll();
                 $data['members']  = $this->memberRepository->getMemberWithEqub();
                 $data['title']  = $this->title;
-           //   dd(  $data['equbTakers']);
-                return view('admin/equbTaker.equbTakerList', $data);
+                $totalEqubTaker = EqubTaker::count();
+
+                return view('admin/equbTaker.equbTakerList', $data, compact('totalEqubTaker'));
             } elseif ($userData && $userData->hasAnyRole($equbcollector)) {
                 $data['equbTakers']  = $this->equbTakerRepository->getAll();
                 $data['equbs']  = $this->equbRepository->getAll();
                 $data['members']  = $this->memberRepository->getMemberWithEqub();
                 $data['title']  = $this->title;
-               dd(  $data['equbTakers']);
+
+                return view('equbcollector/equbTaker.equbTakerList', $data);
             } elseif ($userData && $userData->hasAnyRole($member)) {
                 $data['equbTakers']  = $this->equbTakerRepository->getAll();
                 $data['equbs']  = $this->equbRepository->getAll();
                 $data['members']  = $this->memberRepository->getMemberWithEqub();
                 $data['title']  = $this->title;
+
                 return view('member/equbTaker.equbTakerList', $data);
-            } else {
+            } else  {
                 return view('auth/login');
             }
         } catch (Exception $ex) {
@@ -87,6 +79,7 @@ class EqubTakerController extends Controller
             return back();
         }
     }
+
     public function getRemainingLotteryAmount($id)
     {
         try {
@@ -104,17 +97,11 @@ class EqubTakerController extends Controller
             return back();
         }
     }
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+   
     public function store(Request $request)
     {
         try {
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $this->validate($request, [
                     'payment_type' => 'required',
                     'amount' => 'required',
@@ -126,8 +113,6 @@ class EqubTakerController extends Controller
                 $paymentType = $request->input('payment_type');
                 $amount = $request->input('amount');
                 $status = 'pending';
-                // $status = $request->input('status');
-                // dd("hello");
                 $totalPpayment = $this->paymentRepository->getTotalPaid($equbId);
                 $totalEqubAmount = $this->equbRepository->getTotalEqubAmount($equbId);
                 $takenEqub = $this->equbTakerRepository->getTotalEqubAmount($equbId);
@@ -151,6 +136,7 @@ class EqubTakerController extends Controller
                     'cheque_bank_name' => $chequeBankName,
                     'cheque_description' => $chequeDescription,
                 ];
+
                 //new status added
                 if ($status == "paid") {
                     if ($remainingAmount == 0) {
@@ -168,14 +154,14 @@ class EqubTakerController extends Controller
 
 
                 $create = $this->equbTakerRepository->create($equbTakerData);
-                // $equbTaker = $this->equbTakerRepository->getByEqubId($equbId);
-                // dd($create);
+
                 if ($remainingPayment == 0 && $create->status == 'paid' && $create->remaining_amount == 0) {
                     $ekubStatus = [
                         'status' => 'Deactive'
                     ];
                     $ekubStatusUpdate = $this->equbRepository->update($equbId, $ekubStatus);
                 }
+
                 if ($create) {
                     $activityLog = [
                         'type' => 'equb_takers',
@@ -196,9 +182,6 @@ class EqubTakerController extends Controller
                     Session::flash($type, $msg);
                     redirect('member/');
                 }
-            // } else {
-            //     return view('auth/login');
-            // }
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
@@ -206,9 +189,9 @@ class EqubTakerController extends Controller
             return back();
         }
     }
+
     public function changeStatus($status, $id)
     {
-        // dd($status, $id);
         try {
             $equbTaker = $this->equbTakerRepository->getById($id);
             $userData = Auth::user();
@@ -244,7 +227,6 @@ class EqubTakerController extends Controller
                 $create = $this->equbTakerRepository->update($id, $updatedEkubTaker);
                 $equbTaker = $this->equbTakerRepository->getById($id);
                 if ($remainingPayment == 0 && $equbTaker->status == 'paid' && $equbTaker->remaining_amount == 0) {
-                    // dd($equbTaker);
                     $ekubStatus = [
                         'status' => 'Deactive'
                     ];
@@ -280,12 +262,7 @@ class EqubTakerController extends Controller
             return back();
         }
     }
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\EqubTaker  $equbTaker
-     * @return \Illuminate\Http\Response
-     */
+    
     public function edit($id)
     {
         try {
@@ -318,6 +295,7 @@ class EqubTakerController extends Controller
             return back();
         }
     }
+
     public function updateLottery($member_id, $equb_id, $id, Request $request)
     {
         try {
@@ -377,6 +355,7 @@ class EqubTakerController extends Controller
             return back();
         }
     }
+
     public function destroy($id)
     {
         try {

@@ -9,14 +9,15 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="editCityForm">
+                    <form role="form" method="post" class="form-horizontal form-group" action="" id="editCityForm">
+                        {{ csrf_field() }}
                         <input type="hidden" id="editCityId">
-                        <div class="form-group">
-                            <label for="editCityName" class="control-label">City Name:</label>
+                        <div class="form-group required">
+                            <label for="editCityName" class="control-label">City Name</label>
                             <input type="text" class="form-control" id="editCityName" required>
                         </div>
-                        <div class="form-group">
-                            <label for="editCityStatus" class="control-label">Status:</label>
+                        <div class="form-group required">
+                            <label for="editCityStatus" class="control-label">Status</label>
                             <select class="form-control" id="editCityStatus" required>
                                 <option value="1">Active</option>
                                 <option value="0">Inactive</option>

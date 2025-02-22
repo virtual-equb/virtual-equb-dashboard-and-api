@@ -15,11 +15,6 @@ class CityRepository implements ICityRepository
         $this->limit = 50; // Default limit if needed
     }
 
-    /**
-     * Get all cities.
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
     public function getAll()
     {
         return $this->model->all(); // Retrieve all cities
@@ -32,12 +27,7 @@ class CityRepository implements ICityRepository
     {
         return $this->model->where('name', 'Addis Ababa')->get(); // Retrieve the active city
     }
-    /**
-     * Get an active city by ID.
-     *
-     * @param int $id
-     * @return City|null
-     */
+
     public function getById($id)
     {
         return $this->model->where('active', true)->find($id); // Retrieve active city by ID
@@ -46,54 +36,40 @@ class CityRepository implements ICityRepository
     {
         return $this->model->all()->count();
     }
-    /**
-     * Get a city by ID (for deletion).
-     *
-     * @param int $id
-     * @return City|null
-     */
+
     public function getByIdToDelete($id)
     {
-        return $this->model->find($id); // Retrieve city by ID for deletion
+        return $this->model->find($id);
     }
 
-    /**
-     * Create a new city.
-     *
-     * @param array $data
-     * @return City
-     */
     public function create(array $data)
     {
-        return $this->model->create($data); // Create a new city
+        return $this->model->create($data);
     }
 
-    /**
-     * Update an existing city.
-     *
-     * @param int $id
-     * @param array $data
-     * @return City|null
-     */
     public function update($id, array $data)
     {
-        $city = $this->model->find($id); // Find city by ID
+        $city = $this->model->find($id);
         if ($city) {
-            $city->update($data); // Update city with new data
+            $city->update($data);
             return $city;
         }
-        return null; // Return null if city not found
+        return null;
     }
 
-    /**
-     * Delete a city.
-     *
-     * @param int $id
-     * @return bool|null
-     */
     public function delete($id)
     {
-        $city = $this->getByIdToDelete($id); // Get city to delete
-        return $city ? $city->delete() : null; // Delete city if found
+        $city = $this->getByIdToDelete($id);
+        return $city ? $city->delete() : null;
+    }
+
+    public function active()
+    {
+        return $this->model->active()->get();
+    }
+
+    public function inactive()
+    {
+        return $this->model->inactive()->get();
     }
 }

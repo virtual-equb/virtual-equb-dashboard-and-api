@@ -11,9 +11,18 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group required">
-                        <label for="city_name" class="control-label">City Name</label>
-                        <input type="text" class="form-control" id="city_name" name="name" placeholder="City Name" required>
+                    <div class="col-sm-12">
+                        <div class="form-group required">
+                            <label for="city_name" class="control-label">City Name</label>
+                            <input type="text" class="form-control" id="city_name" name="name" placeholder="City Name" required>
+                        </div>
+                        <div class="form-group required">
+                            <label for="active" class="control-label">Status</label>
+                            <select class="form-control" id="active" name="active">
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">

@@ -314,18 +314,10 @@ class EqubRepository implements IEqubRepository
     public function getAll()
     {
         return $this->model->with('equbType.mainEqub', 'payments')->get();
-        
-        // return EqubType::with('mainEqub')->get();
     }
 
     public function getByDate($dateFrom, $dateTo, $equbType, $offset)
     {
-        // return $this->model->where('status', 'Active')
-        //     ->whereDate('start_date', '>=', $dateFrom)
-        //     ->whereDate('end_date', '<=', $dateTo)
-        //     ->offset($offset)
-        //     ->limit($this->limit)
-        //     ->with('member')->get();
         if ($equbType != 'all') {
             return $this->model
                 ->where('status', 'Active')

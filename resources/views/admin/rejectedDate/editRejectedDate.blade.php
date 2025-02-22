@@ -14,9 +14,9 @@
                         <div class="container">
                             <div class="row">
                                 <div class="form-group required col-12">
-                                    <label class="control-label">Date</label>
+                                    <label class="control-label">Date*</label>
                                     <input type="text" class="form-control" id="update_rejected_date"
-                                        name="rejected_date"placeholder="Rejected Date" required>
+                                        name="rejected_date"placeholder="Off Date" required>
                                 </div>
                             </div>
                             <div class="row">

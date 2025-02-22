@@ -25,12 +25,6 @@ class MainEqubController extends Controller
     ) {
         $this->title = "Virtual Equb - Main Equb";
         $this->activityLogRepository = $activityLogRepository;
-
-        // Permission Guard
-        // $this->middleware('permission_check_logout:update main_equb', ['only' => ['update', 'edit']]);
-        // $this->middleware('permission_check_logout:delete main_equb', ['only' => ['destroy']]);
-        // $this->middleware('permission_check_logout:view main_equb', ['only' => ['index', 'show']]);
-        // $this->middleware('permission_check_logout:create main_equb', ['only' => ['store', 'create']]);
     }
 
     public function index()
@@ -38,8 +32,12 @@ class MainEqubController extends Controller
         try {
             $userData = Auth::user();
             $data['title'] = $this->title;
-            $data['mainEqubs'] = MainEqub::all(); // Fetch all MainEqub records
-            return view('admin/mainEqub.mainEqubList', $data);
+            $data['mainEqubs'] = MainEqub::all();
+            $totalMainEqub = MainEqub::count();
+            $totalActiveEqub =  MainEqub::active()->count();
+            $totalInactiveEqub =  MainEqub::inactive()->count();
+
+            return view('admin/mainEqub.mainEqubList', $data, compact('totalMainEqub', 'totalActiveEqub', 'totalInactiveEqub'));
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             Session::flash('error', $msg);
@@ -50,7 +48,6 @@ class MainEqubController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user();
-        // Validate the incoming request data
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', 
@@ -93,34 +90,8 @@ class MainEqubController extends Controller
         return response()->json($mainEqub); // Return the data as JSON for the AJAX request
     }
 
-    public function update1(Request $request, $id)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'remark' => 'nullable|string|max:500',
-            'status' => 'nullable|boolean',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', 
-
-        ]);
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('images/equbs', 'public'); // Store the image
-            $data['image'] = $imagePath; // Add the image path to the data array
-        }
-
-        $equb = MainEqub::findOrFail($id);
-        $equb->name = $request->input('name');
-        $equb->remark = $request->input('remark');
-        $equb->active = $request->input('status');
-        $equb->save();
-    
-        return response()->json(['message' => 'Main Equb updated successfully!']);
-    }
     public function update(Request $request, $id)
     {
-        // Return the JSON representation of the request data for debugging
-        // This line is for debugging purposes; you can remove it later
-        // return response()->json($request->all());
-    
         // Validate the incoming request data
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
@@ -128,7 +99,7 @@ class MainEqubController extends Controller
             'active' => 'required',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Added image validation
         ]);
-        // dd($validatedData);
+        
         // Find the MainEqub model by ID or fail
         $equb = MainEqub::findOrFail($id);
     
@@ -155,17 +126,31 @@ class MainEqubController extends Controller
             $mainEqub = MainEqub::find($id);
 
             if (!$mainEqub) {
-                return response()->json(['message' => 'Equb not found.!']);
+                $msg = "Equb not found!";
+                $type = 'error';
+                Session::flash($type, $msg);
+
+                return redirect()->back();
             }
 
             if ($mainEqub['active'] == '1') {
-                return response()->json(['message' => 'Unable to delete active Equb.!']);
+                $msg = "Unable to delete active Equb!";
+                $type = 'error';
+                Session::flash($type, $msg);
+
+                return redirect()->back();
             }
 
             $mainEqub->delete();
-            return response()->json(['message' => 'Main Equb deleted successfully.!']);
+            $msg = "Main Equb deleted successfully!";
+            $type = 'success';
+            Session::flash($type, $msg);
+            return redirect()->back();
         } catch (\Exception $ex) {
-            return back()->with('error', 'Unable to delete the Main Equb, please try again!');
+            $msg = "Unable to delete the Main Equb, please try again!";
+            $type = 'error';
+            Session::flash($type, $msg);
+            return $msg;
         }
     }
 }

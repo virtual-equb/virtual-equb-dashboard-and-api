@@ -18,4 +18,7 @@ interface INotificationRepository
 
     public function forceDelete($id);
 
+    public function pending();
+
+    public function approved();
 }

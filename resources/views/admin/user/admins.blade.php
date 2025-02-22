@@ -132,10 +132,6 @@
                                                 </li>
                                             @endcan
                                             
-                                            <div class="float-right">
-                                                @include('rolePermission.nav-links')
-                                            </div>
-                                            
                                             <li class="nav-item updateUser" id="update-equb_taker-div"
                                                 style="display: none;">
                                                 <a class="nav-link" id="custom-tabs-two-profile-tab" data-toggle="pill"
@@ -188,8 +184,10 @@
                 </section>
             </div>
         </div>
+        
         @include('admin/user.deleteUser')
         @include('admin/user.resetPassword')
+
     @endsection
     @section('scripts')
         <script type="text/javascript">
@@ -217,6 +215,7 @@
                     $.LoadingOverlay("hide");
                 }
             }
+
             function users(offsetVal, pageNumberVal) {
                 $.ajax({
                     url: "{{ url('user/user') }}" + '/' + offsetVal + '/' + pageNumberVal,
@@ -226,6 +225,7 @@
                     }
                 });
             }
+
             function loadMoreSearchUsers(searchInput, offsetVal, pageNumberVal) {
                 if (searchInput != "") {
                     $.ajax({
@@ -240,6 +240,7 @@
 
                 }
             }
+
             function deactiveUsers(offsetVal, pageNumberVal) {
                 $.ajax({
                     url: "{{ url('user/deactiveUser') }}" + '/' + offsetVal + '/' + pageNumberVal,
@@ -330,9 +331,11 @@
             function removeTabs() {
                 $('#update-equb_taker-div').css('display', 'none');
             }
+
             $("#addUserForm").submit(function() {
                 $.LoadingOverlay("show");
             });
+
             $("#deleteUser").submit(function() {
                 $.LoadingOverlay("show");
             });
@@ -547,6 +550,7 @@
 
                 });
             }
+
             $(function() {
                 $.ajax({
                     url: "{{ url('user/user') }}" + '/' + 0 + '/' + 1,
@@ -569,10 +573,7 @@
                     }
                 }
 
-
-                //    $('#nav-user').addClass('menu-is-opening menu-open active');
                 $('#adminNav').addClass('active');
-                //    $('#nav-u').addClass('active');
                 var table = $("#equbTaker-list-table").DataTable({
                     "responsive": false,
                     "lengthChange": false,
@@ -587,13 +588,11 @@
                     "buttons": ["excel", "pdf", "print", "colvis"]
                 });
                 table.buttons().container().appendTo('#equbTaker-list-table_wrapper .col-md-6:eq(0)');
-                $('#equbTaker-list-table_filter').prepend(
-                    `<button type="button" class=" btn btn-primary" id="register" data-toggle="modal" data-target="#addEqubTakerModal" style="margin-right: 30px;"> <span class="fa fa-plus-circle"> </span>Add equbTaker</button>`
-                )
+
                 $("#activeUser-list-table").DataTable({
                     "responsive": false,
                     "lengthChange": false,
-                    "searching": false,
+                    "searching": true,
                     "paging": false,
                     "autoWidth": false,
                     language: {
@@ -602,10 +601,11 @@
                     },
                     "buttons": ["excel", "pdf", "print", "colvis"]
                 }).buttons().container().appendTo('#activeUser-list-table_wrapper .col-md-6:eq(0)')
+
                 $("#deactiveUser-list-table").DataTable({
                     "responsive": false,
                     "lengthChange": false,
-                    "searching": false,
+                    "searching": true,
                     "paging": false,
                     "autoWidth": false,
                     language: {

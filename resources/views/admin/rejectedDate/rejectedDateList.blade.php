@@ -44,100 +44,111 @@
             }
         </style>
     @endsection
-    @section('styles')
-    @endsection
     @section('content')
         <div class="wrapper">
             <div class="content-wrapper">
                 <section class="content">
                     <div class="container-fluid">
+                        <div class="row mt-2">
+                            <div class="col-lg-6 col-6">
+                                <div class="small-box bg-info">
+                                    <div class="inner">
+                                        <h3>{{ $totalOffDate }}</h3>
+                                        <p>Total Off Dates</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="ion ion-pie-graph"></i>
+                                    </div>
+                                    <a href="#" class="small-box-footer"><i class="fas fa-list"></i></a>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-6">
+                                <div class="small-box bg-warning">
+                                    <div class="inner">
+                                        <h3>{{ $totalOffDateAfterDay }}</h3>
+                                        <p>Upcoming Off Dates</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="ion ion-pie-graph"></i>
+                                    </div>
+                                    <a href="#" class="small-box-footer"><i class="fas fa-list"></i></a>
+                                </div>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-12">
-                                <div class="card ">
+                                <div class="card">
                                     <div class="card-header">
-                                        <ul class="nav nav-pills" id="custom-tabs-two-tab" role="tablist">
-                                            <li class="nav-item nav-blue addOffDateTab">
-                                                <a class="nav-link active" id="custom-tabs-two-member-tab"
-                                                    data-toggle="pill" href="#custom-tabs-two-member" role="tab"
-                                                    aria-controls="custom-tabs-two-member" aria-selected="true"> <span
-                                                        class="fa fa-list"> </span> Off Date</a>
-                                            </li>
-                                        </ul>
+                                        <h5>Off Date
+                                            <button type="button" class="btn btn-primary float-right" id="register" data-toggle="modal" data-target="#addOffDateModal"> <span class="fa fa-plus-circle"> </span> Add Off Date</button>
+                                        </h5>
                                     </div>
                                     <div class="card-body">
-                                        <div class="tab-content" id="custom-tabs-two-tabContent">
-                                            <div class="tab-pane fade show active" id="custom-tabs-two-member"
-                                                role="tabpanel" aria-labelledby="custom-tabs-two-member-tab">
-                                                @can('create rejected_date')
-                                                    @include('admin/rejectedDate.addRejectedDate')
-                                                @endcan
-                                                <table id="offDate-list-table" class="table table-bordered table-striped">
-                                                    <thead>
+                                        <div id="off_date_table_data" class="table-responsive">
+                                            <table id="offDate-list-table" class="table table-bordered table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>No</th>
+                                                        <th>Date</th>
+                                                        <th>Description</th>
+                                                        <th>Registered At </th>
+                                                        <th style="width: 50px">Action </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($rejectedDate as $index => $item)
                                                         <tr>
-                                                            <th>No</th>
-                                                            <th>Date</th>
-                                                            <th>Description</th>
-                                                            <th>Registered At </th>
-                                                            <th style="width: 50px">Action </th>
+                                                            <td>{{ $loop->iteration }}</td>
+                                                            <td>
+                                                                <?php
+                                                                $toCreatedAt = new DateTime($item['rejected_date']);
+                                                                $createdDate = $toCreatedAt->format('M-j-Y');
+                                                                echo $createdDate; ?>
+                                                            </td>
+                                                            <td>{{ $item->description }}</td>
+                                                            <td>
+                                                                <?php
+                                                                $toCreatedAt = new DateTime($item['created_at']);
+                                                                $createdDate = $toCreatedAt->format('M-j-Y');
+                                                                echo $createdDate; ?>
+                                                            </td>
+                                                            @if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant')
+                                                                <td>
+                                                                    <div class='dropdown'>
+                                                                        <button
+                                                                            class='btn btn-secondary btn-sm btn-flat dropdown-toggle'
+                                                                            type='button' 
+                                                                            data-toggle='dropdown'>Menu
+                                                                            <span class='caret'></span>
+                                                                        </button>
+                                                                        <ul class='dropdown-menu dropdown-menu-right p-4'>
+                                                                            @can('update rejected_date')
+                                                                            <li>
+                                                                                <a href="javascript:void(0);"
+                                                                                    class="btn-sm btn btn-flat"
+                                                                                    onclick="openEditModal({{ $item }})"
+                                                                                    style="margin-right:10px;"><span
+                                                                                        class="fa fa-edit"> </span>
+                                                                                    Edit</a>
+                                                                            </li>
+                                                                            @endcan
+                                                                            @can('delete rejected_date')
+                                                                            <li>
+                                                                                <a href="javascript:void(0);"
+                                                                                    class="btn-sm btn btn-flat"
+                                                                                    onclick="openDeleteModal({{ $item }})"><i
+                                                                                        class="fas fa-trash-alt"></i>
+                                                                                    Delete</a>
+                                                                            </li>
+                                                                            @endcan
+                                                                        </ul>
+                                                                    </div>
+                                                                </td>
+                                                            @endif
                                                         </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach ($rejectedDate as $item)
-                                                            <tr>
-                                                                <td>{{ $item->id }}</td>
-                                                                <td>
-                                                                    <?php
-                                                                    $toCreatedAt = new DateTime($item['rejected_date']);
-                                                                    $createdDate = $toCreatedAt->format('M-j-Y');
-                                                                    echo $createdDate; ?>
-                                                                </td>
-                                                                <td>{{ $item->description }}</td>
-                                                                <td>
-                                                                    <?php
-                                                                    $toCreatedAt = new DateTime($item['created_at']);
-                                                                    $createdDate = $toCreatedAt->format('M-j-Y');
-                                                                    echo $createdDate; ?>
-                                                                </td>
-                                                                @if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant')
-                                                                    <td>
-                                                                        <div class='dropdown'>
-                                                                            <button
-                                                                                class='btn btn-secondary btn-sm btn-flat dropdown-toggle'
-                                                                                type='button'
-                                                                                data-toggle='dropdown'>Menu<span
-                                                                                    class='caret'></span></button>
-                                                                            <ul class='dropdown-menu p-4'>
-                                                                                @can('update rejected_date')
-                                                                                <li>
-                                                                                    <a href="javascript:void(0);"
-                                                                                        class="btn-sm btn btn-flat"
-                                                                                        onclick="openEditModal({{ $item }})"
-                                                                                        style="margin-right:10px;"><span
-                                                                                            class="fa fa-edit"> </span>
-                                                                                        Edit</a>
-                                                                                </li>
-                                                                                @endcan
-                                                                                @can('delete rejected_date')
-                                                                                <li>
-                                                                                    <a href="javascript:void(0);"
-                                                                                        class="btn-sm btn btn-flat"
-                                                                                        onclick="openDeleteModal({{ $item }})"><i
-                                                                                            class="fas fa-trash-alt"></i>
-                                                                                        Delete</a>
-                                                                                </li>
-                                                                                @endcan
-                                                                            </ul>
-                                                                        </div>
-                                                                    </td>
-                                                                @endif
-                                                            </tr>
-                                                        @endforeach
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            <div class="tab-pane fade" id="custom-tabs-two-profile" role="tabpanel"
-                                                aria-labelledby="custom-tabs-two-profile-tab">
-                                            </div>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
                                 </div>
@@ -147,13 +158,14 @@
                 </section>
             </div>
         </div>
+
         <div class="table-responsive">
             <div class="modal modal-danger fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="Delete"
                 aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <p class="modal-title" id="exampleModalLabel">Delete rejected date type</p>
+                            <p class="modal-title" id="exampleModalLabel">Delete Off Date</p>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -163,20 +175,22 @@
                                 @csrf
                                 @method('DELETE')
                                 <input id="id" name="id" hidden value="">
-                                <p class="text-center">Are you sure you want to delete this rejected date type?</p>
+                                <p class="text-center">Are you sure you want to delete this off date value ?</p>
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-
                         </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
+
+        @include('admin/rejectedDate.addRejectedDate')
         @include('admin/rejectedDate.editRejectedDate')
     @endsection
+    
     @section('scripts')
         <script>
             $("#addOffDate").submit(function() {
@@ -236,7 +250,7 @@
                     },
                     messages: {
                         rejected_date: {
-                            required: "Please enter a off date",
+                            required: "Please enter off date value",
                             date: "Please enter proper date",
                             remote: "Off date allready exist",
                         },
@@ -310,7 +324,6 @@
                     }
 
                 });
-                // $('#nav-user').addClass('menu-is-opening menu-open active');
                 $('#offDate').addClass('active');
                 $('#nav-u').addClass('active');
                 $("#offDate-list-table").DataTable({
@@ -323,14 +336,40 @@
                         searchPlaceholder: "Search",
                     },
                     @can('export off_date_data')
-                    "buttons": ["excel", "pdf", "print", "colvis"]
-                    @else 
-                    "buttons": []
+                        "buttons": [
+                            {
+                                extend: 'excel',
+                                exportOptions: {
+                                    columns: ':visible',
+                                    columns: function (index, data, node) {
+                                        return index !== 4;
+                                    }
+                                }
+                            },
+                            {
+                                extend: 'pdf',
+                                exportOptions: {
+                                    columns: ':visible',
+                                    columns: function (index, data, node) {
+                                        return index !== 4;
+                                    }
+                                }
+                            },
+                            {
+                                extend: 'print',
+                                exportOptions: {
+                                    columns: ':visible',
+                                    columns: function (index, data, node) {
+                                        return index !== 4;
+                                    }
+                                }
+                            },
+                            'colvis'
+                        ]
+                    @else
+                        "buttons": []
                     @endcan
-                }).buttons().container().appendTo('#offDate-list-table_wrapper .col-md-6:eq(0)')
-                $('#offDate-list-table_filter').prepend(
-                    `<button type="button" class=" btn btn-primary addOffDate" id="register" data-toggle="modal" data-target="#addOffDateModal" style="margin-right: 30px;"> <span class="fa fa-plus-circle"> </span> Add Off Date</button>`
-                )
+                }).buttons().container().appendTo('#off_date_table_data .col-md-6:eq(0)');
             });
         </script>
     @endSection

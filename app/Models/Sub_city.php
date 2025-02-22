@@ -25,4 +25,14 @@ class Sub_city extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    public function scopeActive($query)
+    {
+        return $query->where('active', '1');
+    }
+
+    public function scopeInactive($query)
+    {
+        return $query->where('active', '0');
+    }
 }

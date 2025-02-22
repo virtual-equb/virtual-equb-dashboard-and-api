@@ -12,12 +12,12 @@
             <form id="addSubCityForm" action="{{ route('subcities.store') }}" method="POST">
                 @csrf
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label for="name" class="control-label">Sub City Name:</label>
-                        <input type="text" class="form-control" id="name" name="name" required>
+                    <div class="form-group required">
+                        <label for="name" class="control-label">Sub City Name</label>
+                        <input type="text" class="form-control" placeholder="Sub City Name" id="name" name="name" required>
                     </div>
-                    <div class="form-group">
-                        <label for="city_id" class="control-label">Select City:</label>
+                    <div class="form-group required">
+                        <label for="city_id" class="control-label">Select City</label>
                         <select class="form-control" id="city_id" name="city_id" required>
                             <option value="">Select City</option>
                             @foreach ($cities as $city)
@@ -25,11 +25,11 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label for="active" class="control-label">Active:</label>
+                    <div class="form-group required">
+                        <label for="active" class="control-label">Status</label>
                         <select class="form-control" id="active" name="active">
-                            <option value="0">No</option>
-                            <option value="1">Yes</option>
+                            <option value="1">Active</option>
+                            <option value="0">Inactive</option>
                         </select>
                     </div>
                 </div>
@@ -41,3 +41,4 @@
         </div>
     </div>
 </div>
+@endcan

@@ -35,61 +35,15 @@ class ReportController extends Controller
         $this->equbRepository = $equbRepository;
         $this->equbTakerRepository = $equbTakerRepository;
         $this->userRepository = $userRepository;
-
-        // Permission Guard
-        // $this->middleware('permission:update report', ['only' => ['update', 'edit']]);
-        // $this->middleware('permission:delete report', ['only' => ['destroy']]);
-        // $this->middleware('permission_check_logout:view report', ['only' => [
-        //     'index', 
-        //     'show', 
-        //     'memberFilter', 
-        //     'members', 
-        //     'paginateMembers', 
-        //     'memberFilterByEqubType', 
-        //     'membersByEqubType', 
-        //     'paginateMembersByEqubType',
-        //     'unPaidLotteryByDateFilter',
-        //     'unPaidLotterysByDate',
-        //     'paginateUnPaidLotterysByDate',
-        //     'equbTypeFilter',
-        //     'equbTypes',
-        //     'paymentFilter',
-        //     'payments',
-        //     'paginatePayments',
-        //     'unPaidFilter',
-        //     'equbEndDates',
-        //     'filterEqubEndDates',
-        //     'loadMoreFilterEqubEndDates',
-        //     'unPaids',
-        //     'loadMoreUnPaids',
-        //     'collectedByFilter',
-        //     'collectedBys',
-        //     'paginateCllectedBys',
-        //     'lotteryFilter',
-        //     'lotterys',
-        //     'paginateLotterys',
-        //     'equbFilter',
-        //     'equbs',
-        //     'paginateEqubs',
-        //     'unPaidLotteryFilter',
-        //     'unPaidLotterys',
-        //     'paginateUnPaidLotterys',
-        //     'reservedLotteryDatesFilter',
-        //     'reservedLotteryDates',
-        //     'paginateReservedLotteryDates'
-        //     ]]);
-        // $this->middleware('permission:create report', ['only' => ['store', 'create']]);
     }
+    
     public function memberFilter()
     {
         try {
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
-                $data['title'] = "Virtual Equb - Members Report";
-                return view('admin/report/memberReport/members', $data);
-            // } else {
-            //     return view('auth/login');
-            // }
+            $data['title'] = "Virtual Equb - Members Report";
+
+            return view('admin/report/memberReport/members', $data);
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
@@ -97,6 +51,7 @@ class ReportController extends Controller
             return back();
         }
     }
+    
     public function members($dateFrom, $dateTo)
     {
         try {
@@ -105,14 +60,11 @@ class ReportController extends Controller
             $data['limit'] = 50;
             $data['pageNumber'] = 1;
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
-                $data['title'] = "Virtual Equb - Members Report";
-                $data['totalMember'] = $this->memberRepository->getCountByDate($dateFrom, $dateTo);
-                $data['members'] = $this->memberRepository->getByDate($dateFrom, $dateTo, $offset);
-                return view('admin/report/memberReport/filterMembers', $data);
-            // } else {
-            //     return view('auth/login');
-            // }
+            $data['title'] = "Virtual Equb - Members Report";
+            $data['totalMember'] = $this->memberRepository->getCountByDate($dateFrom, $dateTo);
+            $data['members'] = $this->memberRepository->getByDate($dateFrom, $dateTo, $offset);
+
+            return view('admin/report/memberReport/filterMembers', $data);
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
@@ -120,6 +72,7 @@ class ReportController extends Controller
             return back();
         }
     }
+    
     public function paginateMembers($dateFrom, $dateTo, $offsetVal, $pageNumberVal)
     {
         try {
@@ -128,14 +81,11 @@ class ReportController extends Controller
             $data['limit'] = 50;
             $data['pageNumber'] = $pageNumberVal;
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
-                $data['title'] = "Virtual Equb - Members Report";
-                $data['totalMember'] = $this->memberRepository->getCountByDate($dateFrom, $dateTo);
-                $data['members'] = $this->memberRepository->getByDate($dateFrom, $dateTo, $offset);
-                return view('admin/report/memberReport/filterMembers', $data);
-            // } else {
-            //     return view('auth/login');
-            // }
+            $data['title'] = "Virtual Equb - Members Report";
+            $data['totalMember'] = $this->memberRepository->getCountByDate($dateFrom, $dateTo);
+            $data['members'] = $this->memberRepository->getByDate($dateFrom, $dateTo, $offset);
+
+            return view('admin/report/memberReport/filterMembers', $data);
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
@@ -143,17 +93,15 @@ class ReportController extends Controller
             return back();
         }
     }
+
     public function memberFilterByEqubType()
     {
         try {
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
-                $data['title'] = "Virtual Equb - Members Report";
-                $data['equbTypes'] = $this->equbTypeRepository->getActive();
-                return view('admin/report/memberReportByEqubType/membersByEqubType', $data);
-            // } else {
-            //     return view('auth/login');
-            // }
+            $data['title'] = "Virtual Equb - Members Report";
+            $data['equbTypes'] = $this->equbTypeRepository->getActive();
+
+            return view('admin/report/memberReportByEqubType/membersByEqubType', $data);
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
@@ -161,23 +109,20 @@ class ReportController extends Controller
             return back();
         }
     }
+
     public function filterByMethod ()
     {
         try {
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
-                $data['title'] = "Virtual Equb - Members Report";
-                $data['equbTypes'] = [
-                    ['id' => 1, 'name' => 'bank transfer'],
-                    ['id' => 2, 'name' => 'cbebirr'],
-                    ['id' => 3, 'name' => 'telebirr'],
-                    ['id' => 3, 'name' => 'cash'],
-                ];
-            
-                return view('admin/report/filterByMethod/methodReport', $data);
-            // } else {
-            //     return view('auth/login');
-            // }
+            $data['title'] = "Virtual Equb - Members Report";
+            $data['equbTypes'] = [
+                ['id' => 1, 'name' => 'bank transfer'],
+                ['id' => 2, 'name' => 'cbebirr'],
+                ['id' => 3, 'name' => 'telebirr'],
+                ['id' => 3, 'name' => 'cash'],
+            ];
+        
+            return view('admin/report/filterByMethod/methodReport', $data);
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
@@ -185,6 +130,7 @@ class ReportController extends Controller
             return back();
         }
     }
+
     public function paginatePaymentMethod($dateFrom, $dateTo, $offsetVal, $pageNumberVal, $equbType)
     {
         try {
@@ -193,14 +139,11 @@ class ReportController extends Controller
             $data['limit'] = 50;
             $data['pageNumber'] = $pageNumberVal;
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
-                $data['title'] = "Virtual Equb - Payment Method Report";
-                $data['totalEqub'] = $this->equbRepository->getCountByDate($dateFrom, $dateTo, $equbType);
-                $data['equbs'] = $this->equbRepository->getByPaymentMethod($dateFrom, $dateTo, $equbType, $offset);
-                return view('admin/report/filterByMethod/filterByMethodReport', $data);
-            // } else {
-            //     return view('auth/login');
-            // }
+            $data['title'] = "Virtual Equb - Payment Method Report";
+            $data['totalEqub'] = $this->equbRepository->getCountByDate($dateFrom, $dateTo, $equbType);
+            $data['equbs'] = $this->equbRepository->getByPaymentMethod($dateFrom, $dateTo, $equbType, $offset);
+
+            return view('admin/report/filterByMethod/filterByMethodReport', $data);
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
@@ -208,6 +151,7 @@ class ReportController extends Controller
             return back();
         }
     }
+
     public function membersByEqubType($dateFrom, $dateTo, $equbType)
     {
         try {
@@ -216,14 +160,11 @@ class ReportController extends Controller
             $data['limit'] = 50;
             $data['pageNumber'] = 1;
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
-                $data['title'] = "Virtual Equb - Members Report";
-                $data['totalMember'] = $this->equbRepository->getCountByDateAndEqubType($dateFrom, $dateTo, $equbType);
-                $data['members'] = $this->equbRepository->getByDateAndEqubType($dateFrom, $dateTo, $equbType, $offset);
-                return view('admin/report/memberReportByEqubType/filterMembersByEqubType', $data);
-            // } else {
-            //     return view('auth/login');
-            // }
+            $data['title'] = "Virtual Equb - Members Report";
+            $data['totalMember'] = $this->equbRepository->getCountByDateAndEqubType($dateFrom, $dateTo, $equbType);
+            $data['members'] = $this->equbRepository->getByDateAndEqubType($dateFrom, $dateTo, $equbType, $offset);
+
+            return view('admin/report/memberReportByEqubType/filterMembersByEqubType', $data);
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
@@ -231,22 +172,20 @@ class ReportController extends Controller
             return back();
         }
     }
+
     public function paginateMembersByEqubType($dateFrom, $dateTo, $equbType, $offsetVal, $pageNumberVal)
     {
         try {
             $data['offset'] = $offsetVal;
             $offset = $offsetVal;
-            $data['limit'] = 50;
+            $data['limit'] = 10;
             $data['pageNumber'] = $pageNumberVal;
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
-                $data['title'] = "Virtual Equb - Members Report";
-                $data['totalMember'] = $this->memberRepository->getCountByDate($dateFrom, $dateTo);
-                $data['members'] = $this->memberRepository->getByDate($dateFrom, $dateTo, $offset);
-                return view('admin/report/memberReport/filterMembers', $data);
-            // } else {
-            //     return view('auth/login');
-            // }
+            $data['title'] = "Virtual Equb - Members Report";
+            $data['totalMember'] = $this->memberRepository->getCountByDate($dateFrom, $dateTo);
+            $data['members'] = $this->memberRepository->getByDate($dateFrom, $dateTo, $offset);
+
+            return view('admin/report/memberReport/filterMembers', $data);
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
@@ -254,17 +193,15 @@ class ReportController extends Controller
             return back();
         }
     }
+
     public function unPaidLotteryByDateFilter()
     {
         try {
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
-                $data['title'] = "Virtual Equb - Lotterys Report";
-                $data['equbTypes'] = $this->equbTypeRepository->getActive();
-                return view('admin/report/unpaidLotteryByDateReport/lotterysByDate', $data);
-            // } else {
-            //     return view('auth/login');
-            // }
+            $data['title'] = "Virtual Equb - Lotterys Report";
+            $data['equbTypes'] = $this->equbTypeRepository->getActive();
+
+            return view('admin/report/unpaidLotteryByDateReport/lotterysByDate', $data);
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
@@ -272,27 +209,23 @@ class ReportController extends Controller
             return back();
         }
     }
+
     public function unPaidLotterysByDate($lotteryDate, $equbType)
     {
-        // dd($lotteryDate);
         try {
             $data['offset'] = 0;
             $offset = 0;
             $data['limit'] = 50;
             $data['pageNumber'] = 1;
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
-                $data['title'] = "Virtual Equb - UnPaid Lotterys By Lottery Date Report";
-                $member_id = $this->equbTakerRepository->getMemberId();
-                $member_id = json_encode($member_id);
-                $member_id = str_replace('"', "", $member_id);
-                $data['totalLotterys'] = $this->equbRepository->getUnPaidLotteryByLotteryDateCount($member_id, $lotteryDate, $equbType);
-                $data['lotterys'] = $this->equbRepository->getUnPaidLotteryByLotteryDate($member_id, $lotteryDate, $offset, $equbType);
-                // dd($data['lotterys']);
-                return view('admin/report/unpaidLotteryByDateReport/filterLotterysByDate', $data);
-            // } else {
-            //     return view('auth/login');
-            // }
+            $data['title'] = "Virtual Equb - UnPaid Lotterys By Lottery Date Report";
+            $member_id = $this->equbTakerRepository->getMemberId();
+            $member_id = json_encode($member_id);
+            $member_id = str_replace('"', "", $member_id);
+            $data['totalLotterys'] = $this->equbRepository->getUnPaidLotteryByLotteryDateCount($member_id, $lotteryDate, $equbType);
+            $data['lotterys'] = $this->equbRepository->getUnPaidLotteryByLotteryDate($member_id, $lotteryDate, $offset, $equbType);
+            
+            return view('admin/report/unpaidLotteryByDateReport/filterLotterysByDate', $data);
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
@@ -300,6 +233,7 @@ class ReportController extends Controller
             return back();
         }
     }
+
     public function paginateUnPaidLotterysByDate($lotteryDate, $offsetVal, $pageNumberVal, $equbType)
     {
         try {
@@ -308,17 +242,14 @@ class ReportController extends Controller
             $data['limit'] = 50;
             $data['pageNumber'] = $pageNumberVal;
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
-                $data['title'] = "Virtual Equb - UnPaid Lotterys Report";
-                $member_id = $this->equbTakerRepository->getMemberId();
-                $member_id = json_encode($member_id);
-                $member_id = str_replace('"', "", $member_id);
-                $data['totalLotterys'] = $this->equbRepository->getUnPaidLotteryByEqubTypeCount($member_id, $equbType);
-                $data['lotterys'] = $this->equbRepository->getUnPaidLotteryByEqubType($member_id, $equbType, $offset);
-                return view('admin/report/unpaidLotteryByDateReport/filterLotterysByDate', $data);
-            // } else {
-            //     return view('auth/login');
-            // }
+            $data['title'] = "Virtual Equb - UnPaid Lotterys Report";
+            $member_id = $this->equbTakerRepository->getMemberId();
+            $member_id = json_encode($member_id);
+            $member_id = str_replace('"', "", $member_id);
+            $data['totalLotterys'] = $this->equbRepository->getUnPaidLotteryByEqubTypeCount($member_id, $equbType);
+            $data['lotterys'] = $this->equbRepository->getUnPaidLotteryByEqubType($member_id, $equbType, $offset);
+
+            return view('admin/report/unpaidLotteryByDateReport/filterLotterysByDate', $data);
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
@@ -326,16 +257,14 @@ class ReportController extends Controller
             return back();
         }
     }
+
     public function equbTypeFilter()
     {
         try {
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
-                $data['title'] = "Virtual Equb - Equb Types Report";
-                return view('admin/report/equbTypeReport/equbTypes', $data);
-            // } else {
-            //     return view('auth/login');
-            // }
+            $data['title'] = "Virtual Equb - Equb Types Report";
+            
+            return view('admin/report/equbTypeReport/equbTypes', $data);
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
@@ -343,17 +272,15 @@ class ReportController extends Controller
             return back();
         }
     }
+
     public function equbTypes($dateFrom, $dateTo)
     {
         try {
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
-                $data['title'] = "Virtual Equb - Equb Types Report";
-                $data['equbTypes'] = $this->equbTypeRepository->getByDate($dateFrom, $dateTo);
-                return view('admin/report/equbTypeReport/filterEqubTypes', $data);
-            // } else {
-            //     return view('auth/login');
-            // }
+            $data['title'] = "Virtual Equb - Equb Types Report";
+            $data['equbTypes'] = $this->equbTypeRepository->getByDate($dateFrom, $dateTo);
+
+            return view('admin/report/equbTypeReport/filterEqubTypes', $data);
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
@@ -361,18 +288,15 @@ class ReportController extends Controller
             return back();
         }
     }
+
     public function paymentFilter()
     {
         try {
-                $data['title'] = "Virtual Equb - Payments Report";
-                $data['members'] = $this->memberRepository->getAll();
-                $data['equbTypes'] = $this->equbTypeRepository->getActive();
-                
-                // Render the view directly instead of returning JSON
-                return view('admin.report.paymentReport.payments', $data);
-            // } else {
-            //     return view('auth/login');
-            // }
+            $data['title'] = "Virtual Equb - Payments Report";
+            $data['members'] = $this->memberRepository->getAll();
+            $data['equbTypes'] = $this->equbTypeRepository->getActive();
+            
+            return view('admin.report.paymentReport.payments', $data);
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
@@ -380,6 +304,7 @@ class ReportController extends Controller
             return back();
         }
     }
+
     public function payments($dateFrom, $dateTo, $member_id, $equb_id)
     {
         try {
@@ -825,14 +750,11 @@ class ReportController extends Controller
     {
         try {
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
-                $data['title'] = "Virtual Equb - Equbs Report";
-                $data['members'] = $this->memberRepository->getAll();
-                $data['equbTypes'] = $this->equbTypeRepository->getActive();
-                return view('admin/report/equbReport/equbs', $data);
-            // } else {
-            //     return view('auth/login');
-            // }
+            $data['title'] = "Virtual Equb - Equbs Report";
+            $data['members'] = $this->memberRepository->getAll();
+            $data['equbTypes'] = $this->equbTypeRepository->getActive();
+
+            return view('admin/report/equbReport/equbs', $data);
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
@@ -872,14 +794,11 @@ class ReportController extends Controller
             $data['limit'] = 50;
             $data['pageNumber'] = $pageNumberVal;
             $userData = Auth::user();
-            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
-                $data['title'] = "Virtual Equb - Equbs Report";
-                $data['totalEqub'] = $this->equbRepository->getCountByDate($dateFrom, $dateTo, $equbType);
-                $data['equbs'] = $this->equbRepository->getByDate($dateFrom, $dateTo, $equbType, $offset);
-                return view('admin/report/equbReport/filterEqubs', $data);
-            // } else {
-            //     return view('auth/login');
-            // }
+            $data['title'] = "Virtual Equb - Equbs Report";
+            $data['totalEqub'] = $this->equbRepository->getCountByDate($dateFrom, $dateTo, $equbType);
+            $data['equbs'] = $this->equbRepository->getByDate($dateFrom, $dateTo, $equbType, $offset);
+            
+            return view('admin/report/equbReport/filterEqubs', $data);
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
