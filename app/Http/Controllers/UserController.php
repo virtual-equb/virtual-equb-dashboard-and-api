@@ -24,27 +24,19 @@ class UserController extends Controller
     private $title;
     public function __construct(IUserRepository $userRepository, IActivityLogRepository $activityLogRepository)
     {
-        //$this->middleware('auth');
         $this->activityLogRepository = $activityLogRepository;
         $this->userRepository = $userRepository;
         $this->title = "Virtual Equb - User";
-
-        // Permission Guard
-        // $this->middleware('permission_check_logout:update user', ['only' => ['update', 'edit', 'resetPassword', 'deactiveStatus', 'activeUser']]);
-        // $this->middleware('permission_check_logout:delete user', ['only' => ['destroy']]);
-        // $this->middleware('permission_check_logout:view user', ['only' => ['index', 'show', 'indexForDeactivated', 'deactiveUser', 'user']]);
-        // $this->middleware('permission_check_logout:create user', ['only' => ['store', 'create', 'storeUser']]);
     }
+
     public function index()
     {
         try {
-                
             $this->middleware('auth');
             $data['title'] = $this->title;
             $data['roles'] = $this->userRepository->getRoles();
                 
             return view('admin/user.admins', $data);
-
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -52,6 +44,7 @@ class UserController extends Controller
             return back();
         }
     }
+    
     public function indexForDeactivated()
     {
         try {
@@ -67,6 +60,7 @@ class UserController extends Controller
             return back();
         }
     }
+
     public function user($offsetVal, $pageNumberVal)
     {
         try {
@@ -91,6 +85,7 @@ class UserController extends Controller
             return back();
         }
     }
+
     public function deactiveUser($offsetVal, $pageNumberVal)
     {
         try {
@@ -114,6 +109,7 @@ class UserController extends Controller
             return back();
         }
     }
+
     public function phoneCheck(Request $request)
     {
         try {
@@ -135,6 +131,7 @@ class UserController extends Controller
             return back();
         }
     }
+
     public function userPhoneCheck(Request $request)
     {
         try {
@@ -157,11 +154,11 @@ class UserController extends Controller
             return back();
         }
     }
+
     public function resetPassword(Request $request)
     {
         try {
             $u_id = $request->input('u_id');
-            // $password = Str::random(6);
             $password = rand(100000, 999999);
             $user = User::where('id', $u_id)->first();
                 $updated = [
@@ -193,6 +190,7 @@ class UserController extends Controller
             return back();
         }
     }
+
     public function emailCheck(Request $request)
     {
         try {
@@ -216,9 +214,9 @@ class UserController extends Controller
             return back();
         }
     }
+
     public function store(Request $request)
     {
-        
         try {
             $userData = Auth::user();
                 $this->validate(
@@ -237,8 +235,6 @@ class UserController extends Controller
                 $phone_number = $request->input('phone_number');
                 $gender = $request->input('gender');
                 $roles = $request->input('role');
-                // $password = $request->input('password');
-                // $password = '123456';
                 $password = rand(100000, 999999);
                 $userData = [
                     'name' => $fullName,
@@ -249,9 +245,6 @@ class UserController extends Controller
                 ];
                 $create = $this->userRepository->createUser($userData);
                 
-                // $create->syncRoles([$role]);
-                
-                // dd($create);
                 if ($create) {
                     foreach ($roles as $roleName) {
                         // First, ensure the roles exist for each guard
@@ -292,7 +285,6 @@ class UserController extends Controller
         } catch (Exception $ex) {
             $msg = $ex->getMessage();
             $type = 'error';
-            // dd($ex);
             Session::flash($type, $msg);
             return back();
         }
@@ -329,7 +321,6 @@ class UserController extends Controller
                     $user->assignRole($roleForWeb);
                     $user->assignRole($roleForApi);
                 }
-                
 
                 $userData = Auth::user();
                     $activityLog = [
@@ -343,10 +334,8 @@ class UserController extends Controller
                     $this->activityLogRepository->createActivityLog($activityLog);
                     try {
                         $message = "Welcome to Virtual Equb! You have registered succesfully. Use the email address " . $request->phone . " and password " . $otp . " to log in." . " For further information please call " . $shortcode;
-                        // dd($message);
                         $this->sendSms($request->phone, $message);
                     } catch (Exception $ex) {
-                        // return redirect()->back()->with('error', 'Failed to send SMS', $ex->getMessage());
                         return redirect()->back()->with('error', $ex->getMessage());
                     };
             }
@@ -358,34 +347,10 @@ class UserController extends Controller
         } catch (Exception $ex) {
             $msg = $ex->getMessage();
             $type = 'error';
-            // dd($ex);
             Session::flash($type, $msg);
             return back();
         }
-        
     }
-    // public function verifyOTP(Request $request)
-    // {
-    //     $request->validate([
-    //         'otp' => 'required|integer',
-    //         'phone_number' => 'required'
-    //     ]);
-
-    //     // Fetch user by phone number
-    //     $user = User::where('phone_number', $request->phone_number)->first();
-
-    //     if (!$user) {
-    //         return response()->json(['message' => 'User not found.'], 404);
-    //     }
-
-    //     // Verify OTP
-    //     if (Hash::check($request->otp, $user->password)) {
-    //         // OTP is valid
-    //         return response()->json(['message' => 'OTP verified successfully.']);
-    //     } else {
-    //         return response()->json(['message' => 'Invalid OTP.'], 422);
-    //     }
-    // }
 
     public function deactiveStatus($id, Request $request)
     {
@@ -423,6 +388,7 @@ class UserController extends Controller
             return back();
         }
     }
+
     public function activeUser($id, Request $request)
     {
         try {
@@ -459,6 +425,7 @@ class UserController extends Controller
             return back();
         }
     }
+
     public function edit($id)
     {
         try {
@@ -479,74 +446,7 @@ class UserController extends Controller
             return back();
         }
     }
-    // public function update($id, Request $request)
-    // {
-    //     try {
-    //             $userData = Auth::user();
-    //             $this->validate(
-    //                 $request,
-    //                 [
-    //                     'name' => 'required',
-    //                     'email' => 'required',
-    //                     'phone_number' => 'required',
-    //                     'gender' => 'required',
-    //                     'role' => 'required|array',
-    //                 ]
-    //             );
-    //             $name = $request->input('name');
-    //             $email = $request->input('email');
-    //             $phone = $request->input('phone_number');
-    //             $gender = $request->input('gender');
-    //             $roles = $request->input('role');
-    //             $updated = [
-    //                 'name' => $name,
-    //                 'email' => $email,
-    //                 'phone_number' => $phone,
-    //                 'gender' => $gender,
-    //             ];
-    //             $updated = $this->userRepository->updateUser($id, $updated);
-    //             if ($updated) {
-            
-    //                 // Assign each role separately for both guards
-    //                 foreach ($roles as $roleName) {
-    //                     // First, ensure the roles exist for each guard
-    //                     $roleForWeb = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web']);
-    //                     $roleForApi = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'api']);
-
-    //                     // Assign the roles to the updated for both guards
-    //                     $updated->assignRole($roleForWeb);
-    //                     $updated->assignRole($roleForApi);
-    //                 }
-    //             }
-    //             // dd($updated);
-    //             // $updated->syncRoles([$role]);
-    //             if ($updated) {
-    //                 $activityLog = [
-    //                     'type' => 'users',
-    //                     'type_id' => $id,
-    //                     'action' => 'updated',
-    //                     'user_id' => $userData->id,
-    //                     'username' => $userData->name,
-    //                     'role' => $userData->role,
-    //                 ];
-    //                 $this->activityLogRepository->createActivityLog($activityLog);
-    //                 $msg = "User detail has been updated successfully!";
-    //                 $type = 'success';
-    //                 Session::flash($type, $msg);
-    //                 return back();
-    //             } else {
-    //                 $msg = "Unknown error occurred, Please try again!";
-    //                 $type = 'error';
-    //                 Session::flash($type, $msg);
-    //                 return back();
-    //             }
-    //     } catch (Exception $ex) {
-    //         $msg = "Unable to process your request, Please try again!";
-    //         $type = 'error';
-    //         Session::flash($type, $msg);
-    //         return back();
-    //     }
-    // }
+   
     public function update1($id, Request $request)
     {
         try {
@@ -639,107 +539,102 @@ class UserController extends Controller
         }
     }
     public function update($id, Request $request)
-{
-    try {
-        $userData = Auth::user();
+    {
+        try {
+            $userData = Auth::user();
 
-        // Validate the request
-        $this->validate(
-            $request,
-            [
-                'name' => 'required',
-                'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($id)],
-                'phone_number' => ['required',  'max:255', Rule::unique('users', 'phone_number')->ignore($id)],
-                'gender' => 'required',
-                'role' => 'required|array',
-            ]
-        );
+            // Validate the request
+            $this->validate(
+                $request,
+                [
+                    'name' => 'required',
+                    'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($id)],
+                    'phone_number' => ['required',  'max:255', Rule::unique('users', 'phone_number')->ignore($id)],
+                    'gender' => 'required',
+                    'role' => 'required|array',
+                ]
+            );
 
-        $name = $request->input('name');
-        $email = $request->input('email');
-        $phone = $request->input('phone_number');
-        $gender = $request->input('gender');
-        $roles = $request->input('role');
+            $name = $request->input('name');
+            $email = $request->input('email');
+            $phone = $request->input('phone_number');
+            $gender = $request->input('gender');
+            $roles = $request->input('role');
 
-        // Update user details
-        $updatedData = [
-            'name' => $name,
-            'email' => $email,
-            'phone_number' => $phone,
-            'gender' => $gender,
-        ];
-        $updated = $this->userRepository->updateUser($id, $updatedData);
-
-        if ($updated) {
-            // Sync roles for the 'web' guard
-            // $rolesForWeb = [];
-            // foreach ($roles as $roleName) {
-            //     $rolesForWeb[] = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web'])->name;
-            // }
-            // $updated->syncRoles($rolesForWeb); // Sync roles for the 'web' guard
-
-            // // Handle roles for the 'api' guard
-            // // First, remove existing roles for the 'api' guard
-            // $currentApiRoles = $updated->roles()->where('guard_name', 'api')->get();
-            // foreach ($currentApiRoles as $role) {
-            //     $updated->removeRole($role->name);
-            // }
-
-            // // Assign new roles for the 'api' guard
-            // foreach ($roles as $roleName) {
-            //     $roleApi = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'api']);
-            //     $updated->assignRole($roleApi->name); // Assign role for 'api'
-            // }
-            $rolesForWeb = [];
-            foreach ($roles as $roleName) {
-                $roleWeb = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web']);
-                $rolesForWeb[] = $roleWeb->name;
-            }
-            $updated->syncRoles($rolesForWeb); // Sync roles for 'web'
-
-            // Clear and assign roles for the 'api' guard
-            // First, remove existing roles for 'api'
-            $updated->roles()->where('guard_name', 'api')->delete();
-
-            // Then assign new roles for 'api'
-            foreach ($roles as $roleName) {
-                $roleApi = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'api']);
-                DB::table('model_has_roles')->insert([
-                    'role_id' => $roleApi->id,
-                    'model_type' => get_class($updated),
-                    'model_id' => $updated->id,
-                ]);
-            }
-
-
-            // Log activity
-            $activityLog = [
-                'type' => 'users',
-                'type_id' => $id,
-                'action' => 'updated',
-                'user_id' => $userData->id,
-                'username' => $userData->name,
-                'role' => $userData->role,
+            // Update user details
+            $updatedData = [
+                'name' => $name,
+                'email' => $email,
+                'phone_number' => $phone,
+                'gender' => $gender,
             ];
-            $this->activityLogRepository->createActivityLog($activityLog);
+            $updated = $this->userRepository->updateUser($id, $updatedData);
 
-            Session::flash('success', "User detail has been updated successfully!");
-            return back();
-        } else {
-            Session::flash('error', "Unknown error occurred, Please try again!");
+            if ($updated) {
+                // Sync roles for the 'web' guard
+                // $rolesForWeb = [];
+                // foreach ($roles as $roleName) {
+                //     $rolesForWeb[] = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web'])->name;
+                // }
+                // $updated->syncRoles($rolesForWeb); // Sync roles for the 'web' guard
+
+                // // Handle roles for the 'api' guard
+                // // First, remove existing roles for the 'api' guard
+                // $currentApiRoles = $updated->roles()->where('guard_name', 'api')->get();
+                // foreach ($currentApiRoles as $role) {
+                //     $updated->removeRole($role->name);
+                // }
+
+                // // Assign new roles for the 'api' guard
+                // foreach ($roles as $roleName) {
+                //     $roleApi = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'api']);
+                //     $updated->assignRole($roleApi->name); // Assign role for 'api'
+                // }
+                $rolesForWeb = [];
+                foreach ($roles as $roleName) {
+                    $roleWeb = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web']);
+                    $rolesForWeb[] = $roleWeb->name;
+                }
+                $updated->syncRoles($rolesForWeb); // Sync roles for 'web'
+
+                // Clear and assign roles for the 'api' guard
+                // First, remove existing roles for 'api'
+                $updated->roles()->where('guard_name', 'api')->delete();
+
+                // Then assign new roles for 'api'
+                foreach ($roles as $roleName) {
+                    $roleApi = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'api']);
+                    DB::table('model_has_roles')->insert([
+                        'role_id' => $roleApi->id,
+                        'model_type' => get_class($updated),
+                        'model_id' => $updated->id,
+                    ]);
+                }
+
+
+                // Log activity
+                $activityLog = [
+                    'type' => 'users',
+                    'type_id' => $id,
+                    'action' => 'updated',
+                    'user_id' => $userData->id,
+                    'username' => $userData->name,
+                    'role' => $userData->role,
+                ];
+                $this->activityLogRepository->createActivityLog($activityLog);
+
+                Session::flash('success', "User detail has been updated successfully!");
+                return back();
+            } else {
+                Session::flash('error', "Unknown error occurred, Please try again!");
+                return back();
+            }
+        } catch (Exception $ex) {
+            Session::flash('error', "Unable to process your request, Please try again! " . $ex->getMessage());
             return back();
         }
-    } catch (Exception $ex) {
-        Session::flash('error', "Unable to process your request, Please try again! " . $ex->getMessage());
-        return back();
     }
-}
 
-
-    // public function removeRole (Request $request)
-    // {
-    //     return response()->json($request->all());
-    // }
     public function destroy($id)
     {
         try {
@@ -778,13 +673,13 @@ class UserController extends Controller
                     return false;
                 }
         } catch (Exception $ex) {
-            // dd($ex);
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
             Session::flash($type, $msg);
             return $msg;
         }
     }
+
     public function searchUser($searchInput, $offset, $pageNumber = null)
     {
         try {

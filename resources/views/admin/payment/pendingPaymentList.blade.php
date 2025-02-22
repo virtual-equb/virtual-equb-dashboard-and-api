@@ -25,13 +25,6 @@
                 color: red;
             }
 
-            div.dataTables_wrapper div.dataTables_paginate {
-                margin: 0;
-                display: none;
-                white-space: nowrap;
-                text-align: right;
-            }
-
             div.dataTables_wrapper div.dataTables_info {
                 padding-top: 0.85em;
                 display: none;
@@ -96,14 +89,6 @@
                 }
             }
 
-            /*@media (max-width: 768px) {
-                                                                                                                                                                                                                                                                                  .col-md-6 {
-                                                                                                                                                                                                                                                                                   width: 100%;
-                                                                                                                                                                                                                                                                                   padding-left: 0px;
-                                                                                                                                                                                                                                                                                   padding-right: 0px;
-                                                                                                                                                                                                                                                                                   float: left;
-                                                                                                                                                                                                                                                                                  }
-                                                                                                                                                                                                                                                                                }*/
             @media (max-width: 575.98px) {
                 #payment-list-table_in_tab {
                     display: block;
@@ -123,76 +108,123 @@
             <div class="content-wrapper">
                 <section class="content">
                     <div class="container-fluid">
+                        <div class="row mt-2">
+                            <div class="col-lg-4 col-md-4 col-12">
+                                <div class="small-box bg-info">
+                                    <div class="inner">
+                                        <h3>{{ $totalPendingPayment }}</h3>
+                                        <p>Total Pending Transactions</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="ion ion-pie-graph"></i>
+                                    </div>
+                                    <a href="#" class="small-box-footer"><i class="fas fa-list"></i></a>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-12">
+                                <div class="small-box bg-success">
+                                    <div class="inner">
+                                        <h3>{{ $totalOfflinePayment }}</h3>
+                                        <p>Offline Payment Transaction</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="ion ion-pie-graph"></i>
+                                    </div>
+                                    <a href="#" class="small-box-footer"><i class="fas fa-list"></i></a>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-12">
+                                <div class="small-box bg-warning">
+                                    <div class="inner">
+                                        <h3>{{ $totalOnlinePayment }}</h3>
+                                        <p>Online Payment Transaction</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="ion ion-pie-graph"></i>
+                                    </div>
+                                    <a href="#" class="small-box-footer"><i class="fas fa-list"></i></a>
+                                </div>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-12">
                                 <div class="card ">
                                     <div class="card-header">
-                                        <ul class="nav nav-pills" id="custom-tabs-two-tab" role="tablist">
-                                            <li class="nav-item nav-blue memberTab">
-                                                <a class="nav-link active" id="custom-tabs-two-member-tab"
-                                                    data-toggle="pill" href="#custom-tabs-two-member" role="tab"
-                                                    aria-controls="custom-tabs-two-member" aria-selected="true"> <span
-                                                        class="fa fa-list"> </span> Pending Payments</a>
-                                            </li>
-                                            <li class="nav-item paymentTab" id="payment-tab" style="display: none;">
-                                                <a class="nav-link" id="custom-tabs-two-messages-tab" data-toggle="pill"
-                                                    href="#custom-tabs-two-messages" role="tab"
-                                                    aria-controls="custom-tabs-two-messages" aria-selected="false"><span
-                                                        class="fa fa-list"> </span> Payment</a>
-                                            </li>
-                                        </ul>
+                                            <h4>Pending Payments</h4>
                                     </div>
                                     <div class="card-body">
-                                        <div class="tab-content" id="custom-tabs-two-tabContent">
-                                            <div class="tab-pane fade show active" id="custom-tabs-two-member"
-                                                role="tabpanel" aria-labelledby="custom-tabs-two-member-tab">
-                                                @include('admin/payment.addPayment')
-                                                {{-- @include('admin/lottery.addLottery')
-                                                @include('admin/equb.addEqub')
-                                                @include('admin/member.addMember') --}}
-                                                <div class="float-left checkLotteryandAddMember" id="member_table_filter">
-                                                    {{-- @if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant' && Auth::user()->role != 'finance')
-                                                        <button type="button" class=" btn btn-primary checkLottery"
-                                                            id="lotteryDatec" data-toggle="modal"
-                                                            data-target="#lotteryDateCheckModal"
-                                                            style="margin-right: 30px;"> <i class="fa fa-check-square"></i>
-                                                            Check Lottery Date</button>
-                                                        <button type="button" class=" btn btn-primary addMember"
-                                                            id="register" data-toggle="modal" data-target="#myModal"
-                                                            style="margin-right: 30px;"> <span class="fa fa-plus-circle">
-                                                            </span> Add member</button>
-                                                    @endif --}}
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-7"></div>
-                                                    <div class="float-right searchandClear row col-5 mb-2"
-                                                        id="member_table_filter">
-                                                        <input class="form-control col-10" type="text"
-                                                            id="memberSearchText" placeholder="Search Member"
-                                                            class="search">
-                                                        <button class="btn btn-default clear col-2" id="clearActiveSearch"
-                                                            onclick="clearSearchEntry()">
-                                                            Clear
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                <div id="member_table_data_w" class="col-md-8">
-
-                                                </div>
-                                                <div id="member_table_data">
-                                                </div>
-                                            </div>
-                                            <div class="tab-pane fade" id="custom-tabs-two-profile" role="tabpanel"
-                                                aria-labelledby="custom-tabs-two-profile-tab">
-
-                                            </div>
-                                            <div class="tab-pane fade" id="custom-tabs-two-messages" role="tabpanel"
-                                                aria-labelledby="custom-tabs-two-messages-tab">
-
-                                            </div>
-                                            <div class="tab-pane fade" id="custom-tabs-two-settings" role="tabpanel"
-                                                aria-labelledby="custom-tabs-two-settings-tab">
-                                            </div>
+                                        <div id="pending_payment_table_data" class="table-responsive">
+                                            <table id="pending-payment-table" class="table table-bordered table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th>Full Name</th>
+                                                        <th>Phone</th>
+                                                        <th>Payment Type</th>
+                                                        <th>Amount</th>
+                                                        <th>Credit</th>
+                                                        <th>Balance</th>
+                                                        <th>Status</th>
+                                                        <th>Registered At</th>
+                                                        <th style="width: 50px">Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach($pendingPayments as $index => $pending)
+                                                    <tr>
+                                                        <td>{{ $loop->iteration }}</td>
+                                                        <td>{{ $pending->member->full_name}}</td>
+                                                        <td>{{ $pending->member->phone}}</td>
+                                                        <td>{{ $pending->payment_type}}</td>
+                                                        <td>{{ number_format($pending->amount, 2) }}</td>
+                                                        <td>{{ number_format($pending->creadit, 2) }}</td>
+                                                        <td>{{ number_format($pending->balance, 2) }}</td>
+                                                        <td>{{ $pending->status}}</td>
+                                                        <td>{{ \Carbon\Carbon::parse($pending->created_at)->format('M-j-Y') }}</td>
+                                                        @if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant')
+                                                            <td>
+                                                                <div class="dropdown">
+                                                                    <button class="btn btn-secondary btn-sm btn-flat dropdown-toggle" type="button" data-toggle="dropdown"> Menu <span class="caret"></span></button>
+                                                                    <ul class="dropdown-menu p-4">
+                                                                        @if (Auth::user()->role != 'finance')
+                                                                            <li>
+                                                                                <a href="javascript:void(0);" class="btn-sm btn btn-flat" onclick="openPaymentEditModal({{ $pending }})">
+                                                                                    <span class="fa fa-edit"></span> Edit
+                                                                                </a>
+                                                                            </li>
+                                                                            <li>
+                                                                                <a href="javascript:void(0);" class="btn-sm btn btn-flat" onclick="openDeletePaymentModal({{ $pending }})">
+                                                                                    <i class="fas fa-trash"></i> Delete
+                                                                                </a>
+                                                                            </li>
+                                                                            <li>
+                                                                                <a href="javascript:void(0);" class="btn-sm btn btn-flat" onclick="showPaymentProofModal({{ $pending }})">
+                                                                                    <i class="fas fa-image"></i> Show Proof
+                                                                                </a>
+                                                                            </li>
+                                                                            @if ($pending->status == 'pending' || $pending->status == 'unpaid')
+                                                                                <li>
+                                                                                    <a href="javascript:void(0);" class="btn-sm btn btn-flat" onclick="approvePayment({{ $pending }})">
+                                                                                        <i class="fas fa-check"></i> Approve
+                                                                                    </a>
+                                                                                </li>
+                                                                            @endif
+                                                                            @if ($pending->status == 'pending')
+                                                                                <li>
+                                                                                    <a href="javascript:void(0);" class="btn-sm btn btn-flat" onclick="rejectPayment({{ $pending }})">
+                                                                                        <i class="fas fa-times"></i> Reject
+                                                                                    </a>
+                                                                                </li>
+                                                                            @endif
+                                                                        @endif
+                                                                    </ul>
+                                                                </div>
+                                                            </td>
+                                                        @endif
+                                                    </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
                                 </div>
@@ -203,142 +235,31 @@
             </div>
         </div>
         @include('admin/payment.deletePayment')
-        @include('admin/equb.deleteEqub')
-        @include('admin/payment.deleteAllPayment')
         @include('admin/payment.editPayment')
-        {{-- @include('admin/lottery.deleteLottery')
-        @include('admin/member.editMember')
-        @include('admin/member.checkLotteryDate')
-        @include('admin/equb.editEqub')
-        @include('admin/notification.sendNotification')
-        @include('admin/lottery.editLottery') --}}
-        <div class="modal modal-danger fade" id="lotteryDetailModal" tabindex="-1" role="dialog" aria-labelledby="Delete"
-            aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <p class="modal-title" id="exampleModalLabel">Reserved Lottery Detail</p>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body" id="lotteryDetail">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+
     @endsection
     @section('scripts')
         <script>
-            var memberSearchField = document.getElementById('memberSearchText');
-            memberSearchField.addEventListener("keydown", function(e) {
-                var memberSearchInput = memberSearchField.value;
-                if (e.keyCode === 13) { //checks whether the pressed key is "Enter"
-                    $.LoadingOverlay("show");
-                    searchForMember(memberSearchInput);
-                }
-            });
-
-            function searchForMember(searchInput) {
-                console.log("🚀 ~ searchForMember ~ searchInput:", searchInput)
-                if (searchInput != "") {
-                    $.ajax({
-                        url: "{{ url('payment/search-pending-payment') }}" + '/' + searchInput + '/0',
-                        type: 'get',
-                        success: function(data) {
-                            $('#member_table_data').html(data);
-                            $.LoadingOverlay("hide");
-                        }
-                    });
-                } else {
-                    clearSearchEntry();
-                    $.LoadingOverlay("hide");
-                }
-            }
-
-            function loadMoreSearchMembers(searchInput, offsetVal, pageNumberVal) {
-                if (searchInput != "") {
-                    $.ajax({
-                        url: "{{ url('payment/search-pending-payment') }}" + '/' + searchInput + '/' +
-                            offsetVal + '/' +
-                            pageNumberVal,
-                        type: 'get',
-                        success: function(data) {
-                            $('#member_table_data').html(data);
-                        }
-                    });
-
-                }
-            }
-
-            function clearSearchEntry() {
-                $.LoadingOverlay("show");
-                var searchInput = document.getElementById('memberSearchText').value;
-                // if (searchInput != "") {
-                document.getElementById('memberSearchText').value = "";
-                $.ajax({
-                    url: "{{ url('payment/clearPendingSearchEntry') }}",
-                    type: 'get',
-                    success: function(data) {
-                        $('#member_table_data').html(data);
-                        $.LoadingOverlay("hide");
-                    }
-                });
-
-                // }
-            }
-
-            function pendingMembers(offsetVal, pageNumberVal) {
-                $.LoadingOverlay("show");
-                $.ajax({
-                    url: "{{ url('payment/show-pending-payment') }}" + '/' + offsetVal + '/' + pageNumberVal,
-                    type: 'get',
-                    success: function(data) {
-                        $('#member_table_data').html(data);
-                        $.LoadingOverlay("hide");
-                    }
-                });
-            }
-
-            function searchPendingMembers(offsetVal, pageNumberVal) {
-                $.LoadingOverlay("show");
-                $.ajax({
-                    url: "{{ url('payment/show-pending-payment') }}" + '/' + offsetVal + '/' + pageNumberVal,
-                    type: 'get',
-                    success: function(data) {
-                        $('#member_table_data').html(data);
-                        $.LoadingOverlay("hide");
-                    }
-                });
-            }
-
-            function statusSubmit() {
-                document.getElementById("updateStatus").submit();
-            }
-
-            function openDeletePaymentModal(item) {
-                $('#payment_id').val(item.id);
+            function openDeletePaymentModal(pending) {
+                $('#payment_id').val(pending.id);
                 $('#deletePaymentModal').modal('show');
                 $('#deletePayment').attr('action', '/payment/deletePending/' + $('#payment_id').val())
             }
 
-            function showPaymentProofModal(item) {
-                $('#payment_id').val(item.id);
-                $("#viewImage").attr("src", "/storage/" + item.payment_proof);
+            function showPaymentProofModal(pending) {
+                $('#payment_id').val(pending.id);
+                $("#viewImage").attr("src", "/storage/" + pending.payment_proof);
                 $('#paymentProofModal').modal('show');
             }
 
-            function approvePayment(item) {
-                $('#payment_id').val(item.id);
+            function approvePayment(pending) {
+                $('#payment_id').val(pending.id);
                 $('#approvePaymentModal').modal('show');
                 $('#approvePayment').attr('action', '/payment/approvePending/' + $('#payment_id').val())
             }
 
-            function rejectPayment(item) {
-                $('#payment_id').val(item.id);
+            function rejectPayment(pending) {
+                $('#payment_id').val(pending.id);
                 $('#rejectPaymentModal').modal('show');
                 $('#rejectPayment').attr('action', '/payment/rejectPending/' + $('#payment_id').val())
             }
@@ -350,15 +271,13 @@
                 $('#deleteAllPayment').attr('action', 'payment/deleteAll/' + $('#member_id').val() + '/' + $('#equb_id').val())
             }
 
-            function openDeleteLotteryModal(item) {
-                $('#lottery_id').val(item.id);
+            function openDeleteLotteryModal(pending) {
+                $('#lottery_id').val(pending.id);
                 $.ajax({
-                    url: '/getRemainingLotteryAmount/' + item.equb_id,
+                    url: '/getRemainingLotteryAmount/' + pending.equb_id,
                     method: 'get',
                     success: function(data) {
-                        // console.log(data)
                         if (data == 0) {
-                            // console.log(data);
                             $('#lotteryPaymentButton').addClass('disabled');
                             $('#lotteryPaymentButton').prop('disabled', true);
                             $('#lotteryEdit').addClass('disabled');
@@ -373,51 +292,37 @@
                 $('#deleteLottery').attr('action', 'equbTaker/equbTaker-delete/' + $('#lottery_id').val())
             }
 
-            function openApproveLotteryModal(item) {
-                console.log("🚀 ~ file: memberList.blade.php:461 ~ openApproveLotteryModal ~ item:", item)
-                $('#lottery_idd').val(item.id);
+            function openApproveLotteryModal(pending) {
+                console.log("🚀 ~ file: memberList.blade.php:461 ~ openApproveLotteryModal ~ pending:", pending)
+                $('#lottery_idd').val(pending.id);
                 $('#openApproveLotteryModal').modal('show');
                 $('#approveLottery').attr('action', 'equbTaker/equbTaker-change-status/approved/' + $('#lottery_idd').val())
             }
 
-            function openPayLotteryModal(item) {
-                console.log("🚀 ~ file: memberList.blade.php:461 ~ openApproveLotteryModal ~ item:", item.id)
-                $('#lottery_id_pay').val(item.id);
+            function openPayLotteryModal(pending) {
+                console.log("🚀 ~ file: memberList.blade.php:461 ~ openApproveLotteryModal ~ pending:", pending.id)
+                $('#lottery_id_pay').val(pending.id);
                 $('#openPayLotteryModal').modal('show');
                 $('#payLottery').attr('action', 'equbTaker/equbTaker-change-status/paid/' + $('#lottery_id_pay').val())
             }
 
-            function openPaymentEditModal(item) {
-                // console.log(item.note)
-                $('#payment_id').val(item.id);
-                $('#update_member_id').val(item.member_id);
-                $('#equb_id').val(item.equb_id);
+            function openPaymentEditModal(pending) {
+                $('#payment_id').val(pending.id);
+                $('#update_member_id').val(pending.member_id);
+                $('#equb_id').val(pending.equb_id);
                 $('#editPaymentModal').modal('show');
-                $('#update_payment_type>option[value="' + item.payment_type + '"]').prop('selected', true);
-                $('#update_payment_amount').val(item.amount);
-                let total_amount = item.equb.amount - item.amount
+                $('#update_payment_type>option[value="' + pending.payment_type + '"]').prop('selected', true);
+                $('#update_payment_amount').val(pending.amount);
+                let total_amount = pending.equb.amount - pending.amount
                 $('#update_payment_credit').val(total_amount);
-                $('#update_payment_remark').val(item.note);
-                $('#update_payment_status>option[value="' + item.status + '"]').prop('selected', true);
+                $('#update_payment_remark').val(pending.note);
+                $('#update_payment_status>option[value="' + pending.status + '"]').prop('selected', true);
                 $('#updatePayment').attr('action', '/payment/updatePendingPayment/' + $('#update_member_id').val() + '/' + $(
                         '#equb_id')
                     .val() + '/' + $('#payment_id').val());
             }
 
             $(function() {
-                $.LoadingOverlay("show");
-                $('#settingNavp').addClass('menu-is-opening menu-open');
-                $('#pendingPayments').addClass('active');
-                $('#pay').addClass('active');
-                $.ajax({
-                    url: "{{ url('payment/show-pending-payment') }}" + '/' + 0 + '/' + 1,
-                    type: 'get',
-                    success: function(data) {
-                        $('#member_table_data').html(data);
-                        $.LoadingOverlay("hide");
-                    }
-                });
-
                 $('#addpayment').validate({
                     onfocusout: false,
                     rules: {
@@ -468,6 +373,7 @@
                     }
 
                 });
+
                 $('#updatePayment').validate({
                     onfocusout: false,
                     rules: {
@@ -519,6 +425,17 @@
                     }
 
                 });
+                $("#pending-payment-table").DataTable({
+                    "responsive": false,
+                    "lengthChange": false,
+                    "searching": true,
+                    "autoWidth": false,
+                    language: {
+                        search: "",
+                        searchPlaceholder: "Search",
+                    },
+                    "buttons": ["excel", "pdf", "print", "colvis"]
+                }).buttons().container().appendTo('#pending_payment_table_data .col-md-6:eq(0)');
             });
         </script>
     @endSection

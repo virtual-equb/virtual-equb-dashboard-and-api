@@ -114,6 +114,7 @@
                     $('#memberToRequired').addClass('d-none');
                 }
             }
+            
             $(function() {
                 $("#memberFrom").datetimepicker({
                     'format': "YYYY-MM-DD",

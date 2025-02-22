@@ -10,17 +10,15 @@ use Carbon\Carbon;
 class EqubTakerRepository implements IEqubTakerRepository
 {
     private $model;
-    private $limit;
+
     public function __construct(EqubTaker $equbTaker)
     {
         $this->model = $equbTaker;
-        $this->limit = 50;
     }
 
     public function getAll()
     {
-       // return $this->model->all();
-       return $this->model->with(['member', 'equb'])->paginate($this->limit);
+       return $this->model->with(['member', 'equb'])->get();
     }
 
     public function getReportById()

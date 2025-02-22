@@ -1,95 +1,164 @@
 <x-guest-layout>
-    <div class="flex items-center justify-center min-h-screen bg-gray-100">
-        <x-jet-authentication-card class="w-full max-w-md p-6 bg-white shadow-md rounded-lg">
-            <x-slot name="logo">
-                <img src="{{ url('dist/img/PNG/VirtualEqubLogoIcon.png') }}" alt="Logo" class="mx-auto mb-4" style="width:100px">
-            </x-slot>
-
-            <x-jet-validation-errors class="mb-4" />
-
-            @if (session('status'))
-                <div class="mb-4 font-medium text-sm text-green-600">
-                    {{ session('status') }}
-                </div>
-            @endif
-
-            <form method="POST" action="{{ route('login') }}">
-                @csrf
-
-                <div>
-                    <x-jet-label for="email" value="{{ __('Email') }}" class="font-semibold" />
-                    <x-jet-input id="email" class="block mt-1 w-full border border-gray-300 rounded-md focus:ring focus:ring-blue-300" type="email" name="email" :value="old('email')" required autofocus />
-                </div>
-
-                <div class="mt-4">
-                    <x-jet-label for="password" value="{{ __('Password') }}" class="font-semibold" />
-                    <x-jet-input id="password" class="block mt-1 w-full border border-gray-300 rounded-md focus:ring focus:ring-blue-300" type="password" name="password" required autocomplete="current-password" />
-                </div>
-
-                <div class="block mt-4">
-                    <label for="remember_me" class="flex items-center">
-                        <x-jet-checkbox id="remember_me" name="remember" class="rounded" />
-                        <span class="ml-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
-                    </label>
-                </div>
-
-                <div class="flex items-center justify-between mt-4">
-                    @if (Route::has('password.request'))
-                        <a class="underline text-sm text-gray-600 hover:text-gray-900" href="{{ route('password.request') }}">
-                            {{ __('Forgot your password?') }}
-                        </a>
+    <div class="container-login">
+        <div class="login-card">
+            <div class="login-card-left">
+                <img src="{{ url('dist/img/PNG/login-image.png') }}" alt="Logo" class="login-side">
+            </div>
+            <div class="login-card-right">
+                <section class="section">
+                    <div class="has-text-centered">
+                        <img class="login-logo" src="{{ url('dist/img/PNG/VirtualEqubLogoIcon.png') }}" alt="Logo">
+                    </div>
+                    <x-jet-validation-errors class="mb-4" />
+                    @if (session('status'))
+                        <div class="mb-4 font-medium text-sm text-green-600">
+                            {{ session('status') }}
+                        </div>
                     @endif
-
-                    <button type="submit" class="advanced-login-button">
-                        Login
-                    </button>
-                </div>
-            </form>
-        </x-jet-authentication-card>
+                    <form method="POST" action="{{ route('login') }}">
+                        @csrf
+                        <div class="field">
+                            <strong class="label">Email*</strong>
+                            {{-- <x-jet-input id="email" class="input" type="email" name="email" placeholder="Enter your email" :value="old('email')" required /> --}}
+                            <div class="input-wrapper">
+                                <x-jet-input id="email" class="input" type="email" name="email" placeholder="Enter your email" :value="old('email')" required />
+                                <i class="fas fa-user"></i> <!-- User Icon -->
+                            </div>
+                        </div>
+                        <div class="field">
+                            <strong class="label">Password*</strong>
+                            <div class="input-wrapper">
+                                <x-jet-input id="password" class="input" type="password" placeholder="Enter your password" name="password" required />
+                                <i class="fas fa-lock input-icon"></i> <!-- Lock Icon at the right end -->
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <label for="remember_me" class="flex items-center  mt-4">
+                                <x-jet-checkbox id="remember_me" name="remember" />
+                                <span class="ml-2 text-sm">Remember me</span>
+                            </label>
+                            <a href="{{ route('password.request') }}" class="text-sm  mt-4">Forgot password?</a>
+                        </div>
+                        <button type="submit" class="advanced-login-button mt-6">Login</button>
+                    </form>
+                    <p class="copyright-text">&copy; {{ now()->year }} Powered by Virtual Equb.</p>
+                </section>
+            </div>
+        </div>
     </div>
 </x-guest-layout>
 
 <style>
-    .advanced-login-button {
-        background: linear-gradient(135deg, #4e73df, #1cc88a); /* Gradient background */
-        color: white; /* Text color */
-        border: none; /* Remove default border */
-        border-radius: 25px; /* Rounded corners */
-        padding: 12px 24px; /* Padding for size */
-        font-size: 16px; /* Font size */
-        font-weight: bold; /* Bold text */
-        text-transform: uppercase; /* Uppercase text */
-        cursor: pointer; /* Pointer cursor on hover */
-        transition: background 0.3s ease, transform 0.2s; /* Smooth transition */
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Shadow effect */
-        margin-left: 10px; /* Space between the link and button */
-    }
+.input-wrapper {
+    position: relative;
+}
 
-    .advanced-login-button:hover {
-        background: linear-gradient(135deg, #1cc88a, #4e73df); /* Reverse gradient on hover */
-        transform: translateY(-2px); /* Slight upward movement */
-    }
+.input-wrapper i {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
 
-    .advanced-login-button:active {
-        transform: translateY(1px); /* Downward movement on click */
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Reduced shadow on click */
-    }
+.input-wrapper .input {
+    padding-left: 30px; /* Space for the icon */
+}
 
-    /* Additional styles for better visuals */
-    .flex {
-        display: flex;
-        align-items: center;
-    }
-    
-    .justify-between {
-        justify-content: space-between;
-    }
+.container-login {
+    width: 100vw;
+    height: 100vh;
+    background-color: #e5e0e0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.login-card {
+    display: flex;
+    width: 90%;
+    max-width: 1000px;
+    height: 80vh;
+    background: #ffffff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+}
+.login-card-left {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #4e73df;
+    max-width: 50%; /* Prevents it from resizing too much */
+}
 
-    .bg-gray-100 {
-        background-color: #f7fafc; /* Light gray background */
+.login-logo-img {
+    max-width: 150px; /* Set a fixed maximum width */
+    height: auto;
+    object-fit: contain;
+}
+.login-side img{
+  width: 100%;
+  object-fit: contain;
+  height:100%;
+}
+.login-card-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.section {
+    width: 100%;
+    max-width: 350px;
+}
+.field {
+    width: 100%;
+    margin-bottom: 15px;
+}
+.input {
+    width: 100%;
+    border-radius: 30px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+}
+.advanced-login-button {
+    width: 100%;
+    background: linear-gradient(135deg, #4e73df, #1cc88a);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.advanced-login-button:hover {
+    background: linear-gradient(135deg, #1cc88a, #4e73df);
+}
+.copyright-text {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+}
+.login-logo {
+    max-width: 150px; /* Reduce width */
+    height: auto;
+    display: block;
+    margin: 20px auto; /* Reduce top and bottom space */
+}
+@media (max-width: 1025px ) {
+    .login-card {
+        flex-direction: column;
+        width: 90%;
     }
-
-    .rounded-lg {
-        border-radius: 0.5rem; /* Rounded corners for the card */
+    .login-card-left {
+        display: none;
     }
+    .login-card-right {
+        padding: 20px;
+    }
+}
 </style>

@@ -96,14 +96,6 @@
                 }
             }
 
-            /*@media (max-width: 768px) {
-                                                                                                                                                                                                                                                                                              .col-md-6 {
-                                                                                                                                                                                                                                                                                               width: 100%;
-                                                                                                                                                                                                                                                                                               padding-left: 0px;
-                                                                                                                                                                                                                                                                                               padding-right: 0px;
-                                                                                                                                                                                                                                                                                               float: left;
-                                                                                                                                                                                                                                                                                              }
-                                                                                                                                                                                                                                                                                            }*/
             @media (max-width: 575.98px) {
                 #payment-list-table_in_tab {
                     display: block;

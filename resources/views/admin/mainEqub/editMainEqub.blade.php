@@ -13,13 +13,13 @@
                 <form id="editMainEqubForm" enctype="multipart/form-data"> <!-- Added enctype for file upload -->
                     <input type="hidden" id="editMainEqubId">
                     
-                    <div class="form-group">
-                        <label for="editMainEqubName" class="control-label">Main Equb Name:</label>
+                    <div class="form-group required">
+                        <label for="editMainEqubName" class="control-label">Main Equb Name</label>
                         <input type="text" class="form-control" id="editMainEqubName" required>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="editMainEqubStatus" class="control-label">Status:</label>
+                    <div class="form-group required">
+                        <label for="editMainEqubStatus" class="control-label">Status</label>
                         <select class="form-control" id="editMainEqubStatus" required>
                             <option value="1">Active</option>
                             <option value="0">Inactive</option>
@@ -27,12 +27,12 @@
                     </div>
 
                     <div class="form-group">
-    <label for="currentImage" class="control-label">Current Image:</label>
-    <div style="background-color: rgb(76, 175, 80); width: 60px; text-align: center;">
-        <img id="currentImage" src="{{ asset('storage/' . $equb->image) }}" alt="{{ $equb->name }}" 
-             style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; display: {{ $equb->image ? 'block' : 'none' }};">
-    </div>
-</div>
+                        <label for="currentImage" class="control-label">Current Image:</label>
+                        <div style="background-color: rgb(76, 175, 80); width: 60px; text-align: center;">
+                            <img id="currentImage" src="{{ asset('storage/' . $equb->image) }}" alt="{{ $equb->name }}" 
+                                style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; display: {{ $equb->image ? 'block' : 'none' }};">
+                        </div>
+                    </div>
 
                     <div class="form-group">
                         <label for="newImage" class="control-label">Upload New Image:</label>

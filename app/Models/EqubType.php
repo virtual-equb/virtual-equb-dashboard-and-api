@@ -37,18 +37,29 @@ class EqubType extends Model
     {
         return $this->hasMany(Equb::class);
     }
+
     public function payments()
     {
         return $this->hasMany(Payment::class);
     }
+
     public function notifications()
     {
         return $this->hasMany(Notification::class);
     }
 
     public function mainEqub()
-  {
-    return $this->belongsTo(MainEqub::class, 'main_equb_id');  // Ensure the foreign key is correct
-  }
+    {
+        return $this->belongsTo(MainEqub::class, 'main_equb_id'); 
+    }
 
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'Active');
+    }
+
+    public function scopeInactive($query)
+    {
+        return $query->where('status', 'Deactive');
+    }
 }

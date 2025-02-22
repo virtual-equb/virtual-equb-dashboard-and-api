@@ -110,7 +110,6 @@
                      "responsive": false,
                      "lengthChange": false,
                      "searching": true,
-                     "paging": false,
                      "autoWidth": false,
                      language: {
                          search: "",

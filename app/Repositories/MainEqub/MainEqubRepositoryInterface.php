@@ -7,4 +7,8 @@ interface MainEqubRepositoryInterface
     public function all(); // Retrieve all MainEqubs
     
     public function find($id); // Retrieve MainEqub by id
+
+    public function active();
+
+    public function inactive();
 }

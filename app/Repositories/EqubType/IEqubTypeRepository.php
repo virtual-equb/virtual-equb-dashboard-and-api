@@ -1,12 +1,9 @@
 <?php
 
-
 namespace App\Repositories\EqubType;
-
 
 interface IEqubTypeRepository
 {
-
    public function getAll();
 
    public function getStatusById($id);
@@ -31,4 +28,7 @@ interface IEqubTypeRepository
 
     public function getEqubs();
 
+    public function active();
+
+    public function inactive();
 }

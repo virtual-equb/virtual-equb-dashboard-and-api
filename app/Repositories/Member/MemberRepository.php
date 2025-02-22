@@ -16,7 +16,7 @@ class MemberRepository implements IMemberRepository
     public function __construct(Member $member)
     {
         $this->model = $member;
-        $this->limit = 50;
+        $this->limit = 10;
     }
 
     public function getAll()
