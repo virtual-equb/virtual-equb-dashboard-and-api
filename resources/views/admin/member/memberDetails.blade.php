@@ -25,12 +25,14 @@
                     $totalPpayment = App\Models\Payment::where('equb_id', $equb['id'])
                         ->where('status', 'paid')
                         ->sum('amount');
-                    $totalEqubAmount = App\Models\Equb
-                        // ::where('status', 'Active')->
-                        ::select('total_amount')
-                        ->where('id', $equb['id'])
-                        ->pluck('total_amount')
-                        ->first();
+                    // $totalEqubAmount = App\Models\Equb
+                    //     // ::where('status', 'Active')->
+                    //     ::select('total_amount')
+                    //     ->where('id', $equb['id'])
+                    //     ->pluck('total_amount')
+                    //     ->first();
+                    $totalEqubAmount = App\Models\Equb::where('id', $equb['id'])
+                                        ->value('total_amount');
                     $remainingPayment = $totalEqubAmount - $totalPpayment;
                     // $lotteryDates = App\Models\Equb::where('status', 'Active')
                     //     ->where('id', $equb['id'])
