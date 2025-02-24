@@ -81,7 +81,7 @@ class MemberController extends Controller
 
             if ($userData && $userData->hasAnyRole($roles)) {
                 $data['totalMember'] = $this->memberRepository->getMember();
-                $data['members'] = $this->memberRepository->getAllByPaginate($offset);
+                $data['members'] = $this->memberRepository->getAllByPaginate($offset, $limit);
                 $data['equbTypes'] = $this->equbTypeRepository->getActive();
                 $data['equbs'] = $this->equbRepository->getAll();
                 $data['payments'] = $this->paymentRepository->getAllPayment();
@@ -117,7 +117,7 @@ class MemberController extends Controller
             $memberRoles = ['member'];
             if ($userData->hasAnyRole($adminRoles)) {
                 $data['totalMember'] = $this->memberRepository->getMember();
-                $data['members'] = $this->memberRepository->getAllByPaginate($offset);
+                $data['members'] = $this->memberRepository->getAllByPaginate($offset, $limit);
                 // $data['equbTypes'] = $this->equbTypeRepository->getActive();
                 // $data['equbs'] = $this->equbRepository->getAll();
                 // $data['payments'] = $this->paymentRepository->getAllPayment();
@@ -253,7 +253,7 @@ class MemberController extends Controller
             if ($userData->hasAnyRole($adminRoles)) {
 
                 $data['totalMember'] = $this->memberRepository->getMember();
-                $data['members'] = $this->memberRepository->getAllByPaginate($offset);
+                $data['members'] = $this->memberRepository->getAllByPaginate($offset, $limit);
                 $data['title'] = $this->title;
                 $data['limit'] = $limit;
                 $data['pageNumber'] = $pageNumber;
