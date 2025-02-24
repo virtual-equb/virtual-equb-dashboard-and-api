@@ -791,7 +791,7 @@ class MemberController extends Controller
     //         return back();
     //     }
     // }
-    public function show($id)
+    public function show1($id)
     {
         try {
             // Get the authenticated user
@@ -856,6 +856,66 @@ class MemberController extends Controller
             Session::flash($type, $msg);
 
             return back();
+        }
+    }
+
+    public function show($id) {
+        try {
+            // Get the authenticated user
+            $userData = Auth::user();
+            if (!$userData) {
+                return view('auth/login');
+            }
+
+            // Define roles
+            $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'call_center', 'finance'];
+            $collectorRoles = ['equb_collector'];
+            $memberRoles = ['member'];
+
+            // Retrieve member once to avoid multiple database queries
+            $member = $this->memberRepository->getByIdNested($id);
+
+            // Ensure member exists
+            if (!$member) {
+                Session::flash('error', "Member not found with ID: $id");
+                return back();
+            }
+
+            // Get equbs and first lottery date
+            $equbs = $member->equbs()->paginate(10);
+            $lotteryDate = $equbs->first()->lottery_date ?? null;
+
+            // Assign common data
+            $data = [
+                'member' => $member,
+                'equbs' => $equbs,
+                'date' => $lotteryDate
+            ];
+            // Determine role and return correct view
+            if ($userData->hasAnyRole($adminRoles)) {
+                return view('admin/member.memberDetails', $data);
+            }
+            if ($userData->hasAnyRole($collectorRoles)) {
+                return view('equbCollecter/member.memberDetails', $data);
+            }
+            if ($userData->hasAnyRole($memberRoles)) {
+                return view('member/member.memberDetails', $data);
+            }
+
+            // Default case (No matching role)
+            return view('auth/login');
+
+        } catch (Exception $ex) {
+            // Log the error for debugging
+            \Log::error('Error in show method: ' . $ex->getMessage());
+            \Log::error($ex->getTraceAsString());
+
+            // Provide user feedback
+            $msg = "Unable to process your request, Please try again!";
+            $type = 'error';
+            Session::flash($type, $msg);
+
+            return back(); 
         }
     }
 

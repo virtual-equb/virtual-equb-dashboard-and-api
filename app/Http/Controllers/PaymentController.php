@@ -174,7 +174,7 @@ class PaymentController extends Controller
                 if ($create) {
                     $totalPpayment = $this->paymentRepository->getTotalPaid($equb_id);
                     $totalEqubAmount = $this->equbRepository->getTotalEqubAmount($equb_id);
-                    $remainingPayment =  $totalEqubAmount - $totalPpayment;
+                    $remainingPayment =  max(0, $totalEqubAmount - $totalPpayment);
                     $updated = [
                         'total_payment' => $totalPpayment,
                         'remaining_payment' => $remainingPayment,
