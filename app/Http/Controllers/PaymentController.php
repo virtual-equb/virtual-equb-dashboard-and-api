@@ -469,7 +469,7 @@ class PaymentController extends Controller
             $data['title'] = $this->title;
 
             $totalPendingPayment = Payment::where('status', 'pending')->whereHas('member')->with('member')->count();
-            $pendingPayments = Payment::where('status', 'pending')->whereHas('member')->with('member')->get();
+            $pendingPayments = Payment::where('status', 'pending')->whereHas('member')->with('member')->orderBy('created_at', 'desc')->get();
             $totalOfflinePayment = Payment::where('status', 'pending')
                 ->whereHas('member')
                 ->whereIn('payment_type', ['cash', 'check', 'bank transfer', 'other'])
@@ -501,7 +501,7 @@ class PaymentController extends Controller
             $data['title'] = $this->title;
 
             $totalPaidPayment = Payment::where('status', 'paid')->whereHas('member')->with('member')->count();
-            $paidPayments = Payment::where('status', 'paid')->whereHas('member')->with('member')->get();
+            $paidPayments = Payment::where('status', 'paid')->whereHas('member')->with('member')->orderBy('created_at', 'desc')->get();
             $totalOfflinePayment = Payment::where('status', 'paid')
                 ->whereHas('member')
                 ->whereIn('payment_type', ['cash', 'check', 'bank transfer', 'other'])
