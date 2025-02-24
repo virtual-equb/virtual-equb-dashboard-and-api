@@ -8,7 +8,7 @@ interface IMemberRepository
 {
     public function getAll();
 
-    public function getAllByPaginate($offset);
+    public function getAllByPaginate($offset, $limit);
 
     public function getAllPendingByPaginate($offset);
 

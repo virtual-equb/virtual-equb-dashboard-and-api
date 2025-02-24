@@ -318,6 +318,24 @@ class EqubRepository implements IEqubRepository
         // return EqubType::with('mainEqub')->get();
     }
 
+    public function getByMember($memberId)
+    {
+        return $this->model
+            ->whereHas('members', function ($query) use ($memberId) {
+                $query->where('id', $memberId);
+            })
+            ->with(['equbType.mainEqub', 'payments'])
+            ->get();
+    }
+
+    public function getAllWithPagination($limit = 50)
+    {
+        return $this->model
+            ->with(['equbType.mainEqub', 'payments'])
+            ->orderBy('created_at', 'desc')
+            ->paginate($limit);
+    }
+
     public function getByDate($dateFrom, $dateTo, $equbType, $offset)
     {
         // return $this->model->where('status', 'Active')

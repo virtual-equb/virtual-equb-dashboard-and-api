@@ -19,6 +19,26 @@ class PaymentRepository implements IPaymentRepository
         $this->limit = 50;
     }
 
+    public function getRecentPayments($limit = 50)
+    {
+        return $this->model
+            ->with(['member', 'equb.equbType'])
+            ->orderByDesc('created_at')
+            ->limit($limit)
+            ->get();
+    }
+
+    public function getPaymentsByMember($memberId)
+    {
+        return $this->model
+            ->whereHas('member', function ($query) use ($memberId) {
+                $query->where('id', $memberId);
+            })
+            ->with(['equb.equbType'])
+            ->orderByDesc('created_at')
+            ->get();
+    }
+
     public function getAll()
     {
         return $this->model->all();
