@@ -108,7 +108,7 @@ class MemberController extends Controller
             return back();
         }
     }
-    public function index()
+    public function index1()
     {
         try {
             $offset = 0;
@@ -155,7 +155,7 @@ class MemberController extends Controller
             return back();
         }
     }
-    public function index1()
+    public function index()
     {
         try {
             $offset = 0;
@@ -178,7 +178,7 @@ class MemberController extends Controller
                 $equbs = $this->equbRepository->getAllWithPagination($limit);
                 $payments = $this->paymentRepository->getRecentPayments($limit);
 
-                return view('member/member.memberList', compact('title', 'members', 'equbTypes', 'equbs', 'payments', 'cities'));
+                return view('admin/member.memberList', compact('title', 'members', 'equbTypes', 'equbs', 'payments', 'cities'));
             }
 
             if ($userData && $userData->hasAnyRole($memberRole)) {

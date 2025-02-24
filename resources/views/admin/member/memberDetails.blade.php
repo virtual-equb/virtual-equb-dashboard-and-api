@@ -245,7 +245,7 @@
                                                 onclick="openEqubDeleteModal({{ $equb }})"
                                                 id="paymentDelete"><i class="fas fa-trash-alt"></i> Delete</a>
                                         </li>
-                                        <li>
+                                        {{-- <li>
                                             <a href="javascript:void(0);" class="text-secondary btn btn-flat"
                                                 onclick="equbStatusChange({{ $equb }})"
                                                 style="margin-right:10px;" id="statuss" name="statuss"><i
@@ -256,6 +256,14 @@
                                                     echo 'Activate';
                                                 }
                                                 ?>
+                                            </a>
+                                        </li> --}}
+                                        <li>
+                                            <a href="javascript:void(0);" class="text-secondary btn btn-flat"
+                                                onclick="equbStatusChange({{ $equb->id }}, '{{ $equb->status }}')"
+                                                style="margin-right:10px;" id="statuss" name="statuss">
+                                                <i class="fab fa-shopware"></i>
+                                                {{ $equb->status == 'Active' ? 'Deactivate' : 'Activate' }}
                                             </a>
                                         </li>
                                         <li>

@@ -1032,45 +1032,82 @@ class EqubController extends Controller
             return back();
         }
     }
+    // public function updateStatus($id, Request $request)
+    // {
+    //     try {
+    //         $userData = Auth::user();
+    //             $status = $this->equbRepository->getStatusById($id)->status;
+    //             if ($status == "Deactive") {
+    //                 $status = "Active";
+    //             } else {
+    //                 $status = "Deactive";
+    //             }
+    //             $updated = [
+    //                 'status' => $status,
+    //             ];
+    //             $updated = $this->equbRepository->update($id, $updated);
+    //             if ($updated) {
+    //                 if ($status == "Deactive") {
+    //                     $status = "Deactivated";
+    //                 } else {
+    //                     $status = "Activated";
+    //                 }
+    //                 $activityLog = [
+    //                     'type' => 'members',
+    //                     'type_id' => $id,
+    //                     'action' => $status,
+    //                     'user_id' => $userData->id,
+    //                     'username' => $userData->name,
+    //                     'role' => $userData->role,
+    //                 ];
+    //                 $this->activityLogRepository->createActivityLog($activityLog);
+    //                 $msg = "Status updated successfully!";
+    //                 $type = 'success';
+    //                 Session::flash($type, $msg);
+    //                 return redirect('/member');
+    //             } else {
+    //                 $msg = "Unknown error occurred, Please try again!";
+    //                 $type = 'error';
+    //                 Session::flash($type, $msg);
+    //                 return redirect('/member');
+    //             }
+    //     } catch (Exception $ex) {
+    //         $msg = "Unable to process your request, Please try again!";
+    //         $type = 'error';
+    //         Session::flash($type, $msg);
+    //         return back();
+    //     }
+    // }
     public function updateStatus($id, Request $request)
     {
         try {
             $userData = Auth::user();
-                $status = $this->equbRepository->getStatusById($id)->status;
-                if ($status == "Deactive") {
-                    $status = "Active";
-                } else {
-                    $status = "Deactive";
-                }
-                $updated = [
-                    'status' => $status,
+            $status = $request->status; // ✅ Get the status directly from the request
+
+            $updated = $this->equbRepository->update($id, ['status' => $status]);
+
+            if ($updated) {
+                $activityLog = [
+                    'type' => 'members',
+                    'type_id' => $id,
+                    'action' => ucfirst($status), // Log "Activated" or "Deactivated"
+                    'user_id' => $userData->id,
+                    'username' => $userData->name,
+                    'role' => $userData->role,
                 ];
-                $updated = $this->equbRepository->update($id, $updated);
-                if ($updated) {
-                    if ($status == "Deactive") {
-                        $status = "Deactivated";
-                    } else {
-                        $status = "Activated";
-                    }
-                    $activityLog = [
-                        'type' => 'members',
-                        'type_id' => $id,
-                        'action' => $status,
-                        'user_id' => $userData->id,
-                        'username' => $userData->name,
-                        'role' => $userData->role,
-                    ];
-                    $this->activityLogRepository->createActivityLog($activityLog);
-                    $msg = "Status updated successfully!";
-                    $type = 'success';
-                    Session::flash($type, $msg);
-                    return redirect('/member');
-                } else {
-                    $msg = "Unknown error occurred, Please try again!";
+                $this->activityLogRepository->createActivityLog($activityLog);
+
+                // return response()->json(['success' => true, 'message' => "Status updated successfully!"]);
+                $msg = "Status updated successfully!";
+                $type = 'success';
+                Session::flash($type, $msg);
+                return redirect('/member');
+            } else {
+                $msg = "Unknown error happened please try again!";
                     $type = 'error';
                     Session::flash($type, $msg);
                     return redirect('/member');
-                }
+            }
         } catch (Exception $ex) {
             $msg = "Unable to process your request, Please try again!";
             $type = 'error';
@@ -1078,6 +1115,7 @@ class EqubController extends Controller
             return back();
         }
     }
+
     public function equbCheckForDrawUpdate($id, Request $request)
     {
         try {
