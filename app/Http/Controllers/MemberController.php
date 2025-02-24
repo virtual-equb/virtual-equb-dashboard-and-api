@@ -118,33 +118,32 @@ class MemberController extends Controller
             $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance', 'call_center', 'assistant', 'collector and finance', 'Customer service supervisor', 'Legal Affair Officers', 'Marketing Manager'];
             $memberRole = ['member'];
             $collector = ['equb_collector'];
-            if ($userData && $userData->hasAnyRole($adminRoles)) {
-                $totalMember = $this->memberRepository->getMember();
-                $members = $this->memberRepository->getAllByPaginate($offset);
-                $equbTypes = $this->equbTypeRepository->getActive();
-                $equbs = $this->equbRepository->getAll();
-                $payments = $this->paymentRepository->getAllPayment();
-                $title = $this->title;
-                $cities = $this->cityRepository->getAll();
+            $title = $this->title;
+            $equbTypes = $this->equbTypeRepository->getActive();
+            $cities = $this->cityRepository->getAll();
+
+            if ($userData && $userData->hasAnyRole($adminRoles) || $userData && $userData->hasAnyRole($collector)) {
+                // $totalMember = $this->memberRepository->getMember();
+                $members = $this->memberRepository->getAllByPaginate($offset, $limit);
+                // $equbTypes = $this->equbTypeRepository->getActive();
+                // $equbs = $this->equbRepository->getAll();
+                $equbs = $this->equbRepository->getAllWithPagination($limit);
+                $payments = $this->paymentRepository->getRecentPayments($limit);
+                // $payments = $this->paymentRepository->getAllPayment();
+                // $title = $this->title;
+                // $cities = $this->cityRepository->getAll();
                 //dd($members);
                 return view('admin/member.memberList', compact('title', 'equbTypes', 'members', 'equbs', 'payments','cities'));
-            } elseif ($userData && $userData->hasAnyRole($collector)) {
-                $totalMember = $this->memberRepository->getMember();
-                $members = $this->memberRepository->getAllByPaginate($offset);
-                $equbTypes = $this->equbTypeRepository->getActive();
-                $equbs = $this->equbRepository->getAll();
-                $payments = $this->paymentRepository->getAllPayment();
-                $title = $this->title;
-                $cities = $this->cityRepository->getAll();
-                return view('admin/member.memberList', compact('title', 'equbTypes', 'members', 'equbs', 'payments','cities'));
-                // return view('equbCollecter/member.memberList', compact('title', 'equbTypes', 'equbs', 'payments','cities'));
-            } elseif ($userData && $userData->hasAnyRole($member)) {
-                $members = $this->memberRepository->getByPhone($userData['phone_number']);
-                $equbTypes = $this->equbTypeRepository->getActive();
-                $equbs = $this->equbRepository->getAll();
-                $payments = $this->paymentRepository->getAllPayment();
-                $members = $this->memberRepository->getByPhone($userData['phone_number']);
-                $cities = $this->cityRepository->getAll();
+            } elseif ($userData && $userData->hasAnyRole($memberRole)) {
+                // $members = $this->memberRepository->getByPhone($userData['phone_number']);
+                // $equbTypes = $this->equbTypeRepository->getActive();
+                // $equbs = $this->equbRepository->getAll();
+                // $payments = $this->paymentRepository->getAllPayment();
+                // $members = $this->memberRepository->getByPhone($userData['phone_number']);
+                // $cities = $this->cityRepository->getAll();
+                $members = $this->memberRepository->getByPhone($userData->phone_number);
+                $equbs = $this->equbRepository->getByMember($userData->id);
+                $payments = $this->paymentRepository->getPaymentsByMember($userData->id);
                 return view('member/member.memberList', compact('title', 'members', 'equbTypes', 'equbs', 'payments','cities'));
             } else {
                 return view('auth/login');
@@ -153,6 +152,47 @@ class MemberController extends Controller
             $msg = "Unknown Error Occurred, Please try again! " . $ex->getMessage();
             $type = 'error';
             Session::flash($type, $msg);
+            return back();
+        }
+    }
+    public function index1()
+    {
+        try {
+            $offset = 0;
+            $limit = 50;
+            $pageNumber = 1;
+            $userData = Auth::user();
+            $adminRoles = [
+               'admin', 'general_manager', 'operation_manager', 'it', 'finance', 
+                'call_center', 'assistant', 'collector and finance', 
+                'Customer service supervisor', 'Legal Affair Officers', 'Marketing Manager' 
+            ];
+            $memberRole = ['member'];
+            $collector = ['equb_collector'];
+            $title = $this->title;
+            $equbTypes = $this->equbTypeRepository->getActive();
+            $cities = $this->cityRepository->getAll();
+
+            if ($userData && $userData->hasAnyRole($adminRoles) || $userData && $userData->hasAnyRole($collector)) {
+                $members = $this->memberRepository->getAllByPaginate($offset, $limit);
+                $equbs = $this->equbRepository->getAllWithPagination($limit);
+                $payments = $this->paymentRepository->getRecentPayments($limit);
+
+                return view('member/member.memberList', compact('title', 'members', 'equbTypes', 'equbs', 'payments', 'cities'));
+            }
+
+            if ($userData && $userData->hasAnyRole($memberRole)) {
+                $members = $this->memberRepository->getByPhone($userData->phone_number);
+                $equbs = $this->equbRepository->getByMember($userData->id);
+                $payments = $this->paymentRepository->getPaymentsByMember($userData->id);
+
+                return view('member/member.memberList', compact('title', 'members', 'equbTypes', 'equbs', 'payments', 'cities'));
+            }
+
+            return view('auth/login');
+
+        } catch (Exception $ex) {
+            Session::flash('error', "Unknown Error Occurred, Please try again! " . $ex->getMessage());
             return back();
         }
     }
@@ -791,7 +831,7 @@ class MemberController extends Controller
     //         return back();
     //     }
     // }
-    public function show($id)
+    public function show1($id)
     {
         try {
             // Get the authenticated user
@@ -859,7 +899,7 @@ class MemberController extends Controller
         }
     }
 
-    public function show1($id) {
+    public function show($id) {
         try {
             // Get the authenticated user
             $userData = Auth::user();

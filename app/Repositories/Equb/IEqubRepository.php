@@ -16,6 +16,10 @@ interface IEqubRepository
 
     public function getYearlyStats();
 
+    public function getAllWithPagination($limit);
+
+    public function getByMember($id);
+
     public function getExpected($equbTypeId);
 
     public function getAutomaticExpected($equbTypeId);

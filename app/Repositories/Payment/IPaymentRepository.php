@@ -17,6 +17,10 @@ interface IPaymentRepository
 
     public function getTotalPayment();
 
+    public function getRecentPayments($limit);
+
+    public function getPaymentsByMember($id);
+
     public function getAutomaticTotalPayment();
 
     public function getManualTotalPayment();

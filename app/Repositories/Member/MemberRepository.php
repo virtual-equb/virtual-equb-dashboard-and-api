@@ -29,11 +29,21 @@ class MemberRepository implements IMemberRepository
         return $this->model->where('id', $id)->first();
     }
 
-    public function getAllByPaginate($offset)
+    // public function getAllByPaginate($offset, $limit)
+    // {
+    //     $limit = 10;
+    //     return $this->model->with(['memberCity', 'memberSubcity'])
+    //         ->where('gender', '!=', '')
+    //         ->orderBy('full_name', 'asc')
+    //         ->offset($offset)
+    //         ->limit($limit)
+    //         ->get();
+    // }
+    public function getAllByPaginate($offset, $limit = 10)
     {
-        $limit = 10;
-        return $this->model->with(['memberCity', 'memberSubcity'])
-            ->where('gender', '!=', '')
+        return $this->model
+            ->with(['memberCity', 'memberSubcity'])
+            ->whereNotNull('gender')
             ->orderBy('full_name', 'asc')
             ->offset($offset)
             ->limit($limit)
