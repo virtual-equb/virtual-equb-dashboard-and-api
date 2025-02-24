@@ -258,6 +258,14 @@
                                                 ?>
                                             </a>
                                         </li>
+                                        {{-- <li>
+                                            <a href="javascript:void(0);" class="text-secondary btn btn-flat"
+                                                onclick="equbStatusChange({{ $equb->id }}, '{{ $equb->status }}')"
+                                                style="margin-right:10px;" id="statuss" name="statuss">
+                                                <i class="fab fa-shopware"></i>
+                                                {{ $equb->status == 'Active' ? 'Deactivate' : 'Activate' }}
+                                            </a>
+                                        </li> --}}
                                         <li>
                                             <a href="javascript:void(0);" class="text-secondary btn btn-flat"
                                                 onclick="equbDrawCheckChange({{ $equb }})"
@@ -336,6 +344,15 @@
             $('#aaaa').modal('show');
             $('#bbbb').attr('action', "{{ url('member/equbStatus-update') }}" + '/' + item.id);
         }
+        // function equbStatusChange(item) {
+        //     let newStatus = item.status === "Active" ? "Deactive" : "Active";
+
+        //     $('#aaaa').modal('show'); // Show the modal
+        //     $('#bbbb').attr('action', "{{ url('member/equbStatus-update') }}" + '/' + item.id);
+
+        //     // Set the correct status inside a hidden input in the form
+        //     $('#equbStatusInput').val(newStatus);
+        // }
 
         function equbDrawCheckChange(item) {
             $('#checkForEqubModal').modal('show');
