@@ -32,58 +32,92 @@
                         ->pluck('total_amount')
                         ->first();
                     $remainingPayment = $totalEqubAmount - $totalPpayment;
-                    $lotteryDates = App\Models\Equb::where('status', 'Active')
-                        ->where('id', $equb['id'])
-                        ->pluck('lottery_date')
-                        ->first();
-                    $equbType = App\Models\EqubType::where('id', $equb->equb_type_id)->first();
-                    $endDate = App\Models\Equb::where('status', 'Active')
-                        ->where('id', $equb['id'])
-                        ->pluck('end_date')
-                        ->first();
+                    // $lotteryDates = App\Models\Equb::where('status', 'Active')
+                    //     ->where('id', $equb['id'])
+                    //     ->pluck('lottery_date')
+                    //     ->first();
+                    $lotteryDates = App\Models\Equb::where('id', $equb['id'])
+                        ->value('lottery_date');
+                    // $equbType = App\Models\EqubType::where('id', $equb->equb_type_id)->first();
+                    $equbType = App\Models\EqubType::find($equb->equb_type_id);
+                    // $endDate = App\Models\Equb::where('status', 'Active')
+                    //     ->where('id', $equb['id'])
+                    //     ->pluck('end_date')
+                    //     ->first();
+                    $endDate = App\Models\Equb::where('id', $equb['id'])
+                    ->value('end_date');
+
                     $lotteryDates = explode(',', $lotteryDates);
-                    $lotteryDate = $lotteryDates[0];
-                    foreach ($lotteryDates as $lottery) {
-                        $date1 = Carbon\Carbon::parse($lottery);
-                        $date2 = Carbon\Carbon::parse($lotteryDate);
-                        if ($date1->greaterThan($date2)) {
-                            $lotteryDate = $lottery;
-                        }
-                    }
-                    $date = date('Y-m-d');
-                    $date1 = new DateTime($date);
-                    $date2 = new DateTime($lotteryDate);
-                    $typeDate2 = new DateTime($equbType->lottery_date);
-                    $date3 = new DateTime($endDate);
-                    if ($date2 > $date1) {
-                        $interval = $date2->diff($date1);
-                        $interval = $interval->days;
-                        // dd($interval, $date2);
-                    } elseif ($date2 == $date1) {
-                        $interval = 0;
+                    // $lotteryDate = $lotteryDates[0];
+                    $lotteryDate = !empty($lotteryDates) ? max($lotteryDates) : null;
+                    // foreach ($lotteryDates as $lottery) {
+                    //     $date1 = Carbon\Carbon::parse($lottery);
+                    //     $date2 = Carbon\Carbon::parse($lotteryDate);
+                    //     if ($date1->greaterThan($date2)) {
+                    //         $lotteryDate = $lottery;
+                    //     }
+                    // }
+                    // $date = date('Y-m-d');
+                    // $date1 = new DateTime($date);
+                    // $date2 = new DateTime($lotteryDate);
+                    // $typeDate2 = new DateTime($equbType->lottery_date);
+                    // $date3 = new DateTime($endDate);
+                    // if ($date2 > $date1) {
+                    //     $interval = $date2->diff($date1);
+                    //     $interval = $interval->days;
+                    //     // dd($interval, $date2);
+                    // } elseif ($date2 == $date1) {
+                    //     $interval = 0;
+                    // } else {
+                    //     $interval = 'passed';
+                    // }
+                    // if ($typeDate2 > $date1) {
+                    //     $typeInterval = $typeDate2->diff($date1);
+                    //     $typeInterval = $typeInterval->days;
+                    // } elseif ($typeDate2 == $date1) {
+                    //     $typeInterval = 0;
+                    // } else {
+                    //     $typeInterval = 'passed';
+                    // }
+                    // if ($date3 > $date1) {
+                    //     $endDateInterval = $date3->diff($date1);
+                    //     $endDateInterval = $endDateInterval->days;
+                    // } elseif ($date3 == $date1) {
+                    //     $endDateInterval = 0;
+                    // } else {
+                    //     $endDateInterval = 'passed';
+                    // }
+                    $date  = date('Y-m-d');
+                    $currentDate = new DateTime($date);
+                    $lotteryDateObj = $lotteryDate ? new DateTime($lotteryDate) : null;
+                    $endDateObj = $endDate ? new DateTime($endDate) : null;
+                    $typeDateObj = new DateTime($equbType->lottery_date);
+
+                    // Till Lottery Calculation
+                    if ($lotteryDateObj && $lotteryDateObj > $currentDate) {
+                        $lotteryInterval = $lotteryDateObj->diff($currentDate)->days . ' Days';
+                    } elseif ($lotteryDateObj && $lotteryDateObj == $currentDate) {
+                        $lotteryInterval = '0 Days';
                     } else {
-                        $interval = 'passed';
+                        $lotteryInterval = 'Passed';
                     }
-                    if ($typeDate2 > $date1) {
-                        $typeInterval = $typeDate2->diff($date1);
-                        $typeInterval = $typeInterval->days;
-                    } elseif ($typeDate2 == $date1) {
-                        $typeInterval = 0;
+                    // Till End Calculation
+                    if ($endDateObj && $endDateObj > $currentDate) {
+                        $endDateInterval = $endDateObj->diff($currentDate)->days . ' Days';
+                    } elseif ($endDateObj && $endDateObj == $currentDate) {
+                        $endDateInterval = '0 Days';
                     } else {
-                        $typeInterval = 'passed';
+                        $endDateInterval = 'Passed';
                     }
-                    if ($date3 > $date1) {
-                        $endDateInterval = $date3->diff($date1);
-                        $endDateInterval = $endDateInterval->days;
-                    } elseif ($date3 == $date1) {
-                        $endDateInterval = 0;
-                    } else {
-                        $endDateInterval = 'passed';
-                    }
+
+                    // Final Lottery Interval
+                    $finalLotteryInterval = ($equbType->type == 'Automatic') 
+                    ? $typeDateObj->diff($currentDate)->days . ' Days'
+                    : ($lotteryDate ? $lotteryInterval : 'Unassigned');
                     // dd($equb->lottery_date != null);
-                    $finalLotteryInterval = $equbType->type == 'Automatic' ? $typeInterval : ($equb->lottery_date != null ? $interval : 'Unassigned');
+                    // $finalLotteryInterval = $equbType->type == 'Automatic' ? $typeInterval : ($equb->lottery_date != null ? $interval : 'Unassigned');
                     ?>
-                    <td class="details-control_payment" id="{{ $equb['id'] }}">{{ $equb['id'] }}</td>
+                    <td class="details-control_payment" id="{{ $equb['id'] }}"></td>
                     <td>{{ $key + 1 }}</td>
                     <td>
                         <a href="javascript:void(0);"
@@ -165,10 +199,13 @@
                             Auth::user()->role != 'legal_affair_officer')
                         <td>
                             <div class='dropdown'>
+    @if (Auth::user()->role != 'marketing_manager') 
     <button class='btn btn-secondary btn-sm btn-flat dropdown-toggle' type='button' data-toggle='dropdown'>
         Menu <span class='caret'></span>
     </button>
-
+@else
+    <span>N/A</span>
+@endif
                                 <ul class='dropdown-menu p-4'>
                                     {{-- <li>
                                     <a href="javascript:void(0);"
