@@ -137,10 +137,13 @@ class MemberController extends Controller
             } elseif ($userData && $userData->hasAnyRole($memberRole)) {
                 // $members = $this->memberRepository->getByPhone($userData['phone_number']);
                 // $equbTypes = $this->equbTypeRepository->getActive();
-                $equbs = $this->equbRepository->getAll();
-                $payments = $this->paymentRepository->getAllPayment();
-                $members = $this->memberRepository->getByPhone($userData['phone_number']);
+                // $equbs = $this->equbRepository->getAll();
+                // $payments = $this->paymentRepository->getAllPayment();
+                // $members = $this->memberRepository->getByPhone($userData['phone_number']);
                 // $cities = $this->cityRepository->getAll();
+                $members = $this->memberRepository->getByPhone($userData->phone_number);
+                $equbs = $this->equbRepository->getByMember($userData->id);
+                $payments = $this->paymentRepository->getPaymentsByMember($userData->id);
                 return view('member/member.memberList', compact('title', 'members', 'equbTypes', 'equbs', 'payments','cities'));
             } else {
                 return view('auth/login');
