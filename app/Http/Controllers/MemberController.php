@@ -791,7 +791,7 @@ class MemberController extends Controller
     //         return back();
     //     }
     // }
-    public function show($id)
+    public function show1($id)
     {
         try {
             // Get the authenticated user
@@ -859,7 +859,7 @@ class MemberController extends Controller
         }
     }
 
-    public function show1($id) {
+    public function show($id) {
         try {
             // Get the authenticated user
             $userData = Auth::user();
