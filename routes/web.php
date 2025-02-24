@@ -242,7 +242,7 @@ Route::middleware([
         Route::get('/paginateMembers/{dateFrom}/{dateTo}/{offsetVal}/{pageNumberVal}', [ReportController::class, 'paginateMembers']);
         Route::get('/memberFilterByEqubType', [ReportController::class, 'memberFilterByEqubType'])->name('memberFilterByEqubType');
         Route::get('/membersByEqubType/{dateFrom}/{dateTo}/{equbType}', [ReportController::class, 'membersByEqubType'])->name('membersByEqubType');
-        Route::get('/paginateMembersByEqubType/{dateFrom}/{dateTo}/{equbType}/{offsetVal}/{pageNumberVal}', [ReportController::class, 'paginateMembersByEqubType']);
+        Route::get('/paginateMembersByEqubType/{dateFrom}/{dateTo}/{equbType}/{offsetVal}/{pageNumberVal}', [ReportController::class, 'paginateMembersByEqubType']);       
         Route::get('/equbTypeFilter', [ReportController::class, 'equbTypeFilter'])->name('equbTypeFilter');
         Route::get('/equbTypes/{dateFrom}/{dateTo}', [ReportController::class, 'equbTypes'])->name('equbTypes');
        // Route::get('/paymentFilter', [ReportController::class, 'paymentFilter'])->name('paymentFilter');
@@ -251,9 +251,14 @@ Route::middleware([
         Route::get('/payments', [ReportController::class, 'payments'])->name('payments');
 
         Route::get('/equbFilter', [ReportController::class, 'equbFilter'])->name('equbFilter');
+
         Route::get('/equbs/{dateFrom}/{dateTo}/{equbType}', [ReportController::class, 'equbs'])->name('equbs');
+        Route::get('/equbs1/{dateFrom}/{dateTo}/{equbType}', [ReportController::class, 'equbs1'])->name('equbs1');
+
         Route::get('/reportByMethod/{dateFrom}/{dateTo}/{equbType}', [ReportController::class, 'reportByMethod'])->name('equbs');
         Route::get('/paginateEqubs/{dateFrom}/{dateTo}/{offsetVal}/{pageNumberVal}/{equbType}', [ReportController::class, 'paginateEqubs']);
+        Route::get('/paginatePaymentMethod/{dateFrom}/{dateTo}/{offsetVal}/{pageNumberVal}/{equbType}', [ReportController::class, 'paginatePaymentMethod']);
+
 
         Route::get('/lotteryDateFilter', [ReportController::class, 'lotteryDateFilter'])->name('lotteryDateFilter');
         Route::get('/lotteryDate/{dateFrom}/{dateTo}', [ReportController::class, 'lotteryDate'])->name('lotteryDate');
@@ -279,9 +284,9 @@ Route::middleware([
         Route::get('/paginatePayments/{dateFrom}/{dateTo}/{member_id}/{equb_id}/{offsetVal}/{pageNumberVal}', [ReportController::class, 'paginatePayments']);
         Route::get('/paymentFilter', [ReportController::class, 'paymentFilter'])->name('paymentFilter');
         Route::get('/payments/{dateFrom}/{dateTo}/{member_id}/{equb_id}', [ReportController::class, 'payments'])->name('payments');
-        Route::get('/paginateCllectedBys/{dateFrom}/{dateTo}/{collecter}/{offsetVal}/{pageNumberVal}/{equbType}', [ReportController::class, 'paginateCllectedBys']);
+        Route::get('/paginateCllectedBys/{dateFrom}/{dateTo}/{collecter}/{paymentMethod}/{offsetVal}/{pageNumberVal}/{equbType}', [ReportController::class, 'paginateCllectedBys']);
         Route::get('/collectedByFilter', [ReportController::class, 'collectedByFilter'])->name('collectedByFilter');
-        Route::get('/collectedBys/{dateFrom}/{dateTo}/{collecter}/{equbType}', [ReportController::class, 'collectedBys'])->name('collectedBys');
+        Route::get('/collectedBys/{dateFrom}/{dateTo}/{collecter}/{paymentMethod}/{equbType}', [ReportController::class, 'collectedBys'])->name('collectedBys');
 
         Route::get('/unPaidFilter', [ReportController::class, 'unPaidFilter'])->name('unPaidFilter');
         Route::get('/filterByMethod', [ReportController::class, 'filterByMethod'])->name('filterByMethod');
@@ -357,7 +362,7 @@ Route::middleware([
           Route::put('{id}', [MainEqubController::class, 'update'])->name('mainEqubs.update');
         
           // Delete a main equb
-          Route::delete('{id}', [MainEqubController::class, 'delete'])->name('mainEqubs.destroy');
+          Route::delete('{id}', [MainEqubController::class, 'destroy'])->name('mainEqubs.destroy');
     });
     Route::middleware(['web','api','auth'])->group(function () {
         // Route to create a new permission

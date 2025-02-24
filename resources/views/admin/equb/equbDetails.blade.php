@@ -1,4 +1,4 @@
-@can('view equb')
+
       <table id="payment-list-table_in_member" class="table table-bordered table-striped"> {{-- <thead>Payment</thead> --}}
           <thead>
               <tr>
@@ -83,4 +83,3 @@
   @endforeach
   </tbody>
   </table>
-@endcan

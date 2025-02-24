@@ -39,7 +39,7 @@
                                             <form role="form" method="post" class="form-horizontal form-group nn"
                                                 action="" enctype="multipart/form-data" id="equbReport">
                                                 <div class="row justify-content-center" style="margin-bottom: 20px;">
-                                                    <h4>Virtual Equb - Filter By Payment Method</h4>
+                                                    <h4>Virtual Equb - Filter By Payment Method sams</h4>
                                                 </div>
                                                 <div class="row justify-content-center">
                                                     <label>Date range:</label>
@@ -64,10 +64,10 @@
                                                             <option value="">Select Equb Type</option>
                                                             <option value="all">All</option>
                                                             @foreach ($equbTypes as $equbType)
-                                                                <option value="{{ $equbType->id }}">{{ $equbType->name }}
-                                                                </option>
+                                                            <option value="{{ $equbType['name'] }}">{{ $equbType['name'] }}</option>
                                                             @endforeach
                                                         </select>
+                                                        
                                                         <p class="text-red d-none" id="equbTypeRequired">Please select equb
                                                             type</p>
                                                     </div>
@@ -92,7 +92,7 @@
             function equbs(offsetVal, pageNumberVal) {
                 let equbType = $('#equb_type').val() != "" ? $('#equb_type').val() : 'all';
                 $.ajax({
-                    url: "{{ url('reports/paginateEqubs') }}" + '/' + $('#equbFrom').val() + '/' + $('#equbTo').val() +
+                    url: "{{ url('reports/paginatePaymentMethod') }}" + '/' + $('#equbFrom').val() + '/' + $('#equbTo').val() +
                         '/' + offsetVal + '/' + pageNumberVal + '/' + equbType,
                     type: 'get',
                     success: function(data) {
@@ -114,7 +114,7 @@
                     $('#equbToRequired').addClass('d-none');
                     let equbType = $('#equb_type').val() != "" ? $('#equb_type').val() : 'all';
                     $.ajax({
-                        url: "{{ url('reports/equbs') }}" + '/' + $('#equbFrom').val() + '/' + $('#equbTo').val() +
+                        url: "{{ url('reports/equbs1') }}" + '/' + $('#equbFrom').val() + '/' + $('#equbTo').val() +
                             '/' + equbType,
                         method: 'get',
                         success: function(form) {

@@ -214,6 +214,7 @@ class PaymentController extends Controller
                     try {
                         $shortcode = config('key.SHORT_CODE');
                         $message = "You have successfully paid $amount ETB and a total of $totalPpayment ETB for the equb $equbType->name. Your remaining unpaid amount is $remainingPayment ETB. Your lottery date is $lotDate" . ". For further information please call " . $shortcode;
+                       // dd($message);
                         $this->sendSms($memberPhone, $message);
                         if ($remainingPayment == 0) {
                             $paymentMessage = "You have successfully finished your payment of $totalPpayment ETB for the equb $equbType->name" . ". For further information please call " . $shortcode;
@@ -406,12 +407,12 @@ class PaymentController extends Controller
         /** @var App\Models\User */
         try {
             $offset = 0;
-            $limit = 100;
+            $limit = 30;
             $pageNumber = 1;
             $userData = Auth::user();
             
             if ($userData) {
-                $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance','call_center'];
+                $adminRoles = ['admin', 'general_manager', 'operation_manager', 'it', 'finance','call_center', 'assistant', 'collector and finance', 'Customer service supervisor', 'Legal Affair Officers', 'Marketing Manager'];
                 $member = ['member'];
                 $collector = ['equb_collector'];
                 if ($userData->hasAnyRole($adminRoles)) {
