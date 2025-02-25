@@ -3,23 +3,25 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use App\Models\User;
 use App\Models\Member;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\LotteryWinner;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 use App\Repositories\ISubCityRepository;
 use App\Repositories\City\ICityRepository;
 use App\Repositories\Equb\IEqubRepository;
 use App\Repositories\User\IUserRepository;
+
 use App\Repositories\Member\IMemberRepository;
 use App\Repositories\SubCity\SubCityRepository;
-
 use App\Repositories\Payment\IPaymentRepository;
 use App\Repositories\EqubType\IEqubTypeRepository;
 use App\Repositories\ActivityLog\IActivityLogRepository;
@@ -196,6 +198,62 @@ class MemberController extends Controller
             return back();
         }
     }
+    public function index3()
+    {
+        try {
+            $userData = Auth::user();
+            if (!$userData) {
+                return view('auth/login');
+            }
+
+            // Define roles
+            $adminRoles = [
+                'admin', 'general_manager', 'operation_manager', 'it', 'finance', 
+                'call_center', 'assistant', 'collector and finance', 
+                'Customer service supervisor', 'Legal Affair Officers', 'Marketing Manager' 
+            ];
+            $collector = ['equb_collector'];
+            $memberRole = ['member'];
+
+            // Cache frequently used data
+            $title = Cache::remember('title', now()->addMinutes(60), function () {
+                return $this->title;
+            });
+
+            $equbTypes = Cache::remember('active_equb_types', now()->addMinutes(60), function () {
+                return $this->equbTypeRepository->getActive();
+            });
+
+            $cities = Cache::remember('all_cities', now()->addMinutes(60), function () {
+                return $this->cityRepository->getAll();
+            });
+
+            if ($userData->hasAnyRole($adminRoles) || $userData->hasAnyRole($collector)) {
+                // Use paginate() instead of offset/limit
+                $members = $this->memberRepository->getAllByPaginate(0, 50);
+                $equbs = $this->equbRepository->getAllWithPagination(50);
+                $payments = $this->paymentRepository->getRecentPayments(50);
+
+                return view('admin/member.memberList', compact('title', 'members', 'equbTypes', 'equbs', 'payments', 'cities'));
+            }
+
+            if ($userData->hasAnyRole($memberRole)) {
+                $members = $this->memberRepository->getByPhone($userData->phone_number);
+                $equbs = $this->equbRepository->getByMember($userData->id);
+                $payments = $this->paymentRepository->getPaymentsByMember($userData->id);
+
+                return view('member/member.memberList', compact('title', 'members', 'equbTypes', 'equbs', 'payments', 'cities'));
+            }
+
+            return view('auth/login');
+
+        } catch (Exception $ex) {
+            Log::error("Error in index method: " . $ex->getMessage());
+            Session::flash('error', "Unknown Error Occurred, Please try again! " . $ex->getMessage());
+            return back();
+        }
+    }
+
     public function countPending()
     {
         try {
