@@ -21,74 +21,22 @@
             @foreach ($member->equbs as $key => $equb)
                 <tr id="tre{{ $equb['id'] }}">
                     <?php
-                    // dd($equb);
                     $totalPpayment = App\Models\Payment::where('equb_id', $equb['id'])
                         ->where('status', 'paid')
                         ->sum('amount');
-                    // $totalEqubAmount = App\Models\Equb
-                    //     // ::where('status', 'Active')->
-                    //     ::select('total_amount')
-                    //     ->where('id', $equb['id'])
-                    //     ->pluck('total_amount')
-                    //     ->first();
                     $totalEqubAmount = App\Models\Equb::where('id', $equb['id'])
                                         ->value('total_amount');
                     $remainingPayment = $totalEqubAmount - $totalPpayment;
-                    // $lotteryDates = App\Models\Equb::where('status', 'Active')
-                    //     ->where('id', $equb['id'])
-                    //     ->pluck('lottery_date')
-                    //     ->first();
                     $lotteryDates = App\Models\Equb::where('id', $equb['id'])
                         ->value('lottery_date');
-                    // $equbType = App\Models\EqubType::where('id', $equb->equb_type_id)->first();
                     $equbType = App\Models\EqubType::find($equb->equb_type_id);
-                    // $endDate = App\Models\Equb::where('status', 'Active')
-                    //     ->where('id', $equb['id'])
-                    //     ->pluck('end_date')
-                    //     ->first();
                     $endDate = App\Models\Equb::where('id', $equb['id'])
-                    ->value('end_date');
+                        ->value('end_date');
 
                     $lotteryDates = explode(',', $lotteryDates);
                     // $lotteryDate = $lotteryDates[0];
                     $lotteryDate = !empty($lotteryDates) ? max($lotteryDates) : null;
-                    // foreach ($lotteryDates as $lottery) {
-                    //     $date1 = Carbon\Carbon::parse($lottery);
-                    //     $date2 = Carbon\Carbon::parse($lotteryDate);
-                    //     if ($date1->greaterThan($date2)) {
-                    //         $lotteryDate = $lottery;
-                    //     }
-                    // }
-                    // $date = date('Y-m-d');
-                    // $date1 = new DateTime($date);
-                    // $date2 = new DateTime($lotteryDate);
-                    // $typeDate2 = new DateTime($equbType->lottery_date);
-                    // $date3 = new DateTime($endDate);
-                    // if ($date2 > $date1) {
-                    //     $interval = $date2->diff($date1);
-                    //     $interval = $interval->days;
-                    //     // dd($interval, $date2);
-                    // } elseif ($date2 == $date1) {
-                    //     $interval = 0;
-                    // } else {
-                    //     $interval = 'passed';
-                    // }
-                    // if ($typeDate2 > $date1) {
-                    //     $typeInterval = $typeDate2->diff($date1);
-                    //     $typeInterval = $typeInterval->days;
-                    // } elseif ($typeDate2 == $date1) {
-                    //     $typeInterval = 0;
-                    // } else {
-                    //     $typeInterval = 'passed';
-                    // }
-                    // if ($date3 > $date1) {
-                    //     $endDateInterval = $date3->diff($date1);
-                    //     $endDateInterval = $endDateInterval->days;
-                    // } elseif ($date3 == $date1) {
-                    //     $endDateInterval = 0;
-                    // } else {
-                    //     $endDateInterval = 'passed';
-                    // }
+                    
                     $date  = date('Y-m-d');
                     $currentDate = new DateTime($date);
                     $lotteryDateObj = $lotteryDate ? new DateTime($lotteryDate) : null;
@@ -114,8 +62,8 @@
 
                     // Final Lottery Interval
                     $finalLotteryInterval = ($equbType->type == 'Automatic') 
-                    ? $typeDateObj->diff($currentDate)->days . ' Days'
-                    : ($lotteryDate ? $lotteryInterval : 'Unassigned');
+                        ? $typeDateObj->diff($currentDate)->days . ' Days'
+                        : ($lotteryDate ? $lotteryInterval : 'Unassigned');
                     // dd($equb->lottery_date != null);
                     // $finalLotteryInterval = $equbType->type == 'Automatic' ? $typeInterval : ($equb->lottery_date != null ? $interval : 'Unassigned');
                     ?>
@@ -128,45 +76,28 @@
                     </td>
                     <td> {{ number_format($equb->amount) }}</td>
                     <td>
-                        <?php
-                        $toCreatedAt = new DateTime($equb['start_date']);
-                        $createdDate = $toCreatedAt->format('M-j-Y');
-                        echo $createdDate; ?>
+                        {{ date('M-j-Y', strtotime($equb['start_date'])) }}
                     </td>
                     <td>
-                        <?php
-                        $toCreatedAt = new DateTime($equb['end_date']);
-                        $createdDate = $toCreatedAt->format('M-j-Y');
-                        echo $createdDate; ?>
+                        {{ date('M-j-Y', strtotime($equb['end_date'])) }}
                     </td>
                     <td> {{ number_format($totalPpayment) }}</td>
                     <td> {{ number_format($remainingPayment) }}</td>
                     <td> {{ number_format($equb->total_amount) }}</td>
 
                     <td>
-                        <?php
-                        if ($equb->lottery_date !== null) {
-                            if ($equbType->type == 'Automatic') {
-                                $toCreatedAt = new DateTime($equbType->lottery_date);
-                                $createdDate = $toCreatedAt->format('M-j-Y');
-                                echo $createdDate;
-                            } else {
-                                foreach (explode(',', $equb->lottery_date) as $lottery_date) {
-                                    $toCreatedAt = new DateTime($lottery_date);
-                                    $createdDate = $toCreatedAt->format('M-j-Y');
-                                    echo $createdDate;
-                                    echo '<br>';
-                                }
-                            }
-                        } else {
-                            echo 'Unassigned';
-                        }
-                        ?>
+                        @if ($equb->lottery_date)
+                            @foreach (explode(',', $equb->lottery_date) as $lottery_date)
+                                {{ date('M-j-Y', strtotime($lottery_date))}}
+                            @endforeach
+                        @else 
+                            Unassigned
+                        @endif
                     </td>
                     <td> {{ $finalLotteryInterval != 'passed' ? ($finalLotteryInterval != 'Unassigned' ? $finalLotteryInterval . ' Days' : 'Unassigned') : 'Passed' }}
                     </td>
                     <td> {{ $endDateInterval != 'passed' ? $endDateInterval . ' Days' : 'Passed' }}</td>
-                    <td> {{ $equb->status }}</td>
+                    <td> {{ $equb->status == 'Active' ? 'Active' : 'Deactive' }}</td>
                     <?php
                     $equbTakers = $equb->equb_takers;
                     if (!empty($equbTakers)) {
