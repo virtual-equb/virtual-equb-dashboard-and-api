@@ -73,7 +73,7 @@ class MemberController extends Controller
             $userData = Auth::user();
             // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "finance" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
                 $totalMember = $this->memberRepository->getMember();
-                $members = $this->memberRepository->getAllByPaginate($offset);
+                $members = $this->memberRepository->getAllByPaginate($offset, $limit);
                 $equbTypes = $this->equbTypeRepository->getActive();
                 $equbs = $this->equbRepository->getAll();
                 $payments = $this->paymentRepository->getAllPayment();
@@ -96,7 +96,7 @@ class MemberController extends Controller
             $userData = Auth::user();
             // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "finance" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
                 $totalMember = $this->memberRepository->getPendingMembers();
-                $members = $this->memberRepository->getAllPendingByPaginate($offset);
+                $members = $this->memberRepository->getAllPendingByPaginate($offset, $limit);
                 $equbTypes = $this->equbTypeRepository->getActive();
                 $equbs = $this->equbRepository->getAll();
                 $payments = $this->paymentRepository->getAllPayment();
@@ -287,7 +287,7 @@ class MemberController extends Controller
             $userData = Auth::user();
             // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "finance" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
                 $totalMember = $this->memberRepository->getPendingMembers();
-                $members = $this->memberRepository->getAllPendingByPaginate($offset);
+                $members = $this->memberRepository->getAllPendingByPaginate($offset, $limit);
                 $equbTypes = $this->equbTypeRepository->getActive();
                 $equbs = $this->equbRepository->getAll();
                 $payments = $this->paymentRepository->getAllPayment();
@@ -298,7 +298,7 @@ class MemberController extends Controller
                 return view('admin/member.pendingMemberList', compact('title', 'equbTypes', 'members', 'equbs', 'payments','cities'));
             // } elseif ($userData && ($userData['role'] == "equb_collector")) {
                 $totalMember = $this->memberRepository->getPendingMembers();
-                $members = $this->memberRepository->getAllPendingByPaginate($offset);
+                $members = $this->memberRepository->getAllPendingByPaginate($offset, $limit);
                 $equbTypes = $this->equbTypeRepository->getActive();
                 $equbs = $this->equbRepository->getAll();
                 $payments = $this->paymentRepository->getAllPayment();
@@ -330,7 +330,7 @@ class MemberController extends Controller
             $userData = Auth::user();
             // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "it" || $userData['role'] == "finance" || $userData['role'] == "customer_service" || $userData['role'] == "assistant")) {
                 $totalMember = $this->memberRepository->getMember();
-                $members = $this->memberRepository->getAllByPaginate($offset);
+                $members = $this->memberRepository->getAllByPaginate($offset, $limit);
                 $equbTypes = $this->equbTypeRepository->getActive();
                 $equbs = $this->equbRepository->getAll();
                 $payments = $this->paymentRepository->getAllPayment();
@@ -338,7 +338,7 @@ class MemberController extends Controller
                 return view('admin/member.memberTable', compact('title', 'equbTypes', 'members', 'equbs', 'payments', 'pageNumber', 'offset', 'limit', 'totalMember'));
             // } elseif ($userData && ($userData['role'] == "equb_collector")) {
                 $totalMember = $this->memberRepository->getMember();
-                $members = $this->memberRepository->getAllByPaginate($offset);
+                $members = $this->memberRepository->getAllByPaginate($offset, $limit);
                 $equbTypes = $this->equbTypeRepository->getActive();
                 $equbs = $this->equbRepository->getAll();
                 $payments = $this->paymentRepository->getAllPayment();
@@ -378,7 +378,7 @@ class MemberController extends Controller
                 return view('admin/member.memberTable', compact('title', 'equbTypes', 'members', 'equbs', 'payments', 'pageNumber', 'offset', 'limit', 'totalMember'));
             // } elseif ($userData && ($userData['role'] == "equb_collector")) {
                 $totalMember = $this->memberRepository->getMember();
-                $members = $this->memberRepository->getAllByPaginate($offset);
+                $members = $this->memberRepository->getAllByPaginate($offset, $limit);
                 $equbTypes = $this->equbTypeRepository->getActive();
                 $equbs = $this->equbRepository->getAll();
                 $payments = $this->paymentRepository->getAllPayment();
