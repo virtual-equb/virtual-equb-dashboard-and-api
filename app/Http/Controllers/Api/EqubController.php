@@ -1066,6 +1066,9 @@ class EqubController extends Controller
                     // if insufficient funds, extend the lottery date
                     $lotteryDate = Carbon::parse($lotteryDate)->addDay()->format('Y-m-d');
                 }
+            } else {
+                // Assign the existing lottery date from equbType for automatic equb
+                $lotteryDate = $equbType->lottery_date;
             }
 
             // Create equb entry
@@ -1084,15 +1087,6 @@ class EqubController extends Controller
             if ($equb) {
                 // If automatic, update equbType member count
             if ($type === 'Automatic') {
-                $equbType = EqubType::find($request->input('equb_type_id'));
-                if (!$equbType) {
-                    return response()->json([
-                        'code' => 404,
-                        'message' => 'Equb type not found'
-                    ]);
-                }
-                // Assign the existing lottery date from equbType
-                $lotteryDate = $equbType->lottery_date;
                 $equbType->decrement('remaining_quota', 1);
                 $equbType->increment('total_members', 1);
             }
