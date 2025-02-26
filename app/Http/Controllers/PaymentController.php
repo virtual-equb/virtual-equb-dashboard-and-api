@@ -191,10 +191,13 @@ class PaymentController extends Controller
                     $updated = [
                         'total_payment' => $totalPpayment,
                         'remaining_payment' => $remainingPayment,
+                        'remaining_amount' => $remainingPayment,
+                        'status' => $remainingPayment == 0 ? 'paid' : 'partially_paid',
                     ];
-                    $updated = $this->equbTakerRepository->updatePayment($equb_id, $updated);
 
+                    $updated = $this->equbTakerRepository->updatePayment($equb_id, $updated);
                     $equbTaker = $this->equbTakerRepository->getByEqubId($equb_id);
+                    
                     $equb = Equb::where('id', $equb_id)->first();
                     $equbTypeId = $equb->equb_type_id;
                     $equbType = EqubType::where('id', $equbTypeId)->first();

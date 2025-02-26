@@ -175,7 +175,11 @@ class EqubTakerRepository implements IEqubTakerRepository
 
     public function getByEqubId($equb_id)
     {
-        return $this->model->where('equb_id', $equb_id)->where('status', 'paid')->first();
+        return $this->model->where('equb_id', $equb_id)
+            ->where(function ($query) {
+                    $query->where('status', 'paid')
+                    ->orWhere('status', 'partially_paid');
+            })->first();
     }
 
     public function getTotal($id)
