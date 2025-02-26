@@ -21,21 +21,13 @@
             @foreach ($member->equbs as $key => $equb)
                 <tr id="tre{{ $equb['id'] }}">
                     <?php
-                    $totalPpayment = App\Models\Payment::where('equb_id', $equb['id'])
-                        ->where('status', 'paid')
-                        ->sum('amount');
+                    $totalPpayment = App\Models\Payment::where('equb_id', $equb['id'])->where('status', 'paid')->sum('amount');
                     $totalEqubAmount = App\Models\Equb::where('id', $equb['id'])->value('total_amount');
                     $remainingPayment = max(0, $totalEqubAmount - $totalPpayment);
 
-                    // $lotteryDates = App\Models\Equb::where('status', 'Active')
-                    //     ->where('id', $equb['id'])
-                    //     ->pluck('lottery_date')
-                    //     ->first();
-                    $lotteryDates = App\Models\Equb::where('id', $equb['id'])
-                        ->value('lottery_date');
+                    $lotteryDates = App\Models\Equb::where('id', $equb['id'])->value('lottery_date');
                     $equbType = App\Models\EqubType::find($equb->equb_type_id);
-                    $endDate = App\Models\Equb::where('id', $equb['id'])
-                        ->value('end_date');
+                    $endDate = App\Models\Equb::where('id', $equb['id'])->value('end_date');
 
                     $lotteryDates = explode(',', $lotteryDates);
                     // $lotteryDate = $lotteryDates[0];
@@ -68,8 +60,6 @@
                     $finalLotteryInterval = ($equbType->type == 'Automatic') 
                     ? $typeDateObj->diff($currentDate)->days . ' Days'
                     : ($lotteryDate ? $lotteryInterval : 'Unassigned');
-                    // dd($equb->lottery_date != null);
-                    // $finalLotteryInterval = $equbType->type == 'Automatic' ? $typeInterval : ($equb->lottery_date != null ? $interval : 'Unassigned');
                     ?>
                     <td class="details-control_payment" id="{{ $equb['id'] }}"></td>
                     <td>{{ $key + 1 }}</td>
