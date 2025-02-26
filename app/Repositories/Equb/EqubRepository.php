@@ -618,7 +618,8 @@ class EqubRepository implements IEqubRepository
     }
     public function getTotalEqubAmount($equb_id)
     {
-        return $this->model->where('status', 'Active')->select('total_amount')->where('id', $equb_id)->pluck('total_amount')->first();
+        // return $this->model->where('status', 'Active')->select('total_amount')->where('id', $equb_id)->pluck('total_amount')->first();
+        return $this->model->where('status', 'Active')->where('id', $equb_id)->value('total_amount');
     }
     public function getExpectedTotal()
     {

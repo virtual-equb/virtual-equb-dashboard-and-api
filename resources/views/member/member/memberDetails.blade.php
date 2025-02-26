@@ -21,8 +21,9 @@
             <tr id="tre{{ $equb['id'] }}">
                 <?php
                 $totalPpayment = App\Models\Payment::where('equb_id', $equb['id'])->where('status', 'paid')->sum('amount');
-                $totalEqubAmount = App\Models\Equb::where('status', 'Active')->where('id', $equb['id'])->value('total_amount');
-                $remainingPayment = $totalEqubAmount - $totalPpayment;
+                $totalEqubAmount = App\Models\Equb::where('id', $equb['id'])->value('total_amount');
+                $remainingPayment = max(0, $totalEqubAmount - $totalPpayment);
+
                 $lotteryDate = explode(',', App\Models\Equb::where('status', 'Active')->where('id', $equb['id'])->value('lottery_date'))[0];
                 $currentDate = new DateTime();
                 $lotteryDateTime = new DateTime($lotteryDate);

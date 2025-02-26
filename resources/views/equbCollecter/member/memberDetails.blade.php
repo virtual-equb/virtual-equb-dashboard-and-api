@@ -22,14 +22,16 @@
              <tr id="tre{{ $equb['id'] }}">
                 <?php
                   $totalPpayment = App\Models\Payment::where('equb_id',$equb['id'])->where('status','paid')->sum('amount');
-                  $totalEqubAmount = App\Models\Equb::where('status','Active')->select('total_amount')->where('id',$equb['id'])->pluck('total_amount')->first();
-                  $remainingPayment =  $totalEqubAmount - $totalPpayment;
+                  $totalEqubAmount = App\Models\Equb::where('id', $equb['id'])->value('total_amount');
+                  $remainingPayment = max(0, $totalEqubAmount - $totalPpayment);
+
                   $lotteryDate = App\Models\Equb::where('status','Active')->where('id',$equb['id'])->pluck('lottery_date')->first();
                   $lotteryDate=explode(',',$lotteryDate);
                   $date = date('Y-m-d');
                   $lotteryDate=$lotteryDate[0];
                   $date1 = new DateTime($date);
                   $date2 = new DateTime($lotteryDate);
+
                   if($date2>$date1){
                     $interval = $date2->diff($date1);
                     $interval=$interval->days;
@@ -103,7 +105,7 @@
 
                 ?>
                 <td>
-                   <a href="javascript:void(0);" class="btn btn-secondary {{$member->status != 'Active' ? 'disabled' : ($equb->status == 'Deactive' ? 'disabled' : (($sum >= $expectedTotal) ? 'disabled' : '' ))}}" onclick="openPaymentModal({{$equb}})" id="paymentButton"><i class="fas fa-plus-circle"></i> Payment</a>
+                   <a href="javascript:void(0);" class="btn btn-secondary {{$member->status != 'Active' ? 'disabled' : ($equb->status != 'Active' ? 'disabled' : (($sum >= $expectedTotal) ? 'disabled' : '' ))}}" onclick="openPaymentModal({{$equb}})" id="paymentButton"><i class="fas fa-plus-circle"></i> Payment</a>
                 </td>
                 </tr>
         @endforeach
