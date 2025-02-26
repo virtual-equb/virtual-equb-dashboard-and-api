@@ -1231,6 +1231,7 @@ class EqubController extends Controller
                     } else {
                         $status = "Activated";
                     }
+                    
                     $activityLog = [
                         'type' => 'members',
                         'type_id' => $id,
