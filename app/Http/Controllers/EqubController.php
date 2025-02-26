@@ -546,24 +546,9 @@ class EqubController extends Controller
             // if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $this->validate($request, [
                     'equb_type_id' => 'required',
-                    // 'amount' => ['required', 
-                    //     function ($attribute, $value, $fail) use ($request) {
-                    //         // Check if the equb type is 'Manual'
-                    //         $equbType = EqubType::find($request->input('equb_type_id'));
-                    //         if ($equbType && $equbType->type === 'Manual') {
-                    //             // Validate amount range for 'Manual' equb type
-                    //             if ($value < 500 || $value > 15000) {
-                    //                 $fail("The {$attribute} must be between 500 and 15000.");
-                    //             }
-                    //         }
-                    //     }
-                    // ],
                     'amount' => 'required',
                     'total_amount' => 'nullable',
                     'start_date' => 'required',
-                    // 'end_date' => 'required',
-                    // 'timeline' => 'required',
-                    // 'lottery_date' => 'required',
                 ]);
                 $member = $request->input('member_id');
                 $equbType = $request->input('equb_type_id');
@@ -606,37 +591,12 @@ class EqubController extends Controller
                         ]);
                     }
                 }
-
-                // Automatically calculate lottery date for 'Manual' type
-                // if ($equbTypeData->type === 'Manual') {
-                //     // Set lottery_date to 45 days after the start date if it's not provided
-                //     if (!$lotteryDate) {
-                //         $lotteryDate = Carbon::parse($formattedStartDate)->addDays(45)->format('Y-m-d');
-                //     }
-
-                //     // check if there are existing lotteries on the same day (to avoid conflicts)
-                //     $existingLottery = Equb::where('lottery_date', $lotteryDate)->exists();
-                //     if ($existingLottery) {
-                //         $msg = 'Lottery date already exists!';
-                //         $type = 'error';
-                //         Session::flash($type, $msg);
-                //         // return response()->json([
-                //         //     'code' => 400,
-                //         //     'message' => 'Lottery date already exists!'
-                //         // ]);
-                //     }
-
-                //     // Ensure total funds available for the lottery (Projection check)
-                //     $cashProjection = Equb::whereDate('lottery_date', $lotteryDate)->sum('amount');
-                //     if ($cashProjection < $totalAmount) {
-                //         // if the cash projection is insufficient, extend the lottery date by 1 day
-                //         $lotteryDate = Carbon::parse($lotteryDate)->addDay()->format('Y-m-d');
-                //     }
-                // }
                 if ($equbTypeData->type === 'Manual') {
-                    // Set initial lottery_date (45 days after start date) if not provided
-                    if (!$lotteryDate) {
-                        $lotteryDate = Carbon::parse($formattedStartDate)->addDays(45)->format('Y-m-d');
+                    // Ensure the lottery date is at least 45 days after the start date
+                    $minLotteryDate = Carbon::parse($formattedStartDate)->addDays(45)->format('Y-m-d');
+                
+                    if (!$lotteryDate || Carbon::parse($lotteryDate)->lt($minLotteryDate)) {
+                        $lotteryDate = $minLotteryDate;
                     }
                 
                     // Get all upcoming lottery dates with their total funds
@@ -654,13 +614,26 @@ class EqubController extends Controller
                         }
                     }
                 
-                    // If no suitable date was found, pick the next available day
-                    if (!$futureLotteries->contains('lottery_date', $lotteryDate)) {
+                    // If no suitable date is found, find the next available day with enough funds
+                    while (!$futureLotteries->contains('lottery_date', $lotteryDate)) {
+                        $lotteryDate = Carbon::parse($lotteryDate)->addDay()->format('Y-m-d');
+                
+                        $availableLottery = Equb::select('lottery_date', DB::raw('SUM(amount) as total_funds'))
+                            ->whereDate('lottery_date', '=', $lotteryDate)
+                            ->groupBy('lottery_date')
+                            ->first();
+                
+                        if ($availableLottery && $availableLottery->total_funds >= $totalAmount) {
+                            break; // Found a date with enough funds
+                        }
+
+                        // Move to the next day
                         $lotteryDate = Carbon::parse($lotteryDate)->addDay()->format('Y-m-d');
                     }
                 
-                    // Store the lottery date (it will now have enough funds)
+                    // Store the final lottery date
                 }
+                
 
                 // Determine lottery_date based on equbType
                 if($equbTypeData->type === 'Automatic') {
@@ -965,6 +938,207 @@ class EqubController extends Controller
             return response()->json([
                 'error' => $ex->getMessage()
             ], 500);
+        }
+    }
+    public function newStore(Request $request) {
+        try {
+            $userData = Auth::user();
+            $equbType = EqubType::where('id', $request->input('equb_type_id'))->first();
+
+            // Validate request inputs
+            $this->validate($request, [
+                'equb_type_id' => 'required',
+                'amount' => 'required',
+                'total_amount' => 'nullable',
+                'start_date' => 'required',
+            ]);
+
+            // Retrieve form data
+            $member = $request->input('member_id');
+            $equbType = $request->input('equb_type_id');
+            $amount = $request->input('amount');
+            $totalAmount = $request->input('total_amount');
+            $startDate = $request->input('start_date');
+            $timeline = $request->input('timeline');
+            $endDate = $request->input('end_date');
+            $lotteryDate = $request->input('lottery_date');
+
+            // Format start_date and end_date correctly
+            // $formattedStartDate = $this->formatDate($startDate);
+            // $formattedEndDate = $this->formatDate($endDate);
+            try {
+                $formattedStartDate = $this->formatDate($startDate);
+                $formattedEndDate = $this->formatDate($endDate);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'code' => 400,
+                    'message' => 'Invalid date format: ' . $e->getMessage(),
+                ]);
+            }
+
+             // Retrieve the EqubType data
+            $equbTypeData = EqubType::find($equbType);
+            if (!$equbTypeData) {
+                return response()->json(['code' => 404, 'message' => 'Equb type not found.']);
+            }
+
+            // Check if the member is already in this Equb
+            $equbs_count = Equb::where('equb_type_id', $equbType)->where('member_id', $member)->count();
+            if ($equbs_count > 0) {
+                return response()->json(['code' => 400, 'message' => 'Equb already exists!']);
+            }
+
+            // Lottery date calculation for "Manual" Equb types
+            if ($equbTypeData->type === 'Manual') {
+                $lotteryDate = $this->calculateManualLotteryDate($formattedStartDate, $lotteryDate, $totalAmount);
+            }
+
+            // Assign lottery_date based on equb type
+            if ($equbTypeData->type === 'Automatic') {
+                $lotteryDate = $equbTypeData->lottery_date;
+                $totalAmount = $equbTypeData->total_amount;
+            } elseif ($equbTypeData->type === 'Seasonal') {
+                $lotteryDate = $equbTypeData->lottery_date;
+                $totalAmount = $equbTypeData->amount;
+            }
+
+            // Create new Equb entry
+            $equbData = [
+                'member_id' => $member,
+                'equb_type_id' => $equbType,
+                'amount' => $amount,
+                'total_amount' => $totalAmount,
+                'start_date' => $formattedStartDate,
+                'end_date' => $formattedEndDate,
+                'timeline' => $timeline,
+                'lottery_date' => $lotteryDate,
+            ];
+            $create = $this->equbRepository->create($equbData);
+
+            // Update lottery date in database if it's a manual equb
+            if ($equbTypeData->type === 'Manual' && $create) {
+                $create->lottery_date = $lotteryDate;
+                $create->save();
+            }
+
+            // Update EqubType remaining quota and status if necessary
+            if ($create && in_array($equbTypeData->type, ['Automatic', 'Seasonal'])) {
+                $equbTypeData->remaining_quota = $equbTypeData->expected_members - $equbTypeData->total_members - 1;
+                $equbTypeData->total_members += 1;
+
+                if ($equbTypeData->remaining_quota == 0) {
+                    $equbTypeData->status = "Deactive";
+                }
+
+                $equbTypeData->save();
+            }
+
+            // Create EqubTaker entry
+            $equbTakerData = [
+                'member_id' => $member,
+                'equb_id' => $create->id,
+                'payment_type' => '',
+                'amount' => $totalAmount,
+                'remaining_amount' => $totalAmount,
+                'status' => 'unpaid',
+                'paid_by' => '',
+                'total_payment' => 0,
+                'remaining_payment' => $totalAmount,
+                'cheque_amount' => '',
+                'cheque_bank_name' => '',
+                'cheque_description' => '',
+            ];
+            $this->equbTakerRepository->create($equbTakerData);
+
+            // Log activity
+            $activityLog = [
+                'type' => 'equbs',
+                'type_id' => $create->id,
+                'action' => 'created',
+                'user_id' => $userData->id,
+                'username' => $userData->name,
+                'role' => $userData->role,
+            ];
+            $this->activityLogRepository->createActivityLog($activityLog);
+
+            // Send notifications
+            $this->sendEqubNotifications($member, $create);
+
+            // Success message
+            Session::flash('success', 'Equb has been registered successfully!');
+            return redirect('/member');
+
+        } catch (Exception $ex) {
+            Session::flash('error', "Unknown Error Occurred, Please try again! " . $ex->getMessage());
+            return back();
+        }
+    }
+    // Formats date to Y-m-d
+    private function formatDate($date)
+    {
+        try {
+            // If the date is already in Y-m-d format, return it
+            if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+                return $date;
+            }
+    
+            // If the date is in m/d/Y format, convert it to Y-m-d
+            return Carbon::createFromFormat('m/d/Y', trim($date))->format('Y-m-d');
+    
+        } catch (\Exception $e) {
+            throw new \Exception("Invalid date format: {$date}");
+        }
+    }
+    // Calculates the lottery date for manual Equbs
+    private function calculateManualLotteryDate($formattedStartDate, $lotteryDate, $totalAmount)
+    {
+        $minLotteryDate = Carbon::parse($formattedStartDate)->addDays(45)->format('Y-m-d');
+
+        if (!$lotteryDate || Carbon::parse($lotteryDate)->lt($minLotteryDate)) {
+            $lotteryDate = $minLotteryDate;
+        }
+
+        $futureLotteries = Equb::select('lottery_date', DB::raw('SUM(amount) as total_funds'))
+            ->whereDate('lottery_date', '>=', $lotteryDate)
+            ->groupBy('lottery_date')
+            ->orderBy('lottery_date', 'asc')
+            ->get();
+
+        foreach ($futureLotteries as $lottery) {
+            if ($lottery->total_funds >= $totalAmount) {
+                return $lottery->lottery_date;
+            }
+        }
+
+        while (true) {
+            $availableLottery = Equb::select('lottery_date', DB::raw('SUM(amount) as total_funds'))
+                ->whereDate('lottery_date', '=', $lotteryDate)
+                ->groupBy('lottery_date')
+                ->first();
+
+            if ($availableLottery && $availableLottery->total_funds >= $totalAmount) {
+                return $lotteryDate;
+            }
+
+            $lotteryDate = Carbon::parse($lotteryDate)->addDay()->format('Y-m-d');
+        }
+    }
+
+    // Sends notifications to members, finance, and call center
+    private function sendEqubNotifications($memberId, $equb)
+    {
+        $shortcode = config('key.SHORT_CODE');
+        $member = Member::find($memberId);
+
+        if ($member && $member->phone) {
+            $this->sendSms($member->phone, "Dear {$member->full_name}, Your Equb has been successfully registered. Call {$shortcode} for more information.");
+        }
+
+        $finances = User::role('finance')->get();
+        foreach ($finances as $finance) {
+            if ($finance->phone_number) {
+                $this->sendSms($finance->phone_number, "Finance Alert: New Member {$member->full_name} joined Equb {$equb->equbType->name}.");
+            }
         }
     }
     public function isDateInYMDFormat($dateString)

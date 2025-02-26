@@ -1066,6 +1066,9 @@ class EqubController extends Controller
                     // if insufficient funds, extend the lottery date
                     $lotteryDate = Carbon::parse($lotteryDate)->addDay()->format('Y-m-d');
                 }
+            } else {
+                // Assign the existing lottery date from equbType for automatic equb
+                $lotteryDate = $equbType->lottery_date;
             }
 
             // Create equb entry
