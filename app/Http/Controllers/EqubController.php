@@ -1214,7 +1214,7 @@ class EqubController extends Controller
 
                 if ($status === "Deactive") {
                     $status = "Active";
-                } else if (empty($equb->status) || $status === null) {
+                } else if (empty($status) || $status === null) {
                     $status = "Active";
                 } else {
                     $status = "Deactive";
