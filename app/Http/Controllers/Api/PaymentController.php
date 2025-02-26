@@ -973,10 +973,14 @@ class PaymentController extends Controller
                     $totalPpayment = $this->paymentRepository->getTotalPaid($equb_id);
                     $totalEqubAmount = $this->equbRepository->getTotalEqubAmount($equb_id);
                     $remainingPayment = max(0, $totalEqubAmount - $totalPpayment);
+
                     $updated = [
                         'total_payment' => $totalPpayment,
                         'remaining_payment' => $remainingPayment,
+                        'remaining_amount' => $remainingPayment,
+                        'status' => $remainingPayment == 0 ? 'paid' : 'partially_paid',
                     ];
+
                     $updated = $this->equbTakerRepository->updatePayment($equb_id, $updated);
                     $equbTaker = $this->equbTakerRepository->getByEqubId($equb_id);
 

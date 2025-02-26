@@ -100,7 +100,7 @@
                     </td>
                     <td> {{ $finalLotteryInterval != 'Passed' ? ($finalLotteryInterval != 'Unassigned' ? $finalLotteryInterval . ' Days' : 'Unassigned') : 'Passed' }}
                     </td>
-                    <td> {{ $endDateInterval != 'passed' ? $endDateInterval . ' Days' : 'Passed' }}</td>
+                    <td> {{ $endDateInterval != 'Passed' ? $endDateInterval . ' Days' : 'Passed' }}</td>
                     <td> {{ $equb->status }}</td>
                     <?php
                     $equbTakers = $equb->equb_takers;
