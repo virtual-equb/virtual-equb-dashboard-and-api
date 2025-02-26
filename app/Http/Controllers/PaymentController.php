@@ -87,6 +87,13 @@ class PaymentController extends Controller
                 $amount = $request->input('amount');
                 $credit = $request->input('creadit');
                 $remark = $request->input('remark');
+
+                $equb_status = $this->equbRepository->getStatusById($equb_id);
+
+                if ($equb_status->status != 'Active') {
+                    return redirect()->back()->with('error', 'Payment processing failed: The Equb is currently not in active status.');
+                }
+
                 if ($credit <= 0) {
                     $credit = 0;
                 }
@@ -98,15 +105,18 @@ class PaymentController extends Controller
                     'creadit' => 0
                 ];
                 $this->paymentRepository->updateCredit($equb_id, $creditData);
+
                 $lastTc = $totalCredit;
                 $totalCredit = $credit + $totalCredit;
                 $tc = $totalCredit;
+                
                 $equbAmount = $this->equbRepository->getEqubAmount($member, $equb_id);
                 $availableBalance = $this->paymentRepository->getTotalBalance($equb_id);
                 $balanceData = [
                     'balance' => 0
                 ];
                 $this->paymentRepository->updateBalance($equb_id, $balanceData);
+
                 if ($availableBalance == null) {
                     $availableBalance = 0;
                 }
@@ -160,6 +170,7 @@ class PaymentController extends Controller
                         $amount = $at;
                     }
                 }
+
                 $paymentData = [
                     'member_id' => $member,
                     'equb_id' => $equb_id,
@@ -171,10 +182,12 @@ class PaymentController extends Controller
                     'collecter' => $userData->id
                 ];
                 $create = $this->paymentRepository->create($paymentData);
+                
                 if ($create) {
                     $totalPpayment = $this->paymentRepository->getTotalPaid($equb_id);
                     $totalEqubAmount = $this->equbRepository->getTotalEqubAmount($equb_id);
-                    $remainingPayment =  max(0, $totalEqubAmount - $totalPpayment);
+                    $remainingPayment = max(0, $totalEqubAmount - $totalPpayment);
+
                     $updated = [
                         'total_payment' => $totalPpayment,
                         'remaining_payment' => $remainingPayment,
@@ -187,7 +200,6 @@ class PaymentController extends Controller
                     $equbType = EqubType::where('id', $equbTypeId)->first();
                     $notifiedMember = Member::where('id', $member)->first();
                     $memberPhone = $notifiedMember->phone;
-                    // dd($equbTaker->status);
 
                     if ($remainingPayment == 0 && $equbTaker) {
                         $ekubStatus = [
@@ -195,6 +207,7 @@ class PaymentController extends Controller
                         ];
                         $ekubStatusUpdate = $this->equbRepository->update($equb_id, $ekubStatus);
                     }
+
                     $activityLog = [
                         'type' => 'payments',
                         'type_id' => $create->id,
@@ -204,17 +217,20 @@ class PaymentController extends Controller
                         'role' => $userData->role,
                     ];
                     $this->activityLogRepository->createActivityLog($activityLog);
+                    
                     $lotteryDateList = explode(",", $equb->lottery_date);
                     $dates = collect($lotteryDateList)->map(function ($date) {
                         return Carbon::parse($date);
                     });
                     $maxDate = $dates->max();
                     $lotDate = $equbType->type == 'Automatic' ? $equbType->lottery_date : $maxDate->toDateString();
+
                     try {
                         $shortcode = config('key.SHORT_CODE');
                         $message = "You have successfully paid $amount ETB and a total of $totalPpayment ETB for the equb $equbType->name. Your remaining unpaid amount is $remainingPayment ETB. Your lottery date is $lotDate" . ". For further information please call " . $shortcode;
-                       // dd($message);
+                        
                         $this->sendSms($memberPhone, $message);
+
                         if ($remainingPayment == 0) {
                             $paymentMessage = "You have successfully finished your payment of $totalPpayment ETB for the equb $equbType->name" . ". For further information please call " . $shortcode;
                             $this->sendSms($memberPhone, $paymentMessage);

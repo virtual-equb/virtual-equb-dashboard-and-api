@@ -746,16 +746,20 @@ class PaymentController extends Controller
 
             $equbId = $request->input('equb_id');
             $amount = $request->input('amount');
-            // $equb = Equb::where('id', $equbId)->first();
-
-            // $equb_amount = $equb->amount;
-            // $credit = $equb_amount - $amount;
-            // $member = $userId;
             $equb_id = $equbId;
             $paymentType = "telebirr";
-            
             $memberData = Member::where('phone', $user->phone_number)->first();
             $collector = User::where('name', 'telebirr')->first();
+
+            $equb_status = $this->equbRepository->getStatusById($equbId);
+
+            if ($equb_status->status != 'Active') {
+                return response()->json([
+                    'code' => 500,
+                    'message' => 'Payment processing failed: The Equb is currently not in active status.',
+                ]);
+            }
+        
             $paymentData = [
                 'member_id' => $memberData->id,
                 'equb_id' => $equb_id,
@@ -769,17 +773,15 @@ class PaymentController extends Controller
             ];
 
             $telebirr = $this->paymentRepository->create($paymentData);
+
             // Telebirr initialization 
             if ($telebirr) {
-
-
                 // Get environment variables from .env or config
                 $baseUrl = TELEBIRR_BASE_URL; // Assuming you have set these in env/services.php
                 $fabricAppId = TELEBIRR_FABRIC_APP_ID;
                 $appSecret = TELEBIRR_APP_SECRET;
                 $merchantAppId = TELEBIRR_MERCHANT_APP_ID;
                 $merchantCode = TELEBIRR_MERCHANT_CODE;
-
 
                 // You can also get the request parameters directly from the request object
                 $req = $request->all(); // or $request->input('key') for specific keys
@@ -970,7 +972,7 @@ class PaymentController extends Controller
 
                     $totalPpayment = $this->paymentRepository->getTotalPaid($equb_id);
                     $totalEqubAmount = $this->equbRepository->getTotalEqubAmount($equb_id);
-                    $remainingPayment =  $totalEqubAmount - $totalPpayment;
+                    $remainingPayment = max(0, $totalEqubAmount - $totalPpayment);
                     $updated = [
                         'total_payment' => $totalPpayment,
                         'remaining_payment' => $remainingPayment,
