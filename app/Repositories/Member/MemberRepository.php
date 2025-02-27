@@ -42,7 +42,7 @@ class MemberRepository implements IMemberRepository
     public function getAllByPaginate($offset, $limit = 10)
     {
         return $this->model
-            ->with(['memberCity', 'memberSubcity'])
+            ->with(['memberCity', 'memberSubcity', 'equbs', 'payments'])
             ->whereNotNull('gender')
             ->orderBy('full_name', 'asc')
             ->offset($offset)

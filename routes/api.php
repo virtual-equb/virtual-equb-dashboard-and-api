@@ -34,6 +34,7 @@ use App\Http\Controllers\Api\PaymentGatewayController;
 use App\Http\Controllers\EqubController as ControllersEqubController;
 use App\Http\Controllers\Api\SubcityController as ApiSubcityController;
 use App\Http\Controllers\EqubTypeController as ControllersEqubTypeController;
+use App\Http\Middleware\LogUserActionMiddleware;
 
 /*
 |--------------------------------------------------------------------------
@@ -80,7 +81,7 @@ Route::get('/verifyOtp/{code}/{phone}', [UserController::class, 'verifyOtp'])->n
 // Route::get('/getEqubType', [EqubTypeController::class, 'getEqubType'])->name('getEqubType');
 
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+Route::middleware('auth:sanctum', LogUserActionMiddleware::class)->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::group([
@@ -258,6 +259,7 @@ Route::get('fallback/', function () {
         'message' => 'Unauthorized!'
     ], 401);
 })->name('api-fallback');
+
 Route::prefix('activityLog')->group(function () {
     Route::get('/', [ActivityLogController::class, 'index'])->name('showActivityLog');
     Route::get('/logDetail/{type}', [ActivityLogController::class, 'logDetail'])->name('logDetail');

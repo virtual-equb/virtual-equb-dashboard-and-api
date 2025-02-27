@@ -22,6 +22,8 @@ use App\Http\Controllers\FrontMainEqubController;
 use App\Http\Controllers\WebPermissionController;
 use App\Http\Controllers\Api\CbeMiniAppController;
 use App\Http\Controllers\TermsAndConditionsController;
+use App\Http\Middleware\LogUserActionMiddleware;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -73,7 +75,8 @@ Route::get('/terms-and-conditions', [TermsAndConditionsController::class, 'index
 Route::middleware([
     'auth',
     config('jetstream.auth_session'),
-    'verified'
+    'verified',
+    LogUserActionMiddleware::class
 ])->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'index'])->name('dashboard');
     Route::get('/equbTypeDashboard/{equb_type_id}', [App\Http\Controllers\HomeController::class, 'equbTypeIndex'])->name('equbTypeDashboard');
