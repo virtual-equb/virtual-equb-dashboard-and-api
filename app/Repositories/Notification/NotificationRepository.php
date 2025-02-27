@@ -32,7 +32,6 @@ class NotificationRepository implements INotificationRepository
 
     public function update($id, array $attributes)
     {
-        // dd($id);
         return $this->model->where('id',$id)->update($attributes);
     }
 
@@ -46,4 +45,13 @@ class NotificationRepository implements INotificationRepository
         return $this->model->where('id',$id)->forceDelete();
     }
 
+    public function pending()
+    {
+        return $this->model->pending()->get();
+    }
+
+    public function approved()
+    {
+        return $this->model->approved()->get();
+    }
 }

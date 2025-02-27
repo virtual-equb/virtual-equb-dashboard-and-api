@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\City\ICityRepository;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Session;
 use App\Models\City;
 
 class CityController extends Controller
@@ -19,25 +20,21 @@ class CityController extends Controller
         $this->title = "Virtual Equb - City";
     }
     
-    /**
-     * Display a listing of cities for authorized users.
-     *
-     * @return \Illuminate\View\View|\Illuminate\Http\JsonResponse
-     */
     public function index()
     {
         try {
             $user = Auth::user();
 
-            // if ($this->isAuthorized($user)) {
                 $cities = $this->cityRepository->getAll();
                 $title = $this->title;
-                $equbTypes = $this->cityRepository->getAll(); // Assuming this method exists
-                $equbs = $this->cityRepository->getAll(); // Assuming this method exists
-                $payments = $this->cityRepository->getAll(); // Assuming this method exists
-                return view('admin/city.cityList', compact('title', 'cities'));            
-            // }
-            return Response::json(['error' => 'Unauthorized access.'], 403);
+                $equbTypes = $this->cityRepository->getAll();
+                $equbs = $this->cityRepository->getAll();
+                $payments = $this->cityRepository->getAll();
+                $totalCity = City::count();
+                $totalActiveCity =  City::active()->count();
+                $totalInactiveCity =  City::inactive()->count();
+
+                return view('admin/city.cityList', compact('title', 'cities', 'totalCity', 'totalActiveCity', 'totalInactiveCity'));            
         } catch (\Exception $e) {
             return Response::json(['error' => 'Failed to retrieve cities.'], 500);
         }
@@ -45,49 +42,37 @@ class CityController extends Controller
 
     public function show($id)
     {
-        // Retrieve the equb by ID
-      //  $city = $this->cityRepository->getAll(); // Adjust this logic based on your needs
-
         $city = City::findOrFail($id);
-        // Return the data as JSON
+
         return response()->json($city);
     }
     
     public function store(Request $request)
     {
-        // Validate the request
         $request->validate([
             'name' => 'required|string|max:255',
+            'active' => 'required|boolean'
         ]);
 
-        // Create a new city
         City::create([
             'name' => $request->name,
+            'active' => $request->active,
         ]);
 
-        // Redirect back with a success message
         return redirect()->back()->with('success', 'City added successfully!');
     }
 
-    /**
-     * Check if the user has the required role to access the cities.
-     *
-     * @param  \Illuminate\Contracts\Auth\Authenticatable|null  $user
-     * @return bool
-     */
     public function update(Request $request, $id) {
-        // Validate the request data
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'status' => 'required|boolean',
+            'status' => 'required',
         ]);
-    
-        // Find the city by ID and update it
+
         $city = City::findOrFail($id);
         $city->name = $validatedData['name'];
         $city->active = $validatedData['status'];
         $city->save();
-    
+
         return response()->json(['message' => 'City updated successfully.']);
     }
 
@@ -108,6 +93,27 @@ class CityController extends Controller
 
     public function destroy($id)
     {
-        // Implement the logic to delete the city
+        try {
+            $city = City::find($id);
+
+            if (!$city) {
+                $msg = "cITY not found!";
+                $type = 'error';
+                Session::flash($type, $msg);
+
+                return redirect()->back();
+            }
+
+            $city->delete();
+            $msg = "City deleted successfully!";
+            $type = 'success';
+            Session::flash($type, $msg);
+            return redirect()->back();
+        } catch (\Exception $ex) {
+            $msg = "Unable to delete the City Data, please try again!";
+            $type = 'error';
+            Session::flash($type, $msg);
+            return $msg;
+        }
     }
 }

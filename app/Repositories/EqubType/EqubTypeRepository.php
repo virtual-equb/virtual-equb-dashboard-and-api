@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Repositories\EqubType;
 
 use App\Models\EqubType;
@@ -10,6 +9,7 @@ class EqubTypeRepository implements IEqubTypeRepository
 {
     private $model;
     private $limit;
+
     public function __construct(EqubType $equbType)
     {
         $this->model = $equbType;
@@ -20,6 +20,7 @@ class EqubTypeRepository implements IEqubTypeRepository
     {
         return MainEqub::all();
     }
+
     public function getAll()
     {
         return $this->model->with('mainEqub')->get();
@@ -42,6 +43,7 @@ class EqubTypeRepository implements IEqubTypeRepository
     {
         return $this->model->distinct('name')->groupBy('equb_types.name')->pluck('name');
     }
+    
     public function getDeactive()
     {
         return $this->model->where('status', 'Deactive')->get();
@@ -75,5 +77,15 @@ class EqubTypeRepository implements IEqubTypeRepository
     public function delete($id)
     {
         return $this->model->where('id', $id)->delete();
+    }
+
+    public function active()
+    {
+        return $this->model->active()->get();
+    }
+
+    public function inactive()
+    {
+        return $this->model->inactive()->get();
     }
 }

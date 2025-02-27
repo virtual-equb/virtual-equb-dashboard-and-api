@@ -40,19 +40,14 @@ Route::get('/unauthorized', function () {
     return view('errorPages.authorization'); // Replace with your unauthorized view
 })->name('unauthorized');
 
-// Route::group(['middleware' => ['role:admin']], function() {
-    Route::resource('/permission', WebPermissionController::class);
-    Route::get('/permission/{permissionId}/delete',[ WebPermissionController::class, 'destroy']);
-    Route::resource('/roles', WebRoleController::class);
-    Route::get('/roles/{roleId}/delete', [WebRoleController::class, 'destroy']);
-        // ->middleware('permission:delete role');
-    Route::get('/roles/{roleId}/assign-permission', [WebRoleController::class, 'assignPermission']);
-    Route::put('/roles/{roleId}/assign-permission', [WebRoleController::class, 'updateRolePermission']);
-// });
-
+Route::resource('/permission', WebPermissionController::class);
+Route::get('/permission/{permissionId}/delete',[ WebPermissionController::class, 'destroy']);
+Route::resource('/roles', WebRoleController::class);
+Route::get('/roles/{roleId}/delete', [WebRoleController::class, 'destroy']);
+Route::get('/roles/{roleId}/assign-permission', [WebRoleController::class, 'assignPermission']);
+Route::put('/roles/{roleId}/assign-permission', [WebRoleController::class, 'updateRolePermission']);
 
 // mini app
-
 Route::get('/cbe-payment', [CbeMiniAppController::class, 'index']);
 Route::get('/validate-token', [CbeMiniAppController::class, 'validateToken']);
 Route::post('/process-payment', [CbeMiniAppController::class, 'processPayment'])->name('cbe.initialize');
@@ -102,7 +97,7 @@ Route::middleware([
     Route::post('/dateInterval', [EqubController::class, 'dateInterval'])->name('dateInterval');
     Route::get('/getDailyPaidAmount/{equb_id}', [EqubController::class, 'getDailyPaidAmount'])->name('getDailyPaidAmount');
 
-
+    //equb type routes
     Route::group(['prefix' => 'equbType'], function () {
         Route::get('/', [EqubTypeController::class, 'index'])->name('showEqubType');
         Route::get('/register', [EqubTypeController::class, 'create'])->name('creatEqubType');
@@ -118,6 +113,7 @@ Route::middleware([
         Route::put('/updatePendingStatus/{id}/{status}', [EqubTypeController::class, 'updatePendingStatus'])->name('updatePendingStatus'); 
         Route::get('/member/{id}', [EqubController::class, 'memberByEqubType'])->name('memberByEqubType');
     });
+
     Route::group(['prefix' => 'mainEqub'], function () {
         Route::get('/mainequbs', [FrontMainEqubController::class, 'index'])->name('mainequbIndex');
         Route::get('/viewmainequb/{id}', [FrontMainEqubController::class, 'show'])->name('viewMainEqub');
@@ -163,6 +159,8 @@ Route::middleware([
         Route::delete('/equb-delete/{id}', [EqubController::class, 'destroy'])->name('deleteEqub');
         Route::post('/add-unpaid/{id}', [EqubController::class, 'addUnpaid'])->name('addUnpaid');
     });
+
+    // payment routes
     Route::group(['prefix' => 'payment'], function () {
         Route::post('/defaultPayment.', [PaymentController::class, 'defaultPayment'])->name('defaultPayment');
         Route::get('/{member_id}/{equb_id}', [PaymentController::class, 'index'])->name('showAllPayment');
@@ -192,6 +190,8 @@ Route::middleware([
         Route::put('/rejectPending/{id}', [PaymentController::class, 'rejectPendingPayment'])->name('rejectPendingPayment');
         Route::delete('/deletePayment/{member_id}/{equb_id}/{id}', [PaymentController::class, 'deletePayment']);
     });
+
+    // equbtaker routes
     Route::group(['prefix' => 'equbTaker'], function () {
         Route::get('/', [EqubTakerController::class, 'index'])->name('showEqubTaker');
         Route::get('/equbTaker-register', [EqubTakerController::class, 'create'])->name('creatEqubTaker');
@@ -202,6 +202,8 @@ Route::middleware([
         Route::delete('/equbTaker-delete/{id}', [EqubTakerController::class, 'destroy'])->name('deleteEqubTaker');
         Route::post('/equbTaker-change-status/{status}/{id}', [EqubTakerController::class, 'changeStatus'])->name('changeStatusEqubTaker');
     });
+
+    //off date routes
     Route::group(['prefix' => 'rejectedDate'], function () {
         Route::get('/', [RejectedDateController::class, 'index'])->name('showRejectedDate');
         Route::get('/register', [RejectedDateController::class, 'create'])->name('creatRejectedDate');
@@ -210,6 +212,8 @@ Route::middleware([
         Route::put('/update/{id}', [RejectedDateController::class, 'update'])->name('updateRejectedDate');
         Route::delete('/delete/{id}', [RejectedDateController::class, 'destroy'])->name('deleteRejectedDate');
     });
+
+    //notification routes
     Route::group(['prefix' => 'notification'], function () {
         Route::get('/', [NotificationController::class, 'index'])->name('showNotifations');
         Route::get('/sent', [NotificationController::class, 'index'])->name('showSentNotifications');
@@ -222,6 +226,9 @@ Route::middleware([
         Route::delete('/delete/{id}', [NotificationController::class, 'destroy'])->name('deleteNotifation');
         Route::post('/approve/{id}', [NotificationController::class, 'approve'])->name('approveNotifation');
     });
+
+
+    // user route
     Route::prefix('user')->middleware('auth')->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('user');
         Route::get('/user/{offsetVal}/{pageNumberVal}', [UserController::class, 'user']);
@@ -236,6 +243,7 @@ Route::middleware([
         Route::delete('/delete/{id}', [UserController::class, 'destroy'])->name('deleteUser');
         Route::post('/resetPassword', [UserController::class, 'resetPassword']);
     });
+
     Route::prefix('reports')->middleware('auth')->group(function () {
         Route::get('/memberFilter', [ReportController::class, 'memberFilter'])->name('memberFilter');
         Route::get('/members/{dateFrom}/{dateTo}', [ReportController::class, 'members'])->name('members');
@@ -245,8 +253,7 @@ Route::middleware([
         Route::get('/paginateMembersByEqubType/{dateFrom}/{dateTo}/{equbType}/{offsetVal}/{pageNumberVal}', [ReportController::class, 'paginateMembersByEqubType']);       
         Route::get('/equbTypeFilter', [ReportController::class, 'equbTypeFilter'])->name('equbTypeFilter');
         Route::get('/equbTypes/{dateFrom}/{dateTo}', [ReportController::class, 'equbTypes'])->name('equbTypes');
-       // Route::get('/paymentFilter', [ReportController::class, 'paymentFilter'])->name('paymentFilter');
-       Route::get('/paymentFilter', [ReportController::class, 'paymentFilter'])->name('paymentFilter');
+        Route::get('/paymentFilter', [ReportController::class, 'paymentFilter'])->name('paymentFilter');
 
         Route::get('/payments', [ReportController::class, 'payments'])->name('payments');
 
@@ -298,6 +305,8 @@ Route::middleware([
         Route::get('/filterPaymentMethod/{dateFrom}/{dateTo}/{equbType}', [ReportController::class, 'filterPaymentMethod'])->name('filterPaymentMethod');
         Route::get('/loadMoreFilterEqubEndDates/{dateFrom}/{dateTo}/{offsetVal}/{pageNumberVal}/{equbType}', [ReportController::class, 'loadMoreFilterEqubEndDates']);
     });
+
+    //activity log routes
     Route::group(['prefix' => 'activityLog'], function () {
         Route::get('/', [ActivityLogController::class, 'index'])->name('showActivityLog');
         Route::get('/activityLog/{offsetVal}/{pageNumberVal}', [ActivityLogController::class, 'paginateActivityLog']);
@@ -306,64 +315,38 @@ Route::middleware([
         Route::get('/search-activity/{type}/{searchInput}/{offset}/{pageNumber?}', [ActivityLogController::class, 'searchActivity'])->name('searchActivity');
         Route::get('/clearSearchEntry', [ActivityLogController::class, 'clearSearchEntry'])->name('clearSearchEntry');
     });
-    Route::prefix('cities')->group(function () {
-        // Get all cities
-        
+
+    // Cities routes
+    Route::prefix('cities')->group(function () {        
         Route::get('/', [CityController::class, 'index'])->name('cities.index');
-            // Create a new city
-            Route::get('/create', [CityController::class, 'create'])->name('admin.city.addCity');
-            Route::post('/', [CityController::class, 'store'])->name('cities.store');
-        // Get a city by ID
-        Route::get('{id}', [CityController::class, 'show'])->name('cities.show');
-    
-        // Create a new city
+        Route::get('/create', [CityController::class, 'create'])->name('admin.city.addCity');
         Route::post('/', [CityController::class, 'store'])->name('cities.store');
-    
-        // Update an existing city
+        Route::get('{id}', [CityController::class, 'show'])->name('cities.show');
         Route::put('{id}', [CityController::class, 'update'])->name('cities.update');
-    
-        // Delete a city
         Route::delete('{id}', [CityController::class, 'destroy'])->name('cities.destroy');
     });
+
+    // sub-cities route
     Route::prefix('subcities')->group(function () {
-        // Get all sub-cities
-        Route::get('/', [BoleController::class, 'index'])->name('subcities.index');
-    
-        // Get a sub-city by ID
-        Route::get('{id}', [BoleController::class, 'show'])->name('subcities.show');
-    
-        // Create a new sub-city
-        Route::post('/', [BoleController::class, 'store'])->name('subcities.store');
-    
-        // Update an existing sub-city
-        Route::put('{id}', [BoleController::class, 'update'])->name('subcities.update');
-    
-        // Delete a sub-city
+        Route::get('/', [SubCityController::class, 'index'])->name('subcities.index');
+        Route::get('{id}', [SubCityController::class, 'show'])->name('subcities.show');
+        Route::post('/', [SubCityController::class, 'store'])->name('subcities.store');
+        Route::put('{id}', [SubCityController::class, 'update'])->name('subcities.update');
         Route::delete('{id}', [SubCityController::class, 'destroy'])->name('subcities.destroy');
-    
-        // Get sub-cities by city ID
-        Route::get('city/{cityId}', [BoleController::class, 'getSubCitiesByCityId'])->name('subcities.byCityId');
-        
+        Route::get('city/{cityId}', [SubCityController::class, 'getSubCitiesByCityId'])->name('subcities.byCityId');
     });
+
     Route::get('/rolesnew', [RolesController::class, 'rolesPermision'])->name('roles.rolesPermision');
+
+    // main equb routes
     Route::prefix('main-equbs')->group(function () {
-        // Get all cities
           Route::get('/', [MainEqubController::class, 'index'])->name('mainEqubs.index');
-          // Get types of equbs
           Route::get('/types', [MainEqubController::class, 'getTypes'])->name('mainEqubs.types');
-    
-          // Create a new main equb
-        //  Route::post('/', [MainEqubController::class, 'store'])->name('mainEqubs.store');
-      
-          // Get a main equb by ID
           Route::get('{id}', [MainEqubController::class, 'show'])->name('mainEqubs.show');
-      
-          // Update an existing main equb
           Route::put('{id}', [MainEqubController::class, 'update'])->name('mainEqubs.update');
-        
-          // Delete a main equb
           Route::delete('{id}', [MainEqubController::class, 'destroy'])->name('mainEqubs.destroy');
     });
+
     Route::middleware(['web','api','auth'])->group(function () {
         // Route to create a new permission
         Route::get('/settings/permission/create', [RolesController::class, 'create_permission'])

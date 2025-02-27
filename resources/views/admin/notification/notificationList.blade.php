@@ -51,133 +51,157 @@
             <div class="content-wrapper">
                 <section class="content">
                     <div class="container-fluid">
+                        <div class="row mt-2">
+                            <div class="col-lg-4 col-md-4 col-12">
+                                <div class="small-box bg-info">
+                                    <div class="inner">
+                                        <h3>{{ $totalNotification }}</h3>
+                                        <p>Total Notification</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="ion ion-pie-graph"></i>
+                                    </div>
+                                    <a href="#" class="small-box-footer"><i class="fas fa-list"></i></a>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-12">
+                                <div class="small-box bg-success">
+                                    <div class="inner">
+                                        <h3>{{ $totalApprovedNotification }}</h3>
+                                        <p>Approved Notification</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="ion ion-pie-graph"></i>
+                                    </div>
+                                    <a href="#" class="small-box-footer"><i class="fas fa-list"></i></a>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-12">
+                                <div class="small-box bg-warning">
+                                    <div class="inner">
+                                        <h3>{{ $totalPendingNotification }}</h3>
+                                        <p>Pending Notification</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="ion ion-pie-graph"></i>
+                                    </div>
+                                    <a href="#" class="small-box-footer"><i class="fas fa-list"></i></a>
+                                </div>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-12">
                                 <div class="card ">
                                     <div class="card-header">
-                                        <ul class="nav nav-pills" id="custom-tabs-two-tab" role="tablist">
-                                            <li class="nav-item nav-blue addOffDateTab">
-                                                <a class="nav-link active" id="custom-tabs-two-member-tab"
-                                                    data-toggle="pill" href="#custom-tabs-two-member" role="tab"
-                                                    aria-controls="custom-tabs-two-member" aria-selected="true"> <span
-                                                        class="fa fa-list"> </span> Notification</a>
-                                            </li>
-                                        </ul>
+                                        <h5>Notification
+                                            <button type="button" class=" btn btn-primary float-right" id="register" data-toggle="modal" data-target="#addNotificationModal"> <span class="fa fa-plus-circle"> </span> Send Notification</button>
+                                        </h5>
                                     </div>
                                     <div class="card-body">
                                         <div class="tab-content" id="custom-tabs-two-tabContent">
-                                            <div class="tab-pane fade show active" id="custom-tabs-two-member"
-                                                role="tabpanel" aria-labelledby="custom-tabs-two-member-tab">
-                                                @can('create notification')
-                                                    @include('admin/notification.sendNotification')
-                                                @endcan
-                                                <table id="offDate-list-table" class="table table-bordered table-striped">
-                                                    <thead>
+                                            <table id="offDate-list-table" class="table table-bordered table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>No</th>
+                                                        <th>Title</th>
+                                                        <th>Body</th>
+                                                        <th>Equb Type</th>
+                                                        <th>Phone</th>
+                                                        <th>Method</th>
+                                                        <th>Status</th>
+                                                        <th>Created At </th>
+                                                        <th style="width: 50px">Action </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($notifications as $index => $item)
                                                         <tr>
-                                                            <th>No</th>
-                                                            <th>Title</th>
-                                                            <th>Body</th>
-                                                            <th>Equb Type</th>
-                                                            <th>Phone</th>
-                                                            <th>Method</th>
-                                                            <th>Status</th>
-                                                            <th>Created At </th>
-                                                            <th style="width: 50px">Action </th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach ($notifications as $key => $item)
-                                                            <tr>
-                                                                <td>{{ $key + 1 }}</td>
-                                                                <td>{{ $item->title }}</td>
-                                                                <td>{{ $item->body }}</td>
-                                                                <td>{{ $item->equbType ? $item->equbType->name : '' }}
-                                                                <td>{{ $item->phone }}</td>
+                                                            <td>{{ $loop->iteration }}</td>
+                                                            <td>{{ $item->title }}</td>
+                                                            <td>{{ $item->body }}</td>
+                                                            <td>{{ $item->equbType ? $item->equbType->name : '' }}
+                                                            <td>{{ $item->phone }}</td>
+                                                            <td>
+                                                                @if ($item->method == 'sms')
+                                                                    SMS
+                                                                @elseif ($item->method == 'notification')
+                                                                    Notification
+                                                                @elseif ($item->method == 'both')
+                                                                    Both
+                                                                @endif
+                                                            </td>
+                                                            </td>
+                                                            <td>
+                                                                @if ($item->status == 'pending')
+                                                                    Pending
+                                                                @elseif ($item->status == 'approved')
+                                                                    Approved
+                                                                @endif
+                                                            </td>
+                                                            <td>
+                                                                <?php
+                                                                $toCreatedAt = new DateTime($item['created_at']);
+                                                                $createdDate = $toCreatedAt->format('M-j-Y');
+                                                                echo $createdDate; ?>
+                                                            </td>
                                                                 <td>
-                                                                    @if ($item->method == 'sms')
-                                                                        SMS
-                                                                    @elseif ($item->method == 'notification')
-                                                                        Notification
-                                                                    @elseif ($item->method == 'both')
-                                                                        Both
-                                                                    @endif
-                                                                </td>
-                                                                </td>
-                                                                <td>
-                                                                    @if ($item->status == 'pending')
-                                                                        Pending
-                                                                    @elseif ($item->status == 'approved')
-                                                                        Approved
-                                                                    @endif
-                                                                </td>
-                                                                <td>
-                                                                    <?php
-                                                                    $toCreatedAt = new DateTime($item['created_at']);
-                                                                    $createdDate = $toCreatedAt->format('M-j-Y');
-                                                                    echo $createdDate; ?>
-                                                                </td>
-                                                                    <td>
-                                                                        <div class='dropdown'>
-                                                                            <button
-                                                                                class='btn btn-secondary btn-sm btn-flat dropdown-toggle'
-                                                                                type='button'
-                                                                                data-toggle='dropdown'>Menu<span
-                                                                                    class='caret'></span></button>
-                                                                            <ul class='dropdown-menu p-4'>
-                                                                                @if ($item->status === 'pending')
-                                                                                    @can('approve notification')
-                                                                                    <li>
-                                                                                        <a href="javascript:void(0);"
-                                                                                            class="btn-sm btn btn-flat"
-                                                                                            onclick="openApproveModal({{ $item }})"
-                                                                                            style="margin-right:10px;"><span
-                                                                                                class="fa fa-check"> </span>
-                                                                                            Approve</a>
-                                                                                    </li>
-                                                                                    @endcan
-                                                                                    @can('update notification')
-                                                                                    <li>
-                                                                                        <a href="javascript:void(0);"
-                                                                                            class="btn-sm btn btn-flat"
-                                                                                            onclick="openEditPendingModal({{ $item }})"
-                                                                                            style="margin-right:10px;"><span
-                                                                                                class="fa fa-edit"> </span>
-                                                                                            Edit</a>
-                                                                                    </li>
-                                                                                    @endcan
-                                                                                @endif
-                                                                                @can('resend notification')
+                                                                    <div class='dropdown'>
+                                                                        <button
+                                                                            class='btn btn-secondary btn-sm btn-flat dropdown-toggle'
+                                                                            type='button'
+                                                                            data-toggle='dropdown'>Menu<span
+                                                                                class='caret'></span></button>
+                                                                        <ul class='dropdown-menu dropdown-menu-right p-4'>
+                                                                            @if ($item->status === 'pending')
+                                                                                @can('approve notification')
                                                                                 <li>
                                                                                     <a href="javascript:void(0);"
                                                                                         class="btn-sm btn btn-flat"
-                                                                                        onclick="openEditModal({{ $item }})"
+                                                                                        onclick="openApproveModal({{ $item }})"
                                                                                         style="margin-right:10px;"><span
-                                                                                            class="fa fa-edit"> </span>
-                                                                                        Resend</a>
+                                                                                            class="fa fa-check"> </span>
+                                                                                        Approve</a>
                                                                                 </li>
                                                                                 @endcan
-                                                                                @if ($item->status === 'pending')
-                                                                                @can('delete notification')
-                                                                                    <li>
-                                                                                        <a href="javascript:void(0);"
-                                                                                            class="btn-sm btn btn-flat"
-                                                                                            onclick="openDeleteModal({{ $item }})"><i
-                                                                                                class="fas fa-trash-alt"></i>
-                                                                                            Delete</a>
-                                                                                    </li>
+                                                                                @can('update notification')
+                                                                                <li>
+                                                                                    <a href="javascript:void(0);"
+                                                                                        class="btn-sm btn btn-flat"
+                                                                                        onclick="openEditPendingModal({{ $item }})"
+                                                                                        style="margin-right:10px;"><span
+                                                                                            class="fa fa-edit"> </span>
+                                                                                        Edit</a>
+                                                                                </li>
                                                                                 @endcan
-                                                                                @endif
-                                                                            </ul>
-                                                                        </div>
-                                                                    </td>
-                                                            </tr>
-                                                        @endforeach
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            <div class="tab-pane fade" id="custom-tabs-two-profile" role="tabpanel"
-                                                aria-labelledby="custom-tabs-two-profile-tab">
-                                            </div>
+                                                                            @endif
+                                                                            @can('resend notification')
+                                                                            <li>
+                                                                                <a href="javascript:void(0);"
+                                                                                    class="btn-sm btn btn-flat"
+                                                                                    onclick="openEditModal({{ $item }})"
+                                                                                    style="margin-right:10px;"><span
+                                                                                        class="fa fa-edit"> </span>
+                                                                                    Resend</a>
+                                                                            </li>
+                                                                            @endcan
+                                                                            @if ($item->status === 'pending')
+                                                                            @can('delete notification')
+                                                                                <li>
+                                                                                    <a href="javascript:void(0);"
+                                                                                        class="btn-sm btn btn-flat"
+                                                                                        onclick="openDeleteModal({{ $item }})"><i
+                                                                                            class="fas fa-trash-alt"></i>
+                                                                                        Delete</a>
+                                                                                </li>
+                                                                            @endcan
+                                                                            @endif
+                                                                        </ul>
+                                                                    </div>
+                                                                </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
                                 </div>
@@ -187,6 +211,7 @@
                 </section>
             </div>
         </div>
+
         <div class="table-responsive">
             <div class="modal modal-danger fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="Delete"
                 aria-hidden="true">
@@ -242,8 +267,13 @@
                 </div>
             </div>
         </div>
+
+        @can('create notification')
+            @include('admin/notification.sendNotification')
+        @endcan
         @include('admin/notification.resendNotification')
     @endsection
+
     @section('scripts')
         <script>
             $("#addNotification").submit(function() {
@@ -379,14 +409,11 @@
                         searchPlaceholder: "Search",
                     },
                     @can('export notification_data')
-                    "buttons": ["excel", "pdf", "print", "colvis"]
+                        "buttons": ["excel", "pdf", "print", "colvis"]
                     @else
                     "buttons": []
                     @endcan
                 }).buttons().container().appendTo('#offDate-list-table_wrapper .col-md-6:eq(0)')
-                $('#offDate-list-table_filter').prepend(
-                    `<button type="button" class=" btn btn-primary addNotification" id="register" data-toggle="modal" data-target="#addNotificationModal" style="margin-right: 30px;"> <span class="fa fa-plus-circle"> </span> Send Notification</button>`
-                )
             });
         </script>
     @endSection

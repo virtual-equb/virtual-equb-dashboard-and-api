@@ -18,4 +18,5 @@ interface IRejectedDateRepository
 
     public function forceDelete($id);
 
+    public function getRejectedDateAfterToday();
 }

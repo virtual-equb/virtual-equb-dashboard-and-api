@@ -15,7 +15,6 @@ class PermissionSeeder extends Seeder
      */
     public function run()
     {
-        // Permission::create(['name' => 'manage_users', 'guard_name' => 'web']);
         Permission::create(['name' => 'edit', 'guard_name' => 'api']);
         Permission::create(['name' => 'create', 'guard_name' => 'api']);
     }
