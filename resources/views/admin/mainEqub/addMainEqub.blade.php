@@ -19,23 +19,23 @@
                             <input type="file" class="form-control" id="image" name="image" accept="image/*">
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group required">
                             <label for="remark" class="control-label">Remark</label>
-                            <textarea class="form-control" id="remark" name="remark" placeholder="Additional Information"></textarea>
+                            <textarea class="form-control" id="remark" name="remark" placeholder="Additional Information" required></textarea>
                         </div>
 
                         <div class="form-group">
-                            <label for="active" class="control-label">Active:</label>
+                            <label for="active" class="control-label">Status*</label>
                             <select class="form-control" id="active" name="active">
-                                <option value="0">No</option>
-                                <option value="1">Yes</option>
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
                             </select>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" id="submitBtn">Save</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-secondary" id="submitBtn">Save</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
                 </div>
             </form>
         </div>

@@ -20,4 +20,14 @@ class City extends Model
     {
         return $this->belongsTo(Sub_city::class, 'city_id');
     }
+
+    public function scopeActive($query)
+    {
+        return $query->where('active', '1');
+    }
+
+    public function scopeInactive($query)
+    {
+        return $query->where('active', '0');
+    }
 }

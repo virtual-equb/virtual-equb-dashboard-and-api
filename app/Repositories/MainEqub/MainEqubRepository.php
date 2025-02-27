@@ -15,12 +15,20 @@ class MainEqubRepository implements MainEqubRepositoryInterface
     }
 
     public function all() {
-        // get all datas
-        // return $this->model->all();
         return MainEqub::with('subEqub')->get();
     }
 
     public function find($id) {
         return $this->model->find($id);
+    }
+
+    public function active()
+    {
+        return $this->model->active()->get();
+    }
+
+    public function inactive()
+    {
+        return $this->model->inactive()->get();
     }
 }

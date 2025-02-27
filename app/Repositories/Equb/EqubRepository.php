@@ -314,8 +314,6 @@ class EqubRepository implements IEqubRepository
     public function getAll()
     {
         return $this->model->with('equbType.mainEqub', 'payments')->get();
-        
-        // return EqubType::with('mainEqub')->get();
     }
 
     public function getByMember($memberId)
@@ -338,12 +336,6 @@ class EqubRepository implements IEqubRepository
 
     public function getByDate($dateFrom, $dateTo, $equbType, $offset)
     {
-        // return $this->model->where('status', 'Active')
-        //     ->whereDate('start_date', '>=', $dateFrom)
-        //     ->whereDate('end_date', '<=', $dateTo)
-        //     ->offset($offset)
-        //     ->limit($this->limit)
-        //     ->with('member')->get();
         if ($equbType != 'all') {
             return $this->model
                 ->where('status', 'Active')
@@ -626,7 +618,8 @@ class EqubRepository implements IEqubRepository
     }
     public function getTotalEqubAmount($equb_id)
     {
-        return $this->model->where('status', 'Active')->select('total_amount')->where('id', $equb_id)->pluck('total_amount')->first();
+        // return $this->model->where('status', 'Active')->select('total_amount')->where('id', $equb_id)->pluck('total_amount')->first();
+        return $this->model->where('status', 'Active')->where('id', $equb_id)->value('total_amount');
     }
     public function getExpectedTotal()
     {

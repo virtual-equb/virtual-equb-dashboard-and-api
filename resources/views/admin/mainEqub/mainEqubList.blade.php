@@ -23,6 +23,10 @@
             margin-bottom: 20px;
         }
     }
+    div.dataTables_wrapper div.dataTables_info {
+        padding-top: 0.85em;
+        display: none;
+    }
 </style>
 @endsection
 
@@ -31,56 +35,75 @@
     <div class="content-wrapper">
         <section class="content">
             <div class="container-fluid">
+                <div class="row mt-2">
+                    <div class="col-lg-4 col-md-4 col-12">
+                        <div class="small-box bg-info">
+                            <div class="inner">
+                                <h3>{{ $totalMainEqub }}</h3>
+                                <p>Total Equbs</p>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-pie-graph"></i>
+                            </div>
+                            <a href="#" class="small-box-footer"><i class="fas fa-list"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-12">
+                        <div class="small-box bg-success">
+                            <div class="inner">
+                                <h3>{{ $totalActiveEqub }}</h3>
+                                <p>Active Equb</p>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-pie-graph"></i>
+                            </div>
+                            <a href="#" class="small-box-footer"><i class="fas fa-list"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-12">
+                        <div class="small-box bg-warning">
+                            <div class="inner">
+                                <h3>{{ $totalInactiveEqub }}</h3>
+                                <p>Inactive Equb</p>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-pie-graph"></i>
+                            </div>
+                            <a href="#" class="small-box-footer"><i class="fas fa-list"></i></a>
+                        </div>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <ul class="nav nav-pills" id="custom-tabs-two-tab" role="tablist">
-                                    <li class="nav-item nav-blue memberTab">
-                                        <a class="nav-link active" id="custom-tabs-two-member-tab" data-toggle="pill" href="#custom-tabs-two-member" role="tab" aria-controls="custom-tabs-two-member" aria-selected="true">
-                                            <span class="fa fa-list"></span> Main Equb
-                                        </a>
-                                    </li>
-                                </ul>
-                                <div class="float-right">
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addMainEqubModal" style="margin-right: 30px;">
-                                            <span class="fa fa-plus-circle"></span> Add Main Equb
-                                        </button>
-                                </div>
+                                <h5>Main Equb
+                                    <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#addMainEqubModal"> <span class="fa fa-plus-circle"> </span> Add Main Equb</button>
+                                </h5>
                             </div>
                             <div class="card-body">
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <input class="form-control responsive-input" type="text" id="equbSearchText" placeholder="Search Main Equb">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <button class="btn btn-default" id="clearSearch">Clear</button>
-                                    </div>
-                                </div>
                                 <div id="equb_table_data" class="table-responsive">
-                                    <table class="table table-bordered" id="equbTable">
+                                    <table  id="equbTable" class="table table-bordered table-striped">
                                         <thead>
                                             <tr>
                                                 <th>#</th>
                                                 <th>Image</th>
                                                 <th>Main Equbs</th>
                                                 <th>Status</th>
-                                                <th>Actions</th>
+                                                <th style="width: 50px">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($mainEqubs as $key => $equb)
+                                            @foreach ($mainEqubs as $index => $equb)
                                                 <tr>
-                                                    <td>{{ $key + 1 }}</td>
+                                                    <td>{{ $loop->iteration }}</td>
                                                     <td style="background-color: rgb(76, 175, 80); width: 60px; text-align: center;">
-    <img src="{{ asset('storage/' . $equb->image) }}" alt="{{ $equb->name }}" 
-         style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
-</td>
+                                                        <img src="{{ asset('storage/' . $equb->image) }}" alt="{{ $equb->name }}" 
+                                                            style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                                                    </td>
                                                     <td>{{ $equb->name }}</td>
                                                     <td>
-                                                        <span class="badge {{ $equb->active ? 'badge-success' : 'badge-danger' }}">
-                                                            {{ $equb->active ? 'Active' : 'Inactive' }}
-                                                        </span>
+                                                        {{ $equb->active ? 'Active' : 'Inactive' }}
                                                     </td>
                                                     <td>
                                                         <div class='dropdown'>
@@ -94,11 +117,11 @@
                                                                     </li>
                                                                 @endcan
                                                                 @can('delete main_equb')
-                                                                    <li>
-                                                                        <button class="text-secondary btn btn-flat delete-equb" data-id="{{ $equb->id }}">
-                                                                            <i class="fas fa-trash-alt"></i> Delete
-                                                                        </button>
-                                                                    </li>
+                                                                    <a href="javascript:void(0);"
+                                                                        class="btn-sm btn btn-flat"
+                                                                        onclick="openDeleteModal({{ $equb }})"><i class="fas fa-trash-alt"></i>
+                                                                        Delete
+                                                                    </a>
                                                                 @endcan
                                                             </ul>
                                                         </div>
@@ -114,6 +137,34 @@
                 </div>
             </div>
         </section>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <div class="modal modal-danger fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="Delete"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title" id="exampleModalLabel">Delete Main Equb</p>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="" method="post" id="deleteMainEqub">
+                        @csrf
+                        @method('DELETE')
+                        <input id="id" name="id" hidden value="">
+                        <p class="text-center">Are you sure you want to delete this Equb ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -134,94 +185,128 @@
         });
     });
 
-    // Delete Equb
-    $(document).on('click', '.delete-equb', function() {
-        const equbId = $(this).data('id');
-        if (confirm('Are you sure you want to remove this main equb?')) {
-            $.ajax({
-                url: '/main-equbs/' + equbId,
-                type: 'DELETE',
-                success: function(result) {
-                    alert(result.message || 'Equb deleted successfully!'); // Dynamic success message
-                    location.reload(); // Refresh the equb table
-                },
-                error: function(xhr) {
-                    console.error('Error deleting equb:', xhr);
-                    alert('Error deleting equb: ' + xhr.responseText); // Dynamic error message
-                }
-            });
-        }
+    $("#deleteMainEqub").submit(function() {
+        $.LoadingOverlay("show");
     });
+
+    function openDeleteModal(item) {
+        $('#id').val(item.id);
+        $('#deleteModal').modal('show');
+        $('#deleteMainEqub').attr('action', 'main-equbs/' + $('#id').val())
+    }
 
     // Clear Search
     $('#clearSearch').click(function() {
         $('#equbSearchText').val('');
         // Optionally refresh the table or apply a filter reset
     });
+
     // Open Edit Modal
-function openEditModal(equbId) {
-    $.ajax({
-        type: 'GET',
-        url: '/main-equbs/' + equbId,
-        success: function(data) {
-            $('#editMainEqubId').val(data.id);
-            $('#editMainEqubName').val(data.name);
-            $('#editMainEqubStatus').val(data.active ? 1 : 0); // Set status based on active
-
-            // Display current image if it exists
-            if (data.image) {
-                $('#currentImage').attr('src', '{{ asset("storage/") }}/' + data.image).show();
-            } else {
-                $('#currentImage').hide(); // Hide if no image
-            }
-
-            $('#editMainEqubModal').modal('show'); // Open the modal
-        },
-        error: function(xhr) {
-            console.error('Error fetching data:', xhr);
-            alert('Error fetching data: ' + xhr.responseText); // Dynamic error message
-        }
-    });
-}
-
-// Save Changes
-// Save Changes
-$(document).ready(function() {
-    // Save Changes
-    $('#saveEditMainEqub').click(function() {
-        const id = $('#editMainEqubId').val();
-        const name = $('#editMainEqubName').val();
-        const status = $('#editMainEqubStatus').val();
-
-        console.log('ID:', id);
-        console.log('Name:', name);
-        console.log('Status:', status); // Log the status
-
-        // Create data object to send
-        const data = {
-            name: name,
-            active: status 
-        };
-
+    function openEditModal(equbId) {
         $.ajax({
-            type: 'PUT',
-            url: '/main-equbs/' + id, // Ensure this URL matches your route
-            data: data,
-            success: function(result) {
-                console.log(data);
-                alert(result.message || 'Main Equb updated successfully!');
-                $('#editMainEqubModal').modal('hide'); // Hide the modal after saving
-                location.reload(); // Refresh the page to see changes
+            type: 'GET',
+            url: '/main-equbs/' + equbId,
+            success: function(data) {
+                $('#editMainEqubId').val(data.id);
+                $('#editMainEqubName').val(data.name);
+                $('#editMainEqubStatus').val(data.active ? 1 : 0); // Set status based on active
+
+                // Display current image if it exists
+                if (data.image) {
+                    $('#currentImage').attr('src', '{{ asset("storage/") }}/' + data.image).show();
+                } else {
+                    $('#currentImage').hide(); // Hide if no image
+                }
+
+                $('#editMainEqubModal').modal('show'); // Open the modal
             },
             error: function(xhr) {
-                console.error('Error updating Main Equb:', xhr);
-                alert('Error updating Main Equb: ' + xhr.responseText);
+                console.error('Error fetching data:', xhr);
+                alert('Error fetching data: ' + xhr.responseText); // Dynamic error message
             }
         });
-    });
-});
+    }
 
-   
+    // Save Changes
+    $(document).ready(function() {
+        // Save Changes
+        $('#saveEditMainEqub').click(function() {
+            const id = $('#editMainEqubId').val();
+            const name = $('#editMainEqubName').val();
+            const status = $('#editMainEqubStatus').val();
+
+            console.log('ID:', id);
+            console.log('Name:', name);
+            console.log('Status:', status); // Log the status
+
+            // Create data object to send
+            const data = {
+                name: name,
+                active: status 
+            };
+
+            $.ajax({
+                type: 'PUT',
+                url: '/main-equbs/' + id, // Ensure this URL matches your route
+                data: data,
+                success: function(result) {
+                    console.log(data);
+                    alert(result.message || 'Main Equb updated successfully!');
+                    $('#editMainEqubModal').modal('hide'); // Hide the modal after saving
+                    location.reload(); // Refresh the page to see changes
+                },
+                error: function(xhr) {
+                    console.error('Error updating Main Equb:', xhr);
+                    alert('Error updating Main Equb: ' + xhr.responseText);
+                }
+            });
+        });
+    });
+
+    $(function() {
+        $('#mainEqubs').addClass('active');
+        $('#nav-u').addClass('active');
+        $("#equbTable").DataTable({
+            "responsive": false,
+            "lengthChange": false,
+            "searching": true,
+            "autoWidth": false,
+            language: {
+                search: "",
+                searchPlaceholder: "Search",
+            },
+            "buttons": [
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: ':visible',
+                        columns: function (index, data, node) {
+                            return index !== 4;
+                        }
+                    }
+                },
+                {
+                    extend: 'pdf',
+                    exportOptions: {
+                        columns: ':visible',
+                        columns: function (index, data, node) {
+                            return index !== 4;
+                        }
+                    }
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: ':visible',
+                        columns: function (index, data, node) {
+                            return index !== 4;
+                        }
+                    }
+                },
+                'colvis'
+            ]
+        }).buttons().container().appendTo('#equb_table_data .col-md-6:eq(0)');
+    });
 </script>
 @endsection
 @endcan

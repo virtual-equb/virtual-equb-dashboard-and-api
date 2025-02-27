@@ -1211,21 +1211,27 @@ class EqubController extends Controller
         try {
             $userData = Auth::user();
                 $status = $this->equbRepository->getStatusById($id)->status;
-                if ($status == "Deactive") {
+
+                if ($status === "Deactive") {
+                    $status = "Active";
+                } else if (empty($status) || $status === null) {
                     $status = "Active";
                 } else {
                     $status = "Deactive";
                 }
+
                 $updated = [
                     'status' => $status,
                 ];
                 $updated = $this->equbRepository->update($id, $updated);
+
                 if ($updated) {
                     if ($status == "Deactive") {
                         $status = "Deactivated";
                     } else {
                         $status = "Activated";
                     }
+                    
                     $activityLog = [
                         'type' => 'members',
                         'type_id' => $id,

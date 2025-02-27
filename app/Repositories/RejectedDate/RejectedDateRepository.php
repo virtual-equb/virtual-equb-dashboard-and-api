@@ -2,6 +2,7 @@
 
 
 namespace App\Repositories\RejectedDate;
+use Carbon\Carbon;
 
 use App\Models\RejectedDate;
 
@@ -45,4 +46,8 @@ class RejectedDateRepository implements IRejectedDateRepository
         return $this->model->where('id',$id)->forceDelete();
     }
 
+    public function getRejectedDateAfterToday()
+    {
+        return $this->model->where('rejected_date', '>', Carbon::today())->count();
+    }
 }

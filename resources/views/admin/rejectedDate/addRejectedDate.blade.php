@@ -13,9 +13,9 @@
                         <div class="col-sm-12">
                             <!-- text input -->
                             <div class="form-group required">
-                                <label class="control-label">Date</label>
+                                <label class="control-label">Date*</label>
                                 <input type="" class="form-control" id="rejected_date"
-                                    name="rejected_date"placeholder="rejected date" required>
+                                    name="rejected_date"placeholder="Off Date" required>
                             </div>
                             <div class="form-group">
                                 <label class="control-label">Description</label>
@@ -25,7 +25,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Save</button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </form>
             </div>
