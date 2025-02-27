@@ -128,6 +128,9 @@ return [
         //     ],
         //     'verify_server_certificate' => true,
         // ],
+        'production' => [
+            'name' => ucfirst(env('APP_ENV', 'production')),
+        ]
     ],
 
     /*
