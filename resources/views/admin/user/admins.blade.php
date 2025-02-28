@@ -104,6 +104,36 @@
                 <section class="content">
                     <div class="container-fluid">
                         <div class="row">
+                            <div class="col-md-6">
+                                <!-- small box -->
+                                <div class="small-box bg-success">
+                                    <div class="inner">
+                                        <h3>{{ round($averageSessionDuration, 2) }} minutes</h3>
+                                        <p>Average Session Duration</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="ion ion-bag"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <!-- small box -->
+                                <div class="small-box bg-info">
+                                    <div class="inner">
+                                        <h3>{{ round($retentionRate, 2) }}%</h3>
+                                        <p>User Retention Rate</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="ion ion-bag"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="content">
+                    <div class="container-fluid">
+                        <div class="row">
                             <div class="col-12">
                                 <div class="card ">
                                     <div class="card-header">

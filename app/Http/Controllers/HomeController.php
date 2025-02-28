@@ -2,23 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Equb;
-use App\Models\EqubType;
-use App\Models\LotteryWinner;
-use App\Models\Member;
-use App\Repositories\Payment\IPaymentRepository;
-use App\Repositories\Equb\IEqubRepository;
-use App\Repositories\EqubType\IEqubTypeRepository;
-use App\Repositories\Member\IMemberRepository;
-use App\Repositories\User\IUserRepository;
-use Illuminate\Support\Arr;
-use App\Models\Payment;
-use App\Repositories\MainEqub\MainEqubRepositoryInterface;
-use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
 use Exception;
+use Carbon\Carbon;
+use App\Models\Equb;
+use App\Models\User;
+use App\Models\Member;
+use App\Models\Payment;
+use App\Models\EqubType;
+use App\Models\UserSession;
+use Illuminate\Support\Arr;
+use App\Models\UserActivity;
+use App\Models\LotteryWinner;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
+use App\Repositories\Equb\IEqubRepository;
+use App\Repositories\User\IUserRepository;
+use App\Repositories\Member\IMemberRepository;
+use App\Repositories\Payment\IPaymentRepository;
+use App\Repositories\EqubType\IEqubTypeRepository;
+use App\Repositories\MainEqub\MainEqubRepositoryInterface;
 
 class HomeController extends Controller
 {
@@ -610,7 +614,34 @@ class HomeController extends Controller
                                 'gender' => $winner->member->gender
                             ];
                         });
+            $topFeatures = UserActivity::select('page', DB::raw('COUNT(*) as visits'))
+                        ->groupBy('page')
+                        ->orderBy('visits', 'desc')
+                        ->limit(5)
+                        ->get();
+                        // Daily logins for line chart
+            $dailyLogins = UserSession::selectRaw('DATE(login_time) as date, COUNT(*) as logins')
+                        ->groupBy('date')
+                        ->orderBy('date', 'asc')
+                        ->get();
+                        // Session Distribution by duration (Bar Chart)
+            $sessionDurations = UserSession::selectRaw("
+                        CASE 
+                            WHEN TIMESTAMPDIFF(MINUTE, login_time, logout_time) < 5 THEN 'Less than 5 min'
+                            WHEN TIMESTAMPDIFF(MINUTE, login_time, logout_time) BETWEEN 5 AND 15 THEN '5-15 min'
+                            WHEN TIMESTAMPDIFF(MINUTE, login_time, logout_time) BETWEEN 15 AND 30 THEN '15-30 min'
+                            ELSE 'More than 30 min'
+                        END as duration_range,
+                        COUNT(*) as count
+            ")->groupBy('duration_range')->get();
+
+            // User Retention Rate (Percentage)
+    $retentionRate = User::whereDate('created_at', '>', now()->subDays(30))->count() / User::count() * 100;
+
                 return view('admin/home', compact(
+                            'retentionRate',
+                           'dailyLogins',
+                           'sessionDurations',
                            'automaticMembersArray',  
                            'title', 
                            'lables', 
@@ -663,7 +694,8 @@ class HomeController extends Controller
                            'tudayPaidMember', 
                            'activeMember', 
                            'totalUser', 
-                           'totalEqubPayment'
+                           'totalEqubPayment',
+                           'topFeatures'
                         ));
         } catch (Exception $ex) {
             // dd($ex);

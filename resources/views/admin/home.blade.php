@@ -114,7 +114,25 @@
                                 </div>
                             </div>
                             
-                            @endcan
+                            @endcan 
+                            <div class="card card-info">
+                                <div class="card-header">
+                                    <h3 class="card-title">Daily Logins</h3>
+                                    <div class="card-tools">
+                                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart">
+                                        <canvas id="loginTrendChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-md-6">
                             @can('view dashboard_all_projection')
@@ -251,6 +269,66 @@
                                 </div>
                             </div>
                             @endcan
+                            <div class="card card-success">
+                                <div class="card-header">
+                                    <h3 class="card-title">Top 5 Most Used Features</h3>
+                                    <div class="card-tools">
+                                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart">
+                                        <canvas id="featureUsageChart">
+                                        </canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            
+                            <div class="card card-info">
+                                <div class="card-header">
+                                    <h3 class="card-title">Session Duration Count</h3>
+                                    <div class="card-tools">
+                                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart">
+                                        <canvas id="sessionDurationChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card card-info">
+                                <div class="card-header">
+                                    <h3 class="card-title">Retention Rate</h3>
+                                    <div class="card-tools">
+                                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart">
+                                        <canvas id="retentionChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -259,6 +337,92 @@
     @endSection
     @section('scripts')
         <script>
+            var ctx = document.getElementById('loginTrendChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: @json($dailyLogins->pluck('date')),
+                    datasets: [{
+                        label: 'Daily Logins',
+                        data: @json($dailyLogins->pluck('logins')),
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        fill: true
+                    }]
+                }
+            });
+
+            var ctx = document.getElementById('sessionDurationChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: @json($sessionDurations->pluck('duration_range')),
+                    datasets: [{
+                        label: 'Session Count',
+                        data: @json($sessionDurations->pluck('count')),
+                        backgroundColor: ['#ff6384', '#36a2eb', '#ffcd56', '#4bc0c0']
+                    }] 
+                }
+            })
+
+            var ctx = document.getElementById('retentionChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Retained Users', 'New Users'],
+                    datasets: [{
+                        data: [{{ $retentionRate }}, {{ 100 - $retentionRate }}],
+                        backgroundColor: ['#28a745', '#dc3545']
+                    }]
+                },
+                options: {
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    let dataset = tooltipItem.dataset.data; // Get dataset values
+                                    let total = dataset.reduce((sum, value) => sum + value, 0); // Calculate total
+                                    let value = dataset[tooltipItem.dataIndex]; // Get hovered slice value
+                                    let percentage = ((value / total) * 100).toFixed(2); // Convert to percentage
+                                    return tooltipItem.label + ': ' + percentage + '%'; // Display label + percentage
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+
+
+            var ctx = document.getElementById('featureUsageChart').getContext('2d');
+            var chart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: @json($topFeatures->pluck('page')),
+                    datasets: [{
+                        label: 'Feature Usage',
+                        data: @json($topFeatures->pluck('visits')),
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.6)',
+                            'rgba(54, 162, 235, 0.6)',
+                            'rgba(255, 206, 86, 0.6)',
+                            'rgba(75, 192, 192, 0.6)',
+                            'rgba(153, 102, 255, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true
+                }
+            })
             $(function() {
                 $('#settingNava').addClass('menu-is-opening menu-open');
                 $('#dashboard').addClass('active');
