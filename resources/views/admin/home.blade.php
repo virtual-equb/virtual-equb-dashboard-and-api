@@ -115,6 +115,25 @@
                             </div>
                             
                             @endcan
+                            <div class="card card-success">
+                                <div class="card-header">
+                                    <h3 class="card-title">Top 5 Most Used Features</h3>
+                                    <div class="card-tools">
+                                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart">
+                                        <canvas id="featureUsageChart">
+                                        </canvas>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-md-6">
                             @can('view dashboard_all_projection')
@@ -252,6 +271,7 @@
                             </div>
                             @endcan
                         </div>
+                        
                     </div>
                 </div>
             </section>
@@ -259,6 +279,35 @@
     @endSection
     @section('scripts')
         <script>
+            var ctx = document.getElementById('featureUsageChart').getContext('2d');
+            var chart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: @json($topFeatures->pluck('page')),
+                    datasets: [{
+                        label: 'Feature Usage',
+                        data: @json($topFeatures->pluck('visits')),
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.6)',
+                            'rgba(54, 162, 235, 0.6)',
+                            'rgba(255, 206, 86, 0.6)',
+                            'rgba(75, 192, 192, 0.6)',
+                            'rgba(153, 102, 255, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true
+                }
+            })
             $(function() {
                 $('#settingNava').addClass('menu-is-opening menu-open');
                 $('#dashboard').addClass('active');
