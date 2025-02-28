@@ -11,6 +11,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
+use App\Models\UserSession;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
@@ -35,6 +36,12 @@ class UserController extends Controller
             $this->middleware('auth');
             $data['title'] = $this->title;
             $data['roles'] = $this->userRepository->getRoles();
+            
+            // Average session duration (in minutes)
+            $data['averageSessionDuration'] = UserSession::selectRaw("AVG(TIMESTAMPDIFF(MINUTE, login_time, logout_time)) as avg_time")
+                    ->value('avg_time');
+
+                $data['retentionRate'] = User::whereDate('created_at', '>', now()->subDays(30))->count() / User::count() * 100;
                 
             return view('admin/user.admins', $data);
         } catch (Exception $ex) {
