@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use Exception;
 use Carbon\Carbon;
 use App\Models\Equb;
+use App\Models\User;
 use App\Models\Member;
 use App\Models\Payment;
 use App\Models\EqubType;
+use App\Models\UserSession;
 use Illuminate\Support\Arr;
 use App\Models\UserActivity;
 use App\Models\LotteryWinner;
@@ -617,7 +619,29 @@ class HomeController extends Controller
                         ->orderBy('visits', 'desc')
                         ->limit(5)
                         ->get();
+                        // Daily logins for line chart
+            $dailyLogins = UserSession::selectRaw('DATE(login_time) as date, COUNT(*) as logins')
+                        ->groupBy('date')
+                        ->orderBy('date', 'asc')
+                        ->get();
+                        // Session Distribution by duration (Bar Chart)
+            $sessionDurations = UserSession::selectRaw("
+                        CASE 
+                            WHEN TIMESTAMPDIFF(MINUTE, login_time, logout_time) < 5 THEN 'Less than 5 min'
+                            WHEN TIMESTAMPDIFF(MINUTE, login_time, logout_time) BETWEEN 5 AND 15 THEN '5-15 min'
+                            WHEN TIMESTAMPDIFF(MINUTE, login_time, logout_time) BETWEEN 15 AND 30 THEN '15-30 min'
+                            ELSE 'More than 30 min'
+                        END as duration_range,
+                        COUNT(*) as count
+            ")->groupBy('duration_range')->get();
+
+            // User Retention Rate (Percentage)
+    $retentionRate = User::whereDate('created_at', '>', now()->subDays(30))->count() / User::count() * 100;
+
                 return view('admin/home', compact(
+                            'retentionRate',
+                           'dailyLogins',
+                           'sessionDurations',
                            'automaticMembersArray',  
                            'title', 
                            'lables', 

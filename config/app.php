@@ -206,6 +206,7 @@ return [
         Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
         Kreait\Laravel\Firebase\ServiceProvider::class,
         App\Providers\PermissionServiceProvider::class,
+        App\Providers\EventServiceProvider::class
         
     ],
 
