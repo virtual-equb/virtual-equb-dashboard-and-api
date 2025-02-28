@@ -89,6 +89,7 @@
     align-items: center;
     background-color: #4e73df;
     max-width: 50%; /* Prevents it from resizing too much */
+    overflow: hidden;
 }
 
 .login-logo-img {
@@ -96,11 +97,13 @@
     height: auto;
     object-fit: contain;
 }
-.login-side img{
+
+.login-side {
   width: 100%;
-  object-fit: contain;
+  object-fit: cover;
   height:100%;
 }
+
 .login-card-right {
     flex: 1;
     display: flex;
