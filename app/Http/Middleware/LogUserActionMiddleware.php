@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\UserActivity;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,6 +27,11 @@ class LogUserActionMiddleware
                 'details' => $request->all(),
                 'ip' => $request->ip(),
                 'timestamp' => now()
+            ]);
+            UserActivity::create([
+                'user_id' => Auth::id(),
+                'page' => $request->path(),
+                'action' => $request->method()
             ]);
         }
         return $next($request);
