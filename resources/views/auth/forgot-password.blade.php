@@ -70,6 +70,7 @@ position: relative;
     justify-content: center;
     align-items: center;
 }
+
 .login-card {
     display: flex;
     width: 90%;
@@ -80,6 +81,7 @@ position: relative;
     border-radius: 10px;
     overflow: hidden;
 }
+
 .login-card-left {
     flex: 1;
     display: flex;
@@ -87,17 +89,21 @@ position: relative;
     align-items: center;
     background-color: #4e73df;
     max-width: 50%;
+    overflow: hidden;
 }
+
 .login-logo-img {
     max-width: 150px;
     height: auto;
     object-fit: contain;
 }
-.login-side img{
+
+.login-side {
   width: 100%;
-  object-fit: contain;
+  object-fit: cover;
   height:100%;
 }
+
 .login-card-right {
     flex: 1;
     display: flex;
