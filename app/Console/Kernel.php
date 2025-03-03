@@ -10,12 +10,12 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // Updated Schedules
-        $schedule->command('check:enddate')->everyEightHours();
-        $schedule->command('send:reminders')->everyNineHours()->withoutOverlapping();
-        $schedule->command('equb:draw')->everyFifteenHours();
-        $schedule->command('check:lotterydate')->everyNineHours()->withoutOverlapping();
-        $schedule->command('check:unpaidPayments')->everyTenHours();
-        $schedule->command('remove:removeOlderPendingTelebirrPayments')->everyThreeHours();
+        $schedule->command('check:enddate')->cron('0 */8 * * *');
+        $schedule->command('send:reminders')->cron('0 */9 * * *')->withoutOverlapping();
+        $schedule->command('equb:draw')->cron('0 */15 * * *');
+        $schedule->command('check:lotterydate')->cron('0 */9 * * *')->withoutOverlapping();
+        $schedule->command('check:unpaidPayments')->cron('0 */10 * * *');
+        $schedule->command('remove:removeOlderPendingTelebirrPayments')->cron('0 */3 * * *');
     }
 
     protected function commands()
