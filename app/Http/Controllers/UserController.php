@@ -36,12 +36,12 @@ class UserController extends Controller
             $this->middleware('auth');
             $data['title'] = $this->title;
             $data['roles'] = $this->userRepository->getRoles();
+            $data['totalActiveUser'] = $this->userRepository->getUser();
             
             // Average session duration (in minutes)
-            $data['averageSessionDuration'] = UserSession::selectRaw("AVG(TIMESTAMPDIFF(MINUTE, login_time, logout_time)) as avg_time")
-                    ->value('avg_time');
+            $data['averageSessionDuration'] = UserSession::selectRaw("AVG(TIMESTAMPDIFF(MINUTE, login_time, logout_time)) as avg_time")->value('avg_time');
 
-                $data['retentionRate'] = User::whereDate('created_at', '>', now()->subDays(30))->count() / User::count() * 100;
+            $data['retentionRate'] = User::whereDate('created_at', '>', now()->subDays(30))->count() / User::count() * 100;
                 
             return view('admin/user.admins', $data);
         } catch (Exception $ex) {
@@ -76,7 +76,7 @@ class UserController extends Controller
             $userData = Auth::user();
             $this->middleware('auth');
             $data['title'] = $this->title;
-            $data['totalUser'] = $this->userRepository->getUser();;
+            $data['totalUser'] = $this->userRepository->getUser();
             $data['pageNumber'] = $pageNumber;
             $data['offset'] = $offset;
             $data['limit'] = 10;
