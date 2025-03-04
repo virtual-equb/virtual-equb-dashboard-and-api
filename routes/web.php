@@ -75,8 +75,7 @@ Route::get('/terms-and-conditions', [TermsAndConditionsController::class, 'index
 Route::middleware([
     'auth',
     config('jetstream.auth_session'),
-    'verified',
-    LogUserActionMiddleware::class
+    'verified'
 ])->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'index'])->name('dashboard');
     Route::get('/equbTypeDashboard/{equb_type_id}', [App\Http\Controllers\HomeController::class, 'equbTypeIndex'])->name('equbTypeDashboard');
