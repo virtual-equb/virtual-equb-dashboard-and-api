@@ -25,13 +25,6 @@
                 color: red;
             }
 
-            div.dataTables_wrapper div.dataTables_paginate {
-                margin: 0;
-                display: none;
-                white-space: nowrap;
-                text-align: right;
-            }
-
             div.dataTables_wrapper div.dataTables_info {
                 padding-top: 0.85em;
                 display: none;
@@ -104,8 +97,19 @@
                 <section class="content">
                     <div class="container-fluid">
                         <div class="row">
-                            <div class="col-md-6">
-                                <!-- small box -->
+                             <div class="col-lg-4 col-md-4 col-12">
+                                <div class="small-box bg-info">
+                                    <div class="inner">
+                                        <h3>{{ $totalActiveUser}}</h3>
+                                        <p>Total Active Users</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="ion ion-bag"></i>
+                                    </div>
+                                    <a href="#" class="small-box-footer"><i class="fas fa-list"></i></a>
+                                </div>
+                            </div>
+                             <div class="col-lg-4 col-md-4 col-12">
                                 <div class="small-box bg-success">
                                     <div class="inner">
                                         <h3>{{ round($averageSessionDuration, 2) }} minutes</h3>
@@ -114,11 +118,11 @@
                                     <div class="icon">
                                         <i class="ion ion-bag"></i>
                                     </div>
+                                    <a href="#" class="small-box-footer"><i class="fas fa-list"></i></a>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <!-- small box -->
-                                <div class="small-box bg-info">
+                             <div class="col-lg-4 col-md-4 col-12">
+                                <div class="small-box bg-warning">
                                     <div class="inner">
                                         <h3>{{ round($retentionRate, 2) }}%</h3>
                                         <p>User Retention Rate</p>
@@ -126,6 +130,7 @@
                                     <div class="icon">
                                         <i class="ion ion-bag"></i>
                                     </div>
+                                    <a href="#" class="small-box-footer"><i class="fas fa-list"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -137,50 +142,36 @@
                             <div class="col-12">
                                 <div class="card ">
                                     <div class="card-header">
-                                        <ul class="nav nav-pills" id="custom-tabs-two-tab" role="tablist">
-                                            <li class="nav-item nav-blue activeUser">
-                                                <a class="nav-link active" id="custom-tabs-two-member-tab"
-                                                    data-toggle="pill" href="#custom-tabs-two-member" role="tab"
-                                                    aria-controls="custom-tabs-two-member" aria-selected="true"
-                                                    onclick="removeTabs();"><span class="fa fa-list"> </span> Active
-                                                    User</a>
-                                            </li>
-                                            <li class="nav-item deactiveUser">
-                                                <a class="nav-link " id="custom-tabs-two-messages-tab" data-toggle="pill"
-                                                    href="#custom-tabs-two-messages" role="tab"
-                                                    aria-controls="custom-tabs-two-messages" aria-selected="false"
-                                                    onclick="removeTabs();"><span class="fa fa-list"> </span>Deactivated
-                                                    User</a>
-                                            </li>
-                                            @can('create user')
-                                                <li class="nav-item addUser">
-                                                    <a class="nav-link" id="custom-tabs-two-settings-tab" data-toggle="pill"
-                                                        href="#custom-tabs-two-settings" role="tab"
-                                                        aria-controls="custom-tabs-two-settings" aria-selected="false"
-                                                        onclick="removeTabs();"> <span class="fa fa-plus-circle"></span> Add
-                                                        User</a>
+                                        <h5>User
+                                            <ul class="nav nav-pills float-right" id="custom-tabs-two-tab" role="tablist">
+                                                <li class="nav-item deactiveUser">
+                                                    <button type="button" class="btn btn-primary" id="custom-tabs-two-member-tab"
+                                                        data-toggle="pill" href="#custom-tabs-two-member" role="tab" style="margin-right: 10px;"
+                                                        aria-controls="custom-tabs-two-member" aria-selected="true"
+                                                        onclick="removeTabs();">
+                                                        <span class="fa fa-list"></span> Active User
+                                                    </button>
                                                 </li>
-                                            @endcan
-                                            
-                                            <li class="nav-item updateUser" id="update-equb_taker-div"
-                                                style="display: none;">
-                                                <a class="nav-link" id="custom-tabs-two-profile-tab" data-toggle="pill"
-                                                    href="#custom-tabs-two-profile" role="tab"
-                                                    aria-controls="custom-tabs-two-profile" aria-selected="false"> <span
-                                                        class="fa fa-list"> </span> Update User</a>
-                                            </li>
-                                            <div class="float-right searchandClear row col-4 offset-md-2"
-                                                        id="member_table_filter">
-                                                        <input class="form-control col-10" type="text"
-                                                            id="memberSearchText" placeholder="Search User"
-                                                            class="search">
-                                                        <button class="btn btn-default clear col-2" id="clearActiveSearch"
-                                                            onclick="clearSearchEntry()">
-                                                            Clear
+                                                <li class="nav-item nav-blue activeUser">
+                                                    <button type="button" class="btn btn-primary" id="custom-tabs-two-messages-tab"
+                                                        data-toggle="pill" href="#custom-tabs-two-messages" role="tab" style="margin-right: 10px;"
+                                                        aria-controls="custom-tabs-two-messages" aria-selected="false"
+                                                        onclick="removeTabs();">
+                                                        <span class="fa fa-list"></span> Deactivated User
+                                                    </button>
+                                                </li>
+                                                <li class="nav-item addUser">
+                                                    @can('create user')
+                                                        <button type="button" class="btn btn-primary" id="custom-tabs-two-settings-tab"
+                                                            data-toggle="pill" href="#custom-tabs-two-settings" role="tab"
+                                                            aria-controls="custom-tabs-two-settings" aria-selected="false"
+                                                            onclick="removeTabs();">
+                                                            <span class="fa fa-plus-circle"></span> Add User
                                                         </button>
-                                            </div>
-                                            
-                                        </ul>
+                                                    @endcan
+                                                </li>
+                                            </ul>
+                                        </h5>
                                     </div>
                                     <div class="card-body">
                                         <div class="tab-content" id="custom-tabs-two-tabContent">
@@ -197,10 +188,10 @@
                                                 </div>
                                             </div>
                                             @can('create user')
-                                            <div class="tab-pane fade" id="custom-tabs-two-settings" role="tabpanel"
-                                                aria-labelledby="custom-tabs-two-settings-tab">
-                                                @include('admin/user.addUser')
-                                            </div>
+                                                <div class="tab-pane fade" id="custom-tabs-two-settings" role="tabpanel"
+                                                    aria-labelledby="custom-tabs-two-settings-tab">
+                                                    @include('admin/user.addUser')
+                                                </div>
                                             @endcan
                                             <div class="tab-pane fade " id="update-equb_taker" role="tabpanel"
                                                 aria-labelledby="update-equb_taker-tab">
@@ -221,31 +212,6 @@
     @endsection
     @section('scripts')
         <script type="text/javascript">
-        var memberSearchField = document.getElementById('memberSearchText');
-            memberSearchField.addEventListener("keydown", function(e) {
-                var memberSearchInput = memberSearchField.value;
-                if (e.keyCode === 13) { //checks whether the pressed key is "Enter"
-                    $.LoadingOverlay("show");
-                    searchForMember(memberSearchInput);
-                }
-            });
-
-            function searchForMember(searchInput) {
-                if (searchInput != "") {
-                    $.ajax({
-                        url: "{{ url('user/search-user') }}" + '/' + searchInput + '/0',
-                        type: 'get',
-                        success: function(data) {
-                            $('#user_table_data').html(data);
-                            $.LoadingOverlay("hide");
-                        }
-                    });
-                } else {
-                    clearSearchEntry();
-                    $.LoadingOverlay("hide");
-                }
-            }
-
             function users(offsetVal, pageNumberVal) {
                 $.ajax({
                     url: "{{ url('user/user') }}" + '/' + offsetVal + '/' + pageNumberVal,
@@ -593,7 +559,6 @@
                     url: "{{ url('user/deactiveUser') }}" + '/' + 0 + '/' + 1,
                     type: 'get',
                     success: function(data) {
-                        // $.LoadingOverlay("show");
                         $('#deactive_user_table_data').html(data);
                     }
                 });
@@ -604,27 +569,25 @@
                 }
 
                 $('#adminNav').addClass('active');
-                var table = $("#equbTaker-list-table").DataTable({
+                $("#equbTaker-list-table").DataTable({
                     "responsive": false,
                     "lengthChange": false,
-                    "searching": false,
+                    "searching": true,
                     "autoWidth": false,
-                    "bSort": false,
-                    "bDestroy": true,
+                    // "bSort": false,
+                    // "bDestroy": true,
                     language: {
                         search: "",
                         searchPlaceholder: "Search",
                     },
                     "buttons": ["excel", "pdf", "print", "colvis"]
-                });
-                table.buttons().container().appendTo('#equbTaker-list-table_wrapper .col-md-6:eq(0)');
+                }).buttons().container().appendTo('#equbTaker-list-table_wrapper .col-md-6:eq(0)');
 
                 $("#activeUser-list-table").DataTable({
                     "responsive": false,
                     "lengthChange": false,
                     "searching": true,
                     "paging": false,
-                    "autoWidth": false,
                     language: {
                         search: "",
                         searchPlaceholder: "Search",
@@ -636,7 +599,6 @@
                     "responsive": false,
                     "lengthChange": false,
                     "searching": true,
-                    "paging": false,
                     "autoWidth": false,
                     language: {
                         search: "",

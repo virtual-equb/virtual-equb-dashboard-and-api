@@ -25,13 +25,6 @@
                 color: red;
             }
 
-            div.dataTables_wrapper div.dataTables_paginate {
-                margin: 0;
-                display: none;
-                white-space: nowrap;
-                text-align: right;
-            }
-
             div.dataTables_wrapper div.dataTables_info {
                 padding-top: 0.85em;
                 display: none;
