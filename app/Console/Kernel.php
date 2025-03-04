@@ -11,7 +11,7 @@ class Kernel extends ConsoleKernel
     {
         // Updated Schedules
         $schedule->command('check:enddate')->cron('0 */8 * * *');
-        $schedule->command('send:reminders')->cron('0 */9 * * *')->withoutOverlapping();
+        // $schedule->command('send:reminders')->cron('0 */9 * * *')->withoutOverlapping();
         $schedule->command('equb:draw')->cron('0 */15 * * *');
         $schedule->command('check:lotterydate')->cron('0 */9 * * *')->withoutOverlapping();
         $schedule->command('check:unpaidPayments')->cron('0 */10 * * *');
