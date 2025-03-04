@@ -24,6 +24,7 @@ class LogUserActionMiddleware
             Log::channel('usage')->info('User action', [
                 'user_id' => Auth::id(),
                 'action' => $request->method() . ' ' . $request->path(),
+                'page' => $request->path(),
                 'details' => $request->all(),
                 'ip' => $request->ip(),
                 'timestamp' => now()
