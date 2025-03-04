@@ -22,13 +22,14 @@
         "tymon/jwt-auth": "^1.0"
     },
     "require-dev": {
+        "enlightn/enlightn": "^2.10",
         "enlightn/security-checker": "^1.11",
         "fakerphp/faker": "^1.9.1",
         "knuckleswtf/scribe": "^4.22",
         "laravel/sail": "^1.0.1",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^6.1",
-        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan": "^1.12",
         "phpunit/phpunit": "^9.5.10",
         "spatie/laravel-ignition": "^1.0"
     },
