@@ -156,7 +156,7 @@ Route::prefix('equbType')->group(function () {
     Route::get('/get-winner/{id}', [EqubTypeController::class, 'getWinner'])->name('getWinner');
     Route::get('/{equbTypeId}/icon', [EqubTypeController::class, 'getIcon'])->name('getIcon');
 });
-Route::prefix('equb')->group(function () {
+Route::prefix('equb')->middleware(LogUserActionMiddleware::class)->group(function () {
     Route::get('/', [EqubController::class, 'index'])->name('showEqub');
     Route::get('/equb-lottery-detail/{lottery_date}', [EqubController::class, 'getReservedLotteryDate'])->name('showAllEqub');
     Route::get('/equb-register', [EqubController::class, 'create'])->name('creatEqub');
@@ -167,7 +167,7 @@ Route::prefix('equb')->group(function () {
     Route::delete('/equb-delete/{id}', [EqubController::class, 'destroy'])->name('deleteEqub');
     Route::get('/get-paid-equbs/{memberId}', [EqubController::class, 'getPaidEqubs'])->name('getPaidEqubs');
 });
-Route::prefix('member')->group(function () {
+Route::prefix('member')->middleware(LogUserActionMiddleware::class)->group(function () {
     Route::get('/', [MemberController::class, 'index'])->name('showMember');
     Route::get('/getMemberById/{id}', [MemberController::class, 'getMemberById'])->name('getMemberById');
     Route::get('/clearSearchEntry', [MemberController::class, 'clearSearchEntry'])->name('clearSearchEntry');

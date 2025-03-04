@@ -23,7 +23,7 @@ class LogUserActionMiddleware
         if (Auth::check()) {
             Log::channel('usage')->info('User action', [
                 'user_id' => Auth::id(),
-                'action' => $request->method() . ' ' . $request->path(),
+                'action' => $request->method(),
                 'page' => $request->path(),
                 'details' => $request->all(),
                 'ip' => $request->ip(),
