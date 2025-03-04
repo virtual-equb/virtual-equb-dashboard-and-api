@@ -95,32 +95,32 @@ Route::group([
     Route::get('profile', [AuthController::class, 'profile']);
 });
 
-Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
-Route::get('/equbTypeDashboard/{equb_type_id}', [HomeController::class, 'equbTypeIndex'])->name('equbTypeDashboard');
-Route::post('/offDateCheck', [RejectedDateController::class, 'offDateCheck'])->name('offDateCheck');
-Route::post('/updateoffDateCheck', [RejectedDateController::class, 'offDateCheck'])->name('updateoffDateCheck');
-Route::post('/equbTypeCheck', [EqubController::class, 'equbCheck'])->name('equb_type_check');
-Route::post('/equbTypeCheckForUpdate', [EqubController::class, 'equbCheckForUpdate'])->name('equb_type_check_for_update');
-Route::post('/phoneCheck', [MemberController::class, 'phoneCheck'])->name('phone_check');
-Route::post('/nameCheck', [EqubTypeController::class, 'nameEqubTypeCheck'])->name('name_check');
-Route::post('/nameCheckForUpdate', [EqubTypeController::class, 'nameEqubTypeCheckForUpdate'])->name('name_check_for_update');
-Route::post('/dateCheckForUpdate', [EqubTypeController::class, 'dateEqubTypeCheckForUpdate'])->name('date_check_for_update');
-Route::post('/dateCheck', [EqubTypeController::class, 'dateEqubTypeCheck'])->name('date_check');
-Route::post('/dateEqubCheck', [EqubController::class, 'dateEqubCheck'])->name('date_equb_check');
-Route::post('/startDateCheck', [EqubController::class, 'startDateCheck'])->name('start_date_check');
-Route::post('/dateEqubLotteryCheck', [EqubController::class, 'dateEqubLotteryCheck'])->name('date_equb_lottery_check');
-Route::post('/userPhoneCheck', [UserController::class, 'userPhoneCheck'])->name('user_phone_check');
-Route::post('/emailCheck', [UserController::class, 'emailCheck'])->name('email_check');
-Route::post('/lotteryDateCheck', [EqubController::class, 'lotteryDateCheck'])->name('lottery_Date_check');
-Route::post('/lotteryDateCheckForUpdate', [EqubController::class, 'lotteryDateCheckForUpdate'])->name('lottery_date_check_for_update');
-Route::get('/getRemainingLotteryAmount/{id}', [EqubTakerController::class, 'getRemainingLotteryAmount'])->name('getRemainingLotteryAmount');
-Route::post('/dateInterval', [EqubController::class, 'dateInterval'])->name('dateInterval');
-Route::get('/getDailyPaidAmount/{equb_id}', [EqubController::class, 'getDailyPaidAmount'])->name('getDailyPaidAmount');
-Route::post('/changePassword/{id}', [UserController::class, 'changePassword'])->name('changePassword');
+Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard')->middleware('log.user.action');
+Route::get('/equbTypeDashboard/{equb_type_id}', [HomeController::class, 'equbTypeIndex'])->name('equbTypeDashboard')->middleware('log.user.action');
+Route::post('/offDateCheck', [RejectedDateController::class, 'offDateCheck'])->name('offDateCheck')->middleware('log.user.action');
+Route::post('/updateoffDateCheck', [RejectedDateController::class, 'offDateCheck'])->name('updateoffDateCheck')->middleware('log.user.action');
+Route::post('/equbTypeCheck', [EqubController::class, 'equbCheck'])->name('equb_type_check')->middleware('log.user.action');
+Route::post('/equbTypeCheckForUpdate', [EqubController::class, 'equbCheckForUpdate'])->name('equb_type_check_for_update')->middleware('log.user.action');
+Route::post('/phoneCheck', [MemberController::class, 'phoneCheck'])->name('phone_check')->middleware('log.user.action');
+Route::post('/nameCheck', [EqubTypeController::class, 'nameEqubTypeCheck'])->name('name_check')->middleware('log.user.action');
+Route::post('/nameCheckForUpdate', [EqubTypeController::class, 'nameEqubTypeCheckForUpdate'])->name('name_check_for_update')->middleware('log.user.action');
+Route::post('/dateCheckForUpdate', [EqubTypeController::class, 'dateEqubTypeCheckForUpdate'])->name('date_check_for_update')->middleware('log.user.action');
+Route::post('/dateCheck', [EqubTypeController::class, 'dateEqubTypeCheck'])->name('date_check')->middleware('log.user.action');
+Route::post('/dateEqubCheck', [EqubController::class, 'dateEqubCheck'])->name('date_equb_check')->middleware('log.user.action');
+Route::post('/startDateCheck', [EqubController::class, 'startDateCheck'])->name('start_date_check')->middleware('log.user.action');
+Route::post('/dateEqubLotteryCheck', [EqubController::class, 'dateEqubLotteryCheck'])->name('date_equb_lottery_check')->middleware('log.user.action');
+Route::post('/userPhoneCheck', [UserController::class, 'userPhoneCheck'])->name('user_phone_check')->middleware('log.user.action');
+Route::post('/emailCheck', [UserController::class, 'emailCheck'])->name('email_check')->middleware('log.user.action');
+Route::post('/lotteryDateCheck', [EqubController::class, 'lotteryDateCheck'])->name('lottery_Date_check')->middleware('log.user.action');
+Route::post('/lotteryDateCheckForUpdate', [EqubController::class, 'lotteryDateCheckForUpdate'])->name('lottery_date_check_for_update')->middleware('log.user.action');
+Route::get('/getRemainingLotteryAmount/{id}', [EqubTakerController::class, 'getRemainingLotteryAmount'])->name('getRemainingLotteryAmount')->middleware('log.user.action');
+Route::post('/dateInterval', [EqubController::class, 'dateInterval'])->name('dateInterval')->middleware('log.user.action');
+Route::get('/getDailyPaidAmount/{equb_id}', [EqubController::class, 'getDailyPaidAmount'])->name('getDailyPaidAmount')->middleware('log.user.action');
+Route::post('/changePassword/{id}', [UserController::class, 'changePassword'])->name('changePassword')->middleware('log.user.action');
 
 
 // Main Equb
-Route::middleware(['auth:api'])->group(function () {
+Route::middleware(['auth:api', 'log.user.action'])->group(function () {
     Route::resource('/mainequb', MainEqubController::class);
     Route::resource('/countries', CountryController::class);
     Route::resource('/countrycode', CountryCodeController::class);
@@ -146,7 +146,7 @@ Route::prefix('chapa')->group(function () {
     Route::get('callback/{userId}/{equbId}/{amount}/{reference}', [ChapaController::class, 'callback'])->name('callback');
 });
 
-Route::prefix('equbType')->group(function () {
+Route::prefix('equbType')->middleware('log.user.action')->group(function () {
     Route::get('/', [EqubTypeController::class, 'index'])->name('showEqubType');
     Route::get('/showequbtype/{id}', [EqubTypeController::class, 'show'])->name('viewEqubType');
     Route::post('/register', [EqubTypeController::class, 'store'])->name('registerEqubType');
@@ -156,7 +156,7 @@ Route::prefix('equbType')->group(function () {
     Route::get('/get-winner/{id}', [EqubTypeController::class, 'getWinner'])->name('getWinner');
     Route::get('/{equbTypeId}/icon', [EqubTypeController::class, 'getIcon'])->name('getIcon');
 });
-Route::prefix('equb')->group(function () {
+Route::prefix('equb')->middleware('log.user.action')->group(function () {
     Route::get('/', [EqubController::class, 'index'])->name('showEqub');
     Route::get('/equb-lottery-detail/{lottery_date}', [EqubController::class, 'getReservedLotteryDate'])->name('showAllEqub');
     Route::get('/equb-register', [EqubController::class, 'create'])->name('creatEqub');
@@ -167,7 +167,7 @@ Route::prefix('equb')->group(function () {
     Route::delete('/equb-delete/{id}', [EqubController::class, 'destroy'])->name('deleteEqub');
     Route::get('/get-paid-equbs/{memberId}', [EqubController::class, 'getPaidEqubs'])->name('getPaidEqubs');
 });
-Route::prefix('member')->group(function () {
+Route::prefix('member')->middleware('log.user.action')->group(function () {
     Route::get('/', [MemberController::class, 'index'])->name('showMember');
     Route::get('/getMemberById/{id}', [MemberController::class, 'getMemberById'])->name('getMemberById');
     Route::get('/clearSearchEntry', [MemberController::class, 'clearSearchEntry'])->name('clearSearchEntry');
@@ -186,7 +186,7 @@ Route::prefix('member')->group(function () {
     Route::delete('/delete/{id}', [MemberController::class, 'destroy'])->name('deleteMember');
     Route::get('/{userId}/profile-picture', [MemberController::class, 'getProfilePicture'])->name('getProfilePicture');
 });
-Route::prefix('payment')->group(function () {
+Route::prefix('payment')->middleware('log.user.action')->group(function () {
     Route::get('/check-payment/{payment}', [PaymentController::class, 'getTransaction'])->name('getTransaction');
     Route::get('/{member_id}/{equb_id}', [PaymentController::class, 'index'])->name('showAllPayment');
     Route::get('/show-payment/{member_id}/{equb_id}/{offsetVal}/{pageNumberVal}', [PaymentController::class, 'show'])->name('showPayment');
@@ -199,19 +199,19 @@ Route::prefix('payment')->group(function () {
     // Route::get('/telebirr/callback/{payment}', [PaymentController::class, 'callback'])->name('callback');
     Route::post('telebirr', [PaymentController::class, 'initialize'])->name('initialize');
 });
-Route::prefix('equbTaker')->group(function () {
+Route::prefix('equbTaker')->middleware('log.user.action')->group(function () {
     Route::get('/', [EqubTakerController::class, 'index'])->name('showEqubTaker');
     Route::post('/equbTaker-register', [EqubTakerController::class, 'store'])->name('registerEqubTaker');
     Route::put('/updateLottery/{member_id}/{equb_id}/{id}', [EqubTakerController::class, 'updateLottery']);
     Route::delete('/equbTaker-delete/{id}', [EqubTakerController::class, 'destroy'])->name('deleteEqubTaker');
 });
-Route::prefix('rejectedDate')->group(function () {
+Route::prefix('rejectedDate')->middleware('log.user.action')->group(function () {
     Route::get('/', [RejectedDateController::class, 'index'])->name('showRejectedDate');
     Route::post('/register', [RejectedDateController::class, 'store'])->name('registerRejectedDate');
     Route::put('/update/{id}', [RejectedDateController::class, 'update'])->name('updateRejectedDate');
     Route::delete('/delete/{id}', [RejectedDateController::class, 'destroy'])->name('deleteRejectedDate');
 });
-Route::prefix('user')->group(function () {
+Route::prefix('user')->middleware('log.user.action')->group(function () {
     Route::get('/', [UserController::class, 'index'])->name('user');
     Route::get('/user/{offsetVal}/{pageNumberVal}', [UserController::class, 'user']);
     Route::get('/deactiveUser/{offsetVal}/{pageNumberVal}', [UserController::class, 'deactiveUser']);
@@ -223,7 +223,7 @@ Route::prefix('user')->group(function () {
     Route::delete('/delete/{id}', [UserController::class, 'destroy'])->name('deleteUser');
     Route::post('/resetPassword', [UserController::class, 'resetPassword']);
 });
-Route::prefix('reports')->group(function () {
+Route::prefix('reports')->middleware('log.user.action')->group(function () {
     Route::get('/memberFilter', [ReportController::class, 'memberFilter'])->name('memberFilter');
     Route::get('/members/{dateFrom}/{dateTo}', [ReportController::class, 'members'])->name('members');
     Route::get('/paginateMembers/{dateFrom}/{dateTo}/{offsetVal}/{pageNumberVal}', [ReportController::class, 'paginateMembers']);
@@ -260,7 +260,7 @@ Route::get('fallback/', function () {
     ], 401);
 })->name('api-fallback');
 
-Route::prefix('activityLog')->group(function () {
+Route::prefix('activityLog')->middleware('log.user.action')->group(function () {
     Route::get('/', [ActivityLogController::class, 'index'])->name('showActivityLog');
     Route::get('/logDetail/{type}', [ActivityLogController::class, 'logDetail'])->name('logDetail');
     Route::get('/logDetailPaginate/{type}/{offsetVal}/{pageNumberVal}', [ActivityLogController::class, 'logDetailPaginate'])->name('logDetailPaginate');
