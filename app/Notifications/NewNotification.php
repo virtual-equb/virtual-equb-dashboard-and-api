@@ -53,7 +53,7 @@ class NewNotification extends Notification
     {
         $client = new Http([
             'headers' => [
-                'Authorization' => 'key=' . env('FIREBASE_SERVER_KEY'),
+                'Authorization' => 'key=' . config('key.FIREBASE_SERVER_KEY'),
                 'Content-Type' => 'application/json',
             ],
         ]);

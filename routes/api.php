@@ -140,11 +140,11 @@ Route::middleware(['auth:api', 'log.user.action'])->group(function () {
 
 // Route::get('/testequb', [MainEqubController::class, 'getTypes']);
 
-Route::prefix('chapa')->group(function () {
-    Route::post('initialize', [ChapaController::class, 'initialize'])->name('initialize');
-    // Route::post('return', [ChapaController::class, 'return'])->name('return');
-    Route::get('callback/{userId}/{equbId}/{amount}/{reference}', [ChapaController::class, 'callback'])->name('callback');
-});
+// Route::prefix('chapa')->group(function () {
+//     Route::post('initialize', [ChapaController::class, 'initialize'])->name('initialize');
+//     // Route::post('return', [ChapaController::class, 'return'])->name('return');
+//     Route::get('callback/{userId}/{equbId}/{amount}/{reference}', [ChapaController::class, 'callback'])->name('callback');
+// });
 
 Route::prefix('equbType')->middleware('log.user.action')->group(function () {
     Route::get('/', [EqubTypeController::class, 'index'])->name('showEqubType');
