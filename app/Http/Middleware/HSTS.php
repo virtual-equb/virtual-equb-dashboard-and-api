@@ -19,7 +19,7 @@ class HSTS
     {
         $response = $next($request);
 
-        Log::info('HSTS middleware executed');
+        // Log::info('HSTS middleware executed');
 
         // Only add HSTS if the request is HTTPS
         if ($request->isSecure()) {
