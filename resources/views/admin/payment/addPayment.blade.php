@@ -4,7 +4,8 @@
              <div class="modal-content">
                  <form role="form" method="post" class="form-horizontal form-group"
                      action="{{ route('registerPayment') }}" enctype="multipart/form-data" id="addpayment">
-                     {{ csrf_field() }}
+                     {{-- {{ csrf_field() }} --}}
+                     @csrf
                      <div class="modal-header">
                          <h4 class="modal-title">Payment</h4>
                          <button type="button" class="close" data-dismiss="modal">&times;</button>
