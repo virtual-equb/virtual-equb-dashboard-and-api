@@ -623,9 +623,9 @@ class CbeMiniAppController extends Controller
             $transactionId = uniqid(); // Generate unique transaction ID
             $transactionTime = now()->toIso8601String(); // Get current timestamp in ISO8601 format
             $callbackUrl = route('cbe.callback'); // Callback URL for response handling
-            $companyName = env('CBE_MINI_COMPANY_NAME'); // Provided company name
-            $hashingKey = env('CBE_MINI_HASHING_KEY'); // Provided hashing key
-            $tillCode = env('CBE_MINI_TILL_CODE'); // Provided till code
+            $companyName = config('key.CBE_MINI_COMPANY_NAME'); // Provided company name
+            $hashingKey = config('key.CBE_MINI_HASHING_KEY'); // Provided hashing key
+            $tillCode = config('key.CBE_MINI_TILL_CODE'); // Provided till code
 
             // Payment data
             $equb = Equb::with('equbType')->findOrFail($validated['equb_id']);

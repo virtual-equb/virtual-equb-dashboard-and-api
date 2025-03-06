@@ -248,9 +248,9 @@ class PaymentGatewayController extends Controller {
         public function testJWT()
         {
             return response()->json([
-                'JWT_SECRET' => env('JWT_SECRET'),
-                'APP_ENV' => env('APP_ENV'),
-                'APP_DEBUG' => env('APP_DEBUG'),
+                'JWT_SECRET' => config('key.JWT_SECRET'),
+                'APP_ENV' => config('key.APP_ENV'),
+                'APP_DEBUG' => config('key.APP_DEBUG'),
             ]);
         }
 
