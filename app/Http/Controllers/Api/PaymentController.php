@@ -826,7 +826,7 @@ class PaymentController extends Controller
     {
         try {
             // Log::info('from callback');
-            Log::info('callback request datas', $request);
+            Log::info('callback request datas', $request->all());
             
             // return response()->json([
             //             'code' => 200,
