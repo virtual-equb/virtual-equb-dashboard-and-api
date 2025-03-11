@@ -60,6 +60,7 @@ class CbeMiniAppController extends Controller
     }
     public function register(Request $request) {
         try {
+            
             $shortcode = config('key.SHORT_CODE');
             // $token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjI1MTkxODA5NDQ1NSIsImV4cCI6MTc0MzA0MjQxNn0.d3keyZuG0FCQpRVolicjFIgbiSqmSRywJGf4spseeeA";
 
@@ -97,7 +98,6 @@ class CbeMiniAppController extends Controller
 
             // Validate request data
             // log
-            Log::info('request',$request->input());
             $this->validate($request, [
                 'full_name' => 'required',
                 'phone' => 'required',
@@ -120,6 +120,7 @@ class CbeMiniAppController extends Controller
             $email = $request->input('email');
             $passwod = $request->input('password');
             $dateofBirth = $request->input('date_of_birth');
+            // dd($phone, $phoneFromToken);
 
             // Ensure phone from request matches token
             if ($phone !== $phoneFromToken) {
