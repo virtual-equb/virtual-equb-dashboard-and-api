@@ -25,13 +25,6 @@
                 color: red;
             }
 
-            div.dataTables_wrapper div.dataTables_paginate {
-                margin: 0;
-                display: none;
-                white-space: nowrap;
-                text-align: right;
-            }
-
             div.dataTables_wrapper div.dataTables_info {
                 padding-top: 0.85em;
                 display: none;
@@ -115,6 +108,20 @@
             <div class="content-wrapper">
                 <section class="content">
                     <div class="container-fluid">
+                        <div class="row mt-2">
+                            <div class="col-12">
+                                <div class="small-box bg-info">
+                                    <div class="inner">
+                                        <h3>{{ $totalMember }}</h3>
+                                        <p>Total Pending Members</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="ion ion-pie-graph"></i>
+                                    </div>
+                                    <a href="#" class="small-box-footer"><i class="fas fa-list"></i></a>
+                                </div>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-12">
                                 <div class="card ">
@@ -142,53 +149,6 @@
                                                 @include('admin/lottery.addLottery')
                                                 @include('admin/equb.addEqub')
                                                 @include('admin/member.addMember')
-                                                <div class="float-left checkLotteryandAddMember" id="member_table_filter">
-                                                @can('view member')
-                                                        <button type="button" class=" btn btn-primary checkLottery"
-                                                            id="lotteryDatec" data-toggle="modal"
-                                                            data-target="#lotteryDateCheckModal"
-                                                            style="margin-right: 30px;"> <i class="fa fa-check-square"></i>
-                                                            Check Lottery Date</button>
-                                                        <button type="button" class=" btn btn-primary addMember"
-                                                            id="register" data-toggle="modal" data-target="#myModal"
-                                                            style="margin-right: 30px;"> <span class="fa fa-plus-circle">
-                                                            </span> Add member</button>
-                                                    @endcan
-                                                </div>
-                                                <div class="row">
-                                                    <div class="float-right searchEqubandClear col-4"
-                                                        id="member_table_filter">
-                                                        <select class="form-control"id="equbSearchText" name="equb_type_id"
-                                                            placeholder="Equb Type">
-                                                            <option value="">All Equb Type</option>
-                                                            @foreach ($equbTypes as $equbType)
-                                                                <option data-info="{{ $equbType->type }}"
-                                                                    value="{{ $equbType->id }}">
-                                                                    {{ $equbType->name }} round {{ $equbType->round }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                    <div class="float-right searchEqubandClear col-4"
-                                                        id="member_table_filter">
-                                                        <select class="form-control"id="statusSearchText"
-                                                            name="member_status" placeholder="Status">
-                                                            <option value="">All Status</option>
-                                                            <option value="Active">Active</option>
-                                                            <option value="Deactive">Deactive</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="float-right searchandClear row col-4"
-                                                        id="member_table_filter">
-                                                        <input class="form-control col-10" type="text"
-                                                            id="memberSearchText" placeholder="Search Member"
-                                                            class="search">
-                                                        <button class="btn btn-default clear col-2" id="clearActiveSearch"
-                                                            onclick="clearSearchEntry()">
-                                                            Clear
-                                                        </button>
-                                                    </div>
-                                                </div>
                                                 <div id="member_table_data_w" class="col-md-8">
 
                                                 </div>
@@ -225,6 +185,7 @@
         @include('admin/notification.sendNotification')
         @include('admin/payment.editPayment')
         @include('admin/lottery.editLottery')
+
         <div class="modal modal-danger fade" id="lotteryDetailModal" tabindex="-1" role="dialog"
             aria-labelledby="Delete" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -243,158 +204,10 @@
                 </div>
             </div>
         </div>
+
     @endsection
     @section('scripts')
         <script>
-            // function updateMembersCount() {
-            //     // Send an Ajax request to fetch the updated members count
-            //     fetch('/member/countPendingMembers')
-            //         .then(response => response.json())
-            //         .then(data => {
-            //             const membersCount = data;
-            //             console.log("ðŸš€ ~ updateMembersCount ~ membersCount:", membersCount)
-            //             // Update the count element with the new count
-            //             document.getElementById('members-count').textContent = membersCount;
-            //         })
-            //         .catch(error => {
-            //             console.error('Error occurred while fetching members count:', error);
-            //         });
-            // }
-            // updateMembersCount();
-            var memberSearchField = document.getElementById('memberSearchText');
-            memberSearchField.addEventListener("keydown", function(e) {
-                var memberSearchInput = memberSearchField.value;
-                if (e.keyCode === 13) { //checks whether the pressed key is "Enter"
-                    $.LoadingOverlay("show");
-                    searchForMember(memberSearchInput);
-                }
-            });
-
-            function searchForMember(searchInput) {
-                if (searchInput != "") {
-                    $.ajax({
-                        url: "{{ url('member/search-member') }}" + '/' + searchInput + '/0',
-                        type: 'get',
-                        success: function(data) {
-                            $('#member_table_data').html(data);
-                            $.LoadingOverlay("hide");
-                        }
-                    });
-                } else {
-                    clearSearchEntry();
-                    $.LoadingOverlay("hide");
-                }
-            }
-
-            function loadMoreSearchMembers(searchInput, offsetVal, pageNumberVal) {
-                if (searchInput != "") {
-                    $.ajax({
-                        url: "{{ url('member/search-member') }}" + '/' + searchInput + '/' +
-                            offsetVal + '/' +
-                            pageNumberVal,
-                        type: 'get',
-                        success: function(data) {
-                            $('#member_table_data').html(data);
-                        }
-                    });
-
-                }
-            }
-            var statusSearchField = document.getElementById('statusSearchText');
-            statusSearchField.addEventListener("change", function(e) {
-                var memberSearchInput = statusSearchField.value;
-                $.LoadingOverlay("show");
-                searchForStatus(memberSearchInput);
-            });
-
-            function searchForStatus(searchInput) {
-                // console.log("ðŸš€ ~ file: memberList.blade.php:274 ~ searchForEqub ~ searchInput:", searchInput)
-                if (searchInput != "") {
-                    $.ajax({
-                        url: "{{ url('member/search-status') }}" + '/' + searchInput + '/0',
-                        type: 'get',
-                        success: function(data) {
-                            $('#member_table_data').html(data);
-                            $.LoadingOverlay("hide");
-                        }
-                    });
-                } else {
-                    clearSearchEntry();
-                    $.LoadingOverlay("hide");
-                }
-            }
-
-            function loadMoreSearchStatus(searchInput, offsetVal, pageNumberVal) {
-                if (searchInput != "") {
-                    $.ajax({
-                        url: "{{ url('member/search-status') }}" + '/' + searchInput + '/' +
-                            offsetVal + '/' +
-                            pageNumberVal,
-                        type: 'get',
-                        success: function(data) {
-                            $('#member_table_data').html(data);
-                        }
-                    });
-
-                }
-            }
-
-            var equbSearchField = document.getElementById('equbSearchText');
-            equbSearchField.addEventListener("change", function(e) {
-                var memberSearchInput = equbSearchField.value;
-                $.LoadingOverlay("show");
-                searchForEqub(memberSearchInput);
-            });
-
-            function searchForEqub(searchInput) {
-                // console.log("ðŸš€ ~ file: memberList.blade.php:274 ~ searchForEqub ~ searchInput:", searchInput)
-                if (searchInput != "") {
-                    $.ajax({
-                        url: "{{ url('member/search-equb') }}" + '/' + searchInput + '/0',
-                        type: 'get',
-                        success: function(data) {
-                            $('#member_table_data').html(data);
-                            $.LoadingOverlay("hide");
-                        }
-                    });
-                } else {
-                    clearSearchEntry();
-                    $.LoadingOverlay("hide");
-                }
-            }
-
-            function loadMoreSearchEqubs(searchInput, offsetVal, pageNumberVal) {
-                if (searchInput != "") {
-                    $.ajax({
-                        url: "{{ url('member/search-equb') }}" + '/' + searchInput + '/' +
-                            offsetVal + '/' +
-                            pageNumberVal,
-                        type: 'get',
-                        success: function(data) {
-                            $('#member_table_data').html(data);
-                        }
-                    });
-
-                }
-            }
-
-            function clearSearchEntry() {
-                $.LoadingOverlay("show");
-                var searchInput = document.getElementById('memberSearchText').value;
-                // if (searchInput != "") {
-                document.getElementById('memberSearchText').value = "";
-                $.ajax({
-                    url: "{{ url('member/clearSearchEntry') }}",
-                    type: 'get',
-                    success: function(data) {
-                        $('#member_table_data').html(data);
-                        $.LoadingOverlay("hide");
-                    }
-                });
-
-                // }
-            }
-
             function members(offsetVal, pageNumberVal) {
                 $.LoadingOverlay("show");
                 $.ajax({
@@ -406,7 +219,6 @@
                     }
                 });
             }
-            // members(0, 1);
 
             function validateForm() {
                 let lottery_date = document.getElementById('lottery_date').value;

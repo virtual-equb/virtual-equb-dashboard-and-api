@@ -1,3 +1,4 @@
+<div id="equb_list_table_data" class="table-responsive">
     <table id="equb-list-table" class="table table-bordered table-striped">
         <thead>
             <tr>
@@ -18,7 +19,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($member->equbs as $key => $equb)
+            @foreach ($member->equbs as $index => $equb)
                 <tr id="tre{{ $equb['id'] }}">
                     <?php
                     $totalPpayment = App\Models\Payment::where('equb_id', $equb['id'])->where('status', 'paid')->sum('amount');
@@ -62,7 +63,7 @@
                     : ($lotteryDate ? $lotteryInterval : 'Unassigned');
                     ?>
                     <td class="details-control_payment" id="{{ $equb['id'] }}"></td>
-                    <td>{{ $key + 1 }}</td>
+                    <td>{{ $loop->iteration }}</td>
                     <td>
                         <a href="javascript:void(0);"
                             onclick="openPaymentTab({{ $equb }})">{{ $equb->equbType->name }} round
@@ -200,7 +201,8 @@
         <tfoot>
         </tfoot>
     </table>
-    <!-- </div> -->
+</div>
+
     <div class="modal modal-danger fade" id="aaaa" tabindex="-1" role="dialog" aria-labelledby="Delete"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -254,15 +256,6 @@
             $('#aaaa').modal('show');
             $('#bbbb').attr('action', "{{ url('member/equbStatus-update') }}" + '/' + item.id);
         }
-        // function equbStatusChange(item) {
-        //     let newStatus = item.status === "Active" ? "Deactive" : "Active";
-
-        //     $('#aaaa').modal('show'); // Show the modal
-        //     $('#bbbb').attr('action', "{{ url('member/equbStatus-update') }}" + '/' + item.id);
-
-        //     // Set the correct status inside a hidden input in the form
-        //     $('#equbStatusInput').val(newStatus);
-        // }
 
         function equbDrawCheckChange(item) {
             $('#checkForEqubModal').modal('show');
@@ -290,19 +283,17 @@
             if ($.fn.DataTable.isDataTable('#equb-list-table')) {
                 $('#equb-list-table').DataTable().destroy();
             }
-            var table = $("#equb-list-table").DataTable({
+           $("#equb-list-table").DataTable({
                 "responsive": false,
                 "lengthChange": false,
-                "searching": false,
+                "searching": true,
                 "autoWidth": false,
-                "bSort": false,
-                "bDestroy": true,
                 language: {
                     search: "",
                     searchPlaceholder: "Search",
                 }
-            });
-            table.buttons().container().appendTo('#equb-list-table_wrapper .col-md-6:eq(0)');
+                "buttons": ["excel", "pdf", "print", "colvis"]
+            }).buttons().container().appendTo('#equb_list_table_data .col-md-6:eq(0)');
             $('#equb-list-table tbody').on('click', 'td.details-control_payment', function() {
                 var tr = $(this).closest('tr');
                 var inputId = $(this).prop("id");

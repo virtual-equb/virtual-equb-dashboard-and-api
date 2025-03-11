@@ -16,6 +16,7 @@
 
         <!-- Scripts -->
         <script src="{{ mix('js/app.js') }}" defer></script>
+        @include('pwa.tags')
     </head>
     <body>
         <div class="font-sans text-gray-900 antialiased">
