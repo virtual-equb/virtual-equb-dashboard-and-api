@@ -43,6 +43,7 @@
     @hasSection('styles')
         @yield('styles')
     @endif
+    @include('pwa.tags')
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">

@@ -78,16 +78,17 @@ class UserRepository implements IUserRepository
 
     public function getDeactive($offset)
     {
-        return $this->model->orderBy('name', 'asc')->where('enabled', 0)->offset($offset)->limit($this->limit)->get();
+        return $this->model->orderBy('name', 'asc')->where('enabled', 0)->get();
     }
 
     public function getActive($offset)
     {
         return $this->model->orderBy('name', 'asc')->where('enabled', 1)->offset($offset)->limit($this->limit)->get();
     }
+
     public function getActiveForUsers($offset, $id)
     {
-        return $this->model->with('roles')->orderBy('name', 'asc')->where('id', '!=', $id)->where('gender', '!=', '')->where('enabled', 1)->offset($offset)->limit($this->limit)->get();
+        return $this->model->with('roles')->orderBy('name', 'asc')->where('enabled', 1)->get();
     }
 
     public function getById($id)

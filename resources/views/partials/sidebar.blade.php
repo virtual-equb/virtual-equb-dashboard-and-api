@@ -4,22 +4,28 @@
         <strong class="brand-text font-weight-light">Virtual Equb</strong>
     </a>
     <div class="sidebar">
-        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex align-items-center">
             <div class="image">
-                @if (Auth::check() && Auth::user()->profile_photo_path)
-                    <img src="{{ Auth::user()->profile_photo_path }}" alt="Profile Photo">
-                @else
-                    <img src="{{ asset('default-profile.png') }}" alt="Default Photo">
-                @endif
+                <img 
+                    class="img-circle elevation-2" 
+                    src="{{ Auth::check() && Auth::user()->profile_photo_path 
+                        ? asset(Auth::user()->profile_photo_path) 
+                        :  asset('default-profile.png') }}" 
+                    alt="Profile Photo"
+                    width="48"
+                    height="48"
+                >
             </div>
-            <div class="info">
-                <a href="/user/profile" class="d-block">
-                    @if (Auth::check() && Auth::user()->name)
-                    {{ Auth::user()->name }}
-                    @endif
-                </a>
+            <div class="info ml-2">
+                <strong class="d-block font-weight-bold text-white" style="word-wrap: break-word; white-space: normal;">
+                    {{ Auth::check() ?Auth::user()->name : 'Guest User' }}
+                </strong>
+                <small class="text-light" style="word-wrap: break-word; white-space: normal;">
+                    {{ Auth::user()->role ?? 'Not Assigned' }}
+                </small>
             </div>
         </div>
+        
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 <!-- Dashboard Section -->

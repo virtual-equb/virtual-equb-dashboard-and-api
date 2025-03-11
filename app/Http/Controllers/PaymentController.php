@@ -435,13 +435,13 @@ class PaymentController extends Controller
                     $paymentData['member'] = $this->memberRepository->getMemberById($member_id);
                     $paymentData['equb'] = $this->equbRepository->geteEubById($equb_id);
                     $paymentData['payments'] = $this->paymentRepository->getSinglePayment($member_id, $equb_id, $offset);
-                    // dd($paymentData['payments']);
                     $paymentData['totalCredit'] = $this->paymentRepository->getTotalCredit($equb_id);
                     $paymentData['totalPaid'] = $this->paymentRepository->getTotalPaid($equb_id);
                     $paymentData['total'] = $this->paymentRepository->getTotalCount($equb_id);
                     $paymentData['offset'] = $offset;
                     $paymentData['limit'] = $limit;
                     $paymentData['pageNumber'] = $pageNumber;
+
                     return view('admin/payment.paymentList', $paymentData);
                 } elseif ($userData->hasAnyRole($collector)) {
                     $paymentData['member'] = $this->memberRepository->getMemberById($member_id);
@@ -453,6 +453,7 @@ class PaymentController extends Controller
                     $paymentData['offset'] = $offset;
                     $paymentData['limit'] = $limit;
                     $paymentData['pageNumber'] = $pageNumber;
+
                     return view('equbCollecter/payment.paymentList', $paymentData);
                 } elseif ($userData->hasAnyRole($member)) {
                     $paymentData['member'] = $this->memberRepository->getMemberById($member_id);
@@ -464,6 +465,7 @@ class PaymentController extends Controller
                     $paymentData['offset'] = $offset;
                     $paymentData['limit'] = $limit;
                     $paymentData['pageNumber'] = $pageNumber;
+                    
                     return view('member/payment.paymentList', $paymentData);
                 } else {
                     return back();

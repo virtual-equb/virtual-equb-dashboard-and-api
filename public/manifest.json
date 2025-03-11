@@ -1,0 +1,23 @@
+{
+    "name": "Virtual Equb",
+    "short_name" : "Virtual Equb",
+    "start_url" : "/",
+    "background_color" : "#ffffff",
+    "description": "Virtual Equb",
+    "theme_color" : "#edf7f2",
+    "display" : "standalone",
+    "orientation" : "portrait",
+    "status_bar" : "#edf7f2",
+    "icons" : [
+        {
+            "src" : "/pwa/pwa-192x192.png",
+            "purpose" : "any",
+            "sizes": "192x192"
+        },
+        {
+            "src" : "/pwa/pwa-512x512.png",
+            "purpose" : "any",
+            "sizes": "512x512"
+        }
+    ]
+}
