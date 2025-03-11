@@ -740,7 +740,7 @@ class PaymentController extends Controller
         try {
             // return $request->all();
             $req = $request->all();
-            Log::info('from initialize', $req);
+            // Log::info('from initialize' $req);
             $user = Auth::user();
             $userId = $user->id;
 
@@ -825,7 +825,7 @@ class PaymentController extends Controller
     public function callback(Request $request)
     {
         try {
-            Log::info('callback request datas', $request->all());
+            // Log::info('callback request datas', $request->all());
             
             // return response()->json([
             //             'code' => 200,
@@ -964,9 +964,9 @@ class PaymentController extends Controller
                     $payment->payment_type = $paymentType;
                     $payment->save();
 
-                    Log::info($telebirrObj);
+                    // Log::info($telebirrObj);
                     // $payment->save($telebirrObj);
-                    Log::info($payment);
+                    // Log::info($payment);
                     $equb_id = $payment->equb_id;
 
                     $totalPpayment = $this->paymentRepository->getTotalPaid($equb_id);

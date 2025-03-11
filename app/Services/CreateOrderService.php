@@ -55,7 +55,7 @@ class CreateOrderService
 
         // Create the order request
         $createOrderResult = $this->requestCreateOrder($fabricToken, TELEBIRR_TITLE, $amount);
-        Log::info('Create Order API Response:' . $createOrderResult);
+        // Log::info('Create Order API Response:' . $createOrderResult);
 
         // $decodedResult = json_decode($createOrderResult);
         // if (!$decodedResult || !isset($decodedResult->biz_content->prepay_id)) {
@@ -81,10 +81,10 @@ class CreateOrderService
                 'Authorization' => $fabricToken,
             ])->post($this->baseUrl . '/payment/v1/merchant/preOrder', $this->createRequestObject($title, $amount));
             
-            Log::info('API Response' . $response->body());
+            // Log::info('API Response' . $response->body());
             return $response->body();
         } catch (Exception $e) {
-            Log::info('log from requestCreateOrder');
+            // Log::info('log from requestCreateOrder');
              Log::info($e->getMessage());
         }
       
