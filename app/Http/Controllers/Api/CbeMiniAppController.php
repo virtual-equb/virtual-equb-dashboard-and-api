@@ -94,6 +94,7 @@ class CbeMiniAppController extends Controller
             ]);
 
             // Validate request data
+            // log
             $this->validate($request, [
                 'full_name' => 'required',
                 'phone' => 'required',
