@@ -1046,7 +1046,7 @@ class EqubController extends Controller
                 ]);
             }
 
-            // Automatically calculate lottery date for 'Manul' Equb
+            // Automatically calculate lottery date for 'Manual' Equb
             if ($type === 'Manual') {
                 if (!$lotteryDate) {
                     $lotteryDate = Carbon::parse($startDate)->addDays(45)->format('Y-m-d');

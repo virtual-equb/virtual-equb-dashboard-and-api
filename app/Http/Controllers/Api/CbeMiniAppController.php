@@ -352,130 +352,136 @@ class CbeMiniAppController extends Controller
         try {
             $userData = Auth::user();
 
-            // Validate required fields
-            $this->validate($request, [
-                'equb_type_id' => 'required',
-                'amount' => ['required', 
-                    function ($attribute, $value, $fail) use ($request) {
-                        // check if the equb type is 'Manual'
-                        $equbType = EqubType::find($request->input('equb_type_id'));
-                        if ($equbType && $equbType->type === 'Manual') {
-                            // validate the amount range for 'Manual' equb type
-                            if ($value < 500 || $value > 15000) {
-                                $fail("The {$attribute} must be between 500 and 15000.");
-                            }
-                        }
+            // Dynamic Validation
+            $rules = [
+                'type' => 'required|in:Manual,Automatic',
+                'amount' => ['required', function ($attribute, $value, $fail) use ($request) {
+                    if ($request->input('type') === 'Manual' && ($value < 500 || $value > 15000)) {
+                        $fail("The {$attribute} must be between 500 and 15000.");
                     }
-                ],
+                }],
                 'total_amount' => 'required',
                 'start_date' => 'required|date_format:Y-m-d',
-                // 'timeline' => 'required',
-            ]);
+            ];
+
+            if ($request->input('type') === 'Automatic') {
+                $rules['equb_type_id'] = 'required|exists:equb_types,id';
+            }
+            $this->validate($request, $rules);
 
             // Collecting request inputs
-            $member = $request->input('member_id');
-            $equbType = $request->input('equb_type_id');
+            $type = $request->input('type');
             $amount = $request->input('amount');
             $totalAmount = $request->input('total_amount');
             $startDate = $request->input('start_date');
             $endDate = $request->input('end_date');
             $timeline = $request->input('timeline');
             $lotteryDate = $request->input('lottery_date');
+            $memberId = $request->input('member_id');
+            $main_equb_id = $request->input('main_equb_id');
 
-            // Parse endDate if it doesn't match expected format
-            $formattedEndDate = $endDate;
-            $formattedStartDate = $startDate;
+            // Format end date if needed
             if (!$this->isDateInYMDFormat($endDate)) {
                 try {
                     $carbonDate = Carbon::createFromFormat('m/d/Y', $endDate);
-                    $formattedEndDate = $carbonDate->format('Y-m-d');
-                } catch (\Exception $e) {
-                    Log::error("Date parsing error for endDate: " . $e->getMessage());
+                    $endDate = $carbonDate->format('Y-m-d');
+
+                } catch (Exception $ex) {
+                    Log::error("Date parsing error for endDate: " . $ex->getMessage());
                     return response()->json([
                         'code' => 400,
                         'message' => 'Invalid date format for end date.'
                     ]);
                 }
             }
-            // Retreive the equbType data
-            $equbTypeData = EqubType::find($equbType);
-            if (!$equbTypeData) {
-                return response()->json([
-                    'code' => 404,
-                    'message' => 'Equb type not found.'
+            // Handle manual equb (create new EqubType)
+            if ($type === 'Manual') {
+                $equbType = EqubType::create([
+                    'name' => 'Manual Equb -' . now()->timestamp,
+                    'main_equb_id' => $main_equb_id,
+                    'round' => 1,
+                    'amount' => $amount,
+                    'total_amount' => $totalAmount,
+                    'total_members' => 0,
+                    'expected_members' => 0,
+                    'status' => 'active',
+                    'remark' => 'Auto-created Manual Equb',
+                    'rote' => 'Daily',
+                    'type' => 'Manual',
+                    'terms' => 'Standard terms apply',
+                    'quota' => 0,
+                    'start_date' => $startDate,
+                    'end_date' => $endDate,
+                    'remaining_quota' => 0,
+                    'image' => null,
+                    'lottery_round' => 0
                 ]);
-            }
-
-            // Check if the equb already exists for the member
-            if (!empty($equbType)) {
-                $equbs_count = Equb::where('equb_type_id', $equbType)
-                                    ->where('member_id', $member)
-                                    ->count();
-                if ($equbs_count > 0) {
+            } else {
+                $equbType = EqubType::find($request->input('equb_type_id'));
+                if (!$equbType) {
                     return response()->json([
-                        'code' => 400,
-                        'message' => 'Equb already exists!'
+                        'code' => 404,
+                        'message' => 'Equb type not found'
                     ]);
                 }
             }
 
-            // Automatically calculate lottery date for 'Manual' equb type
-            if ($equbTypeData->type === 'Manual') {
-                // set lottery date to 45 days after the start date if it's not provided
+            // prevent duplicate equb registsration for the same member
+            if (Equb::where('equb_type_id', $equbType->id)->where('member_id', $memberId)->exists()) {
+                return response()->json([
+                    'code' => 400,
+                    'message' => 'You have already joined this equb'
+                ]);
+            }
+            // Automaticallhy calculate lottery date for 'Manual' Equb
+            if ($type === 'Manual') {
                 if (!$lotteryDate) {
-                    $lotteryDate = Carbon::parse($formattedStartDate)->addDays(45)->format('Y-m-d');
+                    $lotteryDate = Carbon::parse($startDate)->addDays(45)->format('Y-m-d');
                 }
 
-                // Check if there are existing lotteries on the same day (to avoid conflicts)
-                $existingLottery = Equb::where('lottery_date', $lotteryDate)->exists();
-                if($existingLottery) {
+                // Check for existing lotteries on the same date
+                if (Equb::where('lottery_date', $lotteryDate)->exists()) {
                     return response()->json([
                         'code' => 400,
                         'message' => 'Lottery date already exists for another equb.'
                     ]);
                 }
 
-                // Ensure total funds available for the lottery (projection check)
+                // Ensure sufficient fund before finalizing lottery date
                 $cashProjection = Equb::whereDate('lottery_date', $lotteryDate)->sum('amount');
                 if ($cashProjection < $totalAmount) {
-                    // if the cash projection is insufficient, extend the lottery date by 1
+                    // if insufficient funds, extend the lottery date
                     $lotteryDate = Carbon::parse($lotteryDate)->addDay()->format('Y-m-d');
                 }
-            }
-
-            // Determine lottery_date based on equbType
-            if($equbTypeData->type === 'Automatic') {
-                $lotteryDate = $equbTypeData->lottery_date;
             } else {
-                $lotteryDate = $request->input('lottery_date');
+                // Assign the existing lottery date from equbType for automatic equb
+                $lotteryDate = $equbType->lottery_date;
             }
 
-            // Prepare data for new Equb
+            // Create equb entry
             $equbData = [
-                'member_id' => $member,
-                'equb_type_id' => $equbType,
+                'member_id' => $memberId,
+                'equb_type_id' => $equbType->id,
                 'amount' => $amount,
                 'total_amount' => $totalAmount,
                 'start_date' => $startDate,
                 'timeline' => $timeline,
-                'end_date' => $formattedEndDate,
-                'lottery_date' => $lotteryDate,
+                'end_date' => $endDate,
+                'lottery_date' => $lotteryDate
             ];
+            $equb = $this->equbRepository->create($equbData);
 
-            // Create the Equb
-            $create = $this->equbRepository->create($equbData);
-            if ($create) {
-                // Update remaining quota for Automatic type Equb
-                $equbTypes = EqubType::find($equbType);
-                if ($equbTypes && $equbTypes->type == 'Automatic') {
-                    $equbTypes->decrement('remaining_quota', 1);
-                    $equbTypes->increment('total_members', 1);
+            if ($equb) {
+                // if automatic, update equbType member count
+                if ($type === 'Automatic') {
+                    $equbType->increment('remaining_quota', 1);
+                    $equbType->increment('total_members', 1);
                 }
 
-                // Prepare data for Equb Taker
-                $equbTakerData = [
-                    'member_id' => $member,
-                    'equb_id' => $create->id,
+                // Register Equb taker
+                $this->equbTakerRepository->create([
+                    'member_id' => $memberId,
+                    'equb_id' => $equb->id,
                     'payment_type' => '',
                     'amount' => $totalAmount,
                     'remaining_amount' => $totalAmount,
@@ -486,24 +492,21 @@ class CbeMiniAppController extends Controller
                     'cheque_amount' => '',
                     'cheque_bank_name' => '',
                     'cheque_description' => '',
-                ];
-                $createEkubTaker = $this->equbTakerRepository->create($equbTakerData);
+                ]);
 
-                // Create activity log
-                $activityLog = [
+                // Log activity
+                $this->activityLogRepository->createActivityLog([
                     'type' => 'equbs',
-                    'type_id' => $create->id,
+                    'type_id' => $equb->id,
                     'action' => 'created',
                     'user_id' => $userData->id,
                     'username' => $userData->name,
-                    'role' => $userData->role,
-                ];
-                $this->activityLogRepository->createActivityLog($activityLog);
+                    'role' => $userData->role
+                ]);
 
-                // Sending SMS notification
-                // memeber notification
+                // Send SMS Notifications
                 $shortcode = config('key.SHORT_CODE');
-                $member = Member::find($member);
+                $member = Member::find($memberId);
                 if ($member && $member->phone) {
                     $memberMessage = "Dear {$member->full_name}, Your Equb has been successfully registered. Our customer service will contact you soon. For more information call {$shortcode}";
                     $this->sendSms($member->phone, $memberMessage);
@@ -513,7 +516,7 @@ class CbeMiniAppController extends Controller
                 $finances = User::role('finance')->get();
                 foreach ($finances as $finance) {
                     if ($finance->phone_number) {
-                        $financeMessage = "Finance Alert: A New Member {$member->full_name}, has joined Equb titled {$create->equbType->name}. Please review the details.";
+                        $financeMessage = "Finance Alert: A New Member {$member->full_name}, has joined Equb titled {$equb->equbType->name}. Please review the details.";
                         $this->sendSms($finance->phone_number, $financeMessage);
                     }
                 }
@@ -522,21 +525,24 @@ class CbeMiniAppController extends Controller
                 $call_centers = User::role('call_center')->get();
                 foreach($call_centers as $finance) {
                     if ($finance->phone_number) {
-                        $financeMessage = "Call Center Alert: A New Member {$member->full_name}, has joined Equb titled {$create->equbType->name}. Please review the details.";
+                        $financeMessage = "Call Center Alert: A New Member {$member->full_name}, has joined Equb titled {$equb->equbType->name}. Please review the details.";
                         $this->sendSms($finance->phone_number, $financeMessage);
                     }
                 }
+
                 return response()->json([
                     'code' => 200,
                     'message' => 'Equb has been registered successfully!',
-                    'data' => $create
+                    'data' => $equb
                 ]);
             } else {
                 return response()->json([
                     'code' => 400,
-                    'message' => 'Unknown error occurred! Please try again.'
+                    'message' => 'Unknown error occured, Please try again!'
                 ]);
             }
+            
+
 
         } catch (Exception $ex) {
             return response()->json([
