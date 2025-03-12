@@ -85,7 +85,7 @@ class CreateOrderService
             return $response->body();
         } catch (Exception $e) {
             // Log::info('log from requestCreateOrder');
-             Log::info($e->getMessage());
+             return response()->json(['error' => $e->getMessage()], 500);
         }
       
     }
@@ -96,7 +96,7 @@ class CreateOrderService
     {
 
         try {
-            Log::info('Notify url', $this->notifyPath);
+            // Log::info('Notify url', $this->notifyPath);
 
             // Create request array
             $req = [
