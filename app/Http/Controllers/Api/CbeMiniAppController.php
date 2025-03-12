@@ -550,74 +550,87 @@ class CbeMiniAppController extends Controller
             ], 500);
         }
     }
-    public function validateToken(Request $request)
+    public function isDateInYMDFormat($dateString)
     {
         try {
-            $token = $request->header('Authorization');
-            // $token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjI1MTkxODA5NDQ1NSIsImV4cCI6MTczODYzMjEzMH0.cN95szHJNoJwp8tdtpDOk29vPmQeVoYP8dbKFBFy4_M";
-            // $token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjI1MTkxODA5NDQ1NSIsImV4cCI6MTczODI3OTU0NH0.8NrfTbeErIXyin-PH0Vgvnkq4-q2TeVvQz4P3FtBqZU";
-            // $token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjI1MTkxODA5NDQ1NSIsImV4cCI6MTc0MzA0MjQxNn0.d3keyZuG0FCQpRVolicjFIgbiSqmSRywJGf4spseeeA";
-            Log::info('mini app Token', ['token' => $token]);
-            // dd($token);
-            if (!$token) {
-                return response()->json([
-                    'error' => 'Token is missing'
-                ], 400);
-            }
+            // Attempt to parse the data using Carbon
+            $parsedDate = Carbon::createFromFormat('Y-m-d', $dateString);
 
-            // Remove the 'Bearer' prefix
-            $cleanedToken = str_replace('Bearer ', '', $token);
+            // check if the parsed date matches the input date string
+            return $parsedDate->format('Y-m-d') === $dateString;
 
-            $response = Http::withHeaders([
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json',
-                'Authorization' => $token,
-            ])->get('https://cbebirrpaymentgateway.cbe.com.et:8888/auth/user');
-
-            if ($response->status() === 200) {
-                // Save the token to the database
-                $Phone =  $response->json('phone');
-
-                // Check if the phone starts with "+"
-                if (!$Phone) {
-                    return response()->json(['error' => 'Phone number is missing or invalid'], 400);
-                }
-                if (strpos($request->json('phone'), '+') !== 0) {
-                    $Phone = '+' . $Phone;
-                }
-                AppToken::create([
-                    'phone' => $Phone,
-                    'token' => $cleanedToken
-                ]);
-                // $phone = $response->json('phone');
-                $equb = Equb::with('equbType')->whereHas('member', function ($query) use ($Phone) {
-                    $query->where('phone', $Phone);
-                })->get();
-                // dd($equb);
-                if ($equb->count() === 0) {
-                    // return response()->json(['error' => 'No equb found for the user'], 404);
-                    return view('cbe_payment', [
-                        'token' => $token, 
-                        'phone' => $Phone, 
-                        'equbs' => [], 
-                        'error' => 'No equb found for the user'
-                    ]);
-                }
-                return view('cbe_payment', [
-                    'token' => $cleanedToken, 
-                    'phone' => $Phone, 
-                    'equbs' => $equb,
-                    'error' => ''
-                ]);
-            } else {
-                return response()->json(['error' => 'Invalid Token'], 401);
-            }
         } catch (Exception $ex) {
-            return response()->json([
-                'error' => $ex->getMessage()
-            ], 500);
+            return false;
         }
     }
+    // public function validateToken(Request $request)
+    // {
+    //     try {
+    //         $token = $request->header('Authorization');
+    //         // $token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjI1MTkxODA5NDQ1NSIsImV4cCI6MTczODYzMjEzMH0.cN95szHJNoJwp8tdtpDOk29vPmQeVoYP8dbKFBFy4_M";
+    //         // $token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjI1MTkxODA5NDQ1NSIsImV4cCI6MTczODI3OTU0NH0.8NrfTbeErIXyin-PH0Vgvnkq4-q2TeVvQz4P3FtBqZU";
+    //         // $token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjI1MTkxODA5NDQ1NSIsImV4cCI6MTc0MzA0MjQxNn0.d3keyZuG0FCQpRVolicjFIgbiSqmSRywJGf4spseeeA";
+    //         Log::info('mini app Token', ['token' => $token]);
+    //         // dd($token);
+    //         if (!$token) {
+    //             return response()->json([
+    //                 'error' => 'Token is missing'
+    //             ], 400);
+    //         }
+
+    //         // Remove the 'Bearer' prefix
+    //         $cleanedToken = str_replace('Bearer ', '', $token);
+
+    //         $response = Http::withHeaders([
+    //             'Content-Type' => 'application/json',
+    //             'Accept' => 'application/json',
+    //             'Authorization' => $token,
+    //         ])->get('https://cbebirrpaymentgateway.cbe.com.et:8888/auth/user');
+
+    //         if ($response->status() === 200) {
+    //             // Save the token to the database
+    //             $Phone =  $response->json('phone');
+
+    //             // Check if the phone starts with "+"
+    //             if (!$Phone) {
+    //                 return response()->json(['error' => 'Phone number is missing or invalid'], 400);
+    //             }
+    //             if (strpos($request->json('phone'), '+') !== 0) {
+    //                 $Phone = '+' . $Phone;
+    //             }
+    //             AppToken::create([
+    //                 'phone' => $Phone,
+    //                 'token' => $cleanedToken
+    //             ]);
+    //             // $phone = $response->json('phone');
+    //             $equb = Equb::with('equbType')->whereHas('member', function ($query) use ($Phone) {
+    //                 $query->where('phone', $Phone);
+    //             })->get();
+    //             // dd($equb);
+    //             if ($equb->count() === 0) {
+    //                 // return response()->json(['error' => 'No equb found for the user'], 404);
+    //                 return view('cbe_payment', [
+    //                     'token' => $token, 
+    //                     'phone' => $Phone, 
+    //                     'equbs' => [], 
+    //                     'error' => 'No equb found for the user'
+    //                 ]);
+    //             }
+    //             return view('cbe_payment', [
+    //                 'token' => $cleanedToken, 
+    //                 'phone' => $Phone, 
+    //                 'equbs' => $equb,
+    //                 'error' => ''
+    //             ]);
+    //         } else {
+    //             return response()->json(['error' => 'Invalid Token'], 401);
+    //         }
+    //     } catch (Exception $ex) {
+    //         return response()->json([
+    //             'error' => $ex->getMessage()
+    //         ], 500);
+    //     }
+    // }
 
 
     public function processPayment(Request $request)
