@@ -350,7 +350,13 @@ class CbeMiniAppController extends Controller
     }
     public function joinEqub(Request $request) {
         try {
-            $userData = Auth::user();
+            // $userData = Auth::user();
+            // if (!$userData) {
+            //     return response()->json([
+            //         'code'=>401,
+            //         'message' => "Unauthorized: User not authenticated."
+            //     ]);
+            // }
 
             // Dynamic Validation
             $rules = [
@@ -379,6 +385,16 @@ class CbeMiniAppController extends Controller
             $lotteryDate = $request->input('lottery_date');
             $memberId = $request->input('member_id');
             $main_equb_id = $request->input('main_equb_id');
+
+            // Validate Member existence
+            $member = Member::findOrFail($memberId);
+            $userData = User::where('phone_number', $member->phone)->first();
+            if (!$member) {
+                return response()->json([
+                    'code' => 404,
+                    'message' => 'Member not found'
+                ]);
+            }
 
             // Format end date if needed
             if (!$this->isDateInYMDFormat($endDate)) {
