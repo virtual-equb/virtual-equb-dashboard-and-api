@@ -39,7 +39,7 @@ class MemberRepository implements IMemberRepository
     //         ->limit($limit)
     //         ->get();
     // }
-    public function getAllByPaginate($offset, $limit = 10)
+    public function getAllByPaginate($offset, $limit = 50)
     {
         return $this->model
             ->with(['memberCity', 'memberSubcity', 'equbs', 'payments'])
