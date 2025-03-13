@@ -24,7 +24,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('equb:draw')->cron('0 */15 * * *');
         $schedule->command('check:lotterydate')->cron('0 */9 * * *')->withoutOverlapping();
         $schedule->command('check:unpaidPayments')->cron('0 */10 * * *');
-        $schedule->command('remove:removeOlderPendingTelebirrPayments')->cron('0 */3 * * *');
+        // $schedule->command('remove:removeOlderPendingTelebirrPayments')->cron('0 */3 * * *');
 
     }
 
