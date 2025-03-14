@@ -186,7 +186,7 @@ Route::prefix('member')->middleware('log.user.action')->group(function () {
     Route::delete('/delete/{id}', [MemberController::class, 'destroy'])->name('deleteMember');
     Route::get('/{userId}/profile-picture', [MemberController::class, 'getProfilePicture'])->name('getProfilePicture');
 });
-Route::prefix('payment')->middleware('log.user.action')->group(function () {
+Route::prefix('payment')->group(function () {
     Route::get('/check-payment/{payment}', [PaymentController::class, 'getTransaction'])->name('getTransaction');
     Route::get('/{member_id}/{equb_id}', [PaymentController::class, 'index'])->name('showAllPayment');
     Route::get('/show-payment/{member_id}/{equb_id}/{offsetVal}/{pageNumberVal}', [PaymentController::class, 'show'])->name('showPayment');

@@ -33,6 +33,7 @@ class CheckCbePendingPayments extends Command
     {
         // Get today's date 
         $today = Carbon::today();
+
         // get payments where status is 'pending' and created more than 60 minutes ago
         $expiredPayments = Payment::where('payment_type', 'CBE Gateway')
             ->where('status', 'pending')
@@ -45,15 +46,19 @@ class CheckCbePendingPayments extends Command
             return;
         }
 
-        $admins = User::role('admin')->get();
-        foreach($admins as $admin) {
-            if ($admin->phone_number) {
-                $message = "There are " . $expiredPayments->count() . " pending payments in the CBE Gateway for more than 60 minutes. Please check.";
-                $this->sendSms($admin->phone_number, $message);
-            }
-        }
+        // $admins = User::role('admin')->get();
+        // foreach($admins as $admin) {
+        //     if ($admin->phone_number) {
+        //         $message = "There are " . $expiredPayments->count() . " pending payments in the CBE Gateway for more than 60 minutes. Please check.";
+        //         $this->sendSms($admin->phone_number, $message);
+        //     }
+        // }
 
-        $this->info('Notification sent to admins.');
+        // Delete expired payments
+        $deletedCount = $expiredPayments->count();
+        Payment::wherein('id', $expiredPayments->pluck('id'))->delete();
+
+        $this->info("{$deletedCount} expired payments deleted.");
     }
 
     public function sendSms($phoneNumber, $message) 
