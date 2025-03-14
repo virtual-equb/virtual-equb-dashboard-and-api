@@ -672,7 +672,7 @@ class CbeMiniAppController extends Controller
             $equb = Equb::with('equbType')->findOrFail($validated['equb_id']);
             $member = $equb->member->where('phone', $validated['phone'])->first();
             $token = AppToken::where('phone', $validated['phone'])->pluck('token')->first();
-            Log::info('token', $token);
+            Log::info('token'. $token);
             // dd($callbackUrl);
             // Prepare payload for hashing (including 'key')
             $payloadForHashing = [
