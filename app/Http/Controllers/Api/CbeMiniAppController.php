@@ -701,7 +701,7 @@ class CbeMiniAppController extends Controller
                 "companyName" => $companyName,
                 "signature" => $signature, // Add the signature
                 "tillCode" => $tillCode,
-                "token" => $validated['token'],
+                "token" => $token,
                 "transactionId" => $transactionId,
                 "transactionTime" => $transactionTime,
             ];
@@ -725,7 +725,7 @@ class CbeMiniAppController extends Controller
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
-                'Authorization' => "Bearer " . $validated['token'],
+                'Authorization' => "Bearer " . $token,
             ])->post('https://cbebirrpaymentgateway.cbe.com.et:8888/auth/pay', $sortedPayload);
                 
             // Check the response status
