@@ -729,7 +729,7 @@ class CbeMiniAppController extends Controller
                 'Accept' => 'application/json',
                 'Authorization' => "Bearer " . $token,
             ])->post('https://cbebirrpaymentgateway.cbe.com.et:8888/auth/pay', $sortedPayload);
-            Log::info('response ' . $response->all());
+            Log::info('response ' . $response->json());
             // Check the response status
             if ($response->status() === 200) {
 
