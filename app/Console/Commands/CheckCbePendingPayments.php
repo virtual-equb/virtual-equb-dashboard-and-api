@@ -6,6 +6,7 @@ use App\Models\Payment;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Http;
 
 class CheckCbePendingPayments extends Command
 {
@@ -53,5 +54,28 @@ class CheckCbePendingPayments extends Command
         }
 
         $this->info('Notification sent to admins.');
+    }
+
+    public function sendSms($phoneNumber, $message) 
+    {
+        $afroApiKey = config('key.AFRO_API_KEY');
+        $afroSenderId = config('key.AFRO_IDENTIFIER_ID');
+        $afroSenderName = config('key.AFRO_SENDER_NAME');
+        $afroBaseUrl = config('key.AFRO_BASE_URL');
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $afroApiKey,
+        ])
+            ->baseUrl($afroBaseUrl)
+            ->withOptions(['verify' => false])
+            ->post('/send', [
+                'from' => $afroSenderId,
+                'sender' => $afroSenderName,
+                'to' => $phoneNumber,
+                'message' => $message
+            ]);
+        $responseData = $response->json();
+
+        return $responseData;
     }
 }
