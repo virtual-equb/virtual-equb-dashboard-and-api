@@ -825,12 +825,7 @@ class PaymentController extends Controller
     public function callback(Request $request)
     {
         try {
-            // Log::info('callback request datas', $request->all());
-            
-            // return response()->json([
-            //             'code' => 200,
-            //             'message' => 'success'
-            //         ], 200);
+            Log::info('callback request data', $request->all());
 
             if ($request) {
                 // $public_key = TELEBIRR_PUBLIC_KEY;
