@@ -657,7 +657,7 @@ class CbeMiniAppController extends Controller
             $validated = $request->validate([
                 'amount' => 'required|numeric',
                 'equb_id' => 'required|exists:equbs,id',
-                'token' => 'required|exists:app_tokens,token',
+                // 'token' => 'required|exists:app_tokens,token',
                 'phone' => 'required|exists:app_tokens,phone',
             ]);
     
@@ -671,6 +671,7 @@ class CbeMiniAppController extends Controller
             // Payment data
             $equb = Equb::with('equbType')->findOrFail($validated['equb_id']);
             $member = $equb->member->where('phone', $validated['phone'])->first();
+            $token = AppToken::where('phone', $validated['phone'])->pluck('token')->first();
             // dd($callbackUrl);
             // Prepare payload for hashing (including 'key')
             $payloadForHashing = [
@@ -679,7 +680,7 @@ class CbeMiniAppController extends Controller
                 "companyName" => $companyName,
                 "key" => $hashingKey,
                 "tillCode" => $tillCode,
-                "token" => $validated['token'],
+                "token" => $token,
                 "transactionId" => $transactionId,
                 "transactionTime" => $transactionTime,
             ];
