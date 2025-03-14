@@ -671,7 +671,7 @@ class CbeMiniAppController extends Controller
             // Payment data
             $equb = Equb::with('equbType')->findOrFail($validated['equb_id']);
             $member = $equb->member->where('phone', $validated['phone'])->first();
-            $token = AppToken::where('phone', $validated['phone'])->pluck('token')->first();
+            $token = AppToken::where('phone', $validated['phone'])->orderBy('created_at', 'desc')->pluck('token')->first();
             Log::info('token'. $token);
             // dd($callbackUrl);
             // Prepare payload for hashing (including 'key')
