@@ -74,5 +74,6 @@ class Kernel extends HttpKernel
         'permission_check_logout' => \App\Http\Middleware\PermissionCheckAndLogout::class,
         'api_permission_check' => \App\Http\Middleware\ApiPermissionCheck::class,
         'log.user.action' => \App\Http\Middleware\LogUserActionMiddleware::class,
+        'log.telebirr' => \App\Http\Middleware\LogTelebirrCallback::class,
     ];
 }
