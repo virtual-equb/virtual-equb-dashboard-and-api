@@ -721,6 +721,7 @@ class CbeMiniAppController extends Controller
             ];
             
             $sortedPayload = array_merge(array_flip($orderedKeys), $payload);
+            Log::info('Payload sent to API:', $sortedPayload);
             // ksort($sortedPayload);
             // $finalPayload = http_build_query($sortedPayload);
             // Step 2.5: Sending the final payload
