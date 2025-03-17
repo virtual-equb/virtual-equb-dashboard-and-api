@@ -722,15 +722,23 @@ class CbeMiniAppController extends Controller
             
             $sortedPayload = array_merge(array_flip($orderedKeys), $payload);
             Log::info('Payload sent to API:', $sortedPayload);
+            Log::info('Headers:', [
+                'Authorization' => "Bearer " . $token,
+                'Content-Type' => 'application/json',
+            ]);
             // ksort($sortedPayload);
             // $finalPayload = http_build_query($sortedPayload);
             // Step 2.5: Sending the final payload
-            $response = Http::withOptions(['verify' => false])->withHeaders([
+            $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
                 'Authorization' => "Bearer " . $token,
             ])->post('https://cbebirrpaymentgateway.cbe.com.et:8888/auth/pay', $sortedPayload);
             Log::info('response ' . $response->json('token'));
+            Log::info('CBE API Response:', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
             // Check the response status
             if ($response->status() === 200) {
 
