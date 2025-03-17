@@ -658,7 +658,7 @@ class CbeMiniAppController extends Controller
             $validated = $request->validate([
                 'amount' => 'required|numeric',
                 'equb_id' => 'required|exists:equbs,id',
-                // 'token' => 'required|exists:app_tokens,token',
+                'token' => 'required|exists:app_tokens,token',
                 'phone' => 'required|exists:app_tokens,phone',
             ]);
     
@@ -729,7 +729,7 @@ class CbeMiniAppController extends Controller
                 'Accept' => 'application/json',
                 'Authorization' => "Bearer " . $token,
             ])->post('https://cbebirrpaymentgateway.cbe.com.et:8888/auth/pay', $sortedPayload);
-            Log::info('response ' . $response->json());
+            Log::info('response ' . $response->json('token'));
             // Check the response status
             if ($response->status() === 200) {
 
