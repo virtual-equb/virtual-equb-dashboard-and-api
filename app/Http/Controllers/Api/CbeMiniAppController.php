@@ -724,7 +724,7 @@ class CbeMiniAppController extends Controller
             // ksort($sortedPayload);
             // $finalPayload = http_build_query($sortedPayload);
             // Step 2.5: Sending the final payload
-            $response = Http::withHeaders([
+            $response = Http::withOptions(['verify' => false])->withHeaders([
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
                 'Authorization' => "Bearer " . $token,
