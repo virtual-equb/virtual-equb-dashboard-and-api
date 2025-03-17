@@ -882,7 +882,7 @@ class CbeMiniAppController extends Controller
                 'amount' => $amount,
                 'creadit' => $totalCredit,
                 'balance' => $availableBalance,
-                'payment_type' => 'CBE Gateway',
+                'payment_type' => 'CBE Mini App',
                 'collecter' => $memberId,
                 // 'signature' => $data['signature'],
             ]);
