@@ -658,7 +658,7 @@ class CbeMiniAppController extends Controller
             $validated = $request->validate([
                 'amount' => 'required|numeric',
                 'equb_id' => 'required|exists:equbs,id',
-                'token' => 'required|exists:app_tokens,token',
+                // 'token' => 'required|exists:app_tokens,token',
                 'phone' => 'required|exists:app_tokens,phone',
             ]);
     
