@@ -35,7 +35,6 @@ class CreateOrderService
 
     public function createOrder()
     {
-
         $amount = $this->req->amount;
 
         // Initialize ApplyFabricToken with Telebirr configurations
@@ -55,7 +54,7 @@ class CreateOrderService
 
         // Create the order request
         $createOrderResult = $this->requestCreateOrder($fabricToken, TELEBIRR_TITLE, $amount);
-        // Log::info('Create Order API Response:' . $createOrderResult);
+        Log::info('Create Order API Response:' . $createOrderResult);
 
         // $decodedResult = json_decode($createOrderResult);
         // if (!$decodedResult || !isset($decodedResult->biz_content->prepay_id)) {
@@ -68,11 +67,8 @@ class CreateOrderService
     }
 
     public function requestCreateOrder($fabricToken, $title, $amount)
-
-
     {
-        // Use Laravel's HTTP client to send a POST request
-
+        Log::info('Loged requestCreateOrder before intiation');
 
         try {
             $response = Http::timeout(60)->withHeaders([
@@ -81,22 +77,18 @@ class CreateOrderService
                 'Authorization' => $fabricToken,
             ])->post($this->baseUrl . '/payment/v1/merchant/preOrder', $this->createRequestObject($title, $amount));
             
-            // Log::info('API Response' . $response->body());
+            Log::info('requestCreateOrder API Response' . $response->body());
             return $response->body();
         } catch (Exception $e) {
-            // Log::info('log from requestCreateOrder');
+            Log::info('log from requestCreateOrder');
              return response()->json(['error' => $e->getMessage()], 500);
         }
       
     }
 
-    // Inside your CreateOrderService class
-
     public function createRequestObject($title, $amount)
     {
-
         try {
-            // Create request array
             $req = [
                 'nonce_str' => SignHelper::createNonceStr(),
                 'method' => 'payment.preorder',
@@ -104,7 +96,7 @@ class CreateOrderService
                 'version' => '1.0',
                 'biz_content' => [
                     'notify_url' => $this->notifyPath, // Set your notification URL
-                    'business_type' => 'Servicefee',
+                    'business_type' => 'BuyGoods',
                     'trade_type' => 'Cross-App',
                     'appid' => $this->merchantAppId,
                     'merch_code' => $this->merchantCode,
