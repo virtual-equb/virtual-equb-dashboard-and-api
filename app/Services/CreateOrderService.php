@@ -96,8 +96,6 @@ class CreateOrderService
     {
 
         try {
-            // Log::info('Notify url', $this->notifyPath);
-
             // Create request array
             $req = [
                 'nonce_str' => SignHelper::createNonceStr(),
@@ -106,7 +104,7 @@ class CreateOrderService
                 'version' => '1.0',
                 'biz_content' => [
                     'notify_url' => $this->notifyPath, // Set your notification URL
-                    'business_type' => 'BuyGoods',
+                    'business_type' => 'Servicefee',
                     'trade_type' => 'Cross-App',
                     'appid' => $this->merchantAppId,
                     'merch_code' => $this->merchantCode,

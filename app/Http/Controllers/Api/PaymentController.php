@@ -822,21 +822,16 @@ class PaymentController extends Controller
             ]);
         }
     }
+    
     public function callback(Request $request)
     {
         try {
             Log::info('callback request data', $request->all());
 
             if ($request) {
-                // $public_key = TELEBIRR_PUBLIC_KEY;
-                // $pkey_public = openssl_pkey_get_public($public_key);
-
-                // $dataFromTele = $this->decrypt_RSA($pkey_public, $request->getContent());
-                // $dataObj = json_decode($dataFromTele, true);
                 $merch_order_id = $request['merch_order_id'];
                 $payment = Payment::find($merch_order_id);  // Find the record by ID
                
-
                 if ($request['trade_status'] == 'Completed') {
                     
                     $member = $payment->member_id;
