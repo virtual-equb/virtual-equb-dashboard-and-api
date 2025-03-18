@@ -59,21 +59,21 @@ class CbeMiniAppController extends Controller
     public function cbeDatas(Request $request){
         try {
 
-            // $validated = $request->validate([
-            //     'amount' => 'required|numeric',
-            //     'equb_id' => 'required|exists:equbs,id',
-            //     // 'token' => 'required|exists:app_tokens,token',
-            //     'phone' => 'required|exists:app_tokens,phone',
-            // ]);
-            $amount = 5;
-            $equb_id = 254;
-            $phone = "+251918094455";
+            $validated = $request->validate([
+                'amount' => 'required|numeric',
+                'equb_id' => 'required|exists:equbs,id',
+                // 'token' => 'required|exists:app_tokens,token',
+                'phone' => 'required|exists:app_tokens,phone',
+            ]);
+            // $amount = 5;
+            // $equb_id = 254;
+            // $phone = "+251918094455";
 
 
-            // $phone = AppToken::where('phone', $validated['phone'])->orderBy('created_at', 'desc')->pluck('phone')->first();
+            $phone = AppToken::where('phone', $validated['phone'])->orderBy('created_at', 'desc')->pluck('phone')->first();
             $token = AppToken::where('phone', $phone)->orderBy('created_at', 'desc')->pluck('token')->first();
-            // $equb_id = $validated['equb_id'];
-            // $amount = $validated['amount'];
+            $equb_id = $validated['equb_id'];
+            $amount = $validated['amount'];
 
             // $equb = Equb::with('equbType')->whereHas('member', function ($query) use ($phone) {
             //     $query->where('phone', $phone);
