@@ -48,6 +48,7 @@ use App\Http\Middleware\LogUserActionMiddleware;
 */
 
 // Route::get('/cbe-payment', [CbeMiniAppController::class, 'index']);
+Route::post('/cbe-payment-data', [CbeMiniAppController::class, 'cbeDatas']);
 Route::get('/validate-token', [CbeMiniAppController::class, 'validateToken']);
 Route::post('/registermember', [CbeMiniAppController::class, 'register']);
 Route::post('/loginmember', [CbeMiniAppController::class, 'login']);
