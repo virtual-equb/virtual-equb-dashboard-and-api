@@ -113,19 +113,6 @@ class CbeMiniAppController extends Controller
         }
         
     }
-    public function returnUrl() {
-        try {
-
-            return response()->json([
-                route('cbe.payment')
-            ]);
-
-        } catch (Exception $ex) {
-            return response()->json([
-                'error' => $ex->getMessage()
-            ], 500);
-        }
-    }
     public function register(Request $request) {
         try {
             
