@@ -91,7 +91,8 @@ class CbeMiniAppController extends Controller
                 'phone' => $phone,
                 'equb' => $equb,
                 'amount' => $amount,
-                'error' => ''
+                'error' => '',
+                'url' => route('cbe.payment')
             ]);
 
             // **Return JSON response for the mobile app**
@@ -102,7 +103,8 @@ class CbeMiniAppController extends Controller
             }
 
             // **If it's a normal web request, return the Blade view**
-            return $view;
+            // return $view;
+            return response($view)->header('X-URL', route('cbe.payment'));
             
 
             
@@ -112,19 +114,6 @@ class CbeMiniAppController extends Controller
             ], 500);
         }
         
-    }
-    public function returnUrl() {
-        try {
-
-            return response()->json([
-                route('cbe.payment')
-            ]);
-
-        } catch (Exception $ex) {
-            return response()->json([
-                'error' => $ex->getMessage()
-            ], 500);
-        }
     }
     public function register(Request $request) {
         try {
