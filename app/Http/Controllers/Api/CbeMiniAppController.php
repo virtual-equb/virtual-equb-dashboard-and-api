@@ -29,6 +29,7 @@ use App\Repositories\Member\IMemberRepository;
 use App\Repositories\Payment\IPaymentRepository;
 use App\Repositories\EqubTaker\IEqubTakerRepository;
 use App\Repositories\ActivityLog\IActivityLogRepository;
+use Illuminate\Console\View\Components\Alert;
 
 class CbeMiniAppController extends Controller
 {
@@ -55,8 +56,75 @@ class CbeMiniAppController extends Controller
         $this->userRepository = $userRepository;
 
     }
-    public function index(){
-        return view('cbe_payment');
+    public function cbeDatas(Request $request){
+        try {
+
+            $validated = $request->validate([
+                'amount' => 'required|numeric',
+                'equb_id' => 'required|exists:equbs,id',
+                // 'token' => 'required|exists:app_tokens,token',
+                'phone' => 'required|exists:app_tokens,phone',
+            ]);
+
+            $phone = AppToken::where('phone', $validated['phone'])->orderBy('created_at', 'desc')->pluck('phone')->first();
+            $token = AppToken::where('phone', $validated['phone'])->orderBy('created_at', 'desc')->pluck('token')->first();
+            $equb_id = $validated['equb_id'];
+            $amount = $validated['amount'];
+
+            // $equb = Equb::with('equbType')->whereHas('member', function ($query) use ($phone) {
+            //     $query->where('phone', $phone);
+            // })->get();
+
+            // if ($equb->count() === 0) {
+            //     return view('cbe_payment', [
+            //         'token' => $token,
+            //         'phone' => $phone,
+            //         'equbs' => [],
+            //         'error' => 'No equb found for the user'
+            //     ]);
+            // }
+            $equb = Equb::with('equbType')->where('id', $equb_id)->first();
+
+            // **Render the Blade view with the required data**
+            $view = view('cbe_payment', [
+                'token' => $token,
+                'phone' => $phone,
+                'equb' => $equb,
+                'amount' => $amount,
+                'error' => ''
+            ]);
+
+            // **Return JSON response for the mobile app**
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'url' => route('cbe.payment'), // Return the route of the view
+                ]);
+            }
+
+            // **If it's a normal web request, return the Blade view**
+            return $view;
+            
+
+            
+        } catch (Exception $ex) {
+            return response()->json([
+                'error' => $ex->getMessage()
+            ], 500);
+        }
+        
+    }
+    public function returnUrl() {
+        try {
+
+            return response()->json([
+                route('cbe.payment')
+            ]);
+
+        } catch (Exception $ex) {
+            return response()->json([
+                'error' => $ex->getMessage()
+            ], 500);
+        }
     }
     public function register(Request $request) {
         try {
@@ -661,6 +729,7 @@ class CbeMiniAppController extends Controller
                 // 'token' => 'required|exists:app_tokens,token',
                 'phone' => 'required|exists:app_tokens,phone',
             ]);
+            Log::info($validated);
     
             $transactionId = uniqid(); // Generate unique transaction ID
             $transactionTime = now()->toIso8601String(); // Get current timestamp in ISO8601 format

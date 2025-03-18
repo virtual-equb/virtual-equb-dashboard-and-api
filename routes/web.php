@@ -50,7 +50,8 @@ Route::get('/roles/{roleId}/assign-permission', [WebRoleController::class, 'assi
 Route::put('/roles/{roleId}/assign-permission', [WebRoleController::class, 'updateRolePermission']);
 
 // mini app
-Route::get('/cbe-payment', [CbeMiniAppController::class, 'index']);
+Route::post('/cbe-payment-data', [CbeMiniAppController::class, 'cbeDatas'])->name('cbeDatas');
+Route::get('/cbe-payment', [CbeMiniAppController::class, 'cbeDatas'])->name('cbe.payment');
 Route::get('/validate-token', [CbeMiniAppController::class, 'validateToken']);
 Route::post('/process-payment', [CbeMiniAppController::class, 'processPayment'])->name('cbe.initialize');
 // Route::post('/callback', [CbeMiniAppController::class, 'paymentCallback'])->name('cbe.callback');

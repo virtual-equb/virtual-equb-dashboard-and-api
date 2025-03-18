@@ -83,7 +83,7 @@
         @if (empty($error))
         <form id="cbePaymentForm" action="{{ route('cbe.initialize') }}" method="POST">
             @csrf
-            <label for="equb">Select Equb:</label>
+            {{-- <label for="equb">Select Equb:</label>
             <select name="equb_id" id="equb" required>
                 <option value="">Select an Equb</option>
                 @foreach ($equbs as $item)
@@ -91,9 +91,15 @@
                         {{ $item->equbType->name }}, {{ $item->amount }} {{'ETB'}}
                     </option>
                 @endforeach
-            </select>
+            </select> --}}
+            <label for="equb">Equb:</label>
+            <input type="text" name="equb_name" id="equb" value="{{ $equb->equbType->name }}" readonly>
+
+            <input type="hidden" name="equb_id" value="{{ $equb->id }}">
+            {{-- <label for="amount">Amount:</label>
+            <input type="number" name="amount" id="amount" placeholder="Enter amount (ETB)" required> --}}
             <label for="amount">Amount:</label>
-            <input type="number" name="amount" id="amount" placeholder="Enter amount (ETB)" required>
+            <input type="number" name="amount" id="amount" value="{{ $amount }}" readonly>
 
             {{-- <label for="tillCode">Till Code:</label>
             <input type="text" name="tillCode" id="tillCode" value="4002415" readonly>
@@ -101,7 +107,7 @@
             <!-- Hidden input for token -->
             <input type="hidden" name="token" id="token" value="{{ $token }}">
             <input type="hidden" name="phone" value="{{ $phone }}">
-            <button type="submit">Pay Now</button>
+            <button type="submit">Confirm & Pay</button>
         </form>
         @endif
 
