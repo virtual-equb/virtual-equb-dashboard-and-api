@@ -104,7 +104,6 @@ class CreateOrderService
                 'version' => '1.0',
                 'biz_content' => [
                     'notify_url' => $this->notifyPath, // Set your notification URL
-                    'business_type' => 'BuyGoods',
                     'business_type' => 'Servicefee',
                     'trade_type' => 'Cross-App',
                     'appid' => $this->merchantAppId,
