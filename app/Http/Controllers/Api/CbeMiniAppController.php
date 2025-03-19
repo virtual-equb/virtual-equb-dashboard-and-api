@@ -65,9 +65,13 @@ class CbeMiniAppController extends Controller
                 // 'token' => 'required|exists:app_tokens,token',
                 'phone' => 'required|exists:app_tokens,phone',
             ]);
+            // $amount = 5;
+            // $equb_id = 254;
+            // $phone = "+251918094455";
+
 
             $phone = AppToken::where('phone', $validated['phone'])->orderBy('created_at', 'desc')->pluck('phone')->first();
-            $token = AppToken::where('phone', $validated['phone'])->orderBy('created_at', 'desc')->pluck('token')->first();
+            $token = AppToken::where('phone', $phone)->orderBy('created_at', 'desc')->pluck('token')->first();
             $equb_id = $validated['equb_id'];
             $amount = $validated['amount'];
 
@@ -96,11 +100,11 @@ class CbeMiniAppController extends Controller
             ]);
 
             // **Return JSON response for the mobile app**
-            if ($request->wantsJson()) {
-                return response()->json([
-                    'url' => route('cbe.payment'), // Return the route of the view
-                ]);
-            }
+            // if ($request->wantsJson()) {
+            //     return response()->json([
+            //         'url' => route('cbe.payment'), // Return the route of the view
+            //     ]);
+            // }
 
             // **If it's a normal web request, return the Blade view**
             // return $view;
@@ -639,11 +643,11 @@ class CbeMiniAppController extends Controller
     public function validateToken(Request $request)
     {
         try {
-            // $token = $request->header('Authorization');
+            $token = $request->header('Authorization');
             // $token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjI1MTkxODA5NDQ1NSIsImV4cCI6MTczODYzMjEzMH0.cN95szHJNoJwp8tdtpDOk29vPmQeVoYP8dbKFBFy4_M";
             // $token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjI1MTkxODA5NDQ1NSIsImV4cCI6MTczODI3OTU0NH0.8NrfTbeErIXyin-PH0Vgvnkq4-q2TeVvQz4P3FtBqZU";
             // $token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjI1MTkxODA5NDQ1NSIsImV4cCI6MTc0MzA0MjQxNn0.d3keyZuG0FCQpRVolicjFIgbiSqmSRywJGf4spseeeA";
-            $token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjI1MTkxODA5NDQ1NSIsImV4cCI6MTc0NTM2NTMxNX0.FovGa2KY6PXdgfva0OlldWcs3Yv9fQfF9mgLUEr3CcY";
+            // $token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjI1MTkxODA5NDQ1NSIsImV4cCI6MTc0NTM2NTMxNX0.FovGa2KY6PXdgfva0OlldWcs3Yv9fQfF9mgLUEr3CcY";
             Log::info('mini app Token', ['token' => $token]);
             // dd($token);
             if (!$token) {
@@ -718,7 +722,7 @@ class CbeMiniAppController extends Controller
                 // 'token' => 'required|exists:app_tokens,token',
                 'phone' => 'required|exists:app_tokens,phone',
             ]);
-            Log::info($validated);
+            // Log::info('datas', $validated);
     
             $transactionId = uniqid(); // Generate unique transaction ID
             $transactionTime = now()->toIso8601String(); // Get current timestamp in ISO8601 format
