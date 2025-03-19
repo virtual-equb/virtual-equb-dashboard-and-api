@@ -20,6 +20,7 @@
         "opcodesio/log-viewer": "^3.12",
         "phpseclib/phpseclib": "^3.0",
         "predis/predis": "^2.3",
+        "pusher/pusher-php-server": "^7.2",
         "spatie/laravel-permission": "*",
         "tymon/jwt-auth": "^1.0"
     },

@@ -19,6 +19,7 @@ use App\Repositories\Member\IMemberRepository;
 use App\Repositories\Payment\IPaymentRepository;
 use App\Repositories\EqubTaker\IEqubTakerRepository;
 use App\Repositories\ActivityLog\IActivityLogRepository;
+use App\Events\TelebirrPaymentStatusUpdated;
 
 /**
  * @group Payments
@@ -979,6 +980,15 @@ class PaymentController extends Controller
                         ];
                         $ekubStatusUpdate = $this->equbRepository->update($equb_id, $ekubStatus);
                     }
+
+                    try {
+                        Log::info('Payment status update event fired');
+                        event(new TelebirrPaymentStatusUpdated($payment));
+                    } catch (\Exception $e) {
+                        // Log the error, but don't block the transaction
+                        Log::error('Error broadcasting TelebirrPaymentStatusUpdated event: ' . $e->getMessage());
+                    }
+
                     return response()->json([
                         'code' => 200,
                         'message' => 'You have succesfully paid!'
