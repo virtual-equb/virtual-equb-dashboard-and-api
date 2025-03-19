@@ -19,6 +19,7 @@ use App\Repositories\Member\IMemberRepository;
 use App\Repositories\Payment\IPaymentRepository;
 use App\Repositories\EqubTaker\IEqubTakerRepository;
 use App\Repositories\ActivityLog\IActivityLogRepository;
+use App\Events\TelebirrPaymentStatusUpdated;
 
 /**
  * @group Payments
@@ -822,26 +823,16 @@ class PaymentController extends Controller
             ]);
         }
     }
+    
     public function callback(Request $request)
     {
         try {
-            // Log::info('callback request datas', $request->all());
-            
-            // return response()->json([
-            //             'code' => 200,
-            //             'message' => 'success'
-            //         ], 200);
+            Log::info('callback request data', $request->all());
 
             if ($request) {
-                // $public_key = TELEBIRR_PUBLIC_KEY;
-                // $pkey_public = openssl_pkey_get_public($public_key);
-
-                // $dataFromTele = $this->decrypt_RSA($pkey_public, $request->getContent());
-                // $dataObj = json_decode($dataFromTele, true);
                 $merch_order_id = $request['merch_order_id'];
                 $payment = Payment::find($merch_order_id);  // Find the record by ID
                
-
                 if ($request['trade_status'] == 'Completed') {
                     
                     $member = $payment->member_id;
@@ -989,6 +980,15 @@ class PaymentController extends Controller
                         ];
                         $ekubStatusUpdate = $this->equbRepository->update($equb_id, $ekubStatus);
                     }
+
+                    try {
+                        Log::info('Payment status update event fired');
+                        event(new TelebirrPaymentStatusUpdated($payment));
+                    } catch (\Exception $e) {
+                        // Log the error, but don't block the transaction
+                        Log::error('Error broadcasting TelebirrPaymentStatusUpdated event: ' . $e->getMessage());
+                    }
+
                     return response()->json([
                         'code' => 200,
                         'message' => 'You have succesfully paid!'
