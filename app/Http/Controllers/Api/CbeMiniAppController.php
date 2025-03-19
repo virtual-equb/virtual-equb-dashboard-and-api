@@ -814,7 +814,7 @@ class CbeMiniAppController extends Controller
                     'collecter' => $member->id,
                     'signature' => $signature,
                 ]);
-
+                Log::info('Response body:', [$response->body()]);
                 return response()->json(['status' => 'success', 'token' => $response->json('token'), 'signature' => $signature], 200);
             } else {
                 Log::error('CBE API Error:', ['response' => $response->json()]);
