@@ -94,6 +94,14 @@ class PaymentController extends Controller
                     return redirect()->back()->with('error', 'Payment processing failed: The Equb is currently not in active status.');
                 }
 
+                $totalEqubAmountToPay = $this->equbRepository->getTotalEqubAmount($equb_id);
+                $totalPaidAmount = $this->paymentRepository->getTotalPaid($equb_id);
+                $remainingAmountToPay = $totalEqubAmountToPay - $totalPaidAmount;
+
+                if ($amount > $remainingAmountToPay) {
+                    return redirect()->back()->with('error', 'Payment processing failed: You cannot pay more than the required total amount for this Equb.');
+                }
+
                 if ($credit <= 0) {
                     $credit = 0;
                 }

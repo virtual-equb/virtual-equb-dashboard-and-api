@@ -760,6 +760,17 @@ class PaymentController extends Controller
                     'message' => 'Payment processing failed: The Equb is currently not in active status.',
                 ]);
             }
+
+            $totalEqubAmountToPay = $this->equbRepository->getTotalEqubAmount($equb_id);
+            $totalPaidAmount = $this->paymentRepository->getTotalPaid($equb_id);
+            $remainingAmountToPay = $totalEqubAmountToPay - $totalPaidAmount;
+
+            if ($amount > $remainingAmountToPay) {
+                return response()->json([
+                    'code' => 500,
+                    'message' => 'Payment processing failed: You cannot pay more than the required total amount for this Equb.',
+                ]);
+            }
         
             $paymentData = [
                 'member_id' => $memberData->id,
