@@ -739,9 +739,7 @@ class PaymentController extends Controller
     public function initialize(Request $request)
     {
         try {
-            // return $request->all();
             $req = $request->all();
-            // Log::info('from initialize' $req);
             $user = Auth::user();
             $userId = $user->id;
 
@@ -993,7 +991,6 @@ class PaymentController extends Controller
                     }
 
                     try {
-                        Log::info('Payment status update event fired');
                         event(new TelebirrPaymentStatusUpdated($payment));
                     } catch (\Exception $e) {
                         // Log the error, but don't block the transaction
