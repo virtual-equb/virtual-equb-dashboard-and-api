@@ -33,8 +33,6 @@ class TelebirrPaymentStatusUpdated implements ShouldBroadcast
 
     public function broadcastWith()
     {
-        Log::info('Payment status update event fired');
-
         return [
             'payment_id' => $this->payment->id,
             'member_id' => $this->payment->member_id,
