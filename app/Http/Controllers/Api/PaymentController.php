@@ -850,14 +850,15 @@ class PaymentController extends Controller
                     $paymentType = $payment->payment_type;
 
                     $equbAmount = $this->equbRepository->getEqubAmount($member, $equb_id);
-
+                    $totalCredit = $this->paymentRepository->getTotalCreditAPI($equb_id) ?? 0;
+                    $availableBalance = $this->paymentRepository->getTotalBalanceAPI($equb_id) ?? 0;
                     $credit = $equbAmount-$amount;
 
                     if ($credit <= 0) {
                         $credit = 0;
                     }
                     
-                    $totalCredit = $this->paymentRepository->getTotalCreditAPI($equb_id);
+                    
                     if ($totalCredit == null) {
                         $totalCredit = 0;
                     }
@@ -870,7 +871,7 @@ class PaymentController extends Controller
                     $totalCredit = $credit + $totalCredit;
                     $tc = $totalCredit;
                 
-                    $availableBalance = $this->paymentRepository->getTotalBalanceAPI($equb_id);
+                    
                     if ($availableBalance == null) {
                         $availableBalance = 0;
                     }
