@@ -130,6 +130,7 @@ class PaymentController extends Controller
                 }
                 $at = $amount;
                 $amount = $availableBalance + $amount;
+
                 if ($amount > $equbAmount) {
                     if ($totalCredit > 0) {
                         if ($totalCredit < $amount) {
@@ -138,9 +139,8 @@ class PaymentController extends Controller
                                 $totalCredit = 0;
                             } elseif ($at > $equbAmount) {
                                 $diff = $at - $equbAmount;
-                                $totalCredit = $totalCredit - $diff;
-                                $availableBalance = $availableBalance + $diff - $tc;
-                                $totalCredit = 0;
+                                $totalCredit = max (0, $lastTc - $diff);
+                                $availableBalance = max(0, $availableBalance + $diff - $lastTc);
                             } elseif ($at = $equbAmount) {
                                 $availableBalance = $availableBalance;
                             }

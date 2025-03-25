@@ -889,9 +889,8 @@ class PaymentController extends Controller
                                     $totalCredit = 0;
                                 } elseif ($at > $equbAmount) {
                                     $diff = $at - $equbAmount;
-                                    $totalCredit = $totalCredit - $diff;
-                                    $availableBalance = $availableBalance + $diff - $tc;
-                                    $totalCredit = 0;
+                                    $totalCredit = max (0, $lastTc - $diff);
+                                    $availableBalance = max(0, $availableBalance + $diff - $lastTc);
                                 } elseif ($at = $equbAmount) {
                                     $availableBalance = $availableBalance;
                                 }
@@ -929,7 +928,6 @@ class PaymentController extends Controller
                             $amount = $at;
                         }
                     }
-
 
                     $memberData = Member::where('id', $member)->first();
                     $collector = User::where('name', 'telebirr')->first();
@@ -1017,6 +1015,7 @@ class PaymentController extends Controller
             ]);
         }
     }
+
     public function callback1(Request $request)
     {
         try {
