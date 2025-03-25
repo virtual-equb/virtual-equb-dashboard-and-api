@@ -890,6 +890,7 @@ class PaymentController extends Controller
                                     $totalCredit = 0;
                                 } elseif ($at > $equbAmount) {
                                     $diff = $at - $equbAmount;
+                                    //RECENT CODE FIX - REGARDING CREDIT AND BALANCE CALCULATION
                                     $totalCredit = max (0, $lastTc - $diff);
                                     $availableBalance = max(0, $availableBalance + $diff - $lastTc);
                                 } elseif ($at = $equbAmount) {
