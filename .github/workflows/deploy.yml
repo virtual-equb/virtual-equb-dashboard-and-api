@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main  # Specify the target branch for deployment
+      - dev   # Deploy to staging
 
 jobs:
   deploy:
@@ -16,7 +17,8 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
 
-      - name: FTP Deploy
+      - name: FTP Deploy to Staging (dev branch)
+        if: github.ref == 'refs/heads/dev'
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ftp.virtualekubdash.com                     # FTP server address
@@ -24,4 +26,15 @@ jobs:
           password: 'EFZN63l]bgUE'                            # Hard-coded FTP password
           protocol: ftp                                       # Use 'ftp' or 'ftps' as needed
           local-dir: ./                                       # Directory containing files to deploy
-         
+          server-dir: /Staging/                               # Directory for production
+
+      - name: FTP Deploy to Production (main branch)
+        if: github.ref == 'refs/heads/main'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ftp.virtualekubdash.com                     # FTP server address
+          username: main@virtualekubdash.com                  # Full FTP username
+          password: 'EFZN63l]bgUE'                            # Hard-coded FTP password
+          protocol: ftp                                       # Use 'ftp' or 'ftps' as needed
+          local-dir: ./                                       # Directory containing files to deploy
+          server-dir: /public_html/                           # Directory for production
