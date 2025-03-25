@@ -21,9 +21,9 @@ jobs:
         if: github.ref == 'refs/heads/dev'
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ftp.mikiyas.com                             # FTP server address
-          username: staging@staging.mikiyas.com               # Full FTP username
-          password: 'neHB$@asdfsdf;9U'                        # Hard-coded FTP password
+          server: ftp.virtualekubdash.com                     # FTP server address
+          username: staging@staging.virtualekubdash.com       # Full FTP username
+          password: 'neHB$@h5p;9U'                            # Hard-coded FTP password
           protocol: ftp                                       # Use 'ftp' or 'ftps' as needed
           local-dir: ./                                       # Directory containing files to deploy
 
