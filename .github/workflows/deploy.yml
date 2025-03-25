@@ -22,11 +22,11 @@ jobs:
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ftp.virtualekubdash.com                     # FTP server address
-          username: main@virtualekubdash.com                  # Full FTP username
-          password: 'EFZN63l]bgUE'                            # Hard-coded FTP password
+          username: staging@staging.virtualekubdash.com       # Full FTP username
+          password: 'neHB$@h5p;9U'                            # Hard-coded FTP password
           protocol: ftp                                       # Use 'ftp' or 'ftps' as needed
           local-dir: ./                                       # Directory containing files to deploy
-          server-dir: /home/virtuada/Staging/                 # Directory for production
+          server-dir: /Staging/                               # Directory for production
 
       - name: FTP Deploy to Production (main branch)
         if: github.ref == 'refs/heads/main'
