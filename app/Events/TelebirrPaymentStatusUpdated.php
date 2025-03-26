@@ -3,12 +3,12 @@
 namespace App\Events;
 
 use App\Models\Payment;
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-
+use Illuminate\Support\Facades\Log;
 
 class TelebirrPaymentStatusUpdated implements ShouldBroadcast
 {
@@ -23,12 +23,12 @@ class TelebirrPaymentStatusUpdated implements ShouldBroadcast
 
     public function broadcastOn()
     {
-        return new PrivateChannel('member.' . $this->payment->member_id);
+        return new PrivateChannel('user.' . $this->payment->member_id);
     }
 
     public function broadcastAs()
     {
-        return 'status-updated';
+        return 'telebirr-transaction-status-updated';
     }
 
     public function broadcastWith()
@@ -39,7 +39,7 @@ class TelebirrPaymentStatusUpdated implements ShouldBroadcast
             'equb_id' => $this->payment->equb_id,
             'status' => $this->payment->status,
             'amount' => $this->payment->amount,
-            'message' => 'Payment status updated',
+            'message' => 'Telebirr payment status updated ',
         ];
     }
 }

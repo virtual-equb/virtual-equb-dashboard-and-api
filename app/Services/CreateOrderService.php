@@ -68,8 +68,6 @@ class CreateOrderService
 
     public function requestCreateOrder($fabricToken, $title, $amount)
     {
-        Log::info('Loged requestCreateOrder before intiation');
-
         try {
             $response = Http::timeout(60)->withHeaders([
                 'Content-Type' => 'application/json',
