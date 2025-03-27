@@ -739,9 +739,7 @@ class PaymentController extends Controller
     public function initialize(Request $request)
     {
         try {
-            // return $request->all();
             $req = $request->all();
-            // Log::info('from initialize' $req);
             $user = Auth::user();
             $userId = $user->id;
 
@@ -758,6 +756,17 @@ class PaymentController extends Controller
                 return response()->json([
                     'code' => 500,
                     'message' => 'Payment processing failed: The Equb is currently not in active status.',
+                ]);
+            }
+
+            $totalEqubAmountToPay = $this->equbRepository->getTotalEqubAmount($equb_id);
+            $totalPaidAmount = $this->paymentRepository->getTotalPaid($equb_id);
+            $remainingAmountToPay = $totalEqubAmountToPay - $totalPaidAmount;
+
+            if ($amount > $remainingAmountToPay) {
+                return response()->json([
+                    'code' => 500,
+                    'message' => 'Payment processing failed: You cannot pay more than the required total amount for this Equb.',
                 ]);
             }
         
@@ -881,9 +890,9 @@ class PaymentController extends Controller
                                     $totalCredit = 0;
                                 } elseif ($at > $equbAmount) {
                                     $diff = $at - $equbAmount;
-                                    $totalCredit = $totalCredit - $diff;
-                                    $availableBalance = $availableBalance + $diff - $tc;
-                                    $totalCredit = 0;
+                                    //RECENT CODE FIX - REGARDING CREDIT AND BALANCE CALCULATION
+                                    $totalCredit = max (0, $lastTc - $diff);
+                                    $availableBalance = max(0, $availableBalance + $diff - $lastTc);
                                 } elseif ($at = $equbAmount) {
                                     $availableBalance = $availableBalance;
                                 }
@@ -921,7 +930,6 @@ class PaymentController extends Controller
                             $amount = $at;
                         }
                     }
-
 
                     $memberData = Member::where('id', $member)->first();
                     $collector = User::where('name', 'telebirr')->first();
@@ -983,7 +991,6 @@ class PaymentController extends Controller
                     }
 
                     try {
-                        Log::info('Payment status update event fired');
                         event(new TelebirrPaymentStatusUpdated($payment));
                     } catch (\Exception $e) {
                         // Log the error, but don't block the transaction
@@ -1096,6 +1103,7 @@ class PaymentController extends Controller
             ]);
         }
     }
+
     public function callback1(Request $request)
     {
         try {
