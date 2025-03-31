@@ -7,7 +7,7 @@ use Carbon\Carbon;
 use App\Models\Payment;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\Facades\Cache;
 
 class PaymentRepository implements IPaymentRepository
 {
@@ -21,11 +21,12 @@ class PaymentRepository implements IPaymentRepository
 
     public function getRecentPayments($limit = 50)
     {
-        return $this->model
-            ->with(['member', 'equb.equbType'])
-            ->orderByDesc('created_at')
-            ->limit($limit)
-            ->get();
+        return Cache::remember('recent_payments', 60, function () use ($limit) {
+            return $this->model
+                ->with(['member', 'equb.equbType'])
+                ->orderByDesc('created_at')
+                ->paginate($limit);
+        });
     }
 
     public function getPaymentsByMember($memberId)

@@ -9,6 +9,7 @@ use App\Models\Payment;
 use App\Models\EqubType;
 use App\Models\LotteryWinner;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class EqubRepository implements IEqubRepository
 {
@@ -328,10 +329,12 @@ class EqubRepository implements IEqubRepository
 
     public function getAllWithPagination($limit = 50)
     {
-        return $this->model
-            ->with(['equbType.mainEqub', 'payments'])
-            ->orderBy('created_at', 'desc')
-            ->paginate($limit);
+        return Cache::remember('equbs_page_' . request('page', 1), 60, function () use ($limit) {
+            return $this->model
+                ->with(['equbType.mainEqub', 'payments'])
+                ->orderBy('created_at', 'desc')
+                ->paginate($limit);
+        });
     }
 
     public function getByDate($dateFrom, $dateTo, $equbType, $offset)
