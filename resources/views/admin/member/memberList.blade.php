@@ -88,15 +88,7 @@
                     width: 100%;
                 }
             }
-
-            /*@media (max-width: 768px) {
-                                                                                                                                                                                                                                                                                              .col-md-6 {
-                                                                                                                                                                                                                                                                                               width: 100%;
-                                                                                                                                                                                                                                                                                               padding-left: 0px;
-                                                                                                                                                                                                                                                                                               padding-right: 0px;
-                                                                                                                                                                                                                                                                                               float: left;
-                                                                                                                                                                                                                                                                                              }
-                                                                                                                                                                                                                                                                                            }*/
+                                                                                                                                                                                                                                                                               }*/
             @media (max-width: 575.98px) {
                 #payment-list-table_in_tab {
                     display: block;
@@ -247,21 +239,6 @@
     @endsection
     @section('scripts')
         <script>
-            // function updateMembersCount() {
-            //     // Send an Ajax request to fetch the updated members count
-            //     fetch('/member/countPendingMembers')
-            //         .then(response => response.json())
-            //         .then(data => {
-            //             const membersCount = data;
-            //             console.log("ðŸš€ ~ updateMembersCount ~ membersCount:", membersCount)
-            //             // Update the count element with the new count
-            //             document.getElementById('members-count').textContent = membersCount;
-            //         })
-            //         .catch(error => {
-            //             console.error('Error occurred while fetching members count:', error);
-            //         });
-            // }
-            // updateMembersCount();
             var memberSearchField = document.getElementById('memberSearchText');
             memberSearchField.addEventListener("keydown", function(e) {
                 var memberSearchInput = memberSearchField.value;
@@ -309,7 +286,6 @@
             });
 
             function searchForStatus(searchInput) {
-                // console.log("ðŸš€ ~ file: memberList.blade.php:274 ~ searchForEqub ~ searchInput:", searchInput)
                 if (searchInput != "") {
                     $.ajax({
                         url: "{{ url('member/search-status') }}" + '/' + searchInput + '/0',
@@ -348,7 +324,6 @@
             });
 
             function searchForEqub(searchInput) {
-                // console.log("ðŸš€ ~ file: memberList.blade.php:274 ~ searchForEqub ~ searchInput:", searchInput)
                 if (searchInput != "") {
                     $.ajax({
                         url: "{{ url('member/search-equb') }}" + '/' + searchInput + '/0',
@@ -407,7 +382,6 @@
                     }
                 });
             }
-            // members(0, 1);
 
             function validateForm() {
                 let lottery_date = document.getElementById('lottery_date').value;
@@ -531,21 +505,6 @@
                 $('#openPayLotteryModal').modal('show');
                 $('#payLottery').attr('action', 'equbTaker/equbTaker-change-status/paid/' + $('#lottery_id_pay').val())
             }
-            // $("#deleteEqub").submit(function() {
-            //     $.LoadingOverlay("show");
-            // });
-            // $("#updateEqub").submit(function() {
-            //     $.LoadingOverlay("show");
-            // });
-            // $("#addEqub").submit(function() {
-            //     $.LoadingOverlay("show");
-            // });
-            // $("#updateLotteryPayment").submit(function() {
-            //     $.LoadingOverlay("show");
-            // });
-            // $("#deletePayment").submit(function() {
-            //     $.LoadingOverlay("show");
-            // });
 
             function openEqubDeleteModal(item) {
                 $('#equb_id').val(item.id);
@@ -555,61 +514,62 @@
 
            
             function openEditModal(item) {
-    $('#m_id').val(item.id);
-    $('#editMemberModal').modal('show');
-    $('#update_full_name').val(item.full_name);
-    $('#update_phone').val(item.phone);
-    $('#update_email').val(item.email);
-    $('#update_woreda').val(item.woreda);
-    $('#update_location').val(item.specific_location);
-    $('#update_housenumber').val(item.house_number);
-    $('#update_gender > option[value="' + item.gender + '"]').prop('selected', true);
-    
-    // Set the selected city
-    $('#select-city > option[value="' + item.city + '"]').prop('selected', true);
+                $('#m_id').val(item.id);
+                $('#editMemberModal').modal('show');
+                $('#update_full_name').val(item.full_name);
+                $('#update_phone').val(item.phone);
+                $('#update_email').val(item.email);
+                $('#update_woreda').val(item.woreda);
+                $('#update_location').val(item.specific_location);
+                $('#update_housenumber').val(item.house_number);
+                $('#update_gender > option[value="' + item.gender + '"]').prop('selected', true);
+                
+                // Set the selected city
+                $('#select-city > option[value="' + item.city + '"]').prop('selected', true);
 
-    // Fetch sub-cities based on the selected city
-    var cityId = item.city; // Assuming item.city contains the city ID
-    $('#subcity').empty().append('<option value="">Select Sub-City</option>');
-    $('#addSubcity').hide();
+                // Fetch sub-cities based on the selected city
+                var cityId = item.city; // Assuming item.city contains the city ID
+                $('#subcity').empty().append('<option value="">Select Sub-City</option>');
+                $('#addSubcity').hide();
 
-    if (cityId) {
-        $.ajax({
-            url: '/subcities/city/' + encodeURIComponent(cityId),
-            type: 'GET',
-            dataType: 'json',
-            success: function(data) {
-                if (data.length > 0) {
-                    $.each(data, function(index, subcity) {
-                        $('#subcity').append('<option value="' + subcity.id + '">' + subcity.name + '</option>');
+                if (cityId) {
+                    $.ajax({
+                        url: '/subcities/city/' + encodeURIComponent(cityId),
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            if (data.length > 0) {
+                                $.each(data, function(index, subcity) {
+                                    $('#subcity').append('<option value="' + subcity.id + '">' + subcity.name + '</option>');
+                                });
+                                // Set the default sub-city based on the item data
+                                if (item.subcity) { // Assuming item.subcity contains the sub-city ID
+                                    $('#subcity > option[value="' + item.subcity + '"]').prop('selected', true);
+                                }
+                                $('#addSubcity').show();
+                            } else {
+                                $('#addSubcity').hide();
+                            }
+                        },
+                        error: function() {
+                            alert('Failed to retrieve sub-cities.');
+                            $('#addSubcity').hide();
+                        }
                     });
-                    // Set the default sub-city based on the item data
-                    if (item.subcity) { // Assuming item.subcity contains the sub-city ID
-                        $('#subcity > option[value="' + item.subcity + '"]').prop('selected', true);
-                    }
-                    $('#addSubcity').show();
                 } else {
                     $('#addSubcity').hide();
                 }
-            },
-            error: function() {
-                alert('Failed to retrieve sub-cities.');
-                $('#addSubcity').hide();
+
+                // Set the profile picture preview dynamically
+                if (item.profile_photo_path) {
+                    $('#profilePicPreview').attr('src', '{{ asset('storage') }}/' + item.profile_photo_path);
+                } else {
+                    $('#profilePicPreview').attr('src', '{{ asset('storage/profile_pictures/default.png') }}'); // Default image path
+                }
+
+                $('#updateMember').attr('action', 'member/update/' + $('#m_id').val());
             }
-        });
-    } else {
-        $('#addSubcity').hide();
-    }
 
-    // Set the profile picture preview dynamically
-    if (item.profile_photo_path) {
-        $('#profilePicPreview').attr('src', '{{ asset('storage') }}/' + item.profile_photo_path);
-    } else {
-        $('#profilePicPreview').attr('src', '{{ asset('storage/profile_pictures/default.png') }}'); // Default image path
-    }
-
-    $('#updateMember').attr('action', 'member/update/' + $('#m_id').val());
-}
             function openRateModal(item) {
                 console.log("ðŸš€ ~ file: memberList.blade.php:495 ~ openRateModal ~ item:", item)
                 // var addressObject = JSON.parse(item.address);
@@ -1034,19 +994,6 @@
                     $('#total_amount').val(expectedTotal);
                     timelineInput.options[0].selected = true;
                 });
-                // $("#end_date").datetimepicker({
-                //     'format': "YYYY-MM-DD",
-                // }).on('dp.change', function(e) {
-                //     let amount = document.getElementById('amount_per_day').value;
-                //     let startdate = document.getElementById('start_date').value;
-                //     let enddate = document.getElementById('end_date').value;
-                //     startdate = new Date(startdate);
-                //     enddate = new Date(enddate);
-                //     let dateDiff = parseInt((enddate - startdate) / (1000 * 60 * 60 * 24), 10);
-                //     var expectedTotal = dateDiff * amount;
-                //     // console.log(expectedTotal);
-                //     $('#total_amount').val(expectedTotal);
-                // });
 
                 var datePickerOptions = {
                     format: 'yyyy-mm-dd',
@@ -1056,37 +1003,37 @@
                 };
                 $("#lottery_date").datepicker(datePickerOptions);
                 document.getElementById('type').addEventListener('change', function() {
-    const selectedType = this.value;
-    const timeline = document.getElementById('timeline_div'); // Assuming this is the correct ID for the timeline div
+                const selectedType = this.value;
+                const timeline = document.getElementById('timeline_div'); // Assuming this is the correct ID for the timeline div
 
-    // Clear existing options in equb_type_id based on selected type
-    const equbTypeSelect = document.getElementById('equb_type_id');
-    equbTypeSelect.innerHTML = '<option value="">Choose...</option>';
+                // Clear existing options in equb_type_id based on selected type
+                const equbTypeSelect = document.getElementById('equb_type_id');
+                equbTypeSelect.innerHTML = '<option value="">Choose...</option>';
 
-    // Update timeline visibility based on selected type
-    if (selectedType === "Manual") {
-        timeline.classList.remove("d-none");
-    } else if (selectedType === "Seasonal" || selectedType === "Automatic") {
-        timeline.classList.add("d-none");
-    }
+                // Update timeline visibility based on selected type
+                if (selectedType === "Manual") {
+                    timeline.classList.remove("d-none");
+                } else if (selectedType === "Seasonal" || selectedType === "Automatic") {
+                    timeline.classList.add("d-none");
+                }
 
-    // Populate equb_type_id based on selected type
-    @foreach ($equbTypes as $equbType)
-        if (selectedType === "{{ $equbType->type }}") {
-            const option = document.createElement('option');
-            option.value = "{{ $equbType->id }}";
-            option.textContent = "{{ $equbType->name }} round {{ $equbType->round }}";
-            option.setAttribute('data-info', "{{ $equbType->type }}");
-            option.setAttribute('data-startdate', "{{ $equbType->start_date }}");
-            option.setAttribute('data-enddate', "{{ $equbType->end_date }}");
-            option.setAttribute('data-rote', "{{ $equbType->rote }}");
-            option.setAttribute('data-quota', "{{ $equbType->quota }}");
-            option.setAttribute('data-amount', "{{ $equbType->amount }}");
-            option.setAttribute('data-expected-total', "{{ $equbType->expected_total }}");
-            equbTypeSelect.appendChild(option);
-        }
-    @endforeach
-});
+                    // Populate equb_type_id based on selected type
+                    @foreach ($equbTypes as $equbType)
+                        if (selectedType === "{{ $equbType->type }}") {
+                            const option = document.createElement('option');
+                            option.value = "{{ $equbType->id }}";
+                            option.textContent = "{{ $equbType->name }} round {{ $equbType->round }}";
+                            option.setAttribute('data-info', "{{ $equbType->type }}");
+                            option.setAttribute('data-startdate', "{{ $equbType->start_date }}");
+                            option.setAttribute('data-enddate', "{{ $equbType->end_date }}");
+                            option.setAttribute('data-rote', "{{ $equbType->rote }}");
+                            option.setAttribute('data-quota', "{{ $equbType->quota }}");
+                            option.setAttribute('data-amount', "{{ $equbType->amount }}");
+                            option.setAttribute('data-expected-total', "{{ $equbType->expected_total }}");
+                            equbTypeSelect.appendChild(option);
+                        }
+                    @endforeach
+                });
 
                 $(document).ready(function() {
                     const selectBox = document.getElementById("equb_type_id");

@@ -109,7 +109,7 @@
                 
                 $sum = 0;
                 for ($i = 0; $i < $indexP; $i++) {
-                    if ($p[$i]->status == 'paid' || $p[$i]->status == 'pending') {
+                    if ($p[$i]->status == 'paid') {
                         $sum = $sum + $p[$i]->amount;
                     }
                 }
