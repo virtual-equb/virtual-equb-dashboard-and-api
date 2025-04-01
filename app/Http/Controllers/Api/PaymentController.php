@@ -750,6 +750,21 @@ class PaymentController extends Controller
             $memberData = Member::where('phone', $user->phone_number)->first();
             $collector = User::where('name', 'telebirr')->first();
 
+
+            // Check if a payment was made by this member for this equb in the last 24 hours
+            $existingPayment = Payment::where('member_id', $memberData->id)
+                ->where('equb_id', $equbId)
+                ->where('status', 'paid')
+                ->where('created_at', '>=', now()->subDay()) // within last 24 hours
+                ->exists();
+
+            if ($existingPayment) {
+                return response()->json([
+                    'code' => 400,
+                    'message' => 'You can only make one payment transaction per 24 hours for this Equb.'
+                ], 400);
+            }
+            
             $equb_status = $this->equbRepository->getStatusById($equbId);
 
             if ($equb_status->status != 'Active') {
