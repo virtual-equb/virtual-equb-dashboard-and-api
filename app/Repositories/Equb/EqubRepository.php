@@ -270,35 +270,21 @@ class EqubRepository implements IEqubRepository
                 ->count();
         }
     }
+    
     public function getReservedLotteryDates($dateFrom, $dateTo, $memberId, $offset, $equbType)
     {
-        // dd($equbType);
-        // return $this->model->where('status', 'Active')
-        //     //->whereRaw('NOT FIND_IN_SET(member_id,"' . $member_id . '")')
-        //     ->whereBetween('lottery_date', [$dateFrom, $dateTo])
-        //     // ->whereDate('lottery_date', '>=', $dateFrom)
-        //     // ->whereDate('lottery_date', '<=', $dateTo)
-        //     ->offset($offset)
-        //     ->limit($this->limit)
-        //     ->with('member', 'equbType')
-        //     ->get();
-        if ($equbType != 'all') {
-            return $this->model->where('status', 'Active')
-                ->where('equb_type_id', $equbType)
-                ->whereBetween('lottery_date', [$dateFrom, $dateTo])
-                ->offset($offset)
-                ->limit($this->limit)
-                ->with('member', 'equbType')
-                ->get();
-        } else {
-            return $this->model->where('status', 'Active')
-                ->whereBetween('lottery_date', [$dateFrom, $dateTo])
-                ->offset($offset)
-                ->limit($this->limit)
-                ->with('member', 'equbType')
-                ->get();
-        }
+        $query = $this->model->where('status', 'Active')
+            ->whereBetween('lottery_date', [$dateFrom, $dateTo])
+            ->when($equbType !== 'all', function ($q) use ($equbType) {
+                $q->where('equb_type_id', $equbType);
+            })
+            ->offset($offset)
+            ->limit($this->limit)
+            ->with('member', 'equbType');
+
+            return $query->get();
     }
+
     public function getDailyPaid($equb_id)
     {
         return $this->model->where('status', 'Active')->where('id', $equb_id)->pluck('amount')->first();

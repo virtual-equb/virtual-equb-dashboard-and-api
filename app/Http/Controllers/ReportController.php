@@ -963,6 +963,7 @@ class ReportController extends Controller
                 $member_id = str_replace('"', "", $member_id);
                 $data['totalLotterys'] = $this->equbRepository->getReservedLotteryDatesCount($dateFrom, $dateTo, $member_id, $equbType);
                 $data['lotterys'] = $this->equbRepository->getReservedLotteryDates($dateFrom, $dateTo, $member_id, $offset, $equbType);
+               
                 return view('admin/report/reservedLotteryDates/filterLotterys', $data);
             // } else {
             //     return view('auth/login');
