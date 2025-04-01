@@ -201,38 +201,47 @@
                     $('#user_table_data').html(data);
                 }
             });
-            var table = $("#member-list-table").DataTable({
-                "responsive": false,
-                "lengthChange": false,
-                "searching": true,
-                "autoWidth": false,
-                language: {
-                    search: "",
-                    searchPlaceholder: "Search",
-                },
-                "buttons": ["excel", "pdf", "print", "colvis"]
-            }).buttons().container().appendTo('#pending_member_table_data .col-md-6:eq(0)');
 
-            $('#member-list-table tbody').on('click', 'td.details-control_equb', function() {
-                var tr = $(this).closest('tr');
-                var inputId = $(this).prop("id");
-                var row = table.row(tr);
-                if (row.child.isShown()) {
-                    row.child.hide();
-                    tr.removeClass('shown')
-                } else {
-                    row.child(loadHere).show();
-                    $.ajax({
-                        url: "{{ url('member/show-member') }}" + '/' + inputId,
-                        type: 'get',
-                        success: function(data) {
-                            row.child(data).show();
-                            row.child.show();
-                            tr.addClass('shown');
-                        },
-                        error: function() {}
-                    });
-                }
+            $(document).ready(function() {
+                var table = $("#member-list-table").DataTable({
+                    "responsive": false,
+                    "lengthChange": false,
+                    "searching": true,
+                    "autoWidth": false,
+                    language: {
+                        search: "",
+                        searchPlaceholder: "Search",
+                    },
+                    "buttons": ["excel", "pdf", "print", "colvis"]
+                });
+
+                table.buttons().container().appendTo('#pending_member_table_data .col-md-6:eq(0)');
+
+                // Event listener for opening and closing details
+                $('#member-list-table tbody').on('click', 'td.details-control_equb', function() {
+                    var tr = $(this).closest('tr');
+                    var inputId = $(this).prop("id");
+                    var row = table.row(tr);
+
+                    if (row.child.isShown()) {
+                        // This row is already open - close it
+                        row.child.hide();
+                        tr.removeClass('shown');
+                    } else {
+                        // Open this row
+                        $.ajax({
+                            url: "{{ url('member/show-member') }}" + '/' + inputId,
+                            type: 'get',
+                            success: function(data) {
+                                row.child(data).show();
+                                tr.addClass('shown');
+                            },
+                            error: function() {
+                                console.error('Error fetching member details.');
+                            }
+                        });
+                    }
+                });
             });
         });
     </script>
