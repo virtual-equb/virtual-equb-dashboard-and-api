@@ -135,8 +135,8 @@
                                                 @include('admin/lottery.addLottery')
                                                 @include('admin/equb.addEqub')
                                                 @include('admin/member.addMember')
-                                                <div class="float-left checkLotteryandAddMember" id="member_table_filter">
-                                                @can('view member')
+                                                <div class="float-left checkLotteryandAddMember  col-6" id="member_table_filter">
+                                                    @can('view member')
                                                         <button type="button" class=" btn btn-primary checkLottery"
                                                             id="lotteryDatec" data-toggle="modal"
                                                             data-target="#lotteryDateCheckModal"
@@ -149,7 +149,7 @@
                                                     @endcan
                                                 </div>
                                                 <div class="row">
-                                                    <div class="float-right searchEqubandClear col-4"
+                                                    <div class="float-right searchEqubandClear col-6"
                                                         id="member_table_filter">
                                                         <select class="form-control"id="equbSearchText" name="equb_type_id"
                                                             placeholder="Equb Type">
@@ -162,7 +162,7 @@
                                                             @endforeach
                                                         </select>
                                                     </div>
-                                                    <div class="float-right searchEqubandClear col-4"
+                                                    <div class="float-right searchEqubandClear col-6"
                                                         id="member_table_filter">
                                                         <select class="form-control"id="statusSearchText"
                                                             name="member_status" placeholder="Status">
@@ -170,16 +170,6 @@
                                                             <option value="Active">Active</option>
                                                             <option value="Deactive">Deactive</option>
                                                         </select>
-                                                    </div>
-                                                    <div class="float-right searchandClear row col-4"
-                                                        id="member_table_filter">
-                                                        <input class="form-control col-10" type="text"
-                                                            id="memberSearchText" placeholder="Search Member"
-                                                            class="search">
-                                                        <button class="btn btn-default clear col-2" id="clearActiveSearch"
-                                                            onclick="clearSearchEntry()">
-                                                            Clear
-                                                        </button>
                                                     </div>
                                                 </div>
                                                 <div id="member_table_data_w" class="col-md-8">
@@ -239,31 +229,6 @@
     @endsection
     @section('scripts')
         <script>
-            var memberSearchField = document.getElementById('memberSearchText');
-            memberSearchField.addEventListener("keydown", function(e) {
-                var memberSearchInput = memberSearchField.value;
-                if (e.keyCode === 13) { //checks whether the pressed key is "Enter"
-                    $.LoadingOverlay("show");
-                    searchForMember(memberSearchInput);
-                }
-            });
-
-            function searchForMember(searchInput) {
-                if (searchInput != "") {
-                    $.ajax({
-                        url: "{{ url('member/search-member') }}" + '/' + searchInput + '/0',
-                        type: 'get',
-                        success: function(data) {
-                            $('#member_table_data').html(data);
-                            $.LoadingOverlay("hide");
-                        }
-                    });
-                } else {
-                    clearSearchEntry();
-                    $.LoadingOverlay("hide");
-                }
-            }
-
             function loadMoreSearchMembers(searchInput, offsetVal, pageNumberVal) {
                 if (searchInput != "") {
                     $.ajax({
@@ -278,6 +243,7 @@
 
                 }
             }
+
             var statusSearchField = document.getElementById('statusSearchText');
             statusSearchField.addEventListener("change", function(e) {
                 var memberSearchInput = statusSearchField.value;
