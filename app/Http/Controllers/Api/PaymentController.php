@@ -750,6 +750,21 @@ class PaymentController extends Controller
             $memberData = Member::where('phone', $user->phone_number)->first();
             $collector = User::where('name', 'telebirr')->first();
 
+
+            // Check if a payment was made by this member for this equb in the last 24 hours
+            $existingPayment = Payment::where('member_id', $memberData->id)
+                ->where('equb_id', $equbId)
+                ->where('status', 'paid')
+                ->where('created_at', '>=', now()->subDay()) // within last 24 hours
+                ->exists();
+
+            if ($existingPayment) {
+                return response()->json([
+                    'code' => 400,
+                    'message' => 'You can only make one payment transaction per 24 hours for this Equb.'
+                ], 400);
+            }
+            
             $equb_status = $this->equbRepository->getStatusById($equbId);
 
             if ($equb_status->status != 'Active') {
@@ -1009,6 +1024,92 @@ class PaymentController extends Controller
                     ], 400);
                 }
             }
+            // if ($request) {
+            //     $merch_order_id = $request['merch_order_id'];
+            //     $payment = Payment::find($merch_order_id);  // Find the record by ID
+               
+            //     if ($request['trade_status'] == 'Completed') {
+                    
+            //         $member = $payment->member_id;
+            //         $equb_id = $payment->equb_id;
+            //         $amount = $payment->amount;
+            //         $paymentType = $payment->payment_type;
+            
+            //         $equbAmount = $this->equbRepository->getEqubAmount($member, $equb_id);
+            //         $totalCredit = $this->paymentRepository->getTotalCreditAPI($equb_id) ?? 0;
+            //         $availableBalance = $this->paymentRepository->getTotalBalanceAPI($equb_id) ?? 0;
+                    
+            //         // Calculate new credit and balance
+            //         $credit = max(0, $equbAmount - $amount);
+            //         $totalCredit = max(0, $totalCredit + $credit);
+                    
+            //         if ($amount >= $equbAmount) {
+            //             $availableBalance += ($amount - $equbAmount);
+            //             $totalCredit = 0;
+            //         } else {
+            //             $availableBalance = max(0, $availableBalance - $totalCredit);
+            //         }
+                    
+            //         // Update payment records
+            //         $this->paymentRepository->updateCredit($equb_id, ['creadit' => $totalCredit]);
+            //         $this->paymentRepository->updateBalance($equb_id, ['balance' => $availableBalance]);
+                    
+            //         // Convert timestamp to readable date
+            //         $tradeDt = $request['notify_time'];
+            //         $readableDate = Carbon::createFromTimestamp($tradeDt / 1000)->format('Y-m-d H:i:s');
+                    
+            //         // Prepare payment update
+            //         $telebirrObj = [
+            //             'amount' => $request['total_amount'],
+            //             'tradeDate' => $readableDate,
+            //             'tradeNo' => $request['payment_order_id'],
+            //             'tradeStatus' => $request['trade_status'],
+            //             'transaction_number' => $request['payment_order_id'],
+            //             'status' => 'paid',
+            //             'collecter' => User::where('name', 'telebirr')->first()->id,
+            //             'creadit' => $totalCredit,
+            //             'balance' => $availableBalance,
+            //             'payment_type' => $paymentType
+            //         ];
+                    
+            //         $payment->update($telebirrObj);
+                    
+            //         // Update Equb Payment Status
+            //         $totalPpayment = $this->paymentRepository->getTotalPaid($equb_id);
+            //         $totalEqubAmount = $this->equbRepository->getTotalEqubAmount($equb_id);
+            //         $remainingPayment = max(0, $totalEqubAmount - $totalPpayment);
+                    
+            //         $this->equbTakerRepository->updatePayment($equb_id, [
+            //             'total_payment' => $totalPpayment,
+            //             'remaining_payment' => $remainingPayment,
+            //             'remaining_amount' => $remainingPayment,
+            //             'status' => $remainingPayment == 0 ? 'paid' : 'partially_paid',
+            //         ]);
+                    
+            //         if ($remainingPayment == 0) {
+            //             $this->equbRepository->update($equb_id, ['status' => 'Deactive']);
+            //         }
+                    
+            //         // Fire event
+            //         try {
+            //             Log::info('Payment status update event fired');
+            //             event(new TelebirrPaymentStatusUpdated($payment));
+            //         } catch (\Exception $e) {
+            //             Log::error('Error broadcasting event: ' . $e->getMessage());
+            //         }
+                    
+            //         return response()->json([
+            //             'code' => 200,
+            //             'message' => 'You have successfully paid!'
+            //         ], 200);
+            //     } else {
+            //         return response()->json([
+            //             'code' => 400,
+            //             'message' => 'Payment failed, Please try again!'
+            //         ], 400);
+            //     }
+            // }
+            
         } catch (Exception $error) {
             return response()->json([
                 'code' => 500,
