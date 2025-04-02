@@ -102,7 +102,6 @@ class PaymentGatewayController extends Controller {
         {
             try {
 
-                // Validate that the 'amount' field (A) is present in the request
                 $request->validate([
                     'amount' => 'required|numeric',
                     'member_id' => 'required|exists:members,id',
@@ -118,6 +117,26 @@ class PaymentGatewayController extends Controller {
                 $this->equbId = $request->input('equb_id');
                 $localTransactionId = Str::uuid();
                 $this->localTransactionId = $localTransactionId;
+
+                $equb_status = $this->equbRepository->getStatusById($this->equbId);
+
+                if ($equb_status->status != 'Active') {
+                    return response()->json([
+                        'code' => 500,
+                        'message' => 'Payment processing failed: The Equb is currently not in active status.',
+                    ]);
+                }
+
+                $totalEqubAmountToPay = $this->equbRepository->getTotalEqubAmount($this->equbId);
+                $totalPaidAmount = $this->paymentRepository->getTotalPaid($this->equbId);
+                $remainingAmountToPay = $totalEqubAmountToPay - $totalPaidAmount;
+
+                if ($this->storedAmount > $remainingAmountToPay) {
+                    return response()->json([
+                        'code' => 500,
+                        'message' => 'Payment processing failed: You cannot pay more than the required total amount for this Equb.',
+                    ]);
+                }
 
                 Payment::create([
                     'member_id' => $request->input('member_id'),
@@ -342,14 +361,32 @@ class PaymentGatewayController extends Controller {
                     if ($totalCredit > 0) {
                         if ($totalCredit < $amount) {
                             if ($at < $equbAmount) {
-                                $availableBalance -= $totalCredit;
+                                $availableBalance = $availableBalance - $totalCredit;
                                 $totalCredit = 0;
                             } elseif ($at > $equbAmount) {
                                 $diff = $at - $equbAmount;
-                                $totalCredit -= $diff;
-                                $availableBalance = ($availableBalance + $diff) - $totalCredit;
-                                $totalCredit = 0;
+                                //RECENT CODE FIX - REGARDING CREDIT AND BALANCE CALCULATION
+                                $totalCredit = max (0, $lastTc - $diff);
+                                $availableBalance = max(0, $availableBalance + $diff - $lastTc);
+                            } elseif ($at = $equbAmount) {
+                                $availableBalance = $availableBalance;
                             }
+                            $amount = $at;
+                        } else {
+                            $amount = $at;
+                            $totalCredit = $totalCredit;
+                        }
+                    } else {
+                        $totalCredit = $totalCredit;
+                        if ($at < $equbAmount) {
+                            $availableBalance = $availableBalance - $totalCredit;
+                        } elseif ($at > $equbAmount) {
+                            $diff = $at - $equbAmount;
+                            $totalCredit = $totalCredit - $diff;
+                            $availableBalance = $availableBalance + $diff;
+                            $totalCredit = 0;
+                        } elseif ($at = $equbAmount) {
+                            $availableBalance = $availableBalance;
                         }
                         $amount = $at;
                     }
@@ -361,12 +398,14 @@ class PaymentGatewayController extends Controller {
                     if ($lastTc == 0) {
                         $totalCredit = $equbAmount - $amount;
                         $availableBalance = 0;
+                        $amount = $at;
                     } else {
                         $totalCredit = $totalCredit;
                         $availableBalance = 0;
+                        $amount = $at;
                     }
-                    $amount = $at;
                 }
+
                 $status = '';
                 $paidDate = null;
 
@@ -513,6 +552,7 @@ class PaymentGatewayController extends Controller {
                 return response()->json(['message' => 'Error verifying transaction status', 'error' => $e->getMessage()], 500);
             }
         }
+        
         private function isJson($string)
         {
             json_decode($string);
