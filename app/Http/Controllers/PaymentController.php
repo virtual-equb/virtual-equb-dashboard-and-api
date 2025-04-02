@@ -88,6 +88,20 @@ class PaymentController extends Controller
                 $credit = $request->input('creadit');
                 $remark = $request->input('remark');
 
+                // Check if a payment was made by this member for this equb in the last 24 hours
+                $existingPayment = Payment::where('member_id', $member)
+                        ->where('equb_id', $equb_id)
+                        ->where('status', 'paid')
+                        ->where('created_at', '>=', now()->subDay()) // within last 24 hours
+                        ->exists();
+
+                if ($existingPayment) {
+                    $msg = "You can only make one payment transaction per 24 hours for this Equb.";
+                    $type = 'error';
+                    Session::flash($type, $msg);
+                    redirect('/member');
+                }
+
                 $equb_status = $this->equbRepository->getStatusById($equb_id);
 
                 if ($equb_status->status != 'Active') {

@@ -763,6 +763,11 @@ class PaymentController extends Controller
                     'code' => 400,
                     'message' => 'You can only make one payment transaction per 24 hours for this Equb.'
                 ], 400);
+                Log::info('Payment already made in the last 24 hours', [
+                    'member_id' => $memberData->id,
+                    'equb_id' => $equbId,
+                    'timestamp' => now()
+                ]);
             }
             
             $equb_status = $this->equbRepository->getStatusById($equbId);
