@@ -13,6 +13,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 
 class NotificationController extends Controller
 {
@@ -182,8 +183,10 @@ class NotificationController extends Controller
              
                 if ($equb_type_id != "all") {
                     $members = $this->memberRepository->getMembersByEqubType($equb_type_id);
+                    Log::info('Notification to all members', ['members' => $members]);
                 } else {
                     $members = $this->memberRepository->getActiveMemberNotification();
+                    Log::info('Notification to specific equb members', ['members' => $members]);
                 }
 
                 foreach ($members as $member) {
@@ -208,6 +211,8 @@ class NotificationController extends Controller
                         }
                     }
                 }
+
+                Log::info('Notification Sent Successfully');
 
                 $update = [
                     'status' => 'approved'
