@@ -187,25 +187,28 @@ class NotificationController extends Controller
                 }
 
                 foreach ($members as $member) {
-                    $notifiedMember = User::where('phone_number', $member->phone)->first();
-                    if ($method == 'sms') {
-                        try {
-                            $this->sendSms($member->phone, $body);
-                        } catch (Exception $ex) {
-                            return redirect()->back()->with('error', 'Failed to send SMS');
-                        };
-                    } elseif ($method == 'notification') {
-                        Notification::sendNotification($notifiedMember->fcm_id, $title, $body);
-                    } elseif ($method == 'both') {
-                        // dd($method);
-                        try {
-                            $this->sendSms($member->phone, $body);
-                        } catch (Exception $ex) {
-                            return redirect()->back()->with('error', 'Failed to send SMS');
-                        };
-                        Notification::sendNotification($notifiedMember->fcm_id, $title, $body);
+                    if (!empty($member->phone)) {
+                        $notifiedMember = User::where('phone_number', $member->phone)->first();
+                        
+                        if ($method == 'sms') {
+                            try {
+                                $this->sendSms($member->phone, $body);
+                            } catch (Exception $ex) {
+                                return redirect()->back()->with('error', 'Failed to send SMS');
+                            };
+                        } elseif ($method == 'notification') {
+                            Notification::sendNotification($notifiedMember->fcm_id, $title, $body);
+                        } elseif ($method == 'both') {
+                            try {
+                                $this->sendSms($member->phone, $body);
+                            } catch (Exception $ex) {
+                                return redirect()->back()->with('error', 'Failed to send SMS');
+                            };
+                            Notification::sendNotification($notifiedMember->fcm_id, $title, $body);
+                        }
                     }
                 }
+
                 $update = [
                     'status' => 'approved'
                 ];
