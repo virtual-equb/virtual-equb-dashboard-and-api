@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\EqubTypeResource;
 use App\Models\LotteryWinner;
 use Exception;
+use Carbon\Carbon;
 use App\Repositories\EqubType\IEqubTypeRepository;
 use App\Repositories\Equb\IEqubRepository;
 use App\Repositories\EqubTaker\IEqubTakerRepository;
@@ -488,7 +489,8 @@ class EqubTypeController extends Controller
             //     "message" => "Winner has not been selected yet",
             //     "data" => []
             // ]);
-            $winners = LotteryWinner::where('equb_type_id', $id)
+            $winners = LotteryWinner::where('created_at', Carbon::today()->format('Y-m-d'))
+                ->where('equb_type_id', $id)
                 ->orderBy('created_at', 'desc')
                 ->get();
 
