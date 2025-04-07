@@ -40,15 +40,26 @@ class MemberRepository implements IMemberRepository
     //         ->get();
     // }
 
+    // public function getAllByPaginate($offset, $limit = 50)
+    // {
+    //     return Cache::remember('members_page_' . request('page', 1), 60, function () use ($limit) {
+    //         return $this->model
+    //             ->with(['memberCity', 'memberSubcity'])
+    //             ->whereNotNull('gender')
+    //             ->orderBy('full_name', 'asc')
+    //             ->get();
+    //     });
+    // }
+
     public function getAllByPaginate($offset, $limit = 50)
     {
-        return Cache::remember('members_page_' . request('page', 1), 60, function () use ($limit) {
-            return $this->model
-                ->with(['memberCity', 'memberSubcity'])
-                ->whereNotNull('gender')
-                ->orderBy('full_name', 'asc')
-                ->get();
-        });
+        return $this->model
+            ->with(['memberCity', 'memberSubcity'])
+            ->whereNotNull('gender')
+            ->orderBy('full_name', 'asc')
+            ->offset($offset)
+            ->limit($limit)
+            ->get();
     }
 
     public function getAllPendingByPaginate($offset)
