@@ -139,7 +139,7 @@
                     dropdownContent += '<a href="{{ route('showMember') }}" class="dropdown-item dropdown-footer">See All Members</a>';
                     // Replace the content of the dropdown menu with the updated content
                     $('#dropdownId').html(dropdownContent);
-                    updateNotificationCount();
+                    // updateNotificationCount();
                 },
                 error: function(xhr, status, error) {
                     console.error('Error fetching updated dropdown content:', error);
@@ -148,20 +148,20 @@
         });
 
         // Function to update the notification count
-        function updateNotificationCount() {
-            $.ajax({
-                url: '/member/countPendingMembers', // Replace with the appropriate URL to fetch the updated notification count
-                method: 'GET',
-                success: function(count) {
-                    $('.navbar-badge').text(count);
-                    $('#dropdownId .dropdown-header').text(count + ' unapproved member' + (count > 1 ? 's' : ''));
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error updating notification count:', error);
-                }
-            });
-        }
-        setInterval(updateNotificationCount, 10000);
+        // function updateNotificationCount() {
+        //     $.ajax({
+        //         url: '/member/countPendingMembers', // Replace with the appropriate URL to fetch the updated notification count
+        //         method: 'GET',
+        //         success: function(count) {
+        //             $('.navbar-badge').text(count);
+        //             $('#dropdownId .dropdown-header').text(count + ' unapproved member' + (count > 1 ? 's' : ''));
+        //         },
+        //         error: function(xhr, status, error) {
+        //             console.error('Error updating notification count:', error);
+        //         }
+        //     });
+        // }
+        // setInterval(updateNotificationCount, 10000);
 
         // Function to format the date using moment.js
         function formatDate(dateString) {
