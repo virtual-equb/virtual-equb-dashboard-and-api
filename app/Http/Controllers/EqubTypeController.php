@@ -397,20 +397,20 @@ class EqubTypeController extends Controller
             // Stop the draw if no eligible members remain
             if (empty($eligibleMembers)) {
                 // Retrieve users with roles 'admin' and 'operation_manager'
-                $userToNotify = User::role(['admin', 'operation_manager'])->get();
+                // $userToNotify = User::role(['admin', 'operation_manager'])->get();
     
-                $message = "No eligible members for the lottery draw. Please review and ensure payments are up-to-date.";
+                $message = "The lottery draw cannot proceed due to an insufficient number of eligible members. Please ensure there are enough participants with up-to-date payments.";
     
-                foreach ($userToNotify as $user) {
-                    try {
-                        $this->sendSms($user->phone_number, $message);
-                    } catch (Exception $e) {
-                        Log::error("Failed to send SMS to {$user->phone_number}: {$e->getMessage()}");
-                    }
-                }
+                // foreach ($userToNotify as $user) {
+                //     try {
+                //         $this->sendSms($user->phone_number, $message);
+                //     } catch (Exception $e) {
+                //         Log::error("Failed to send SMS to {$user->phone_number}: {$e->getMessage()}");
+                //     }
+                // }
     
                 // Flash an error message for the web
-                Session::flash('error', "No eligible members for the lottery draw. Ensure payments are up-to-date.");
+                Session::flash('error', "The lottery draw cannot proceed due to an insufficient number of eligible members. Please ensure there are enough participants with up-to-date payments.");
                 return back();
             }
     
