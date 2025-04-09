@@ -57,8 +57,8 @@ class MemberRepository implements IMemberRepository
             ->with(['memberCity', 'memberSubcity'])
             ->whereNotNull('gender')
             ->orderBy('full_name', 'asc')
-            ->offset($offset)
-            ->limit($limit)
+            // ->offset($offset)
+            // ->limit($limit)
             ->get();
     }
 

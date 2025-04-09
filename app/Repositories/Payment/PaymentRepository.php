@@ -21,12 +21,10 @@ class PaymentRepository implements IPaymentRepository
 
     public function getRecentPayments($limit = 50)
     {
-        return Cache::remember('recent_payments', 60, function () use ($limit) {
-            return $this->model
-                ->with(['member', 'equb.equbType'])
-                ->orderByDesc('created_at')
-                ->paginate($limit);
-        });
+        return $this->model
+            ->with(['member', 'equb.equbType'])
+            ->orderByDesc('created_at')
+            ->paginate($limit);
     }
 
     public function getPaymentsByMember($memberId)
