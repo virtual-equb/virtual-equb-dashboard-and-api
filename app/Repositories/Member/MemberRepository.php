@@ -56,6 +56,7 @@ class MemberRepository implements IMemberRepository
         return $this->model
             ->with(['memberCity', 'memberSubcity'])
             ->whereNotNull('gender')
+            ->where('status', '!=', 'Pending')
             ->orderBy('full_name', 'asc')
             // ->offset($offset)
             // ->limit($limit)
