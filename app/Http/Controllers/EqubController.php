@@ -549,6 +549,7 @@ class EqubController extends Controller
                     'amount' => 'required',
                     'total_amount' => 'nullable',
                     'start_date' => 'required',
+                    'lottery_date' => 'required',
                 ]);
                 $member = $request->input('member_id');
                 $equbType = $request->input('equb_type_id');
@@ -579,11 +580,13 @@ class EqubController extends Controller
                         'message' => 'Equb type not found.'
                     ]);
                 }
+                
                 // Check if the equb already exists for the member
                 if (!empty($equbType)) {
                     $equbs_count = Equb::where('equb_type_id', $equbType)
                                         ->where('member_id', $member)
                                         ->count();
+
                     if ($equbs_count > 0) {
                         return response()->json([
                             'code' => 400,
@@ -591,6 +594,7 @@ class EqubController extends Controller
                         ]);
                     }
                 }
+
                 if ($equbTypeData->type === 'Manual') {
                     // Ensure the lottery date is at least 45 days after the start date
                     $minLotteryDate = Carbon::parse($formattedStartDate)->addDays(45)->format('Y-m-d');
@@ -598,43 +602,34 @@ class EqubController extends Controller
                     if (!$lotteryDate || Carbon::parse($lotteryDate)->lt($minLotteryDate)) {
                         $lotteryDate = $minLotteryDate;
                     }
-                
+
+                    // Check if there are existing lotteries on the same day (to avoid conflicts)
+                    $exiLottery = Equb::where('lottery_date', $lotteryDate)->exists();
+                    if($exiLottery) {
+                        return response()->json([
+                            'code' => 400,
+                            'message' => 'A lottery is already scheduled for this date. Please choose a different date.'
+                        ]);
+                    }
+
                     // Get all upcoming lottery dates with their total funds
                     $futureLotteries = Equb::select('lottery_date', DB::raw('SUM(amount) as total_funds'))
                         ->whereDate('lottery_date', '>=', $lotteryDate)
                         ->groupBy('lottery_date')
                         ->orderBy('lottery_date', 'asc')
                         ->get();
-                
-                    // Find the earliest date with enough funds
-                    foreach ($futureLotteries as $lottery) {
-                        if ($lottery->total_funds >= $totalAmount) {
-                            $lotteryDate = $lottery->lottery_date;
-                            break;
-                        }
-                    }
-                
-                    // If no suitable date is found, find the next available day with enough funds
-                    while (!$futureLotteries->contains('lottery_date', $lotteryDate)) {
-                        $lotteryDate = Carbon::parse($lotteryDate)->addDay()->format('Y-m-d');
-                
-                        $availableLottery = Equb::select('lottery_date', DB::raw('SUM(amount) as total_funds'))
-                            ->whereDate('lottery_date', '=', $lotteryDate)
-                            ->groupBy('lottery_date')
-                            ->first();
-                
-                        if ($availableLottery && $availableLottery->total_funds >= $totalAmount) {
-                            break; // Found a date with enough funds
-                        }
 
-                        // Move to the next day
-                        $lotteryDate = Carbon::parse($lotteryDate)->addDay()->format('Y-m-d');
+                    // Find the earliest date with enough funds
+                    if (!$futureLotteries->isEmpty()) {
+                        foreach ($futureLotteries as $lottery) {
+                            if ($lottery->total_funds >= $totalAmount) {
+                                $lotteryDate = $lottery->lottery_date;
+                                break;
+                            }
+                        }
                     }
-                
-                    // Store the final lottery date
                 }
                 
-
                 // Determine lottery_date based on equbType
                 if($equbTypeData->type === 'Automatic') {
                     $lotteryDate = $equbTypeData->lottery_date;
@@ -696,7 +691,6 @@ class EqubController extends Controller
                     'cheque_description' => '',
                 ];
                 $createEkubTaker = $this->equbTakerRepository->create($equbTakerData);
-                // dd($equbTakerData, $createEkubTaker);
                 
                 if ($create) {
                     $activityLog = [
@@ -709,31 +703,31 @@ class EqubController extends Controller
                     ];
                     $this->activityLogRepository->createActivityLog($activityLog);
 
-                    // Send Notifications for members
-                    $shortcode = config('key.SHORT_CODE');
-                    $member = Member::find($member);
-                    if ($member && $member->phone) {
-                        $memberMessage = "Dear {$member->full_name}, Your Equb has been successfully registered. Our customer service will contact you soon. For more information call {$shortcode}";
-                        $this->sendSms($member->phone, $memberMessage);
-                    }
+                    // // Send Notifications for members
+                    // $shortcode = config('key.SHORT_CODE');
+                    // $member = Member::find($member);
+                    // if ($member && $member->phone) {
+                    //     $memberMessage = "Dear {$member->full_name}, Your Equb has been successfully registered. Our customer service will contact you soon. For more information call {$shortcode}";
+                    //     $this->sendSms($member->phone, $memberMessage);
+                    // }
 
-                    // Finance Sms
-                    $finances = User::role('finance')->get();
-                    foreach ($finances as $finance) {
-                        if ($finance->phone_number) {
-                            $financeMessage = "Finance Alert: A New Member {$member->full_name}, has joined Equb titled {$create->equbType->name}. Please review the details.";
-                            $this->sendSms($finance->phone_number, $financeMessage);
-                        }
-                    }
+                    // // Finance Sms
+                    // $finances = User::role('finance')->get();
+                    // foreach ($finances as $finance) {
+                    //     if ($finance->phone_number) {
+                    //         $financeMessage = "Finance Alert: A New Member {$member->full_name}, has joined Equb titled {$create->equbType->name}. Please review the details.";
+                    //         $this->sendSms($finance->phone_number, $financeMessage);
+                    //     }
+                    // }
 
-                    // Call center sms
-                    $call_centers = User::role('call_center')->get();
-                    foreach($call_centers as $finance) {
-                        if ($finance->phone_number) {
-                            $financeMessage = "Call Center Alert: A New Member {$member->full_name}, has joined Equb titled {$create->equbType->name}. Please review the details.";
-                            $this->sendSms($finance->phone_number, $financeMessage);
-                        }
-                    }
+                    // // Call center sms
+                    // $call_centers = User::role('call_center')->get();
+                    // foreach($call_centers as $finance) {
+                    //     if ($finance->phone_number) {
+                    //         $financeMessage = "Call Center Alert: A New Member {$member->full_name}, has joined Equb titled {$create->equbType->name}. Please review the details.";
+                    //         $this->sendSms($finance->phone_number, $financeMessage);
+                    //     }
+                    // }
                     
                     $msg = "Equb has been registered successfully!";
                     $type = 'success';
@@ -745,11 +739,7 @@ class EqubController extends Controller
                     Session::flash($type, $msg);
                     redirect('/member');
                 }
-            // } else {
-            //     return view('auth/login');
-            // }
         } catch (Exception $ex) {
-            // dd($ex);
             $msg = "Unknown Error Occurred, Please try again!" . $ex->getMessage();
             $type = 'error';
             Session::flash($type, $msg);
