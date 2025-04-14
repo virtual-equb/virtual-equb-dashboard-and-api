@@ -703,31 +703,31 @@ class EqubController extends Controller
                     ];
                     $this->activityLogRepository->createActivityLog($activityLog);
 
-                    // // Send Notifications for members
-                    // $shortcode = config('key.SHORT_CODE');
-                    // $member = Member::find($member);
-                    // if ($member && $member->phone) {
-                    //     $memberMessage = "Dear {$member->full_name}, Your Equb has been successfully registered. Our customer service will contact you soon. For more information call {$shortcode}";
-                    //     $this->sendSms($member->phone, $memberMessage);
-                    // }
+                    // Send Notifications for members
+                    $shortcode = config('key.SHORT_CODE');
+                    $member = Member::find($member);
+                    if ($member && $member->phone) {
+                        $memberMessage = "Dear {$member->full_name}, Your Equb has been successfully registered. Our customer service will contact you soon. For more information call {$shortcode}";
+                        $this->sendSms($member->phone, $memberMessage);
+                    }
 
-                    // // Finance Sms
-                    // $finances = User::role('finance')->get();
-                    // foreach ($finances as $finance) {
-                    //     if ($finance->phone_number) {
-                    //         $financeMessage = "Finance Alert: A New Member {$member->full_name}, has joined Equb titled {$create->equbType->name}. Please review the details.";
-                    //         $this->sendSms($finance->phone_number, $financeMessage);
-                    //     }
-                    // }
+                    // Finance Sms
+                    $finances = User::role('finance')->get();
+                    foreach ($finances as $finance) {
+                        if ($finance->phone_number) {
+                            $financeMessage = "Finance Alert: A New Member {$member->full_name}, has joined Equb titled {$create->equbType->name}. Please review the details.";
+                            $this->sendSms($finance->phone_number, $financeMessage);
+                        }
+                    }
 
-                    // // Call center sms
-                    // $call_centers = User::role('call_center')->get();
-                    // foreach($call_centers as $finance) {
-                    //     if ($finance->phone_number) {
-                    //         $financeMessage = "Call Center Alert: A New Member {$member->full_name}, has joined Equb titled {$create->equbType->name}. Please review the details.";
-                    //         $this->sendSms($finance->phone_number, $financeMessage);
-                    //     }
-                    // }
+                    // Call center sms
+                    $call_centers = User::role('call_center')->get();
+                    foreach($call_centers as $finance) {
+                        if ($finance->phone_number) {
+                            $financeMessage = "Call Center Alert: A New Member {$member->full_name}, has joined Equb titled {$create->equbType->name}. Please review the details.";
+                            $this->sendSms($finance->phone_number, $financeMessage);
+                        }
+                    }
                     
                     $msg = "Equb has been registered successfully!";
                     $type = 'success';
