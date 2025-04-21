@@ -583,15 +583,12 @@ class EqubController extends Controller
                 
                 // Check if the equb already exists for the member
                 if (!empty($equbType)) {
-                    $equbs_count = Equb::where('equb_type_id', $equbType)
-                                        ->where('member_id', $member)
-                                        ->count();
+                    $equbs_count = Equb::where('equb_type_id', $equbType)->where('member_id', $member)->count();
 
                     if ($equbs_count > 0) {
-                        return response()->json([
-                            'code' => 400,
-                            'message' => 'Equb already exists!'
-                        ]);
+                        $type = 'error';
+                        Session::flash($type, 'Equb already exists!');
+                        return back();
                     }
                 }
 
@@ -599,17 +596,16 @@ class EqubController extends Controller
                     // Ensure the lottery date is at least 45 days after the start date
                     $minLotteryDate = Carbon::parse($formattedStartDate)->addDays(45)->format('Y-m-d');
                 
-                    if (!$lotteryDate || Carbon::parse($lotteryDate)->lt($minLotteryDate)) {
-                        $lotteryDate = $minLotteryDate;
-                    }
+                    // if (!$lotteryDate || Carbon::parse($lotteryDate)->lt($minLotteryDate)) {
+                    //     $lotteryDate = $minLotteryDate;
+                    // }
 
                     // Check if there are existing lotteries on the same day (to avoid conflicts)
                     $exiLottery = Equb::where('lottery_date', $lotteryDate)->exists();
                     if($exiLottery) {
-                        return response()->json([
-                            'code' => 400,
-                            'message' => 'A lottery is already scheduled for this date. Please choose a different date.'
-                        ]);
+                        $type = 'error';
+                        Session::flash($type, 'A lottery is already scheduled for this date. Please choose a different date.');
+                        return back();
                     }
 
                     // Get all upcoming lottery dates with their total funds
