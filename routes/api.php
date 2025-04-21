@@ -33,6 +33,7 @@ use App\Http\Controllers\Api\PaymentTesterController;
 use App\Http\Controllers\Api\PaymentGatewayController;
 use App\Http\Controllers\EqubController as ControllersEqubController;
 use App\Http\Controllers\Api\SubcityController as ApiSubcityController;
+use App\Http\Controllers\api\TelebirrMiniAppController;
 use App\Http\Controllers\EqubTypeController as ControllersEqubTypeController;
 use App\Http\Middleware\LogUserActionMiddleware;
 
@@ -48,6 +49,7 @@ use App\Http\Middleware\LogUserActionMiddleware;
 */
 
 // Route::get('/cbe-payment', [CbeMiniAppController::class, 'index']);
+// CBE MiniApp Integration
 Route::post('/cbe-payment-data', [CbeMiniAppController::class, 'cbeDatas']);
 Route::get('/validate-token', [CbeMiniAppController::class, 'validateToken']);
 Route::post('/registermember', [CbeMiniAppController::class, 'register']);
@@ -57,6 +59,9 @@ Route::post('/joinequb', [CbeMiniAppController::class, 'joinEqub']);
 Route::post('/process-payment', [CbeMiniAppController::class, 'processPayment'])->name('cbe.initialize');
 Route::post('/callback', [CbeMiniAppController::class, 'paymentCallback'])->name('cbe.callback');
 
+// Telebirr MiniApp Integration
+Route::post('/telebirr-miniapp/initialize', [TelebirrMiniAppController::class, 'initialize'])->name('telebirrminiapp.initialize');
+Route::post('/telebirr-miniapp/callback', [TelebirrMiniAppController::class, 'callback'])->name('telebirrminiappcallback');
 
 Route::post('/drawauto', [ControllersEqubTypeController::class, 'drawSeasonedAutoWinners']);
 Route::get('/jwt', [PaymentGatewayController::class, 'testJWT']);
@@ -132,7 +137,8 @@ Route::middleware(['auth:api', 'log.user.action'])->group(function () {
     Route::resource('/permissions', PermissionController::class);
     Route::get('/roles/{roleId}/give-permissions', [RoleController::class, 'addPermissionToRole']);
     Route::put('/roles/{roleId}/give-permissions', [RoleController::class, 'updatePermissionToRole']);
-    // CBE
+   
+    // CBE Gateway
     Route::post('/cbegateway', [PaymentGatewayController::class, 'generateUrl']);
     Route::post('/retry/cbegateway/{id}', [PaymentGatewayController::class, 'regenerateUrl']);
     Route::delete('/cancel/cbegateway/{id}', [PaymentGatewayController::class, 'cancelPayment']);
