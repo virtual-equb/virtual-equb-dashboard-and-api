@@ -4,7 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
 use App\Services\ApplyFabricToken;
-use App\Helpers\SignHelper; // Make sure to include the SignHelper class
+use App\Helpers\SignHelper;
 use Exception;
 
 use Illuminate\Support\Facades\Log;
@@ -19,19 +19,17 @@ class CreateOrderService
     protected $notifyPath;
     protected $paymentId;
 
-
     public function __construct($baseUrl, $req, $fabricAppId, $appSecret, $merchantAppId, $merchantCode, $paymentId)
     {
-        $this->baseUrl = $baseUrl; // use the provided base URL
-        $this->req = $req; // request object
-        $this->fabricAppId = $fabricAppId; // other parameters
+        $this->baseUrl = $baseUrl;
+        $this->req = $req;
+        $this->fabricAppId = $fabricAppId;
         $this->appSecret = $appSecret;
         $this->merchantAppId = $merchantAppId;
         $this->merchantCode = $merchantCode;
         $this->paymentId = $paymentId;
         $this->notifyPath = TELEBIRR_NOTIFY_URL;
     }
-
 
     public function createOrder()
     {
@@ -56,12 +54,7 @@ class CreateOrderService
         $createOrderResult = $this->requestCreateOrder($fabricToken, TELEBIRR_TITLE, $amount);
         Log::info('Create Order API Response:' . $createOrderResult);
 
-        // $decodedResult = json_decode($createOrderResult);
-        // if (!$decodedResult || !isset($decodedResult->biz_content->prepay_id)) {
-        //     throw new Exception('Invalid response from API:' . $createOrderResult);
-        // }
         $prepayId = json_decode($createOrderResult)->biz_content->prepay_id;
-        // $prepayId = $decodedResult->biz_content->prepay_id;
 
         return $this->createRawRequest($prepayId);
     }
@@ -76,12 +69,13 @@ class CreateOrderService
             ])->post($this->baseUrl . '/payment/v1/merchant/preOrder', $this->createRequestObject($title, $amount));
             
             Log::info('requestCreateOrder API Response' . $response->body());
+
             return $response->body();
         } catch (Exception $e) {
             Log::info('log from requestCreateOrder');
-             return response()->json(['error' => $e->getMessage()], 500);
+
+            return response()->json(['error' => $e->getMessage()], 500);
         }
-      
     }
 
     public function createRequestObject($title, $amount)
@@ -93,7 +87,7 @@ class CreateOrderService
                 'timestamp' => SignHelper::createTimeStamp(),
                 'version' => '1.0',
                 'biz_content' => [
-                    'notify_url' => $this->notifyPath, // Set your notification URL
+                    'notify_url' => $this->notifyPath,
                     'business_type' => 'BuyGoods',
                     'trade_type' => 'Cross-App',
                     'appid' => $this->merchantAppId,

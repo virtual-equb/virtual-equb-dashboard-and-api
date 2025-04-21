@@ -41,7 +41,6 @@ class SignHelper
         return self::SignWithRSA($sortedString);
     }
 
-
     public static function sortedString($stringApplet)
     {
         $sortedArray = explode("&", $stringApplet);
@@ -71,7 +70,6 @@ class SignHelper
            throw $e;
         }
     }
-
 
     public static function createMerchantOrderId()
     {
