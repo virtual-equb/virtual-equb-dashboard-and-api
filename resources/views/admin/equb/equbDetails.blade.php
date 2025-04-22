@@ -35,7 +35,7 @@
                           $createdDate = $toCreatedAt->format('M-j-Y');
                           echo $createdDate; ?>
                       </td>
-                      @if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant' && Auth::user()->role != 'finance')
+                      @if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant')
                           <td>
                               <div class='dropdown'>
                                   <div class="table-responsive">
