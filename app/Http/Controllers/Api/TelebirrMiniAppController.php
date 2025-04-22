@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\api;
+namespace App\Http\Controllers\Api;
 
 use Exception;
 use Carbon\Carbon;
@@ -59,7 +59,7 @@ class TelebirrMiniAppController extends Controller
         IEqubTakerRepository $equbTakerRepository,
         IActivityLogRepository $activityLogRepository
     ) {
-        $this->middleware('auth:api')->except('getPaymentsByReference', 'callback');
+        $this->middleware('auth:api')->except('getPaymentsByReference','callback','telebirr-miniapp.callback');
         $this->activityLogRepository = $activityLogRepository;
         $this->paymentRepository = $paymentRepository;
         $this->memberRepository = $memberRepository;
