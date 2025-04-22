@@ -197,7 +197,7 @@ class EqubTakerController extends Controller
             $equbTaker = $this->equbTakerRepository->getById($id);
             $userData = Auth::user();
 
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
+            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector") || ($userData['role'] == "finance")) {
                 $memberId = $equbTaker->member_id;
                 $equbId = $equbTaker->equb_id;
                 $amount = $equbTaker->amount;
