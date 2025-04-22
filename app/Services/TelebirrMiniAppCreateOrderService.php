@@ -84,9 +84,9 @@ class TelebirrMiniAppCreateOrderService
     {
         try {
             $req = [
+                'timestamp' => SignHelper::createTimeStamp(),
                 'nonce_str' => SignHelper::createNonceStr(),
                 'method' => 'payment.preorder',
-                'timestamp' => SignHelper::createTimeStamp(),
                 'version' => '1.0',
                 'biz_content' => [
                     'notify_url' => $this->notifyPath,
@@ -95,13 +95,13 @@ class TelebirrMiniAppCreateOrderService
                     'appid' => $this->merchantAppId,
                     'merch_code' => $this->merchantCode,
                     'merch_order_id' => (string) $this->paymentId,
-                    'title' => "hello",
+                    'title' => "Equb Payment",
                     'total_amount' => (string) $amount,
                     'trans_currency' => 'ETB',
                     'timeout_express' => '120m',
                     'payee_identifier' => $this->merchantCode,
                     'payee_identifier_type' => '04',
-                    'payee_type' => "3000",
+                    'payee_type' => '5000',
                     'redirect_url' => $this->redirectPath,
                 ],
                 'sign_type' => 'SHA256WithRSA',
@@ -134,6 +134,9 @@ class TelebirrMiniAppCreateOrderService
         // Sign the raw request
         $rawRequest .= '&sign=' . SignHelper::sign($maps);
 
-        return $rawRequest;
+        // return $rawRequest;
+        return response()->json([
+            'rawRequest' => $rawRequest
+        ]);
     }
 }

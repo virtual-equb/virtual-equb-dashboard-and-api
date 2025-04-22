@@ -157,14 +157,8 @@ class TelebirrMiniAppController extends Controller
                 );
 
                 $result = $telebirrMiniAppCreateOrderService->createOrder();
-
-                // Parse URL-encoded string response into an associative array
-                parse_str($result, $parsedResult);
-                // Remove unwanted keys
-                unset($parsedResult['sign_type'], $parsedResult['sign'], $parsedResult['nonce_str']);
-                $parsedResult["paymentId"] = $telebirr->id;
-                // Return the filtered array as JSON
-                return response()->json($parsedResult);
+              
+                return $result;
             } else {
                 return response()->json([
                     'code' => 400,
