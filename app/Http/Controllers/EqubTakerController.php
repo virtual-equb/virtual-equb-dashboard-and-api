@@ -116,10 +116,10 @@ class EqubTakerController extends Controller
                 $status = 'pending';
                 $totalPpayment = $this->paymentRepository->getTotalPaid($equbId);
                 $totalEqubAmount = $this->equbRepository->getTotalEqubAmount($equbId);
-                $takenEqub = $this->equbTakerRepository->getTotalEqubAmount($equbId);
+                $takenEqub = $this->equbTakerRepository->getTotalPaidLotterAmount($equbId);
                 $remainingAmount = $totalEqubAmount - $takenEqub;
                 $remainingAmount = $remainingAmount - $amount;
-                $remainingPayment =  $totalEqubAmount - $totalPpayment;
+                $remainingPayment =  max(0, $totalEqubAmount - $totalPpayment);
                 $chequeAmount = $request->input('cheque_amount');
                 $chequeBankName = $request->input('cheque_bank_name');
                 $chequeDescription = $request->input('cheque_description');
@@ -152,7 +152,7 @@ class EqubTakerController extends Controller
 
                 $totalPpayment = $this->paymentRepository->getTotalPaid($equbId);
                 $totalEqubAmount = $this->equbRepository->getTotalEqubAmount($equbId);
-                $remainingPayment =  $totalEqubAmount - $totalPpayment;
+                $remainingPayment = max(0, $totalEqubAmount - $totalPpayment);
 
                 $create = $this->equbTakerRepository->create($equbTakerData);
 
@@ -160,7 +160,7 @@ class EqubTakerController extends Controller
                     $ekubStatus = [
                         'status' => 'Deactive'
                     ];
-                    $ekubStatusUpdate = $this->equbRepository->update($equbId, $ekubStatus);
+                   $this->equbRepository->update($equbId, $ekubStatus);
                 }
 
                 if ($create) {
@@ -222,7 +222,7 @@ class EqubTakerController extends Controller
 
                 $totalPpayment = $this->paymentRepository->getTotalPaid($equbId);
                 $totalEqubAmount = $this->equbRepository->getTotalEqubAmount($equbId);
-                $remainingPayment =  $totalEqubAmount - $totalPpayment;
+                $remainingPayment = max(0, $totalEqubAmount - $totalPpayment);
 
                 $updatedEkubTaker = [
                     "status" => $status
@@ -252,9 +252,10 @@ class EqubTakerController extends Controller
                         $notifiedMember = Member::where('id', $memberId)->first();
                         $memberPhone = $notifiedMember->phone;
                         $equbName = $equbTaker->equb->equbType->name;
+                        $paidLotteryAmount = $equbTaker->amount ?? $equbTaker->cheque_amount;
 
                         $shortcode = config('key.SHORT_CODE');
-                        $message = "Congrats! You've received a payment of $equbTaker->cheque_amount ETB for winning the $equbName equb. Lottery date: $equbTaker->created_at. For more info, call $shortcode.";
+                        $message = "Congrats! You've received a payment of $paidLotteryAmount ETB for winning the $equbName equb. Lottery date: $equbTaker->created_at. For more info, call $shortcode.";
                         
                         $this->sendSms($memberPhone, $message);
 
