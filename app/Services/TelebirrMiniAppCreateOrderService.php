@@ -47,6 +47,7 @@ class TelebirrMiniAppCreateOrderService
 
         // Get the fabric token
         $tokenResult = json_decode($applyFabricTokenService->applyFabricToken());
+
         if (!$tokenResult || !isset($tokenResult->token)) {
             throw new Exception('Failed to retrive Fabric token :' . json_encode($tokenResult));
         }
@@ -64,11 +65,11 @@ class TelebirrMiniAppCreateOrderService
     public function requestCreateOrder($fabricToken, $title, $amount)
     {
         try {
-            $response = Http::timeout(60)->withHeaders([
+            $response = Http::withOptions(['verify' => false])->timeout(60)->withHeaders([
                 'Content-Type' => 'application/json',
-                'X-APP-Key' => $this->fabricAppId,
+                'X-APP-Key' => 'c4182ef8-9249-458a-985e-06d191f4d505',
                 'Authorization' => $fabricToken,
-            ])->post($this->baseUrl . '/payment/v1/merchant/preOrder', $this->createRequestObject($title, $amount));
+            ])->post('https://196.188.120.3:38443/apiaccess/payment/gateway' . '/payment/v1/merchant/preOrder', $this->createRequestObject($title, $amount));
             
             Log::info('requestCreateOrder API Response' . $response->body());
 
@@ -92,14 +93,14 @@ class TelebirrMiniAppCreateOrderService
                     'notify_url' => $this->notifyPath,
                     'business_type' => 'BuyGoods',
                     'trade_type' => 'InApp',
-                    'appid' => $this->merchantAppId,
-                    'merch_code' => $this->merchantCode,
+                    'appid' => '1350921361971201',
+                    'merch_code' => '771342',
                     'merch_order_id' => (string) $this->paymentId,
                     'title' => "Equb Payment",
                     'total_amount' => (string) $amount,
                     'trans_currency' => 'ETB',
                     'timeout_express' => '120m',
-                    'payee_identifier' => $this->merchantCode,
+                    'payee_identifier' => '771342',
                     'payee_identifier_type' => '04',
                     'payee_type' => '5000',
                     'redirect_url' => $this->redirectPath,

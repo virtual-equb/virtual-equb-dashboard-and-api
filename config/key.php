@@ -30,8 +30,6 @@ return [
     "TELEBIRR_PUBLIC_KEY_C" => env('TELEBIRR_PUBLIC_KEY_C'),
     "TELEBIRR_H5_URL" => env('TELEBIRR_H5_URL', "https://app.ethiomobilemoney.et:2121/ammapi/payment/service-openup/toTradeWebPay"),
     
-    
-    
     'TELEBIRR_BASE_URL' => env('TELEBIRR_BASE_URL'),
     'TELEBIRR_FABRIC_APP_ID' => env('TELEBIRR_FABRIC_APP_ID'),
     'TELEBIRR_APP_SECRET' => env('TELEBIRR_APP_SECRET'),
