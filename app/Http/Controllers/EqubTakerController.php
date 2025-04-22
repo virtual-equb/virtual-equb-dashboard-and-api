@@ -11,6 +11,7 @@ use App\Repositories\EqubType\IEqubTypeRepository;
 use App\Repositories\Equb\IEqubRepository;
 use App\Repositories\ActivityLog\IActivityLogRepository;
 use App\Models\EqubTaker;
+use App\Models\Member;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
@@ -122,6 +123,7 @@ class EqubTakerController extends Controller
                 $chequeAmount = $request->input('cheque_amount');
                 $chequeBankName = $request->input('cheque_bank_name');
                 $chequeDescription = $request->input('cheque_description');
+
                 $equbTakerData = [
                     'member_id' => $memberId,
                     'equb_id' => $equbId,
@@ -152,7 +154,6 @@ class EqubTakerController extends Controller
                 $totalEqubAmount = $this->equbRepository->getTotalEqubAmount($equbId);
                 $remainingPayment =  $totalEqubAmount - $totalPpayment;
 
-
                 $create = $this->equbTakerRepository->create($equbTakerData);
 
                 if ($remainingPayment == 0 && $create->status == 'paid' && $create->remaining_amount == 0) {
@@ -172,7 +173,7 @@ class EqubTakerController extends Controller
                         'role' => $userData->role,
                     ];
                     $this->activityLogRepository->createActivityLog($activityLog);
-                    $msg = "Lottery winner has been registered successfully!";
+                    $msg = "Lottery winner - payment data has been registered successfully!";
                     $type = 'success';
                     Session::flash($type, $msg);
                     return redirect('member/');
@@ -195,17 +196,19 @@ class EqubTakerController extends Controller
         try {
             $equbTaker = $this->equbTakerRepository->getById($id);
             $userData = Auth::user();
-            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
 
+            if ($userData && ($userData['role'] == "admin") || ($userData['role'] == "equb_collector")) {
                 $memberId = $equbTaker->member_id;
                 $equbId = $equbTaker->equb_id;
                 $amount = $equbTaker->amount;
+
                 $totalPpayment = $this->paymentRepository->getTotalPaid($equbId);
                 $totalEqubAmount = $this->equbRepository->getTotalEqubAmount($equbId);
                 $takenEqub = $this->equbTakerRepository->getTotalEqubAmount($equbId);
                 $remainingAmount = $totalEqubAmount - $takenEqub;
                 $remainingAmount = $remainingAmount - $amount;
                 $remainingPayment =  $totalEqubAmount - $totalPpayment;
+
                 //new status added
                 if ($status == "paid") {
                     if ($remainingAmount == 0) {
@@ -226,12 +229,14 @@ class EqubTakerController extends Controller
                 ];
                 $create = $this->equbTakerRepository->update($id, $updatedEkubTaker);
                 $equbTaker = $this->equbTakerRepository->getById($id);
+
                 if ($remainingPayment == 0 && $equbTaker->status == 'paid' && $equbTaker->remaining_amount == 0) {
                     $ekubStatus = [
                         'status' => 'Deactive'
                     ];
-                    $ekubStatusUpdate = $this->equbRepository->update($equbId, $ekubStatus);
+                    $this->equbRepository->update($equbId, $ekubStatus);
                 }
+
                 if ($create) {
                     $activityLog = [
                         'type' => 'equb_takers',
@@ -242,7 +247,22 @@ class EqubTakerController extends Controller
                         'role' => $userData->role,
                     ];
                     $this->activityLogRepository->createActivityLog($activityLog);
-                    $msg = "Lottery winner has been $status successfully!";
+
+                    try {
+                        $notifiedMember = Member::where('id', $memberId)->first();
+                        $memberPhone = $notifiedMember->phone;
+                        $equbName = $equbTaker->equb->equbType->name;
+
+                        $shortcode = config('key.SHORT_CODE');
+                        $message = "Congrats! You've received a payment of $equbTaker->cheque_amount ETB for winning the $equbName equb. Lottery date: $equbTaker->created_at. For more info, call $shortcode.";
+                        
+                        $this->sendSms($memberPhone, $message);
+
+                    } catch (Exception $ex) {
+                        return redirect()->back()->with('error', 'Failed to send SMS');
+                    };
+
+                    $msg = "Lottery winner - payment data has been $status successfully!";
                     $type = 'success';
                     Session::flash($type, $msg);
                     return redirect('member/');
@@ -253,7 +273,10 @@ class EqubTakerController extends Controller
                     redirect('member/');
                 }
             } else {
-                return view('auth/login');
+                $msg = "You do not have the required role to approve this transaction.";
+                $type = 'error';
+                Session::flash($type, $msg);
+                return back();
             }
         } catch (Exception $ex) {
             $msg = "Unknown Error Occurred, Please try again!";
