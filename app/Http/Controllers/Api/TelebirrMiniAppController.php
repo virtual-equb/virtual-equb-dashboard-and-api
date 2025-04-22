@@ -12,7 +12,6 @@ use App\Models\EqubType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use App\Services\CreateOrderService;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\Equb\IEqubRepository;
 use App\Repositories\Member\IMemberRepository;
@@ -20,6 +19,7 @@ use App\Repositories\Payment\IPaymentRepository;
 use App\Repositories\EqubTaker\IEqubTakerRepository;
 use App\Repositories\ActivityLog\IActivityLogRepository;
 use App\Events\TelebirrPaymentStatusUpdated;
+use App\Services\TelebirrMiniAppCreateOrderService;
 
 /**
  * @group Payments
@@ -28,8 +28,8 @@ define('TELEBIRR_APP_ID', config('key.TELEBIRR_APP_ID'));
 define('TELEBIRR_RECEIVER_NAME', config("key.TELEBIRR_RECEIVER_NAME"));
 define('TELEBIRR_SHORT_CODE', config('key.TELEBIRR_SHORT_CODE'));
 define('TELEBIRR_SUBJECT', config('key.TELEBIRR_SUBJECT'));
-define('TELEBIRR_RETURN_URL', config('key.TELEBIRR_RETURN_URL'));
-define('TELEBIRR_NOTIFY_URL', config('key.TELEBIRR_NOTIFY_URL'));
+define('TELEBIRR_MINIAPP_RETURN_URL', config('key.TELEBIRR_MINIAPP_RETURN_URL'));
+define('TELEBIRR_MINIAPP_NOTIFY_URL', config('key.TELEBIRR_MINIAPP_NOTIFY_URL'));
 define('TELEBIRR_TIMEOUT_EXPRESS', config('key.TELEBIRR_TIMEOUT_EXPRESS'));
 define('TELEBIRR_APP_KEY', config('key.TELEBIRR_APP_KEY'));
 define('TELEBIRR_PUBLIC_KEY', config('key.TELEBIRR_PUBLIC_KEY'));
@@ -145,8 +145,8 @@ class TelebirrMiniAppController extends Controller
                 // You can also get the request parameters directly from the request object
                 $req = $request->all();
 
-                // Create an instance of CreateOrderService
-                $createOrderService = new CreateOrderService(
+                // Create an instance of TelebirrMiniAppCreateOrderService
+                $telebirrMiniAppCreateOrderService = new TelebirrMiniAppCreateOrderService(
                     $baseUrl,
                     (object) $req, // This casts the array to an object
                     $fabricAppId,
@@ -156,7 +156,7 @@ class TelebirrMiniAppController extends Controller
                     $telebirr->id // Cast to string if necessary
                 );
 
-                $result = $createOrderService->createOrder();
+                $result = $telebirrMiniAppCreateOrderService->createOrder();
 
                 // Parse URL-encoded string response into an associative array
                 parse_str($result, $parsedResult);
@@ -173,7 +173,7 @@ class TelebirrMiniAppController extends Controller
             }
         } catch (Exception $error) {
 
-            // Log::error('Error creating CreateOrderService: ' . $error->getMessage());
+            // Log::error('Error creating TelebirrMiniAppCreateOrderService: ' . $error->getMessage());
             return response()->json([
                 'code' => 500,
                 'message' => 'Failed to create order service',
