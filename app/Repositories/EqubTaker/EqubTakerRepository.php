@@ -57,6 +57,15 @@ class EqubTakerRepository implements IEqubTakerRepository
         return $this->model->where('equb_id', $equb_id)->where('status', '!=', 'unpaid')->sum('amount');
     }
 
+    public function getTotalPaidLotterAmount($equb_id)
+    {
+        return $this->model->where('equb_id', $equb_id)
+            ->where('status', '!=', 'unpaid')
+            ->whereNotNull('payment_type')
+            ->where('payment_type', '!=', '')
+            ->sum('amount');
+    }
+
     public function getByDate($dateFrom, $dateTo, $offset)
     {
         \DB::statement("SET SQL_MODE=''");

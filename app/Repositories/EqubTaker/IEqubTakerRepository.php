@@ -24,6 +24,8 @@ interface IEqubTakerRepository
 
     public function getTotalEqubAmount($equb_id);
 
+    public function getTotalPaidLotterAmount($equb_id);
+
     public function getByDate($dateFrom,$dateTo,$offset);
 
     public function getWithDateAndEqub($dateFrom,$dateTo,$equb_type_id,$offset);
