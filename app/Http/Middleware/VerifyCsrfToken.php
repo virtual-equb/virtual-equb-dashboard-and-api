@@ -14,5 +14,7 @@ class VerifyCsrfToken extends Middleware
     protected $except = [
         'api/registermember',
         'api/payments/telebirr/callback',
+        'api/telebirr-miniapp/initialize',
+        'api/telebirr-miniapp/callback',
     ];
 }

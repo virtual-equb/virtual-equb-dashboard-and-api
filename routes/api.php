@@ -33,7 +33,7 @@ use App\Http\Controllers\Api\PaymentTesterController;
 use App\Http\Controllers\Api\PaymentGatewayController;
 use App\Http\Controllers\EqubController as ControllersEqubController;
 use App\Http\Controllers\Api\SubcityController as ApiSubcityController;
-use App\Http\Controllers\api\TelebirrMiniAppController;
+use App\Http\Controllers\Api\TelebirrMiniAppController;
 use App\Http\Controllers\EqubTypeController as ControllersEqubTypeController;
 use App\Http\Middleware\LogUserActionMiddleware;
 
@@ -59,9 +59,10 @@ Route::post('/joinequb', [CbeMiniAppController::class, 'joinEqub']);
 Route::post('/process-payment', [CbeMiniAppController::class, 'processPayment'])->name('cbe.initialize');
 Route::post('/callback', [CbeMiniAppController::class, 'paymentCallback'])->name('cbe.callback');
 
-// Telebirr MiniApp Integration
-Route::post('/telebirr-miniapp/initialize', [TelebirrMiniAppController::class, 'initialize'])->name('telebirrminiapp.initialize');
-Route::post('/telebirr-miniapp/callback', [TelebirrMiniAppController::class, 'callback'])->name('telebirrminiappcallback');
+Route::prefix('telebirr-miniapp')->group(function () {
+    Route::post('/initialize', [TelebirrMiniAppController::class, 'initialize'])->name('telebirr-miniapp.initialize');
+    Route::post('/callback', [TelebirrMiniAppController::class, 'callback'])->name('telebirr-miniapp.callback');
+});
 
 Route::post('/drawauto', [ControllersEqubTypeController::class, 'drawSeasonedAutoWinners']);
 Route::get('/jwt', [PaymentGatewayController::class, 'testJWT']);
