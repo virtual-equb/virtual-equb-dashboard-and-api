@@ -3,11 +3,10 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
-use App\Services\ApplyFabricToken;
-use App\Helpers\SignHelper;
+use App\Helpers\SignHelperMiniApp;
 use Exception;
-
 use Illuminate\Support\Facades\Log;
+
 class TelebirrMiniAppCreateOrderService
 {
     protected $baseUrl;
@@ -38,7 +37,7 @@ class TelebirrMiniAppCreateOrderService
         $amount = $this->req->amount;
 
         // Initialize ApplyFabricToken with Telebirr configurations
-        $applyFabricTokenService = new ApplyFabricTokenService(
+        $applyFabricTokenServiceMiniApp = new ApplyFabricTokenServiceMiniApp(
             TELEBIRR_BASE_URL,
             TELEBIRR_FABRIC_APP_ID,
             TELEBIRR_APP_SECRET,
@@ -46,16 +45,16 @@ class TelebirrMiniAppCreateOrderService
         );
 
         // Get the fabric token
-        $tokenResult = json_decode($applyFabricTokenService->applyFabricToken());
+        $tokenResult = json_decode($applyFabricTokenServiceMiniApp->applyFabricToken());
 
         if (!$tokenResult || !isset($tokenResult->token)) {
-            throw new Exception('Failed to retrive Fabric token :' . json_encode($tokenResult));
+            throw new Exception('Failed to retrive Fabric token - MiniApp :' . json_encode($tokenResult));
         }
         $fabricToken = $tokenResult->token;
 
         // Create the order request
         $createOrderResult = $this->requestCreateOrder($fabricToken, TELEBIRR_TITLE, $amount);
-        Log::info('Create Order API Response:' . $createOrderResult);
+        Log::info('Create Order API Response - MiniApp:' . $createOrderResult);
 
         $prepayId = json_decode($createOrderResult)->biz_content->prepay_id;
 
@@ -85,8 +84,8 @@ class TelebirrMiniAppCreateOrderService
     {
         try {
             $req = [
-                'timestamp' => SignHelper::createTimeStamp(),
-                'nonce_str' => SignHelper::createNonceStr(),
+                'timestamp' => SignHelperMiniApp::createTimeStamp(),
+                'nonce_str' => SignHelperMiniApp::createNonceStr(),
                 'method' => 'payment.preorder',
                 'version' => '1.0',
                 'biz_content' => [
@@ -109,7 +108,7 @@ class TelebirrMiniAppCreateOrderService
             ];
 
             // Sign the request
-            $req['sign'] = SignHelper::sign($req); 
+            $req['sign'] = SignHelperMiniApp::sign($req); 
             return $req;
         } catch (Exception $e) {
             throw $e;
@@ -121,9 +120,9 @@ class TelebirrMiniAppCreateOrderService
         $maps = [
             'appid' => $this->merchantAppId,
             'merch_code' => $this->merchantCode,
-            'nonce_str' => SignHelper::createNonceStr(),
+            'nonce_str' => SignHelperMiniApp::createNonceStr(),
             'prepay_id' => $prepayId,
-            'timestamp' => SignHelper::createTimeStamp(),
+            'timestamp' => SignHelperMiniApp::createTimeStamp(),
             'sign_type' => 'SHA256WithRSA',
         ];
 
@@ -133,7 +132,7 @@ class TelebirrMiniAppCreateOrderService
             ->join('&');
 
         // Sign the raw request
-        $rawRequest .= '&sign=' . SignHelper::sign($maps);
+        $rawRequest .= '&sign=' . SignHelperMiniApp::sign($maps);
 
         // return $rawRequest;
         return response()->json([
