@@ -24,11 +24,11 @@ class ApplyFabricTokenService
     public function applyFabricToken()
     {
         try {
-            $response = Http::withOptions(['verify' => false])->timeout(60)->withHeaders([
+            $response = Http::timeout(60)->withHeaders([
                     "Content-Type" => "application/json",
-                    "X-APP-Key" => "c4182ef8-9249-458a-985e-06d191f4d505",
-                ])->post('https://196.188.120.3:38443/apiaccess/payment/gateway' . '/payment/v1/token', [
-                    'appSecret' => "fad0f06383c6297f545876694b974599",
+                    "X-APP-Key" => $this->fabricAppId,
+                ])->post($this->BASE_URL . '/payment/v1/token', [
+                    'appSecret' => $this->appSecret,
                 ]);
 
             if ($response->successful()) {
@@ -40,12 +40,12 @@ class ApplyFabricTokenService
             ]);
 
             Log::info('Apply Fabric Token Request', [
-                'url' => 'https://196.188.120.3:38443/apiaccess/payment/gateway' . '/payment/v1/token',
+                'url' => $this->BASE_URL . '/payment/v1/token',
                 'headers' => [
                     "Content-Type" => "application/json",
-                    "X-APP-Key" => 'c4182ef8-9249-458a-985e-06d191f4d505',
+                    "X-APP-Key" => $this->fabricAppId,
                 ],
-                'body' => ['appSecret' => 'fad0f06383c6297f545876694b974599'],
+                'body' => ['appSecret' => $this->appSecret],
             ]);
             
             Log::info('Fabric Token API Response', ['response' => $response->body()]);
