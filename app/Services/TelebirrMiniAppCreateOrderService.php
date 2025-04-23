@@ -90,7 +90,6 @@ class TelebirrMiniAppCreateOrderService
                 'version' => '1.0',
                 'biz_content' => [
                     'notify_url' => $this->notifyPath,
-                    'business_type' => 'BuyGoods',
                     'trade_type' => 'InApp',
                     'appid' => '1350921361971201',
                     'merch_code' => '771342',
@@ -123,16 +122,17 @@ class TelebirrMiniAppCreateOrderService
             'nonce_str' => SignHelperMiniApp::createNonceStr(),
             'prepay_id' => $prepayId,
             'timestamp' => SignHelperMiniApp::createTimeStamp(),
-            'sign_type' => 'SHA256WithRSA',
         ];
+
+        // Generate the signature
+        $sign = SignHelperMiniApp::sign($maps);
 
         // Create the raw request string
         $rawRequest = collect($maps)
             ->map(fn($value, $key) => "$key=$value")
+            ->push("sign=$sign")
+            ->push("sign_type=SHA256WithRSA")
             ->join('&');
-
-        // Sign the raw request
-        $rawRequest .= '&sign=' . SignHelperMiniApp::sign($maps);
 
         // return $rawRequest;
         return response()->json([
