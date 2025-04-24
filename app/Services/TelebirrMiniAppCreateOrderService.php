@@ -50,10 +50,11 @@ class TelebirrMiniAppCreateOrderService
         if (!$tokenResult || !isset($tokenResult->token)) {
             throw new Exception('Failed to retrive Fabric token - MiniApp :' . json_encode($tokenResult));
         }
+
         $fabricToken = $tokenResult->token;
 
         // Create the order request
-        $createOrderResult = $this->requestCreateOrder($fabricToken, TELEBIRR_TITLE, $amount);
+        $createOrderResult = $this->requestCreateOrder($fabricToken, 'Test Equb Payment', $amount);
         Log::info('Create Order API Response - MiniApp:' . $createOrderResult);
 
         $prepayId = json_decode($createOrderResult)->biz_content->prepay_id;
@@ -84,12 +85,13 @@ class TelebirrMiniAppCreateOrderService
     {
         try {
             $req = [
-                'timestamp' => SignHelperMiniApp::createTimeStamp(),
                 'nonce_str' => SignHelperMiniApp::createNonceStr(),
                 'method' => 'payment.preorder',
+                'timestamp' => SignHelperMiniApp::createTimeStamp(),
                 'version' => '1.0',
                 'biz_content' => [
                     'notify_url' => $this->notifyPath,
+                    'business_type' => 'BuyGoods',
                     'trade_type' => 'InApp',
                     'appid' => '1350921361971201',
                     'merch_code' => '771342',
@@ -101,7 +103,6 @@ class TelebirrMiniAppCreateOrderService
                     'payee_identifier' => '771342',
                     'payee_identifier_type' => '04',
                     'payee_type' => '5000',
-                    'redirect_url' => $this->redirectPath,
                 ],
                 'sign_type' => 'SHA256WithRSA',
             ];
@@ -117,26 +118,24 @@ class TelebirrMiniAppCreateOrderService
     public function createRawRequest($prepayId)
     {
         $maps = [
-            'appid' => $this->merchantAppId,
-            'merch_code' => $this->merchantCode,
+            'appid' => '1350921361971201',
+            'merch_code' => '771342',
             'nonce_str' => SignHelperMiniApp::createNonceStr(),
             'prepay_id' => $prepayId,
             'timestamp' => SignHelperMiniApp::createTimeStamp(),
+            'sign_type' => 'SHA256WithRSA'
         ];
+
+        // Construct the raw request string with proper encoding
+        $rawRequest = http_build_query($maps, '', '&', PHP_QUERY_RFC3986);
 
         // Generate the signature
         $sign = SignHelperMiniApp::sign($maps);
 
-        // Create the raw request string
-        $rawRequest = collect($maps)
-            ->map(fn($value, $key) => "$key=$value")
-            ->push("sign=$sign")
-            ->push("sign_type=SHA256WithRSA")
-            ->join('&');
+        // Append the sign
+        $rawRequest .= '&sign=' . $sign;
 
         // return $rawRequest;
-        return response()->json([
-            'rawRequest' => $rawRequest
-        ]);
+        return $rawRequest;
     }
 }
