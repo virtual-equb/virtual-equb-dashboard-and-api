@@ -62,6 +62,7 @@ Route::post('/callback', [CbeMiniAppController::class, 'paymentCallback'])->name
 Route::prefix('telebirr-miniapp')->group(function () {
     Route::post('/initialize', [TelebirrMiniAppController::class, 'initialize'])->name('telebirr-miniapp.initialize');
     Route::post('/callback', [TelebirrMiniAppController::class, 'callback'])->name('telebirr-miniapp.callback');
+    Route::post('/callback-miniapp', [TelebirrMiniAppController::class, 'callbackMiniApp'])->name('telebirr-miniapp.callback-miniapp');
 });
 
 Route::post('/drawauto', [ControllersEqubTypeController::class, 'drawSeasonedAutoWinners']);
@@ -97,6 +98,7 @@ Route::group([
 
 ], function ($router) {
     Route::post('login', [AuthController::class, 'login']);
+    Route::post('login-telebirr-miniapp', [AuthController::class, 'loginTelebirrMiniApp']);
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::get('profile', [AuthController::class, 'profile']);

@@ -136,6 +136,8 @@ class TelebirrMiniAppCreateOrderService
         $rawRequest .= '&sign=' . $sign;
 
         // return $rawRequest;
-        return $rawRequest;
+        return response()->json([
+            'rawRequest' => $rawRequest
+        ]);
     }
 }

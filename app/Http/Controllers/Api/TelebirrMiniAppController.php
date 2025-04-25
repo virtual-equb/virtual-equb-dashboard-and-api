@@ -59,7 +59,7 @@ class TelebirrMiniAppController extends Controller
         IEqubTakerRepository $equbTakerRepository,
         IActivityLogRepository $activityLogRepository
     ) {
-        $this->middleware('auth:api')->except('getPaymentsByReference','callback','telebirr-miniapp.callback');
+        $this->middleware('auth:api')->except('getPaymentsByReference','callback', 'telebirr-miniapp.callback', 'telebirr-miniapp.callback-miniapp');
         $this->activityLogRepository = $activityLogRepository;
         $this->paymentRepository = $paymentRepository;
         $this->memberRepository = $memberRepository;
@@ -351,6 +351,24 @@ class TelebirrMiniAppController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
+                "error" => $error
+            ]);
+        }
+    }
+
+    public function callbackMiniApp(Request $request)
+    {
+        try {
+            Log::info('Callback From Telebirr MiniApp request data', $request->all());
+
+            return response()->json([
+                'code' => 200,
+                'message' => 'Callback Response Successfully Cached - Telebirr MiniApp!'
+            ], 200);          
+        } catch (Exception $error) {
+            return response()->json([
+                'code' => 500,
+                'message' => 'Unable to catch response request from telebirr miniApp, Please try again!',
                 "error" => $error
             ]);
         }

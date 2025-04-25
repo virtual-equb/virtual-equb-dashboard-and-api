@@ -19,7 +19,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login']]);
+        $this->middleware('auth:api', ['except' => ['login', 'loginTelebirrMiniApp']]);
     }
     /**
      * Get a JWT via given credentials.
@@ -28,7 +28,6 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        // dd($request);
         try {
             $request->validate([
                 'phone_number' => 'required',
@@ -104,7 +103,97 @@ class AuthController extends Controller
             ]);
         }
     }
-    
+
+    public function loginTelebirrMiniApp(Request $request)
+    {
+        try {
+            $request->validate([
+                'phone_number' => 'required',
+                'name' => 'required|string|max:20',
+            ]);
+
+            // Check if the user exists based on phone number
+            $userExists = User::where('phone_number', $request->input('phone_number'))->first();
+
+            if (!$userExists) {
+                return response()->json([
+                    'code' => 404,
+                    'message' => 'User not found!'
+                ], 404);
+            }
+
+            // Attempt to create a token (no password required)
+            $user = $userExists; 
+            if (!$token = JWTAuth::fromUser($user)) {
+                return response()->json([
+                    'code' => 401,
+                    'message' => 'Unable to generate token'
+                ], 401);
+            }
+
+            // Check if the user's account is active
+            $userStatus = $user->enabled;
+            $olderToken = $user->token;
+
+            if (!$userStatus) {
+                if ($olderToken) {
+                    JWTAuth::manager()->invalidate(new \Tymon\JWTAuth\Token($olderToken));
+                }
+                return response()->json([
+                    'code' => 403,
+                    'message' => 'Your account is not active, Please contact admin!'
+                ]);
+            }
+
+            // Invalidate any existing token (if needed)
+            if ($olderToken) {
+                JWTAuth::manager()->invalidate(new \Tymon\JWTAuth\Token($olderToken));
+            }
+
+            // Update the user's token and store the FCM ID
+            $userId = $user->id;
+            User::where('id', $userId)
+                ->update([
+                    'token' => $token,
+                    'fcm_id' => $request->fcm_id
+                ]);
+
+            // Get the member ID based on the user's phone number
+            $memberPhone = $user->phone_number;
+            $memberId = Member::where('phone', $memberPhone)->pluck('id')->first();
+
+            // Prepare user data to return in response
+            $userData = [
+                "id" => $user->id,
+                "name" => $user->name,
+                "email" => $user->email,
+                "phone_number" => $user->phone_number,
+                "gender" => $user->gender,
+                "role" => $user->getRoleNames()->first(),
+                "enabled" => $user->enabled,
+                "member_id" => $memberId
+            ];
+
+            // Prepare token data (using your method `respondWithToken`)
+            $tokenData = $this->respondWithToken($token);
+
+            return response()->json([
+                'message' => "Logged in successfully!",
+                'code' => 200,
+                'user' => $userData,
+                'token_type' => 'Bearer',
+                'token' => $tokenData->original['access_token'],
+                'fcm_id' => $request->fcm_id
+            ]);
+
+        } catch (Exception $error) {
+            return response()->json([
+                'code' => 500,
+                'message' => 'Unable to process your request, Please try again!',
+                "error" => $error->getMessage()
+            ]);
+        }
+    }
 
     /**
      * Get the authenticated User.
