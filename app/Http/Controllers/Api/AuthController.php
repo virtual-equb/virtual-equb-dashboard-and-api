@@ -106,19 +106,32 @@ class AuthController extends Controller
 
     public function loginTelebirrMiniApp(Request $request)
     {
-        try {
             $request->validate([
-                'phone_number' => 'required',
-                'name' => 'required|string|max:20',
+                'authToken' => 'required|string',
             ]);
 
+            // Assuming you have an AuthTokenService that handles the token processing
+            $authTokenService = new AuthTokenService();
+
+            $tokenResult = $authTokenService->authToken($request->input('authToken'));
+            $responseData = json_decode($tokenResult, true);
+        
+            if (isset($responseData['biz_content'])) {
+                $bizContent = $responseData['biz_content'];
+        
+                $identifier = $bizContent['identifier'] ?? null;
+                $nickName = $bizContent['nickName'] ?? null;
+            }
+
             // Check if the user exists based on phone number
-            $userExists = User::where('phone_number', $request->input('phone_number'))->first();
+            $userExists = User::where('phone_number',  $identifier)->first();
 
             if (!$userExists) {
                 return response()->json([
                     'code' => 404,
-                    'message' => 'User not found!'
+                    'message' => 'User not found!',
+                    'identifier' => $identifier,
+                    'nickName' => $nickName,
                 ], 404);
             }
 
