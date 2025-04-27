@@ -8,6 +8,7 @@ use App\Models\Member;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Controllers\Controller;
+use App\Services\AuthTokenService;
 use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
@@ -106,6 +107,7 @@ class AuthController extends Controller
 
     public function loginTelebirrMiniApp(Request $request)
     {
+        try {
             $request->validate([
                 'authToken' => 'required|string',
             ]);
