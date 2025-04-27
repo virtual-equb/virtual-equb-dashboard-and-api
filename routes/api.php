@@ -63,6 +63,7 @@ Route::prefix('telebirr-miniapp')->group(function () {
     Route::post('/initialize', [TelebirrMiniAppController::class, 'initialize'])->name('telebirr-miniapp.initialize');
     Route::post('/callback', [TelebirrMiniAppController::class, 'callback'])->name('telebirr-miniapp.callback');
     Route::post('/callback-miniapp', [TelebirrMiniAppController::class, 'callbackMiniApp'])->name('telebirr-miniapp.callback-miniapp');
+    Route::post('/register-member', [TelebirrMiniAppController::class, 'registerMember'])->name('telebirr-miniapp.store-member');
 });
 
 Route::post('/drawauto', [ControllersEqubTypeController::class, 'drawSeasonedAutoWinners']);

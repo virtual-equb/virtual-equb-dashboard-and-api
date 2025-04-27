@@ -19,7 +19,10 @@ use App\Repositories\Payment\IPaymentRepository;
 use App\Repositories\EqubTaker\IEqubTakerRepository;
 use App\Repositories\ActivityLog\IActivityLogRepository;
 use App\Events\TelebirrPaymentStatusUpdated;
+use App\Repositories\User\IUserRepository;
 use App\Services\TelebirrMiniAppCreateOrderService;
+use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 /**
  * @group Payments
@@ -51,20 +54,23 @@ class TelebirrMiniAppController extends Controller
     private $memberRepository;
     private $equbRepository;
     private $equbTakerRepository;
+    private $userRepository;
     private $title;
     public function __construct(
         IPaymentRepository $paymentRepository,
         IMemberRepository $memberRepository,
         IEqubRepository $equbRepository,
         IEqubTakerRepository $equbTakerRepository,
-        IActivityLogRepository $activityLogRepository
+        IActivityLogRepository $activityLogRepository,
+        IUserRepository $userRepository,
     ) {
-        $this->middleware('auth:api')->except('getPaymentsByReference','callback', 'telebirr-miniapp.callback', 'telebirr-miniapp.callback-miniapp');
+        $this->middleware('auth:api')->except('getPaymentsByReference','callback', 'telebirr-miniapp.callback', 'telebirr-miniapp.callback-miniapp', 'telebirr-miniapp.store-member');
         $this->activityLogRepository = $activityLogRepository;
         $this->paymentRepository = $paymentRepository;
         $this->memberRepository = $memberRepository;
         $this->equbRepository = $equbRepository;
         $this->equbTakerRepository = $equbTakerRepository;
+        $this->userRepository = $userRepository;
         $this->title = "Virtual Equb - Telebirr MiniApp Payment";
     }
 
@@ -405,6 +411,135 @@ class TelebirrMiniAppController extends Controller
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
                 "error" => $error
+            ]);
+        }
+    }
+
+    public function registerMember(Request $request)
+    {
+        $shortcode = config('key.SHORT_CODE');
+        try {
+            // Validation rules
+            $this->validate(
+                $request,
+                [
+                    'full_name' => 'required',
+                    'phone' => 'required',
+                    'gender' => 'required',
+                    'date_of_birth' => 'required|date|before:' . now()->subYears(18)->format('Y-m-d'), // Must be before 18 years ago
+                    'password' => 'required'
+                ],
+                [
+                    'date_of_birth.before' => 'You must be at least 18 years old to register.'
+                ]
+            );
+
+            // Handle the input data
+            $fullName = $request->input('full_name');
+            $phone = $request->input('phone');
+            $gender = $request->input('gender');
+            $city = $request->input('city');
+            $subcity = $request->input('subcity');
+            $woreda = $request->input('woreda');
+            $housenumber = $request->input('housenumber');
+            $location = $request->input('location');
+            $email = $request->input('email');
+            $password = $request->input('password');
+            $dateofBirth = $request->input('date_of_birth');
+
+            // Check if the phone number already exists
+            if (!empty($phone)) {
+                $member_count = Member::where('phone', $phone)->count();
+                $user_count = User::where('phone_number', $phone)->count();
+                if ($member_count > 0 || $user_count > 0) {
+                    return response()->json([
+                        'code' => 403,
+                        'message' => 'Phone already exists',
+                    ]);
+                }
+            }
+
+            // Check if the email already exists
+            if (!empty($email)) {
+                $member_count = Member::where('email', $email)->count();
+                $user_count = User::where('email', $email)->count();
+                if ($member_count > 0 || $user_count > 0) {
+                    return response()->json([
+                        'code' => 403,
+                        'message' => 'Email already exists',
+                    ]);
+                }
+            }
+
+            // Prepare the member data
+            $memberData = [
+                'full_name' => $fullName,
+                'phone' => $phone,
+                'gender' => $gender,
+                'email' => $email,
+                'city' => $city,
+                'subcity' => $subcity,
+                'woreda' => $woreda,
+                'house_number' => $housenumber,
+                'specific_location' => $location,
+                'status' => "Active",
+                'date_of_birth' => $dateofBirth
+            ];
+
+            // Handle the profile picture upload
+            if ($request->file('profile_picture')) {
+                $image = $request->file('profile_picture');
+                $imageName = time() . '.' . $image->getClientOriginalExtension();
+                $image->storeAs('public/profile_pictures', $imageName);
+                $memberData['profile_photo_path'] = 'profile_pictures/' . $imageName;
+            }
+
+            // Create member and user
+            $create = $this->memberRepository->create($memberData);
+            $user = [
+                'name' => $fullName,
+                'email' => $email,
+                'password' => Hash::make($password),
+                'phone_number' => $phone,
+                'gender' => $gender,
+                'status' => 'Active'
+            ];
+            $user = $this->userRepository->createUser($user);
+
+            $memberRoleAPI = Role::firstOrCreate(['name' => 'member', 'guard_name' => 'api']);
+            $memberRoleWEB = Role::firstOrCreate(['name' => 'member', 'guard_name' => 'web']);
+            $user->assignRole($memberRoleWEB);
+            $user->assignRole($memberRoleAPI);
+
+            if ($create && $user) {
+                try {
+                    $message = "Welcome to Virtual Equb! You have registered succesfully. Use the phone number " . $phone . " and password " . $password . " to log in." . " For further information please call " . $shortcode;
+                    // dd($message);
+                    $this->sendSms($request->phone, $message);
+                } catch (Exception $ex) {
+                    return response()->json([
+                        'code' => 400,
+                        'message' => 'Failed to send SMS',
+                        "error" => "Failed to send SMS"
+                    ]);
+                };
+                return response()->json([
+                    'code' => 200,
+                    'message' => "Member has registered successfully!",
+                    'data' => new MemberResource($create)
+                ]);
+            } else {
+                return response()->json([
+                    'code' => 400,
+                    'message' => 'Unknown error occurred, Please try again!',
+                    "error" => "Unknown error occurred, Please try again!"
+                ]);
+            }
+        } catch (Exception $ex) {
+            return response()->json([
+                'code' => 400,
+                'message' => 'Unknown error occurred, Please try again!',
+                "error" => $ex->getMessage()
             ]);
         }
     }
