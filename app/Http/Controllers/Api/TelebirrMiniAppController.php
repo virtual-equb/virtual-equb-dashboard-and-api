@@ -418,19 +418,19 @@ class TelebirrMiniAppController extends Controller
 
     public function registerMember(Request $request)
     {
-        Log::info('Member Register Data from Telebirr MiniApp', $request->all());
+        Log::info('Member Registration Data from Telebirr MiniApp', $request->all());
 
-        $shortcode = config('key.SHORT_CODE');
         try {
-            // Validation rules
+            $shortcode = config('key.SHORT_CODE');
+
             $this->validate(
                 $request,
                 [
                     'full_name' => 'required',
                     'phone' => 'required',
+                    'email' => 'nullable|email',
                     'gender' => 'required',
                     'date_of_birth' => 'required|date|before:' . now()->subYears(18)->format('Y-m-d'), // Must be before 18 years ago
-                    'password' => 'required'
                 ],
                 [
                     'date_of_birth.before' => 'You must be at least 18 years old to register.'
@@ -438,17 +438,17 @@ class TelebirrMiniAppController extends Controller
             );
 
             // Handle the input data
-            $fullName = $request->input('full_name');
             $phone = $request->input('phone');
+            $fullName = $request->input('full_name');
+            $email = $request->input('email');
             $gender = $request->input('gender');
+            $dateofBirth = $request->input('date_of_birth');
+
             $city = $request->input('city');
             $subcity = $request->input('subcity');
             $woreda = $request->input('woreda');
             $housenumber = $request->input('housenumber');
             $location = $request->input('location');
-            $email = $request->input('email');
-            $password = $request->input('password');
-            $dateofBirth = $request->input('date_of_birth');
 
             // Check if the phone number already exists
             if (!empty($phone)) {
@@ -499,10 +499,13 @@ class TelebirrMiniAppController extends Controller
 
             // Create member and user
             $create = $this->memberRepository->create($memberData);
+
+            $password = rand(100000, 999999);
+            $hashedPassword = Hash::make($password);
             $user = [
                 'name' => $fullName,
                 'email' => $email,
-                'password' => Hash::make($password),
+                'password' => $hashedPassword,
                 'phone_number' => $phone,
                 'gender' => $gender,
                 'status' => 'Active'
@@ -516,26 +519,33 @@ class TelebirrMiniAppController extends Controller
 
             if ($create && $user) {
                 try {
-                    $message = "Welcome to Virtual Equb! You have registered succesfully. Use the phone number " . $phone . " and password " . $password . " to log in." . " For further information please call " . $shortcode;
-                    // dd($message);
-                    $this->sendSms($request->phone, $message);
+                    $message = "Welcome to Virtual Equb! You have successfully registered. 
+                    Please use your phone number ({$phone}) and password ({$password}) when logging in through our mobile application. 
+                    For support, please call {$shortcode}.";
+
+                    $this->sendSms($phone, $message);
+
+                    $authController = new AuthController();
+        
+                    $loginRequest = new \Illuminate\Http\Request([
+                        'phone_number' => $phone,
+                        'password' => $password,
+                    ]);
+            
+                    // Call the login() method
+                    return $authController->login($loginRequest);
                 } catch (Exception $ex) {
                     return response()->json([
-                        'code' => 400,
+                        'code' => 200,
                         'message' => 'Failed to send SMS',
                         "error" => "Failed to send SMS"
                     ]);
                 };
-                return response()->json([
-                    'code' => 200,
-                    'message' => "Member has registered successfully!",
-                    'data' => new MemberResource($create)
-                ]);
             } else {
                 return response()->json([
-                    'code' => 400,
-                    'message' => 'Unknown error occurred, Please try again!',
-                    "error" => "Unknown error occurred, Please try again!"
+                    'code' => 200,
+                    'message' => 'Registration failed. Please try again!',
+                    'error' => 'Registration process encountered an unknown error.'
                 ]);
             }
         } catch (Exception $ex) {
