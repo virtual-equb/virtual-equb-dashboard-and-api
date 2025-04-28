@@ -12,9 +12,14 @@ class AuthTokenService
 {
     protected $applyFabricTokenServiceMiniApp;
 
-    public function __construct(ApplyFabricTokenServiceMiniApp $applyFabricTokenServiceMiniApp)
+    public function __construct()
     {
-        $this->applyFabricTokenServiceMiniApp = $applyFabricTokenServiceMiniApp;
+        $this->applyFabricTokenServiceMiniApp = new ApplyFabricTokenServiceMiniApp(
+            env('BASE_URL'),
+            env('FABRIC_APP_ID'),
+            env('APP_SECRET'),
+            env('MERCHANT_APP_ID')
+        );
     }
 
     public function authToken($authToken)
