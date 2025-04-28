@@ -106,7 +106,7 @@ class EqubTakerController extends Controller
                 $this->validate($request, [
                     'payment_type' => 'required',
                     'amount' => 'required',
-                    // 'status' => 'required'
+                    'paid_date' => 'required',
                 ]);
 
                 $memberId = $request->input('lottey_member_id');
@@ -123,6 +123,7 @@ class EqubTakerController extends Controller
                 $chequeAmount = $request->input('cheque_amount');
                 $chequeBankName = $request->input('cheque_bank_name');
                 $chequeDescription = $request->input('cheque_description');
+                $paidDate = $request->input('paid_date');
 
                 $equbTakerData = [
                     'member_id' => $memberId,
@@ -137,6 +138,7 @@ class EqubTakerController extends Controller
                     'cheque_amount' => $chequeAmount,
                     'cheque_bank_name' => $chequeBankName,
                     'cheque_description' => $chequeDescription,
+                    'paid_date' => $paidDate,
                 ];
 
                 //new status added
@@ -255,7 +257,8 @@ class EqubTakerController extends Controller
                         $paidLotteryAmount = $equbTaker->amount ?? $equbTaker->cheque_amount;
 
                         $shortcode = config('key.SHORT_CODE');
-                        $message = "Congrats! You've received a payment of $paidLotteryAmount ETB for winning the $equbName equb. Lottery date: $equbTaker->created_at. For more info, call $shortcode.";
+                        $formattedDate = \Carbon\Carbon::parse($equbTaker->paid_date)->format('M-j-Y');
+                        $message = "Congrats! You've received a payment of $paidLotteryAmount ETB for winning the $equbName equb. Lottery date: $formattedDate. For more info, call $shortcode.";
                         
                         $this->sendSms($memberPhone, $message);
 
@@ -335,6 +338,7 @@ class EqubTakerController extends Controller
                 $chequeAmount = $request->input('update_lottery_cheque_amount');
                 $chequeBankName = $request->input('update_lottery_cheque_bank_name');
                 $chequeDescription = $request->input('update_lottery_cheque_description');
+                $paidDate = $request->input('update_paid_date');
 
                 $updated = [
                     'payment_type' => $paymentType,
@@ -347,8 +351,10 @@ class EqubTakerController extends Controller
                     'cheque_amount' => $chequeAmount,
                     'cheque_bank_name' => $chequeBankName,
                     'cheque_description' => $chequeDescription,
+                    'paid_date' => $paidDate,
                 ];
                 $updated = $this->equbTakerRepository->update($id, $updated);
+
                 if ($updated) {
                     $activityLog = [
                         'type' => 'equb_takers',
