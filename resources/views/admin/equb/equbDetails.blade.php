@@ -13,7 +13,6 @@
                   <th>Paid By</th>
                   <th>Payment Date</th>
                   <th style="width: 50px">Action</th>
-
               </tr>
           </thead>
 
@@ -28,12 +27,17 @@
                       <td> {{ $equbTaker->cheque_bank_name }}</td>
                       <td> {{ $equbTaker->cheque_description }}</td>
                       <td> {{ $equbTaker->status }}</td>
-                      <td> {{ $equbTaker->paid_by }}</td>
+                      <td> {{ empty($equbTaker->paid_by) ? '-' : $equbTaker->paid_by }}</td>
                       <td>
-                          <?php
-                          $toCreatedAt = new DateTime($equbTaker['created_at']);
-                          $createdDate = $toCreatedAt->format('M-j-Y');
-                          echo $createdDate; ?>
+                        <?php
+                        if (!empty($equbTaker->paid_by)) {
+                            $toPaidDate = new DateTime($equbTaker['paid_date']);
+                            $paymentDate = $toPaidDate->format('M-j-Y');
+                            echo $paymentDate;
+                        } else {
+                            echo '-';
+                        }
+                        ?>
                       </td>
                       @if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant')
                           <td>

@@ -886,7 +886,12 @@
                 $('#update_lottery_status>option[value="' + item.status + '"]').prop('selected', true);
                 $('#update_lottery_cheque_amount').val(item.cheque_amount);
                 $('#update_lottery_cheque_bank_name').val(item.cheque_bank_name);
-                $('#update_lottery_cheque_bank_name').val(item.cheque_bank_name);
+                if (item.paid_date) {
+                    var paidDate = new Date(item.paid_date);
+                    paidDate = moment(paidDate);
+                    paidDate = paidDate.format("YYYY-MM-DD");
+                    $('#update_paid_date').val(paidDate);
+                }
                 $('#updateLotteryPayment').attr('action', 'equbTaker/updateLottery/' + $('#update_member_id').val() + '/' + $(
                     '#equb_id').val() + '/' + $('#lottery_id').val());
             }

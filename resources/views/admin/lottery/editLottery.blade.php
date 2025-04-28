@@ -29,6 +29,13 @@
 
                                 </select>
                             </div>
+
+                            <div class="form-group required">
+                                <label class="control-label">Payment Date</label>
+                                <input type="date" class="form-control" id="update_paid_date"
+                                    name="update_paid_date" placeholder="Payment date" required>
+                            </div>
+
                             <div class="form-group required">
                                 <label class="control-label">Amount</label>
                                 <input type="number" class="form-control" id="update_lottery_amount"

@@ -26,21 +26,17 @@
                                        </select>
                                    </div>
 
+                                    <div class="form-group required">
+                                        <label class="control-label">Payment Date</label>
+                                        <input type="date" class="form-control" id="paid_date"
+                                            name="paid_date" placeholder="Payment date" autocomplete="off">
+                                    </div>
+
                                    <div class="form-group required">
                                        <label class="control-label">Lottery Amount</label>
                                        <input type="number" class="form-control" id="lottery_amount"
                                            name="amount"placeholder="Amount" required>
                                    </div>
-                                   {{-- <div class="form-group required">
-                                        <label class="control-label">Status</label>
-                                        <select class="form-control select2" id="status" name="status" placeholder="Status" required>
-                                            <option value="">Choose..</option>
-                                            <option value="paid">Fully Paid</option>
-                                            <option value="partially_paid">Partially Paid</option>
-                                            <option value="unpaid">Unpaid</option>
-                                            <option value="pending">Pending</option>
-                                        </select>
-                                  </div> --}}
                                    <div class="form-group ">
                                        <label class="control-label">Cheque Amount</label>
                                        <input type="number" class="form-control" id="cheque_amount"
