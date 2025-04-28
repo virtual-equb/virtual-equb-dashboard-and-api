@@ -120,6 +120,8 @@ class AuthController extends Controller
 
             $tokenResult = $authTokenService->authToken($request->input('authToken'));
             $responseData = json_decode($tokenResult, true);
+
+            return response()->json($responseData, 200);
         
             if (isset($responseData['biz_content'])) {
                 $bizContent = $responseData['biz_content'];
@@ -129,14 +131,14 @@ class AuthController extends Controller
             }
 
             // Check if the user exists based on phone number
-            $userExists = User::where('phone_number',  $identifier)->first();
+            $userExists = User::where('phone_number',  '+251933624757')->first();
 
             if (!$userExists) {
                 return response()->json([
                     'code' => 404,
                     'message' => 'User not found!',
-                    'identifier' => $identifier,
-                    'nickName' => $nickName,
+                    'phone_number' => "+251900456788",
+                    'name' => "Telebirr User Test",
                 ], 404);
             }
 
