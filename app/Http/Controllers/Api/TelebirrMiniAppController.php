@@ -64,7 +64,7 @@ class TelebirrMiniAppController extends Controller
         IActivityLogRepository $activityLogRepository,
         IUserRepository $userRepository,
     ) {
-        $this->middleware('auth:api')->except('getPaymentsByReference','callback', 'telebirr-miniapp.callback', 'telebirr-miniapp.callback-miniapp', 'telebirr-miniapp.store-member');
+        $this->middleware('auth:api')->except('callbackMiniApp', 'registerMember');
         $this->activityLogRepository = $activityLogRepository;
         $this->paymentRepository = $paymentRepository;
         $this->memberRepository = $memberRepository;
@@ -184,8 +184,9 @@ class TelebirrMiniAppController extends Controller
     
     public function callback(Request $request)
     {
+
         try {
-            Log::info('callback request data', $request->all());
+            Log::info('callback request data - Telebirr MiniApp', $request->all());
 
             if ($request) {
                 $merch_order_id = $request['merch_order_id'];
@@ -417,6 +418,8 @@ class TelebirrMiniAppController extends Controller
 
     public function registerMember(Request $request)
     {
+        Log::info('Member Register Data from Telebirr MiniApp', $request->all());
+
         $shortcode = config('key.SHORT_CODE');
         try {
             // Validation rules
