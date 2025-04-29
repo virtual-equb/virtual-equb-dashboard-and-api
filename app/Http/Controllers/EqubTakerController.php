@@ -258,7 +258,7 @@ class EqubTakerController extends Controller
 
                         $shortcode = config('key.SHORT_CODE');
                         $formattedDate = \Carbon\Carbon::parse($equbTaker->paid_date)->format('M-j-Y');
-                        $message = "Congrats! You've received a payment of $paidLotteryAmount ETB for winning the $equbName equb. Lottery date: $formattedDate. For more info, call $shortcode.";
+                        $message = "Congratulations! You've received a payment of $paidLotteryAmount ETB for winning the $equbName equb. Payment Date: $formattedDate. Thank you for your contribution. For any questions, please contact us at $shortcode.";
                         
                         $this->sendSms($memberPhone, $message);
 
