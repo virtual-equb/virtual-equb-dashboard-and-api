@@ -93,14 +93,14 @@ class TelebirrMiniAppCreateOrderService
                     'notify_url' => $this->notifyPath,
                     'business_type' => 'BuyGoods',
                     'trade_type' => 'InApp',
-                    'appid' => '1350921361971201',
-                    'merch_code' => '771342',
+                    'appid' => '1412693976883201',
+                    'merch_code' => '446668',
                     'merch_order_id' => (string) $this->paymentId,
                     'title' => "Equb Payment",
                     'total_amount' => (string) $amount,
                     'trans_currency' => 'ETB',
                     'timeout_express' => '120m',
-                    'payee_identifier' => '771342',
+                    'payee_identifier' => '446668',
                     'payee_identifier_type' => '04',
                     'payee_type' => '5000',
                 ],
@@ -118,8 +118,8 @@ class TelebirrMiniAppCreateOrderService
     public function createRawRequest($prepayId)
     {
         $maps = [
-            'appid' => '1350921361971201',
-            'merch_code' => '771342',
+            'appid' => '1412693976883201',
+            'merch_code' => '446668',
             'nonce_str' => SignHelperMiniApp::createNonceStr(),
             'prepay_id' => $prepayId,
             'timestamp' => SignHelperMiniApp::createTimeStamp(),

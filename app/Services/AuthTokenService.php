@@ -67,7 +67,7 @@ class AuthTokenService
                 'biz_content' => [
                     'access_token'  => $appToken,
                     'trade_type' => 'InApp',
-                    'appid' => '1350921361971201',
+                    'appid' => '1412693976883201',
                     'resource_type' => 'OpenId',
                 ],
             ];
