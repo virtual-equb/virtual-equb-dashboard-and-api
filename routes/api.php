@@ -35,6 +35,7 @@ use App\Http\Controllers\EqubController as ControllersEqubController;
 use App\Http\Controllers\Api\SubcityController as ApiSubcityController;
 use App\Http\Controllers\Api\TelebirrMiniAppController;
 use App\Http\Controllers\EqubTypeController as ControllersEqubTypeController;
+use App\Http\Controllers\TermsAndConditionsController;
 use App\Http\Middleware\LogUserActionMiddleware;
 
 /*
@@ -129,6 +130,7 @@ Route::post('/dateInterval', [EqubController::class, 'dateInterval'])->name('dat
 Route::get('/getDailyPaidAmount/{equb_id}', [EqubController::class, 'getDailyPaidAmount'])->name('getDailyPaidAmount')->middleware('log.user.action');
 Route::post('/changePassword/{id}', [UserController::class, 'changePassword'])->name('changePassword')->middleware('log.user.action');
 
+Route::get('/terms-and-conditions', [TermsAndConditionsController::class, 'index'])->name('terms.show');
 
 // Main Equb
 Route::middleware(['auth:api', 'log.user.action'])->group(function () {
