@@ -135,8 +135,8 @@ class AuthController extends Controller
                 return response()->json([
                     'code' => 404,
                     'message' => 'User not found!',
-                    'phone_number' => "+251953960596",
-                    'name' => "Telebirr User Test",
+                    'phone_number' => $identifier,
+                    'name' => $nickName,
                 ], 200);
             }
 

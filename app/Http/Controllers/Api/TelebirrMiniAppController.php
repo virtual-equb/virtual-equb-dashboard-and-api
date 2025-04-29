@@ -418,15 +418,6 @@ class TelebirrMiniAppController extends Controller
 
     public function registerMember(Request $request)
     {
-        $authController = new AuthController();
-        
-        $loginRequest = new \Illuminate\Http\Request([
-            'phone_number' => '+251933624757',
-            'password' => '203040',
-        ]);
-
-        return $authController->login($loginRequest);
-
         Log::info('Member Registration Data from Telebirr MiniApp', $request->all());
 
         try {
