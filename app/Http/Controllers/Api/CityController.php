@@ -12,29 +12,20 @@ use Illuminate\Support\Facades\Auth;
 
 class CityController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    public function __construct() {
+        
+    }
+
     public function index()
     {
-        $userData = Auth::user();
+        // $userData = Auth::user();
         try {
-            // if ($userData && in_array($userData['role'], ['admin', "equb_collector", "member", "it"])) {
-
                 $cities = Cities::with('cityCountry', 'subCity')->get();
 
                 return response()->json([
                     'code' => 200,
                     'data' => $cities
                 ]);
-            // } else {
-            //     return response()->json([
-            //         'code' => 403,
-            //         'message' => 'You can\'t perform this action!'
-            //     ]);
-            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 400,
@@ -43,29 +34,16 @@ class CityController extends Controller
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(StoreCityRequest $request)
     {
         $userData = Auth::user();
 
         try {
-            // if ($userData && in_array($userData['role'], ['admin', 'member', 'general_manager', 'operation_manager', 'it', 'customer_service', 'assistant'])) {
-
                 $data = $request->validated();
                 $city = Cities::create($data);
 
@@ -73,12 +51,6 @@ class CityController extends Controller
                     'code' => 200,
                     'data' => $city
                 ]);
-            // } else {
-            //     return response()->json([
-            //         'code' => 403,
-            //         'message' => 'You can\'t perform this action!'
-            //     ]);
-            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 400,
@@ -87,30 +59,17 @@ class CityController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         $userData = Auth::user();
 
         try {
-            // if ($userData && in_array($userData['role'], ['admin', 'member', 'general_manager', 'operation_manager', 'it', 'customer_service', 'assistant'])) {
                 $city = Cities::where('id', $id)->with('cityCountry', 'subCity')->first();
 
                 return response()->json([
                     'code' => 200,
                     'data' => $city
                 ]);
-            // } else {
-            //     return response()->json([
-            //         'code' => 403,
-            //         'message' => 'You can\'t perform this action!'
-            //     ]);
-            // }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 400,
@@ -119,30 +78,16 @@ class CityController extends Controller
         }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(UpdateCityRequest $request, $id)
     {
         $userData = Auth::user();
 
         try {
-            // if ($userData && in_array($userData['role'], ['admin', 'member', 'general_manager', 'operation_manager', 'it', 'customer_service', 'assistant'])) {
                 $city = Cities::where('id', $id)->with('cityCountry', 'subCity')->first();
 
                 $data = $request->validated();
@@ -153,13 +98,6 @@ class CityController extends Controller
                     'data' => $city
                 ]);
 
-            // } else {
-            //     return response()->json([
-            //         'code' => 403,
-            //         'message' => 'You can\'t perform this action!'
-            //     ]);
-            // }
-
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
@@ -168,12 +106,6 @@ class CityController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         //

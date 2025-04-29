@@ -64,6 +64,7 @@ Route::prefix('telebirr-miniapp')->group(function () {
     Route::post('/callback', [TelebirrMiniAppController::class, 'callback'])->name('telebirr-miniapp.callback');
     Route::post('/callback-miniapp', [TelebirrMiniAppController::class, 'callbackMiniApp'])->name('telebirr-miniapp.callback-miniapp');
     Route::post('/register-member', [TelebirrMiniAppController::class, 'registerMember'])->name('telebirr-miniapp.register-member');
+    Route::post('/register-member', [TelebirrMiniAppController::class, 'registerMember'])->name('telebirr-miniapp.register-member');
 });
 
 Route::post('/drawauto', [ControllersEqubTypeController::class, 'drawSeasonedAutoWinners']);
@@ -134,7 +135,6 @@ Route::middleware(['auth:api', 'log.user.action'])->group(function () {
     Route::resource('/mainequb', MainEqubController::class);
     Route::resource('/countries', CountryController::class);
     Route::resource('/countrycode', CountryCodeController::class);
-    Route::resource('/city', CityController::class);
     Route::resource('/subcity', ApiSubcityController::class);
     // Roles & Permissions
     Route::resource('/roles', RoleController::class);
@@ -148,6 +148,8 @@ Route::middleware(['auth:api', 'log.user.action'])->group(function () {
     Route::delete('/cancel/cbegateway/{id}', [PaymentGatewayController::class, 'cancelPayment']);
 });
 
+// Added city route outside middleware group
+Route::resource('/city', CityController::class);
 
 // Route::get('/testequb', [MainEqubController::class, 'getTypes']);
 
