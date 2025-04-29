@@ -112,20 +112,34 @@
                             <div class="col-12">
                                 <div class="card ">
                                     <div class="card-header">
-                                        <ul class="nav nav-pills" id="custom-tabs-two-tab" role="tablist">
-                                            <li class="nav-item nav-blue memberTab">
-                                                <a class="nav-link active" id="custom-tabs-two-member-tab"
-                                                    data-toggle="pill" href="#custom-tabs-two-member" role="tab"
-                                                    aria-controls="custom-tabs-two-member" aria-selected="true"> <span
-                                                        class="fa fa-list"> </span> Member</a>
-                                            </li>
-                                            <li class="nav-item paymentTab" id="payment-tab" style="display: none;">
-                                                <a class="nav-link" id="custom-tabs-two-messages-tab" data-toggle="pill"
-                                                    href="#custom-tabs-two-messages" role="tab"
-                                                    aria-controls="custom-tabs-two-messages" aria-selected="false"><span
-                                                        class="fa fa-list"> </span> Payment</a>
-                                            </li>
-                                        </ul>
+                                        <div class="d-flex flex-wrap justify-content-between align-items-center w-100">
+                                            <ul class="nav nav-pills mb-2 mb-md-0" id="custom-tabs-two-tab" role="tablist">
+                                                <li class="nav-item nav-blue memberTab">
+                                                    <a class="nav-link active" id="custom-tabs-two-member-tab"
+                                                        data-toggle="pill" href="#custom-tabs-two-member" role="tab"
+                                                        aria-controls="custom-tabs-two-member" aria-selected="true">
+                                                        <span class="fa fa-list"></span> Member
+                                                    </a>
+                                                </li>
+                                                <li class="nav-item paymentTab" id="payment-tab" style="display: none;">
+                                                    <a class="nav-link" id="custom-tabs-two-messages-tab" data-toggle="pill"
+                                                        href="#custom-tabs-two-messages" role="tab"
+                                                        aria-controls="custom-tabs-two-messages" aria-selected="false">
+                                                        <span class="fa fa-list"></span> Payment
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                            <div class="d-flex flex-wrap">
+                                                @can('view member')
+                                                    <button type="button" class="btn btn-primary mr-2 mb-2 mb-md-0" id="lotteryDatec" data-toggle="modal" data-target="#lotteryDateCheckModal">
+                                                        <i class="fa fa-check-square"></i> Check Lottery Date
+                                                    </button>
+                                                    <button type="button" class="btn btn-primary mb-2 mb-md-0" id="register" data-toggle="modal" data-target="#myModal">
+                                                        <span class="fa fa-plus-circle"></span> Add member
+                                                    </button>
+                                                @endcan
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="card-body">
                                         <div class="tab-content" id="custom-tabs-two-tabContent">
@@ -135,41 +149,9 @@
                                                 @include('admin/lottery.addLottery')
                                                 @include('admin/equb.addEqub')
                                                 @include('admin/member.addMember')
-                                                <div class="float-left checkLotteryandAddMember  col-6" id="member_table_filter">
-                                                    @can('view member')
-                                                        <button type="button" class=" btn btn-primary checkLottery"
-                                                            id="lotteryDatec" data-toggle="modal"
-                                                            data-target="#lotteryDateCheckModal"
-                                                            style="margin-right: 30px;"> <i class="fa fa-check-square"></i>
-                                                            Check Lottery Date</button>
-                                                        <button type="button" class=" btn btn-primary addMember"
-                                                            id="register" data-toggle="modal" data-target="#myModal"
-                                                            style="margin-right: 30px;"> <span class="fa fa-plus-circle">
-                                                            </span> Add member</button>
-                                                    @endcan
-                                                </div>
-                                                <div class="row">
-                                                    <div class="float-right searchEqubandClear col-6"
-                                                        id="member_table_filter">
-                                                        <select class="form-control"id="equbSearchText" name="equb_type_id"
-                                                            placeholder="Equb Type">
-                                                            <option value="">All Equb Type</option>
-                                                            @foreach ($equbTypes as $equbType)
-                                                                <option data-info="{{ $equbType->type }}"
-                                                                    value="{{ $equbType->id }}">
-                                                                    {{ $equbType->name }} round {{ $equbType->round }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                    <div class="float-right searchEqubandClear col-6"
-                                                        id="member_table_filter">
-                                                        <select class="form-control"id="statusSearchText"
-                                                            name="member_status" placeholder="Status">
-                                                            <option value="">All Status</option>
-                                                            <option value="Active">Active</option>
-                                                            <option value="Deactive">Deactive</option>
-                                                        </select>
+                                                <div class="row mb-3">
+                                                    <div class="col-12">
+                                                        @include('components.filter', ['equbTypes' => $equbTypes])
                                                     </div>
                                                 </div>
                                                 <div id="member_table_data_w" class="col-md-8">
