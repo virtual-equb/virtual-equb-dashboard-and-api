@@ -3,18 +3,18 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
-use App\Services\ApplyFabricTokenService;
+use App\Services\ApplyFabricTokenServiceMiniApp;
 use App\Helpers\SignHelper;
 use Illuminate\Support\Facades\Log;
 use Exception;
 
 class AuthTokenService
 {
-    protected $applyFabricTokenService;
+    protected $applyFabricTokenServiceMiniApp;
 
     public function __construct()
     {
-        $this->applyFabricTokenService = new ApplyFabricTokenService(
+        $this->applyFabricTokenServiceMiniApp = new ApplyFabricTokenServiceMiniApp(
             env('BASE_URL'),
             env('FABRIC_APP_ID'),
             env('APP_SECRET'),
@@ -24,7 +24,7 @@ class AuthTokenService
 
     public function authToken($authToken)
     {
-        $tokenResult = json_decode($this->applyFabricTokenService->applyFabricToken());
+        $tokenResult = json_decode($this->applyFabricTokenServiceMiniApp->applyFabricToken());
 
         if (!$tokenResult || !isset($tokenResult->token)) {
             throw new Exception('Failed to retrive Fabric token - MiniApp Auto Login:' . json_encode($tokenResult));
@@ -40,7 +40,7 @@ class AuthTokenService
         $requestBody = $this->createRequestObject($appToken);
 
         try {
-            $response = Http::timeout(60)->withHeaders([
+            $response = Http::withOptions(['verify' => false])->timeout(60)->withHeaders([
                 'Content-Type' => 'application/json',
                 'X-APP-Key'    =>  env('FABRIC_APP_ID'),
                 'Authorization' => $fabricToken,
