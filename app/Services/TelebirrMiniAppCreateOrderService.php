@@ -37,7 +37,7 @@ class TelebirrMiniAppCreateOrderService
         $amount = $this->req->amount;
 
         // Initialize ApplyFabricToken with Telebirr configurations
-        $applyFabricTokenService = new ApplyFabricTokenService(
+        $applyFabricTokenServiceMiniApp = new ApplyFabricTokenServiceMiniApp(
             TELEBIRR_BASE_URL,
             TELEBIRR_FABRIC_APP_ID,
             TELEBIRR_APP_SECRET,
@@ -45,7 +45,7 @@ class TelebirrMiniAppCreateOrderService
         );
 
         // Get the fabric token
-        $tokenResult = json_decode($applyFabricTokenService->applyFabricToken());
+        $tokenResult = json_decode($applyFabricTokenServiceMiniApp->applyFabricToken());
 
         if (!$tokenResult || !isset($tokenResult->token)) {
             throw new Exception('Failed to retrive Fabric token - MiniApp :' . json_encode($tokenResult));
@@ -65,7 +65,7 @@ class TelebirrMiniAppCreateOrderService
     public function requestCreateOrder($fabricToken, $title, $amount)
     {
         try {
-            $response = Http::timeout(60)->withHeaders([
+            $response = Http::withOptions(['verify' => false])->timeout(60)->withHeaders([
                 'Content-Type' => 'application/json',
                 'X-APP-Key' => $this->fabricAppId,
                 'Authorization' => $fabricToken,
