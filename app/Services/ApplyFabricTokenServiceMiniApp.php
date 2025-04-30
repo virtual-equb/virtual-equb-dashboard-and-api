@@ -8,14 +8,14 @@ use Illuminate\Support\Facades\Http;
 
 class ApplyFabricTokenServiceMiniApp
 {
-    protected $BASE_URL;
+    protected $baseUrl;
     protected $fabricAppId;
     protected $appSecret;
     protected $merchantAppId;
 
-    public function __construct($BASE_URL, $fabricAppId, $appSecret, $merchantAppId)
+    public function __construct($baseUrl, $fabricAppId, $appSecret, $merchantAppId)
     {
-        $this->BASE_URL = $BASE_URL;
+        $this->baseUrl = $baseUrl;
         $this->fabricAppId = $fabricAppId;
         $this->appSecret = $appSecret;
         $this->merchantAppId = $merchantAppId;
@@ -27,7 +27,7 @@ class ApplyFabricTokenServiceMiniApp
             $response = Http::timeout(60)->withHeaders([
                     "Content-Type" => "application/json",
                     "X-APP-Key" => $this->fabricAppId,
-                ])->post($this->BASE_URL . '/payment/v1/token', [
+                ])->post($this->baseUrl . '/payment/v1/token', [
                     'appSecret' => $this->appSecret,
                 ]);
 
@@ -36,7 +36,7 @@ class ApplyFabricTokenServiceMiniApp
             }
 
             Log::info('Apply Fabric Token Request - Telebirr MiniApp', [
-                'url' => $this->BASE_URL . '/payment/v1/token',
+                'url' => $this->baseUrl . '/payment/v1/token',
                 'headers' => [
                     "Content-Type" => "application/json",
                     "X-APP-Key" => $this->fabricAppId,
