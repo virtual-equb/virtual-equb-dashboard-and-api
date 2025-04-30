@@ -142,7 +142,7 @@
                                     </li>
                                     <li>
                                         <a href="javascript:void(0);"
-                                            class="text-secondary btn btn-flat {{ $member->status == 'Deactive' ? 'disabled' : ($equb->status != 'Active' ? 'disabled' : ($remainingAmount == 0 ? '' : '')) }}"
+                                            class="text-secondary btn btn-flat {{ $member->status == 'Deactive' ? 'disabled' : ($equb->status != 'Active' ? 'disabled' : '') }}"
                                             id="lotteryPaymentButton"
                                             onclick="openLotteryModal({{ $equb }})"><i
                                                 class="fas fa-plus-circle"></i> Lottery</a>
