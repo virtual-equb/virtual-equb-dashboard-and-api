@@ -102,9 +102,9 @@ class TelebirrMiniAppController extends Controller
 
             if ($existingPayment) {
                 return response()->json([
-                    'code' => 400,
+                    'code' => 200,
                     'message' => 'You can only make one payment transaction per 24 hours for this Equb.'
-                ], 400);
+                ], 200);
             }
             
             // Check if equb status is active and able to process payment
@@ -112,9 +112,9 @@ class TelebirrMiniAppController extends Controller
 
             if ($equb_status->status != 'Active') {
                 return response()->json([
-                    'code' => 500,
+                    'code' => 200,
                     'message' => 'Payment processing failed: The Equb is currently not in active status.',
-                ]);
+                ], 200);
             }
 
             // Check if entered amount is more that the total amount to be paid and restrict user from paying more than the required amount
@@ -167,15 +167,15 @@ class TelebirrMiniAppController extends Controller
                 return $result;
             } else {
                 return response()->json([
-                    'code' => 400,
+                    'code' => 200,
                     'message' => 'Unknown error occurred, Please try again!'
-                ], 400);
+                ], 200);
             }
         } catch (Exception $error) {
 
             // Log::error('Error creating TelebirrMiniAppCreateOrderService: ' . $error->getMessage());
             return response()->json([
-                'code' => 500,
+                'code' => 200,
                 'message' => 'Failed to create order service',
                 'error' => $error->getMessage(),
             ]);
@@ -348,14 +348,14 @@ class TelebirrMiniAppController extends Controller
                 } else {
 
                     return response()->json([
-                        'code' => 400,
+                        'code' => 200,
                         'message' => 'Payment failed, Please try again!'
-                    ], 400);
+                    ], 200);
                 }
             }            
         } catch (Exception $error) {
             return response()->json([
-                'code' => 500,
+                'code' => 200,
                 'message' => 'Unable to process your request, Please try again!',
                 "error" => $error
             ]);
@@ -455,7 +455,7 @@ class TelebirrMiniAppController extends Controller
                 $user_count = User::where('phone_number', $phone)->count();
                 if ($member_count > 0 || $user_count > 0) {
                     return response()->json([
-                        'code' => 403,
+                        'code' => 200,
                         'message' => 'Phone already exists',
                     ]);
                 }
@@ -467,7 +467,7 @@ class TelebirrMiniAppController extends Controller
                 $user_count = User::where('email', $email)->count();
                 if ($member_count > 0 || $user_count > 0) {
                     return response()->json([
-                        'code' => 403,
+                        'code' => 200,
                         'message' => 'Email already exists',
                     ]);
                 }
@@ -549,7 +549,7 @@ class TelebirrMiniAppController extends Controller
             }
         } catch (Exception $ex) {
             return response()->json([
-                'code' => 400,
+                'code' => 200,
                 'message' => 'Unknown error occurred, Please try again!',
                 "error" => $ex->getMessage()
             ]);

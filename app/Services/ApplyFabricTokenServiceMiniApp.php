@@ -24,24 +24,24 @@ class ApplyFabricTokenServiceMiniApp
     public function applyFabricToken()
     {
         try {
-            $response = Http::withOptions(['verify' => false])->timeout(60)->withHeaders([
+            $response = Http::timeout(60)->withHeaders([
                     "Content-Type" => "application/json",
-                    "X-APP-Key" => 'c4182ef8-9249-458a-985e-06d191f4d505',
-                ])->post('https://196.188.120.3:38443/apiaccess/payment/gateway' . '/payment/v1/token', [
-                    'appSecret' => 'fad0f06383c6297f545876694b974599',
+                    "X-APP-Key" => $this->fabricAppId,
+                ])->post($this->BASE_URL . '/payment/v1/token', [
+                    'appSecret' => $this->appSecret,
                 ]);
 
             if ($response->successful()) {
                 return $response->body();
             }
 
-            Log::info('Apply Fabric Token Request - MiniApp', [
-                'url' => 'https://196.188.120.3:38443/apiaccess/payment/gateway' . '/payment/v1/token',
+            Log::info('Apply Fabric Token Request - Telebirr MiniApp', [
+                'url' => $this->BASE_URL . '/payment/v1/token',
                 'headers' => [
                     "Content-Type" => "application/json",
-                    "X-APP-Key" => 'c4182ef8-9249-458a-985e-06d191f4d505',
+                    "X-APP-Key" => $this->fabricAppId,
                 ],
-                'body' => ['appSecret' => 'fad0f06383c6297f545876694b974599'],
+                'body' => ['appSecret' => $this->appSecret],
             ]);
             
             throw new \Exception('Error retrieving the Fabric token MiniApp: ' . $response->status());
