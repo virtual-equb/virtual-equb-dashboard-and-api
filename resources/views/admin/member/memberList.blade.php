@@ -423,7 +423,7 @@
                     method: 'get',
                     success: function(data) {
                         // console.log(data)
-                        if (data == 0) {
+                        if (data < 0) {
                             // console.log(data);
                             $('#lotteryPaymentButton').addClass('disabled');
                             $('#lotteryPaymentButton').prop('disabled', true);
@@ -783,7 +783,7 @@
                     url: '/getRemainingLotteryAmount/' + item.id,
                     method: 'get',
                     success: function(data) {
-                        if (data == 0) {
+                        if (data < 0) {
                             $('#lotteryPaymentButton').addClass('disabled');
                             $('#lotteryPaymentButton').prop('disabled', true);
                             $('#lotteryEdit').addClass('disabled');
@@ -844,7 +844,7 @@
                     url: '/getRemainingLotteryAmount/' + item.equb_id,
                     method: 'get',
                     success: function(data) {
-                        if (data == 0) {
+                        if (data < 0) {
                             $('#lotteryPaymentButton').addClass('disabled');
                             $('#lotteryPaymentButton').prop('disabled', true);
                             $('#lotteryEdit').addClass('disabled');
