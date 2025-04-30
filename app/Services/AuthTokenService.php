@@ -8,26 +8,6 @@ use App\Helpers\SignHelper;
 use Illuminate\Support\Facades\Log;
 use Exception;
 
-define('TELEBIRR_APP_ID', config('key.TELEBIRR_APP_ID'));
-define('TELEBIRR_RECEIVER_NAME', config("key.TELEBIRR_RECEIVER_NAME"));
-define('TELEBIRR_SHORT_CODE', config('key.TELEBIRR_SHORT_CODE'));
-define('TELEBIRR_SUBJECT', config('key.TELEBIRR_SUBJECT'));
-define('TELEBIRR_RETURN_URL', config('key.TELEBIRR_RETURN_URL'));
-define('TELEBIRR_NOTIFY_URL', config('key.TELEBIRR_NOTIFY_URL'));
-define('TELEBIRR_TIMEOUT_EXPRESS', config('key.TELEBIRR_TIMEOUT_EXPRESS'));
-define('TELEBIRR_APP_KEY', config('key.TELEBIRR_APP_KEY'));
-define('TELEBIRR_PUBLIC_KEY', config('key.TELEBIRR_PUBLIC_KEY'));
-define('TELEBIRR_PUBLIC_KEY_C', config('key.TELEBIRR_PUBLIC_KEY_C'));
-define('TELEBIRR_INAPP_PAYMENT_URL', config('key.TELEBIRR_INAPP_PAYMENT_URL'));
-define('TELEBIRR_H5_URL', config('key.TELEBIRR_H5_URL'));
-define('TELEBIRR_BASE_URL', config('key.TELEBIRR_BASE_URL'));
-define('TELEBIRR_FABRIC_APP_ID', config('key.TELEBIRR_FABRIC_APP_ID'));
-define('TELEBIRR_APP_SECRET', config('key.TELEBIRR_APP_SECRET'));
-define('TELEBIRR_MERCHANT_APP_ID', config('key.TELEBIRR_MERCHANT_APP_ID'));
-define('TELEBIRR_MERCHANT_CODE', config('key.TELEBIRR_MERCHANT_CODE'));
-define('TELEBIRR_TITLE', config('key.TELEBIRR_TITLE'));
-define('PRIVATE_KEY', config('key.PRIVATE_KEY'));
-
 class AuthTokenService
 {
     protected $applyFabricTokenServiceMiniApp;
@@ -39,10 +19,10 @@ class AuthTokenService
     public function __construct()
     {
         $this->applyFabricTokenServiceMiniApp = new ApplyFabricTokenServiceMiniApp(
-            $this->baseUrl = TELEBIRR_BASE_URL, 
-            $this->fabricAppId = TELEBIRR_FABRIC_APP_ID,
-            $this->appSecret = TELEBIRR_APP_SECRET,
-            $this->merchantAppId = TELEBIRR_MERCHANT_APP_ID,
+            $this->baseUrl = env('TELEBIRR_BASE_URL'), 
+            $this->fabricAppId = env('TELEBIRR_FABRIC_APP_ID'),
+            $this->appSecret = env('TELEBIRR_APP_SECRET'),
+            $this->merchantAppId = env('TELEBIRR_MERCHANT_APP_ID'),
         );
     }
 

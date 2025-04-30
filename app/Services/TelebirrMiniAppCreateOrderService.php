@@ -28,8 +28,8 @@ class TelebirrMiniAppCreateOrderService
         $this->merchantAppId = $merchantAppId;
         $this->merchantCode = $merchantCode;
         $this->paymentId = $paymentId;
-        $this->notifyPath = TELEBIRR_MINIAPP_NOTIFY_URL;
-        $this->redirectPath = TELEBIRR_MINIAPP_RETURN_URL;
+        $this->notifyPath = env('TELEBIRR_MINIAPP_NOTIFY_URL');
+        $this->redirectPath = env('TELEBIRR_MINIAPP_RETURN_URL');
     }
 
     public function createOrder()
@@ -38,10 +38,10 @@ class TelebirrMiniAppCreateOrderService
 
         // Initialize ApplyFabricToken with Telebirr configurations
         $applyFabricTokenServiceMiniApp = new ApplyFabricTokenServiceMiniApp(
-            TELEBIRR_BASE_URL,
-            TELEBIRR_FABRIC_APP_ID,
-            TELEBIRR_APP_SECRET,
-            TELEBIRR_MERCHANT_APP_ID
+            $this->baseUrl,
+            $this->fabricAppId,
+            $this->appSecret,
+            $this->merchantAppId
         );
 
         // Get the fabric token
