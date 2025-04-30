@@ -64,7 +64,7 @@ class TelebirrMiniAppController extends Controller
         IActivityLogRepository $activityLogRepository,
         IUserRepository $userRepository,
     ) {
-        $this->middleware('auth:api')->except('callbackMiniApp', 'registerMember');
+        $this->middleware('auth:api')->except('callbackMiniApp', 'registerMember', 'callback');
         $this->activityLogRepository = $activityLogRepository;
         $this->paymentRepository = $paymentRepository;
         $this->memberRepository = $memberRepository;
@@ -184,7 +184,6 @@ class TelebirrMiniAppController extends Controller
     
     public function callback(Request $request)
     {
-
         try {
             Log::info('callback request data - Telebirr MiniApp', $request->all());
 
