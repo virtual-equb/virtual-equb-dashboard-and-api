@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use Exception;
 use phpseclib3\Crypt\RSA;
+define('PRIVATE_KEY', config('key.PRIVATE_KEY'));
 
 class SignHelper
 {
