@@ -65,7 +65,7 @@ class TelebirrMiniAppCreateOrderService
     public function requestCreateOrder($fabricToken, $title, $amount)
     {
         try {
-            $response = Http::withOptions(['verify' => false])->timeout(60)->withHeaders([
+            $response = Http::timeout(60)->withHeaders([
                 'Content-Type' => 'application/json',
                 'X-APP-Key' => $this->fabricAppId,
                 'Authorization' => $fabricToken,

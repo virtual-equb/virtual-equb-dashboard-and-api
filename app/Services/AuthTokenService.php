@@ -40,7 +40,7 @@ class AuthTokenService
         $requestBody = $this->createRequestObject($appToken);
 
         try {
-            $response = Http::withOptions(['verify' => false])->timeout(60)->withHeaders([
+            $response = Http::timeout(60)->withHeaders([
                 'Content-Type' => 'application/json',
                 'X-APP-Key'    =>  env('FABRIC_APP_ID'),
                 'Authorization' => $fabricToken,

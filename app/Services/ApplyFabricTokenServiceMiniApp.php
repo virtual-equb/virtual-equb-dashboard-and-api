@@ -24,7 +24,7 @@ class ApplyFabricTokenServiceMiniApp
     public function applyFabricToken()
     {
         try {
-            $response = Http::withOptions(['verify' => false])->timeout(60)->withHeaders([
+            $response = Http::timeout(60)->withHeaders([
                     "Content-Type" => "application/json",
                     "X-APP-Key" => $this->fabricAppId,
                 ])->post($this->BASE_URL . '/payment/v1/token', [
