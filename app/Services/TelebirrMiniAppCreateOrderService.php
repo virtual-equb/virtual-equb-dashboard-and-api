@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
-use App\Helpers\SignHelperMiniApp;
+use App\Helpers\SignHelper;
 use Exception;
 use Illuminate\Support\Facades\Log;
 
@@ -37,7 +37,7 @@ class TelebirrMiniAppCreateOrderService
         $amount = $this->req->amount;
 
         // Initialize ApplyFabricToken with Telebirr configurations
-        $applyFabricTokenServiceMiniApp = new ApplyFabricTokenServiceMiniApp(
+        $applyFabricTokenService = new ApplyFabricTokenService(
             TELEBIRR_BASE_URL,
             TELEBIRR_FABRIC_APP_ID,
             TELEBIRR_APP_SECRET,
@@ -45,7 +45,7 @@ class TelebirrMiniAppCreateOrderService
         );
 
         // Get the fabric token
-        $tokenResult = json_decode($applyFabricTokenServiceMiniApp->applyFabricToken());
+        $tokenResult = json_decode($applyFabricTokenService->applyFabricToken());
 
         if (!$tokenResult || !isset($tokenResult->token)) {
             throw new Exception('Failed to retrive Fabric token - MiniApp :' . json_encode($tokenResult));
@@ -65,11 +65,11 @@ class TelebirrMiniAppCreateOrderService
     public function requestCreateOrder($fabricToken, $title, $amount)
     {
         try {
-            $response = Http::withOptions(['verify' => false])->timeout(60)->withHeaders([
+            $response = Http::timeout(60)->withHeaders([
                 'Content-Type' => 'application/json',
-                'X-APP-Key' => 'c4182ef8-9249-458a-985e-06d191f4d505',
+                'X-APP-Key' => $this->fabricAppId,
                 'Authorization' => $fabricToken,
-            ])->post('https://196.188.120.3:38443/apiaccess/payment/gateway' . '/payment/v1/merchant/preOrder', $this->createRequestObject($title, $amount));
+            ])->post($this->baseUrl . '/payment/v1/merchant/preOrder', $this->createRequestObject($title, $amount));
             
             Log::info('requestCreateOrder API Response' . $response->body());
 
@@ -85,22 +85,22 @@ class TelebirrMiniAppCreateOrderService
     {
         try {
             $req = [
-                'nonce_str' => SignHelperMiniApp::createNonceStr(),
+                'nonce_str' => SignHelper::createNonceStr(),
                 'method' => 'payment.preorder',
-                'timestamp' => SignHelperMiniApp::createTimeStamp(),
+                'timestamp' => SignHelper::createTimeStamp(),
                 'version' => '1.0',
                 'biz_content' => [
                     'notify_url' => $this->notifyPath,
                     'business_type' => 'BuyGoods',
                     'trade_type' => 'InApp',
-                    'appid' => '1412693976883201',
-                    'merch_code' => '446668',
+                    'appid' => $this->merchantAppId,
+                    'merch_code' => $this->merchantCode,
                     'merch_order_id' => (string) $this->paymentId,
                     'title' => "Equb Payment",
                     'total_amount' => (string) $amount,
                     'trans_currency' => 'ETB',
                     'timeout_express' => '120m',
-                    'payee_identifier' => '446668',
+                    'payee_identifier' => $this->merchantCode,
                     'payee_identifier_type' => '04',
                     'payee_type' => '5000',
                 ],
@@ -108,7 +108,7 @@ class TelebirrMiniAppCreateOrderService
             ];
 
             // Sign the request
-            $req['sign'] = SignHelperMiniApp::sign($req); 
+            $req['sign'] = SignHelper::sign($req); 
             return $req;
         } catch (Exception $e) {
             throw $e;
@@ -118,11 +118,11 @@ class TelebirrMiniAppCreateOrderService
     public function createRawRequest($prepayId)
     {
         $maps = [
-            'appid' => '1412693976883201',
-            'merch_code' => '446668',
-            'nonce_str' => SignHelperMiniApp::createNonceStr(),
+            'appid' => $this->merchantAppId,
+            'merch_code' => $this->merchantCode,
+            'nonce_str' => SignHelper::createNonceStr(),
             'prepay_id' => $prepayId,
-            'timestamp' => SignHelperMiniApp::createTimeStamp(),
+            'timestamp' => SignHelper::createTimeStamp(),
             'sign_type' => 'SHA256WithRSA'
         ];
 
@@ -130,7 +130,7 @@ class TelebirrMiniAppCreateOrderService
         $rawRequest = http_build_query($maps, '', '&', PHP_QUERY_RFC3986);
 
         // Generate the signature
-        $sign = SignHelperMiniApp::sign($maps);
+        $sign = SignHelper::sign($maps);
 
         // Append the sign
         $rawRequest .= '&sign=' . $sign;

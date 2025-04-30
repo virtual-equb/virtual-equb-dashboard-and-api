@@ -3,18 +3,18 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
-use App\Services\ApplyFabricTokenServiceMiniApp;
-use App\Helpers\SignHelperMiniApp;
+use App\Services\ApplyFabricTokenService;
+use App\Helpers\SignHelper;
 use Illuminate\Support\Facades\Log;
 use Exception;
 
 class AuthTokenService
 {
-    protected $applyFabricTokenServiceMiniApp;
+    protected $applyFabricTokenService;
 
     public function __construct()
     {
-        $this->applyFabricTokenServiceMiniApp = new ApplyFabricTokenServiceMiniApp(
+        $this->applyFabricTokenService = new ApplyFabricTokenService(
             env('BASE_URL'),
             env('FABRIC_APP_ID'),
             env('APP_SECRET'),
@@ -24,7 +24,7 @@ class AuthTokenService
 
     public function authToken($authToken)
     {
-        $tokenResult = json_decode($this->applyFabricTokenServiceMiniApp->applyFabricToken());
+        $tokenResult = json_decode($this->applyFabricTokenService->applyFabricToken());
 
         if (!$tokenResult || !isset($tokenResult->token)) {
             throw new Exception('Failed to retrive Fabric token - MiniApp Auto Login:' . json_encode($tokenResult));
@@ -40,11 +40,11 @@ class AuthTokenService
         $requestBody = $this->createRequestObject($appToken);
 
         try {
-            $response = Http::withOptions(['verify' => false])->withHeaders([
+            $response = Http::timeout(60)->withHeaders([
                 'Content-Type' => 'application/json',
-                'X-APP-Key'    => 'c4182ef8-9249-458a-985e-06d191f4d505',
+                'X-APP-Key'    =>  env('FABRIC_APP_ID'),
                 'Authorization' => $fabricToken,
-            ])->post('https://196.188.120.3:38443/apiaccess/payment/gateway' . '/payment/v1/auth/authToken', $requestBody);
+            ])->post(env('BASE_URL') . '/payment/v1/auth/authToken', $requestBody);
             
             Log::info('Getting MiniApp Auth Login Result' . $response->body());
 
@@ -60,20 +60,20 @@ class AuthTokenService
     {
         try {
             $req = [
-                'nonce_str' => SignHelperMiniApp::createNonceStr(),
+                'nonce_str' => SignHelper::createNonceStr(),
                 'method' => 'payment.authtoken',
-                'timestamp' => SignHelperMiniApp::createTimeStamp(),
+                'timestamp' => SignHelper::createTimeStamp(),
                 'version' => '1.0',
                 'biz_content' => [
                     'access_token'  => $appToken,
                     'trade_type' => 'InApp',
-                    'appid' => '1412693976883201',
+                    'appid' => env('MERCHANT_APP_ID'),
                     'resource_type' => 'OpenId',
                 ],
             ];
 
             // Sign the request
-            $req['sign'] = SignHelperMiniApp::sign($req); 
+            $req['sign'] = SignHelper::sign($req); 
             $req['sign_type'] = 'SHA256WithRSA';
 
             return $req;
