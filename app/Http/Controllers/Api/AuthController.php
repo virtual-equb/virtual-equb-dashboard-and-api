@@ -133,7 +133,7 @@ class AuthController extends Controller
 
             if (!$userExists) {
                 return response()->json([
-                    'code' => 404,
+                    'code' => 200,
                     'message' => 'User not found!',
                     'phone_number' => $identifier,
                     'name' => $nickName,
