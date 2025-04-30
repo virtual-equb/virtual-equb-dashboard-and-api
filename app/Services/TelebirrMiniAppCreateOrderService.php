@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Http;
 use App\Helpers\SignHelper;
 use Exception;
 use Illuminate\Support\Facades\Log;
+define('TELEBIRR_MINIAPP_NOTIFY_URL', config('key.TELEBIRR_MINIAPP_NOTIFY_URL'));
+define('TELEBIRR_MINIAPP_RETURN_URL', config('key.TELEBIRR_MINIAPP_RETURN_URL'));
 
 class TelebirrMiniAppCreateOrderService
 {
@@ -28,8 +30,8 @@ class TelebirrMiniAppCreateOrderService
         $this->merchantAppId = $merchantAppId;
         $this->merchantCode = $merchantCode;
         $this->paymentId = $paymentId;
-        $this->notifyPath = env('TELEBIRR_MINIAPP_NOTIFY_URL');
-        $this->redirectPath = env('TELEBIRR_MINIAPP_RETURN_URL');
+        $this->notifyPath = TELEBIRR_MINIAPP_NOTIFY_URL;
+        $this->redirectPath = TELEBIRR_MINIAPP_RETURN_URL;
     }
 
     public function createOrder()
