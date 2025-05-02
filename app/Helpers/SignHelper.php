@@ -4,7 +4,6 @@ namespace App\Helpers;
 
 use Exception;
 use phpseclib3\Crypt\RSA;
-define('PRIVATE_KEY', config('key.PRIVATE_KEY'));
 
 class SignHelper
 {
@@ -53,7 +52,7 @@ class SignHelper
     {
         try{
         // Retrieve private key from .env
-        $private_key = PRIVATE_KEY;
+        $private_key = config('key.PRIVATE_KEY');
 
         if (empty($private_key)) {
             echo "Error: Private key is not set in the .env file.";
