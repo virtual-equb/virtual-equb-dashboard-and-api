@@ -129,13 +129,14 @@ class AuthController extends Controller
             }
 
             // Check if the user exists based on phone number
-            $userExists = User::where('phone_number',  $identifier)->first();
+            $phoneNumber = '+' . $identifier;
+            $userExists = User::where('phone_number',  $phoneNumber)->first();
 
             if (!$userExists) {
                 return response()->json([
                     'code' => 200,
                     'message' => 'User not found!',
-                    'phone_number' => $identifier,
+                    'phone_number' =>  $phoneNumber,
                     'name' => $nickName,
                 ], 200);
             }
