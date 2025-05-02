@@ -42,7 +42,7 @@ class AuthTokenService
             $this->baseUrl = TELEBIRR_BASE_URL,
             $this->fabricAppId = TELEBIRR_FABRIC_APP_ID,
             $this->appSecret = TELEBIRR_APP_SECRET,
-            $this->merchantAppId = TELEBIRR_MERCHANT_APP_ID,
+            $this->merchantAppId = TELEBIRR_MERCHANT_APP_ID
         );
     }
 
