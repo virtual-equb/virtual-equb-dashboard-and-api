@@ -64,7 +64,7 @@ class TelebirrMiniAppController extends Controller
         IActivityLogRepository $activityLogRepository,
         IUserRepository $userRepository,
     ) {
-        $this->middleware('auth:api')->except('callbackMiniApp', 'registerMember', 'callback');
+        $this->middleware('auth:api', ['except' => ['callbackMiniApp', 'registerMember', 'callback']]);
         $this->activityLogRepository = $activityLogRepository;
         $this->paymentRepository = $paymentRepository;
         $this->memberRepository = $memberRepository;
@@ -102,19 +102,18 @@ class TelebirrMiniAppController extends Controller
 
             if ($existingPayment) {
                 return response()->json([
-                    'code' => 200,
+                    'code' => 400,
                     'message' => 'You can only make one payment transaction per 24 hours for this Equb.'
-                ], 200);
+                ], 400);
             }
             
-            // Check if equb status is active and able to process payment
             $equb_status = $this->equbRepository->getStatusById($equbId);
 
             if ($equb_status->status != 'Active') {
                 return response()->json([
-                    'code' => 200,
+                    'code' => 500,
                     'message' => 'Payment processing failed: The Equb is currently not in active status.',
-                ], 200);
+                ]);
             }
 
             // Check if entered amount is more that the total amount to be paid and restrict user from paying more than the required amount
@@ -167,15 +166,15 @@ class TelebirrMiniAppController extends Controller
                 return $result;
             } else {
                 return response()->json([
-                    'code' => 200,
+                    'code' => 400,
                     'message' => 'Unknown error occurred, Please try again!'
-                ], 200);
+                ], 400);
             }
         } catch (Exception $error) {
 
             // Log::error('Error creating TelebirrMiniAppCreateOrderService: ' . $error->getMessage());
             return response()->json([
-                'code' => 200,
+                'code' => 500,
                 'message' => 'Failed to create order service',
                 'error' => $error->getMessage(),
             ]);
@@ -346,16 +345,15 @@ class TelebirrMiniAppController extends Controller
                         'message' => 'You have succesfully paid!'
                     ], 200);
                 } else {
-
                     return response()->json([
-                        'code' => 200,
+                        'code' => 400,
                         'message' => 'Payment failed, Please try again!'
-                    ], 200);
+                    ], 400);
                 }
             }            
         } catch (Exception $error) {
             return response()->json([
-                'code' => 200,
+                'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
                 "error" => $error
             ]);
@@ -540,14 +538,14 @@ class TelebirrMiniAppController extends Controller
                 };
             } else {
                 return response()->json([
-                    'code' => 200,
+                    'code' => 400,
                     'message' => 'Registration failed. Please try again!',
                     'error' => 'Registration process encountered an unknown error.'
                 ]);
             }
         } catch (Exception $ex) {
             return response()->json([
-                'code' => 200,
+                'code' => 500,
                 'message' => 'Unknown error occurred, Please try again!',
                 "error" => $ex->getMessage()
             ]);
