@@ -518,9 +518,7 @@ class TelebirrMiniAppController extends Controller
 
             if ($create && $user) {
                 try {
-                    $message = "Welcome to Virtual Equb! You have successfully registered. 
-                    Please use your phone number ({$phone}) and password ({$password}) when logging in through our mobile application. 
-                    For support, please call {$shortcode}.";
+                    $message = "Welcome to Virtual Equb! You have successfully registered. Please use your phone number ({$phone}) and password ({$password}) when logging in through our mobile application. For support, please call {$shortcode}.";
 
                     $this->sendSms($phone, $message);
 
