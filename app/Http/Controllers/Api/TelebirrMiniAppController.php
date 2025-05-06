@@ -76,6 +76,8 @@ class TelebirrMiniAppController extends Controller
 
     public function initialize (Request $request)
     {
+        Log::info('To Payment - Request Data', $request->all());
+
         try {
             $request->validate([
                 'amount' => 'required|numeric',

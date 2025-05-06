@@ -738,6 +738,8 @@ class PaymentController extends Controller
     // }
     public function initialize(Request $request)
     {
+        Log::info('To Payment - Request Data', $request->all());
+
         try {
             $req = $request->all();
             $user = Auth::user();
