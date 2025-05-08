@@ -17,7 +17,7 @@
             text-align: center;
             color: #05870c;
             margin-bottom: 15px;
-            font-size: 2.1em;
+            font-size: 1.6em;
         }
         h2 {
             color: #05870c;
