@@ -115,7 +115,7 @@ class TelebirrMiniAppController extends Controller
                 return response()->json([
                     'code' => 500,
                     'message' => 'Payment processing failed: The Equb is currently not in active status.',
-                ]);
+                ], 500);
             }
 
             // Check if entered amount is more that the total amount to be paid and restrict user from paying more than the required amount
@@ -127,7 +127,7 @@ class TelebirrMiniAppController extends Controller
                 return response()->json([
                     'code' => 500,
                     'message' => 'Payment processing failed: You cannot pay more than the required total amount for this Equb.',
-                ]);
+                ], 500);
             }
         
             $paymentData = [
@@ -179,7 +179,7 @@ class TelebirrMiniAppController extends Controller
                 'code' => 500,
                 'message' => 'Failed to create order service',
                 'error' => $error->getMessage(),
-            ]);
+            ], 500);
         }
     }
     
@@ -358,7 +358,7 @@ class TelebirrMiniAppController extends Controller
                 'code' => 500,
                 'message' => 'Unable to process your request, Please try again!',
                 "error" => $error
-            ]);
+            ], 500);
         }
     }
 
@@ -469,7 +469,7 @@ class TelebirrMiniAppController extends Controller
                     return response()->json([
                         'code' => 200,
                         'message' => 'Email already exists',
-                    ]);
+                    ], 200);
                 }
             }
 
@@ -536,21 +536,21 @@ class TelebirrMiniAppController extends Controller
                         'code' => 200,
                         'message' => 'Failed to send SMS',
                         "error" => "Failed to send SMS"
-                    ]);
+                    ], 200);
                 };
             } else {
                 return response()->json([
                     'code' => 400,
                     'message' => 'Registration failed. Please try again!',
                     'error' => 'Registration process encountered an unknown error.'
-                ]);
+                ], 400);
             }
         } catch (Exception $ex) {
             return response()->json([
                 'code' => 500,
                 'message' => 'Unknown error occurred, Please try again!',
                 "error" => $ex->getMessage()
-            ]);
+            ], 500);
         }
     }
 }
