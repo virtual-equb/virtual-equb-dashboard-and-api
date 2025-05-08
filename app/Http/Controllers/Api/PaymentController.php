@@ -752,6 +752,13 @@ class PaymentController extends Controller
             $memberData = Member::where('phone', $user->phone_number)->first();
             $collector = User::where('name', 'telebirr')->first();
 
+            $equb_status = $this->equbRepository->getStatusById($equbId);
+            if ($equb_status->status != 'Active') {
+                return response()->json([
+                    'code' => 500,
+                    'message' => 'Payment processing failed: The Equb is currently not in active status.',
+                ]);
+            }
 
             // Check if a payment was made by this member for this equb in the last 24 hours
             $existingPayment = Payment::where('member_id', $memberData->id)
@@ -765,15 +772,6 @@ class PaymentController extends Controller
                     'code' => 400,
                     'message' => 'You can only make one payment transaction per 24 hours for this Equb.'
                 ], 400);
-            }
-            
-            $equb_status = $this->equbRepository->getStatusById($equbId);
-
-            if ($equb_status->status != 'Active') {
-                return response()->json([
-                    'code' => 500,
-                    'message' => 'Payment processing failed: The Equb is currently not in active status.',
-                ]);
             }
 
             $totalEqubAmountToPay = $this->equbRepository->getTotalEqubAmount($equb_id);
