@@ -56,6 +56,25 @@ class CbeMiniAppController extends Controller
         $this->userRepository = $userRepository;
 
     }
+
+    public function miniAppLogin(Request $request)
+    {
+        try {
+            $authHeader = $request->header('Authorization');
+
+            if (!$authHeader || !str_starts_with($authHeader, 'Bearer ')) {
+                return 'The token is missing or improperly formatted. Please verify and try again.';
+            }
+
+            $token = substr($authHeader, 7);
+
+            return redirect()->away("https://cbebirr.virtualequb.com?token={$token}");
+        } catch (Exception $ex) {
+            return 'There was an issue extracting the token. Please ensure the token is being passed and handled correctly.';
+        }
+    }
+
+
     public function cbeDatas(Request $request){
         try {
 
@@ -119,6 +138,7 @@ class CbeMiniAppController extends Controller
         }
         
     }
+
     public function register(Request $request) {
         try {
             
@@ -269,6 +289,7 @@ class CbeMiniAppController extends Controller
             ], 500);
         }
     }
+
     public function login(Request $request) {
         try {
             $request->validate([
@@ -383,6 +404,7 @@ class CbeMiniAppController extends Controller
             ], 500);
         }
     } 
+
     protected function respondWithToken($token)
     {
         return response()->json([
@@ -391,6 +413,7 @@ class CbeMiniAppController extends Controller
             'expires_in' => auth('api')->factory()->getTTL() * 60, // Use 'api' guard for JWT
         ]);
     }
+
     public function mainEqub(Request $request)
     {
         try {
@@ -409,6 +432,7 @@ class CbeMiniAppController extends Controller
             ], 500);
         }
     }
+
     public function joinEqub(Request $request) {
         try {
             // Dynamic Validation
@@ -619,6 +643,7 @@ class CbeMiniAppController extends Controller
             ], 500);
         }
     }
+
     public function isDateInYMDFormat($dateString)
     {
         try {
@@ -632,6 +657,7 @@ class CbeMiniAppController extends Controller
             return false;
         }
     }
+
     public function validateToken(Request $request)
     {
         try {
@@ -701,7 +727,6 @@ class CbeMiniAppController extends Controller
             ], 500);
         }
     }
-
 
     public function processPayment(Request $request)
     {
@@ -817,7 +842,6 @@ class CbeMiniAppController extends Controller
         }
     }
     
-
     public function paymentCallback(Request $request)
     {
         try {
