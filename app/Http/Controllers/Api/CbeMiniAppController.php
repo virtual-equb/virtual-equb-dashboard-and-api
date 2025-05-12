@@ -63,10 +63,12 @@ class CbeMiniAppController extends Controller
             $authHeader = $request->header('Authorization');
 
             if (!$authHeader || !str_starts_with($authHeader, 'Bearer ')) {
+                Log::info('CbeMiniApp - Token Not Found');
                 return 'The token is missing or improperly formatted. Please verify and try again.';
             }
 
             $token = substr($authHeader, 7);
+            Log::info('CbeMiniApp - Token Value', ['token' => $token]);
 
             return redirect()->away("https://cbebirr.virtualequb.com?token={$token}");
         } catch (Exception $ex) {
