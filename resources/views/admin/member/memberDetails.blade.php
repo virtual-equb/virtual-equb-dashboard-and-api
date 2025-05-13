@@ -106,10 +106,15 @@
                     @php
                         $rote = $equb->equbType->rote;
                         $equbAmount = $equb->amount;
+                        $equbEndDate = new DateTime($equb->end_date);
+
                         $equbStartDate = new DateTime($equb->start_date);
                         $interval = $equbStartDate->diff($currentDate);
 
-                        if ($rote == 'Daily') {
+                        if ($equbEndDate < $currentDate) {
+                            $unpaidAmount = $remainingPayment;
+                            $dueDays = $unpaidAmount / $equbAmount;
+                        } elseif ($rote == 'Daily') {
                             $amountToPay = $interval->days * $equbAmount;
                             $unpaidAmount = max(0, $amountToPay - $totalPpayment);
                             $dueDays = $unpaidAmount / $equbAmount;
@@ -125,6 +130,7 @@
 
                             $dueDays = $unpaidAmount / $equbAmount;
                         }
+
                     @endphp
 
                     @if ($equb->status != 'Deactive')
