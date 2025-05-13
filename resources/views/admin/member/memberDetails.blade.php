@@ -89,8 +89,31 @@
                     @endif
                 </td>
                 <td>
-                    @if ($remainingPayment == 0)
+                    @php
+                        $timelineMultipliers = [
+                            '105' => 5,
+                            '210' => 10,
+                            '315' => 15,
+                            '420' => 20,
+                        ];
+
+                        $refinedPaidLoterry = 0;
+
+                        if (isset($timelineMultipliers[$equb->timeline])) {
+                            $multiplier = $timelineMultipliers[$equb->timeline];
+                            $refinedPaidLoterry = ($equb->total_amount - $equb->amount * $multiplier) * 0.05;
+                        }
+                        $paidLoterryAmount = $equb->equbTakers
+                            ->whereNotNull('payment_type')
+                            ->filter(fn($taker) => $taker->payment_type !== '')
+                            ->sum('amount');
+                        $refinedPaidLoterryAmount = $equb->total_amount - $refinedPaidLoterry;
+                    @endphp
+
+                    @if ($paidLoterryAmount >= $refinedPaidLoterryAmount)
                         Paid
+                    @elseif ($refinedPaidLoterryAmount > $paidLoterryAmount  && $paidLoterryAmount > 0)
+                        Partially Paid
                     @else
                         {{ $finalLotteryInterval != 'Passed' ? ($finalLotteryInterval != 'Unassigned' ? $finalLotteryInterval . ' Days' : 'Unassigned') : 'Passed' }}
                     @endif
@@ -106,10 +129,14 @@
                     @php
                         $rote = $equb->equbType->rote;
                         $equbAmount = $equb->amount;
+                        $equbEndDate = new DateTime($equb->end_date);
+
                         $equbStartDate = new DateTime($equb->start_date);
                         $interval = $equbStartDate->diff($currentDate);
-
-                        if ($rote == 'Daily') {
+                        if ($equbEndDate < $currentDate) {
+                            $unpaidAmount = $remainingPayment;
+                            $dueDays = $unpaidAmount / $equbAmount;
+                        } elseif ($rote == 'Daily') {
                             $amountToPay = $interval->days * $equbAmount;
                             $unpaidAmount = max(0, $amountToPay - $totalPpayment);
                             $dueDays = $unpaidAmount / $equbAmount;
@@ -125,6 +152,7 @@
 
                             $dueDays = $unpaidAmount / $equbAmount;
                         }
+
                     @endphp
 
                     @if ($equb->status != 'Deactive')
