@@ -51,14 +51,20 @@ use App\Http\Middleware\LogUserActionMiddleware;
 
 // Route::get('/cbe-payment', [CbeMiniAppController::class, 'index']);
 // CBE MiniApp Integration
-Route::post('/cbe-payment-data', [CbeMiniAppController::class, 'cbeDatas']);
-Route::get('/validate-token', [CbeMiniAppController::class, 'validateToken']);
-Route::post('/registermember', [CbeMiniAppController::class, 'register']);
-Route::post('/loginmember', [CbeMiniAppController::class, 'login']);
-Route::get('/getmainEqub', [CbeMiniAppController::class, 'mainEqub']);
-Route::post('/joinequb', [CbeMiniAppController::class, 'joinEqub']);
-Route::post('/process-payment', [CbeMiniAppController::class, 'processPayment'])->name('cbe.initialize');
-Route::post('/callback', [CbeMiniAppController::class, 'paymentCallback'])->name('cbe.callback');
+// Route::post('/cbe-payment-data', [CbeMiniAppController::class, 'cbeDatas']);
+// Route::get('/validate-token', [CbeMiniAppController::class, 'validateToken']);
+// Route::get('/getmainEqub', [CbeMiniAppController::class, 'mainEqub']);
+// Route::post('/joinequb', [CbeMiniAppController::class, 'joinEqub']);
+// Route::post('/loginmember', [CbeMiniAppController::class, 'login']);
+// Route::post('/registermember', [CbeMiniAppController::class, 'register']);
+// Route::post('/process-payment', [CbeMiniAppController::class, 'processPayment'])->name('cbe.initialize');
+// Route::post('/callback', [CbeMiniAppController::class, 'paymentCallback'])->name('cbe.callback');
+
+Route::prefix('cbe-miniapp')->group(function () {
+    Route::post('/register-member', [CbeMiniAppController::class, 'registerMember'])->name('cbe-miniapp.register-member');
+    Route::post('/initialize', [CbeMiniAppController::class, 'initialize'])->name('cbe-miniapp.initialize');
+    Route::post('/callback', [CbeMiniAppController::class, 'callback'])->name('cbe-miniapp.callback');
+});
 
 Route::prefix('telebirr-miniapp')->group(function () {
     Route::post('/initialize', [TelebirrMiniAppController::class, 'initialize'])->name('telebirr-miniapp.initialize');
@@ -101,6 +107,7 @@ Route::group([
 ], function ($router) {
     Route::post('login', [AuthController::class, 'login']);
     Route::post('login-telebirr-miniapp', [AuthController::class, 'loginTelebirrMiniApp']);
+    Route::post('login-cbebirr-miniapp', [AuthController::class, 'loginCbeBirrMiniApp']);
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::get('profile', [AuthController::class, 'profile']);
