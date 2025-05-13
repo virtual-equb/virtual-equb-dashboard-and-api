@@ -48,6 +48,7 @@ class CbeMiniAppController extends Controller
         IUserRepository $userRepository
     )
     {
+        $this->middleware('auth:api', ['except' => ['miniAppLogin', 'registerMember', 'callback']]);
         $this->activityLogRepository = $activityLogRepository;
         $this->paymentRepository = $paymentRepository;
         $this->memberRepository = $memberRepository;
@@ -68,15 +69,460 @@ class CbeMiniAppController extends Controller
             }
 
             $token = substr($authHeader, 7);
-            Log::info('CbeMiniApp - Token Value', ['token' => $token]);
 
-            return redirect()->away("https://cbebirr.virtualequb.com?token={$token}");
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'Authorization' => $token
+            ])->get('https://cbebirrpaymentgateway.cbe.com.et:8888/auth/user');
+            
+            if ($response->failed()) {
+                Log::info('CbeMiniApp - Request failed: ' . $response->status());
+                return 'Request failed. Please check your network or the API endpoint.';
+            }
+
+            if (!$response->json('phone')) {
+                return 'Phone number is missing or invalid';
+            }
+
+            $phoneNumber = '+' . $response->json('phone');
+
+            return redirect()->away("https://cbebirr.virtualequb.com?token={$phoneNumber}");
         } catch (Exception $ex) {
             return 'There was an issue extracting the token. Please ensure the token is being passed and handled correctly.';
         }
     }
 
+    public function registerMember(Request $request)
+    {
+        Log::info('Member Registration Data from CbeBirr MiniApp', $request->all());
 
+        try {
+            $shortcode = config('key.SHORT_CODE');
+
+            $this->validate(
+                $request,
+                [
+                    'full_name' => 'required',
+                    'phone' => 'required',
+                    'email' => 'nullable|email',
+                    'gender' => 'required',
+                    'date_of_birth' => 'required|date|before:' . now()->subYears(18)->format('Y-m-d'), // Must be before 18 years ago
+                ],
+                [
+                    'date_of_birth.before' => 'You must be at least 18 years old to register.'
+                ]
+            );
+
+            // Handle the input data
+            $phone = $request->input('phone');
+            $fullName = $request->input('full_name');
+            $email = $request->input('email');
+            $gender = $request->input('gender');
+            $dateofBirth = $request->input('date_of_birth');
+
+            $city = $request->input('city');
+            $subcity = $request->input('subcity');
+            $woreda = $request->input('woreda');
+            $housenumber = $request->input('housenumber');
+            $location = $request->input('location');
+
+            // Check if the phone number already exists
+            if (!empty($phone)) {
+                $member_count = Member::where('phone', $phone)->count();
+                $user_count = User::where('phone_number', $phone)->count();
+                if ($member_count > 0 || $user_count > 0) {
+                    return response()->json([
+                        'code' => 200,
+                        'message' => 'Phone already exists',
+                    ]);
+                }
+            }
+
+            // Check if the email already exists
+            if (!empty($email)) {
+                $member_count = Member::where('email', $email)->count();
+                $user_count = User::where('email', $email)->count();
+                if ($member_count > 0 || $user_count > 0) {
+                    return response()->json([
+                        'code' => 200,
+                        'message' => 'Email already exists',
+                    ], 200);
+                }
+            }
+
+            // Prepare the member data
+            $memberData = [
+                'full_name' => $fullName,
+                'phone' => $phone,
+                'gender' => $gender,
+                'email' => $email,
+                'city' => $city,
+                'subcity' => $subcity,
+                'woreda' => $woreda,
+                'house_number' => $housenumber,
+                'specific_location' => $location,
+                'status' => "Active",
+                'date_of_birth' => $dateofBirth
+            ];
+
+            // Handle the profile picture upload
+            if ($request->file('profile_picture')) {
+                $image = $request->file('profile_picture');
+                $imageName = time() . '.' . $image->getClientOriginalExtension();
+                $image->storeAs('public/profile_pictures', $imageName);
+                $memberData['profile_photo_path'] = 'profile_pictures/' . $imageName;
+            }
+
+            // Create member and user
+            $create = $this->memberRepository->create($memberData);
+
+            $password = rand(100000, 999999);
+            $hashedPassword = Hash::make($password);
+            $user = [
+                'name' => $fullName,
+                'email' => $email,
+                'password' => $hashedPassword,
+                'phone_number' => $phone,
+                'gender' => $gender,
+                'status' => 'Active'
+            ];
+            $user = $this->userRepository->createUser($user);
+
+            $memberRoleAPI = Role::firstOrCreate(['name' => 'member', 'guard_name' => 'api']);
+            $memberRoleWEB = Role::firstOrCreate(['name' => 'member', 'guard_name' => 'web']);
+            $user->assignRole($memberRoleWEB);
+            $user->assignRole($memberRoleAPI);
+
+            if ($create && $user) {
+                try {
+                    $message = "Welcome to Virtual Equb! You have successfully registered. Please use your phone number ({$phone}) and password ({$password}) when logging in through our mobile application. For support, please call {$shortcode}.";
+
+                    $this->sendSms($phone, $message);
+
+                    $authController = new AuthController();
+        
+                    $loginRequest = new \Illuminate\Http\Request([
+                        'phone_number' => $phone,
+                        'password' => $password,
+                    ]);
+            
+                    // Call the login() method
+                    return $authController->login($loginRequest);
+                } catch (Exception $ex) {
+                    return response()->json([
+                        'code' => 200,
+                        'message' => 'Failed to send SMS',
+                        "error" => "Failed to send SMS"
+                    ], 200);
+                };
+            } else {
+                return response()->json([
+                    'code' => 400,
+                    'message' => 'Registration failed. Please try again!',
+                    'error' => 'Registration process encountered an unknown error.'
+                ], 400);
+            }
+        } catch (Exception $ex) {
+            return response()->json([
+                'code' => 500,
+                'message' => 'Unknown error occurred, Please try again!',
+                "error" => $ex->getMessage()
+            ], 500);
+        }
+    }
+
+    public function initialize(Request $request)
+    {
+        try {
+            // Step 2: Process the payment
+            // Step 2.1: Preparing data to be sent
+            $validated = $request->validate([
+                'amount' => 'required|string',
+                'equb_id' => 'required|exists:equbs,id',
+                // 'token' => 'required|exists:app_tokens,token',
+                'phone' => 'required|exists:app_tokens,phone',
+            ]);
+            // Log::info('datas', $validated);
+    
+            $transactionId = uniqid(); // Generate unique transaction ID
+            $transactionTime = now()->toIso8601String(); // Get current timestamp in ISO8601 format
+            $callbackUrl = route('cbe.callback'); // Callback URL for response handling
+            $companyName = config('key.CBE_MINI_COMPANY_NAME'); // Provided company name
+            $hashingKey = config('key.CBE_MINI_HASHING_KEY'); // Provided hashing key
+            $tillCode = config('key.CBE_MINI_TILL_CODE'); // Provided till code
+
+            // Payment data
+            $equb = Equb::with('equbType')->findOrFail($validated['equb_id']);
+            $member = $equb->member->where('phone', $validated['phone'])->first();
+            $token = AppToken::where('phone', $validated['phone'])->orderBy('created_at', 'desc')->pluck('token')->first();
+            Log::info('token'. $token);
+            // dd($callbackUrl);
+            // Prepare payload for hashing (including 'key')
+            $payloadForHashing = [
+                "amount" => $validated['amount'],
+                "callBackURL" => $callbackUrl,
+                "companyName" => $companyName,
+                "key" => $hashingKey,
+                "tillCode" => $tillCode,
+                "token" => $token,
+                "transactionId" => $transactionId,
+                "transactionTime" => $transactionTime,
+            ];
+
+            // Step 2.3: Sorting payload and preparing hashing payload
+            ksort($payloadForHashing); // Sort payload by keys
+
+            $processedPayload = urldecode(http_build_query($payloadForHashing)); // Convert sorted payload to query string
+    
+            // Step 2.3.3: Hash the processed payload
+            // $signature = hash_hmac('sha256', $processedPayload, $hashingKey);
+            $signature = hash('sha256', $processedPayload);
+            // dd($signature);
+            // Prepare final payload (excluding 'key')
+            $payload = [
+                "amount" => $validated['amount'],
+                "callBackURL" => $callbackUrl,
+                "companyName" => $companyName,
+                "signature" => $signature, // Add the signature
+                "tillCode" => $tillCode,
+                "token" => $token,
+                "transactionId" => $transactionId,
+                "transactionTime" => $transactionTime,
+            ];
+    
+            // Ensure payload is sorted according to the desired order
+            $orderedKeys = [
+                "amount",
+                "callBackURL",
+                "companyName",
+                "signature", // Place "signature" before "key"
+                "tillCode",
+                "token",
+                "transactionId",
+                "transactionTime",
+            ];
+            
+            $sortedPayload = array_merge(array_flip($orderedKeys), $payload);
+            Log::info('Payload sent to API:', $sortedPayload);
+            Log::info('Headers:', [
+                'Authorization' => "Bearer " . $token,
+                'Content-Type' => 'application/json',
+            ]);
+            // ksort($sortedPayload);
+            // $finalPayload = http_build_query($sortedPayload);
+            // Step 2.5: Sending the final payload
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'Authorization' => "Bearer " . $token,
+            ])->post('https://cbebirrpaymentgateway.cbe.com.et:8888/auth/pay', $sortedPayload);
+            Log::info('response ' . $response->json('token'));
+            Log::info('CBE API Response:', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+            // Check the response status
+            if ($response->status() === 200) {
+
+                Payment::create([
+                    'member_id' => $member->id,
+                    'equb_id' => $equb->id,
+                    'transaction_number' => $transactionId,
+                    'amount' => $validated['amount'],
+                    'status' => 'pending',
+                    'payment_type' => 'CBE Mini App',
+                    'collecter' => $member->id,
+                    'signature' => $signature,
+                ]);
+                Log::info('Response body:', [$response->body()]);
+                return response()->json(['status' => 'success', 'token' => $response->json('token'), 'signature' => $signature], 200);
+            } else {
+                Log::error('CBE API Error:', ['response' => $response->json()]);
+                return response()->json(['status' => 'error', 'message' => 'Transaction failed'], $response->status());
+            }
+        } catch (\Exception $ex) {
+            return response()->json(['status' => 'error', 'message' => $ex->getMessage()], 500);
+        }
+    }
+
+    public function callback(Request $request)
+    {
+        try {
+            // return 123;
+            $token = $request->header('Authorization');
+            // $token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjI1MTkxODA5NDQ1NSIsImV4cCI6MTczODYzMjEzMH0.cN95szHJNoJwp8tdtpDOk29vPmQeVoYP8dbKFBFy4_M";
+            if (!$token) {
+                return response()->json([
+                    'error' => 'Token is missing'
+                ], 400);
+            }
+            
+            // Validate the token
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'Authorization' => $token,
+            ])->get('https://cbebirrpaymentgateway.cbe.com.et:8888/auth/user');
+
+            if ($response->status() !== 200) {
+                return response()->json(['error' => 'Invalid Token'], 401);
+            }
+
+            
+
+            // Verify the signature
+            $data = $request->all();
+            $callbackData = CallbackData::create([
+                'paidAmount' => $data['paidAmount'],
+                'paidByNumber' => $data['paidByNumber'],
+                'transactionId' => $data['transactionId'],
+                'transactionTime' => $data['transactionTime'],
+                'tillCode' => $data['tillCode'],
+                'token' => $data['token'],
+                'signature' => $data['signature']
+            ]);
+            // $receivedSignature = $data['signature'] ?? null;
+            // unset($data['signature']);
+
+            // $hashingKey = 'XLcFp4RASjDwvTsH0DxeM06s5sOrHe0eSJwb7pB';
+            // $data['key'] = $hashingKey;
+
+            // ksort($data);
+
+            // $processedPayload = http_build_query($data);
+            // // $calculatedSignature = hash_hmac('sha256', $processedPayload, $hashingKey);
+            // $calculatedSignature = hash('sha256', $processedPayload);
+
+            // if ($calculatedSignature !== $receivedSignature) {
+            //     return response()->json(['error' => 'Invalid Signature'], 400);
+            // }
+            // if (!$signature) {
+            //     return response()->json(['error' => 'Invalid Signature'], 400);
+            // }
+            $payment = Payment::where('transaction_number', $data['transactionId'])->first();
+            if (!$payment) {
+                return response()->json(['message' => 'Payment record not found'], 404);
+            }
+            // payment calculations
+            $equbId = $payment->equb_id;
+            $memberId = $payment->member_id;
+            $amount = $payment->amount;
+            $credit = $payment->creadit;
+
+            // Compute total credit and balance
+            $totalCredit = $this->paymentRepository->getTotalCredit($equbId) ?? 0;
+            $equbAmount = $this->equbRepository->getEqubAmount($memberId, $equbId);
+            $availableBalance = $this->paymentRepository->getTotalBalance($equbId) ?? 0;
+
+            $creditData = ['creadit' => 0];
+            $this->paymentRepository->updateCredit($equbId, $creditData);
+
+            $lastTc = $totalCredit;
+            $totalCredit += $credit;
+
+            $balanceData = ['balance' => 0];
+            $this->paymentRepository->updateBalance($equbId, $balanceData);
+
+            $at = $amount;
+            $amount += $availableBalance;
+
+            if ($amount > $equbAmount) {
+                if ($totalCredit > 0) {
+                    if ($totalCredit < $amount) {
+                        if ($at < $equbAmount) {
+                            $availableBalance -= $totalCredit;
+                            $totalCredit = 0;
+                        } elseif ($at > $equbAmount) {
+                            $diff = $at - $equbAmount;
+                            $totalCredit -= $diff;
+                            $availableBalance = ($availableBalance + $diff) - $totalCredit;
+                            $totalCredit = 0;
+                        }
+                    }
+                    $amount = $at;
+                }
+            } elseif ($amount == $equbAmount) {
+                $amount = $at;
+                $totalCredit = $lastTc;
+                $availableBalance = 0;
+            } elseif ($amount < $equbAmount) {
+                if ($lastTc == 0) {
+                    $totalCredit = $equbAmount - $amount;
+                    $availableBalance = 0;
+                } else {
+                    $totalCredit = $totalCredit;
+                    $availableBalance = 0;
+                }
+                $amount = $at;
+            }
+            // Update the payment record with the CBE details
+            $payment->update([
+                'transaction_number' => $data['transactionId'],
+                'status' => 'paid',
+                'paid_date' => now(),
+                'amount' => $amount,
+                'creadit' => $totalCredit,
+                'balance' => $availableBalance,
+                'payment_type' => 'CBE Mini App',
+                'collecter' => $memberId,
+                // 'signature' => $data['signature'],
+            ]);
+            // Update equb total payment and remaining payment
+            $totalPaid = $this->paymentRepository->getTotalPaid($equbId);
+            $totalEqubAmount = $this->equbRepository->getTotalEqubAmount($equbId);
+            $remainingPayment = $totalEqubAmount - $totalPaid;
+
+            $updated = [
+                'total_payment' => $totalPaid,
+                'remaining_payment' => $remainingPayment,
+            ];
+            $this->equbTakerRepository->updatePayment($equbId, $updated);
+
+            // Mark equb as deactivated if fully paid
+            if ($remainingPayment == 0) {
+                $this->equbRepository->update($equbId, ['status' => 'Deactive']);
+            }
+
+            // Log the activity
+            // $activityLog = [
+            //     'type' => 'payments',
+            //     'type_id' => $payment->id,
+            //     'action' => 'updated',
+            //     'user_id' => Auth::id(),
+            //     'username' => Auth::user()->name,
+            //     'role' => Auth::user()->role,
+            // ];
+            // $this->activityLogRepository->createActivityLog($activityLog);
+            Log::info('Transaction verified successfully.');
+           
+
+            // Process the transaction
+            return response()->json(['status' => 'success'], 200);
+
+        } catch (Exception $ex) {
+            return response()->json([
+                'error' => $ex->getMessage()
+            ], 500);
+        }
+    }
+
+    public function isDateInYMDFormat($dateString)
+    {
+        try {
+            // Attempt to parse the data using Carbon
+            $parsedDate = Carbon::createFromFormat('Y-m-d', $dateString);
+
+            // check if the parsed date matches the input date string
+            return $parsedDate->format('Y-m-d') === $dateString;
+
+        } catch (Exception $ex) {
+            return false;
+        }
+    }
+
+
+    // below code may not be relevant
     public function cbeDatas(Request $request){
         try {
 
@@ -140,272 +586,6 @@ class CbeMiniAppController extends Controller
         }
         
     }
-
-    public function register(Request $request) {
-        try {
-            
-            $shortcode = config('key.SHORT_CODE');
-            // $token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjI1MTkxODA5NDQ1NSIsImV4cCI6MTc0MzA0MjQxNn0.d3keyZuG0FCQpRVolicjFIgbiSqmSRywJGf4spseeeA";
-
-            $token = $request->header('Authorization');
-            // dd($request->all());
-            if (!$token) {
-                return response()->json(['error' => 'Token is missing'], 400);
-            }
-            
-            // Remove 'Bearer ' prefix
-            $cleanedToken = str_replace('Bearer ', '', $token);
-
-            // call external API to validate token
-            $response = Http::withHeaders([
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json',
-                'Authorization' => $token,
-            ])->get('https://cbebirrpaymentgateway.cbe.com.et:8888/auth/user');
-
-            if ($response->status() == 200) {
-                $phoneFromToken = $response->json('phone');
-
-            if (!$phoneFromToken) {
-                return response()->json(['error' => 'Phone number is missing or invalid'], 400);
-            }
-
-            // Ensure phone starts with '+'
-            if (strpos($phoneFromToken, '+') !== 0) {
-                $phoneFromToken = '+' . $phoneFromToken;
-            }
-            AppToken::create([
-                'phone' => $phoneFromToken,
-                'token' => $cleanedToken
-            ]);
-
-            // Validate request data
-            // log
-            $this->validate($request, [
-                'full_name' => 'required',
-                'phone' => 'required',
-                'gender' => 'required',
-                'date_of_birth' => 'required|date|before:' . now()->subYears(18)->format('Y-m-d'),
-                'password' => 'required'
-            ], [
-                'date_of_birth.before' => 'You must be at least 18 years old to register.'
-            ]);
-
-            // Handle input datas
-            $fullName = $request->input('full_name');
-            $phone = $request->input('phone');
-            $gender = $request->input('gender');
-            $city = $request->input('city');
-            $subcity = $request->input('subcity');
-            $woreda = $request->input('woreda');
-            $housenumber = $request->input('housenumber');
-            $location = $request->input('location');
-            $email = $request->input('email');
-            $passwod = $request->input('password');
-            $dateofBirth = $request->input('date_of_birth');
-            // dd($phone, $phoneFromToken);
-
-            // Ensure phone from request matches token
-            if ($phone !== $phoneFromToken) {
-                return response()->json(['error' => 'Phone number does not match the token'], 403);
-            }
-
-            // check if phone already exists
-            if (Member::where('phone', $phone)->exists()) {
-                return response()->json(['code' => 403, 'message' => 'Phone already exists']);
-            }
-           // Check if email already exists
-            if (!empty($email) && Member::where('email', $email)->exists()) {
-                return response()->json(['code' => 403, 'message' => 'Email already exists']);
-            }
-
-            $memberData = [
-                'full_name' => $fullName,
-                'phone' => $phone,
-                'gender' => $gender,
-                'email' => $email,
-                'city' => $city,
-                'subcity' => $subcity,
-                'woreda' => $woreda,
-                'house_number' => $housenumber,
-                'specific_location' => $location,
-                'status' => 'Active',
-                'date_of_birth' => $dateofBirth
-            ];
-
-            // Handle profile picture upload
-            if ($request->file('profile_picture')) {
-                $image = $request->file('profile_picture');
-                $imageName = time() . '.' . $image->getClientOriginalExtension();
-                $image->storeAs('public/profile_pictures', $imageName);
-                $memberData['profile_photo_path'] = 'profile_pictures/' . $imageName;
-            }
-            // Create member and user
-            $create = $this->memberRepository->create($memberData);
-            $user = [
-                'name' => $fullName,
-                'email' => $email,
-                'password' => Hash::make($passwod),
-                'phone_number' => $phone,
-                'gender' => $gender,
-                'status' => 'Active'
-            ];
-            $user = $this->userRepository->createUser($user);
-            // Member Role
-            $memberRoleAPI = Role::firstOrCreate(['name' => 'member', 'guard_name' => 'api']);
-            $memberRoleWEB = Role::firstOrCreate(['name' => 'member', 'guard_name' => 'web']);
-            $user->assignRole($memberRoleWEB);
-            $user->assignRole($memberRoleAPI);
-
-            if ($create && $user) {
-                try {
-                    $message = "Welcome to Virtual Equb! You have registered successfully. Use the phone number " . $phone . " and password " . $passwod . " to log in. For further information, please call " . $shortcode;
-                    $this->sendSms($phone, $message);
-
-                } catch (Exception $ex) {
-                    return response()->json([
-                        'error' => $ex->getMessage()
-                    ]);
-                }
-                return response()->json([
-                    'code' => 200,
-                    'message' => "Member has registered successfully!",
-                    'data' => new MemberResource($create)
-                ]);
-            } else {
-                return response()->json([
-                    'code' => 400,
-                    'message' => 'Unknown error occured, Please try again!'
-                ]);
-            }
-                
-            } else {
-                return response()->json(['error' => 'Invalid Token'], 401);
-            }
-
-            
- 
-        } catch (Exception $ex) {
-            return response()->json([
-                'error' => $ex->getMessage()
-            ], 500);
-        }
-    }
-
-    public function login(Request $request) {
-        try {
-            $request->validate([
-                'phone_number' => 'required',
-                'password' => 'required'
-            ]);
-
-            // Validate token
-            $token = $request->header('Authorization');
-            if (!$token) {
-                return response()->json([
-                    'error' => 'Token is missing'
-                ], 400);
-            }
-            // Remove 'Bearer ' prefix
-            $cleanedToken = str_replace('Bearer ', '', $token);
-
-            $response = Http::withHeaders([
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json',
-                'Authorization' => $token
-            ])->get('https://cbebirrpaymentgateway.cbe.com.et:8888/auth/user');
-
-            if ($response->status() !== 200) {
-                return response()->json([
-                    'error' => 'Invalid Token'
-                ], 401);
-            }
-
-            // Extract phone number from the token response
-            $phoneFromToken = $response->json('phone');
-
-            if (!$phoneFromToken) {
-                return response()->json([
-                    'error' => 'Phone number is missing or invalid'
-                ], 400);
-            }
-            // Ensure phone starts with '+'
-            if (strpos($phoneFromToken, '+') !== 0) {
-                $phoneFromToken = '+' . $phoneFromToken;
-            }
-            // proceed with login process
-            $user = [
-                'phone_number' => $request->input('phone_number'),
-                'password' => $request->input('password')
-            ];
-            $userExists = User::where('phone_number', $request->input('phone_number'))->first();
-            if (!$userExists) {
-                return response()->json([
-                    'code' => 404,
-                    'message' => 'Member not found!'
-                ], 404);
-            }
-
-            if (!$token = JWTAuth::attempt($user)) {
-                return response()->json([
-                    'code' => 401,
-                    'message' => 'Incorrect phone number or password!'
-                ], 200);
-            }
-            $user = request()->user();
-            $userStatus = $user->enabled;
-            $olderToken = $user->token;
-            if (!$userStatus) {
-                JWTAuth::manager()->invalidate(new \Tymon\JWTAuth\Token($olderToken, $forceForever = false));
-                return response()->json([
-                    'code' => 403,
-                    'message' => 'Your account is not active, Please contact admin!'
-                ]);
-            }
-            $userId = $user->id;
-
-            if ($olderToken) {
-                JWTAuth::manager()->invalidate(new \Tymon\JWTAuth\Token($olderToken, $forceForever = false));
-            }
-    
-            User::where('id', $userId)
-                ->update([
-                    'token' => $token,
-                    'fcm_id' => $request->fcm_id
-                ]);
-    
-            $memberPhone = $user->phone_number;
-            $memberId = Member::where('phone', $memberPhone)->pluck('id')->first();
-    
-            $userData = [
-                "id" => $user->id,
-                "name" => $user->name,
-                "email" => $user->email,
-                "phone_number" => $user->phone_number,
-                "gender" => $user->gender,
-                "role" => $user->getRoleNames()->first(),
-                "enabled" => $user->enabled,
-                "member_id" => $memberId
-            ];
-    
-            $tokenData = $this->respondWithToken($token);
-    
-            return response()->json([
-                'message' => "Logged in successfully!",
-                'code' => 200,
-                'user' => $userData,
-                'token_type' => 'Bearer',
-                'token' => $tokenData->original['access_token'],
-                'fcm_id' => $request->fcm_id
-            ]);
-    
-
-        } catch (Exception $ex) {
-            return response()->json([
-                'error' => $ex->getMessage()
-            ], 500);
-        }
-    } 
 
     protected function respondWithToken($token)
     {
@@ -646,20 +826,6 @@ class CbeMiniAppController extends Controller
         }
     }
 
-    public function isDateInYMDFormat($dateString)
-    {
-        try {
-            // Attempt to parse the data using Carbon
-            $parsedDate = Carbon::createFromFormat('Y-m-d', $dateString);
-
-            // check if the parsed date matches the input date string
-            return $parsedDate->format('Y-m-d') === $dateString;
-
-        } catch (Exception $ex) {
-            return false;
-        }
-    }
-
     public function validateToken(Request $request)
     {
         try {
@@ -723,281 +889,6 @@ class CbeMiniAppController extends Controller
             } else {
                 return response()->json(['error' => 'Invalid Token'], 401);
             }
-        } catch (Exception $ex) {
-            return response()->json([
-                'error' => $ex->getMessage()
-            ], 500);
-        }
-    }
-
-    public function processPayment(Request $request)
-    {
-        try {
-            // Step 2: Process the payment
-            // Step 2.1: Preparing data to be sent
-            $validated = $request->validate([
-                'amount' => 'required|string',
-                'equb_id' => 'required|exists:equbs,id',
-                // 'token' => 'required|exists:app_tokens,token',
-                'phone' => 'required|exists:app_tokens,phone',
-            ]);
-            // Log::info('datas', $validated);
-    
-            $transactionId = uniqid(); // Generate unique transaction ID
-            $transactionTime = now()->toIso8601String(); // Get current timestamp in ISO8601 format
-            $callbackUrl = route('cbe.callback'); // Callback URL for response handling
-            $companyName = config('key.CBE_MINI_COMPANY_NAME'); // Provided company name
-            $hashingKey = config('key.CBE_MINI_HASHING_KEY'); // Provided hashing key
-            $tillCode = config('key.CBE_MINI_TILL_CODE'); // Provided till code
-
-            // Payment data
-            $equb = Equb::with('equbType')->findOrFail($validated['equb_id']);
-            $member = $equb->member->where('phone', $validated['phone'])->first();
-            $token = AppToken::where('phone', $validated['phone'])->orderBy('created_at', 'desc')->pluck('token')->first();
-            Log::info('token'. $token);
-            // dd($callbackUrl);
-            // Prepare payload for hashing (including 'key')
-            $payloadForHashing = [
-                "amount" => $validated['amount'],
-                "callBackURL" => $callbackUrl,
-                "companyName" => $companyName,
-                "key" => $hashingKey,
-                "tillCode" => $tillCode,
-                "token" => $token,
-                "transactionId" => $transactionId,
-                "transactionTime" => $transactionTime,
-            ];
-
-            // Step 2.3: Sorting payload and preparing hashing payload
-            ksort($payloadForHashing); // Sort payload by keys
-
-            $processedPayload = urldecode(http_build_query($payloadForHashing)); // Convert sorted payload to query string
-    
-            // Step 2.3.3: Hash the processed payload
-            // $signature = hash_hmac('sha256', $processedPayload, $hashingKey);
-            $signature = hash('sha256', $processedPayload);
-            // dd($signature);
-            // Prepare final payload (excluding 'key')
-            $payload = [
-                "amount" => $validated['amount'],
-                "callBackURL" => $callbackUrl,
-                "companyName" => $companyName,
-                "signature" => $signature, // Add the signature
-                "tillCode" => $tillCode,
-                "token" => $token,
-                "transactionId" => $transactionId,
-                "transactionTime" => $transactionTime,
-            ];
-    
-            // Ensure payload is sorted according to the desired order
-            $orderedKeys = [
-                "amount",
-                "callBackURL",
-                "companyName",
-                "signature", // Place "signature" before "key"
-                "tillCode",
-                "token",
-                "transactionId",
-                "transactionTime",
-            ];
-            
-            $sortedPayload = array_merge(array_flip($orderedKeys), $payload);
-            Log::info('Payload sent to API:', $sortedPayload);
-            Log::info('Headers:', [
-                'Authorization' => "Bearer " . $token,
-                'Content-Type' => 'application/json',
-            ]);
-            // ksort($sortedPayload);
-            // $finalPayload = http_build_query($sortedPayload);
-            // Step 2.5: Sending the final payload
-            $response = Http::withHeaders([
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json',
-                'Authorization' => "Bearer " . $token,
-            ])->post('https://cbebirrpaymentgateway.cbe.com.et:8888/auth/pay', $sortedPayload);
-            Log::info('response ' . $response->json('token'));
-            Log::info('CBE API Response:', [
-                'status' => $response->status(),
-                'body' => $response->body(),
-            ]);
-            // Check the response status
-            if ($response->status() === 200) {
-
-                Payment::create([
-                    'member_id' => $member->id,
-                    'equb_id' => $equb->id,
-                    'transaction_number' => $transactionId,
-                    'amount' => $validated['amount'],
-                    'status' => 'pending',
-                    'payment_type' => 'CBE Mini App',
-                    'collecter' => $member->id,
-                    'signature' => $signature,
-                ]);
-                Log::info('Response body:', [$response->body()]);
-                return response()->json(['status' => 'success', 'token' => $response->json('token'), 'signature' => $signature], 200);
-            } else {
-                Log::error('CBE API Error:', ['response' => $response->json()]);
-                return response()->json(['status' => 'error', 'message' => 'Transaction failed'], $response->status());
-            }
-        } catch (\Exception $ex) {
-            return response()->json(['status' => 'error', 'message' => $ex->getMessage()], 500);
-        }
-    }
-    
-    public function paymentCallback(Request $request)
-    {
-        try {
-            // return 123;
-            $token = $request->header('Authorization');
-            // $token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjI1MTkxODA5NDQ1NSIsImV4cCI6MTczODYzMjEzMH0.cN95szHJNoJwp8tdtpDOk29vPmQeVoYP8dbKFBFy4_M";
-            if (!$token) {
-                return response()->json([
-                    'error' => 'Token is missing'
-                ], 400);
-            }
-            
-            // Validate the token
-            $response = Http::withHeaders([
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json',
-                'Authorization' => $token,
-            ])->get('https://cbebirrpaymentgateway.cbe.com.et:8888/auth/user');
-
-            if ($response->status() !== 200) {
-                return response()->json(['error' => 'Invalid Token'], 401);
-            }
-
-            
-
-            // Verify the signature
-            $data = $request->all();
-            $callbackData = CallbackData::create([
-                'paidAmount' => $data['paidAmount'],
-                'paidByNumber' => $data['paidByNumber'],
-                'transactionId' => $data['transactionId'],
-                'transactionTime' => $data['transactionTime'],
-                'tillCode' => $data['tillCode'],
-                'token' => $data['token'],
-                'signature' => $data['signature']
-            ]);
-            // $receivedSignature = $data['signature'] ?? null;
-            // unset($data['signature']);
-
-            // $hashingKey = 'XLcFp4RASjDwvTsH0DxeM06s5sOrHe0eSJwb7pB';
-            // $data['key'] = $hashingKey;
-
-            // ksort($data);
-
-            // $processedPayload = http_build_query($data);
-            // // $calculatedSignature = hash_hmac('sha256', $processedPayload, $hashingKey);
-            // $calculatedSignature = hash('sha256', $processedPayload);
-
-            // if ($calculatedSignature !== $receivedSignature) {
-            //     return response()->json(['error' => 'Invalid Signature'], 400);
-            // }
-            // if (!$signature) {
-            //     return response()->json(['error' => 'Invalid Signature'], 400);
-            // }
-            $payment = Payment::where('transaction_number', $data['transactionId'])->first();
-            if (!$payment) {
-                return response()->json(['message' => 'Payment record not found'], 404);
-            }
-            // payment calculations
-            $equbId = $payment->equb_id;
-            $memberId = $payment->member_id;
-            $amount = $payment->amount;
-            $credit = $payment->creadit;
-
-            // Compute total credit and balance
-            $totalCredit = $this->paymentRepository->getTotalCredit($equbId) ?? 0;
-            $equbAmount = $this->equbRepository->getEqubAmount($memberId, $equbId);
-            $availableBalance = $this->paymentRepository->getTotalBalance($equbId) ?? 0;
-
-            $creditData = ['creadit' => 0];
-            $this->paymentRepository->updateCredit($equbId, $creditData);
-
-            $lastTc = $totalCredit;
-            $totalCredit += $credit;
-
-            $balanceData = ['balance' => 0];
-            $this->paymentRepository->updateBalance($equbId, $balanceData);
-
-            $at = $amount;
-            $amount += $availableBalance;
-
-            if ($amount > $equbAmount) {
-                if ($totalCredit > 0) {
-                    if ($totalCredit < $amount) {
-                        if ($at < $equbAmount) {
-                            $availableBalance -= $totalCredit;
-                            $totalCredit = 0;
-                        } elseif ($at > $equbAmount) {
-                            $diff = $at - $equbAmount;
-                            $totalCredit -= $diff;
-                            $availableBalance = ($availableBalance + $diff) - $totalCredit;
-                            $totalCredit = 0;
-                        }
-                    }
-                    $amount = $at;
-                }
-            } elseif ($amount == $equbAmount) {
-                $amount = $at;
-                $totalCredit = $lastTc;
-                $availableBalance = 0;
-            } elseif ($amount < $equbAmount) {
-                if ($lastTc == 0) {
-                    $totalCredit = $equbAmount - $amount;
-                    $availableBalance = 0;
-                } else {
-                    $totalCredit = $totalCredit;
-                    $availableBalance = 0;
-                }
-                $amount = $at;
-            }
-            // Update the payment record with the CBE details
-            $payment->update([
-                'transaction_number' => $data['transactionId'],
-                'status' => 'paid',
-                'paid_date' => now(),
-                'amount' => $amount,
-                'creadit' => $totalCredit,
-                'balance' => $availableBalance,
-                'payment_type' => 'CBE Mini App',
-                'collecter' => $memberId,
-                // 'signature' => $data['signature'],
-            ]);
-            // Update equb total payment and remaining payment
-            $totalPaid = $this->paymentRepository->getTotalPaid($equbId);
-            $totalEqubAmount = $this->equbRepository->getTotalEqubAmount($equbId);
-            $remainingPayment = $totalEqubAmount - $totalPaid;
-
-            $updated = [
-                'total_payment' => $totalPaid,
-                'remaining_payment' => $remainingPayment,
-            ];
-            $this->equbTakerRepository->updatePayment($equbId, $updated);
-
-            // Mark equb as deactivated if fully paid
-            if ($remainingPayment == 0) {
-                $this->equbRepository->update($equbId, ['status' => 'Deactive']);
-            }
-
-            // Log the activity
-            // $activityLog = [
-            //     'type' => 'payments',
-            //     'type_id' => $payment->id,
-            //     'action' => 'updated',
-            //     'user_id' => Auth::id(),
-            //     'username' => Auth::user()->name,
-            //     'role' => Auth::user()->role,
-            // ];
-            // $this->activityLogRepository->createActivityLog($activityLog);
-            Log::info('Transaction verified successfully.');
-           
-
-            // Process the transaction
-            return response()->json(['status' => 'success'], 200);
-
         } catch (Exception $ex) {
             return response()->json([
                 'error' => $ex->getMessage()
