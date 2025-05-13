@@ -110,7 +110,6 @@
 
                         $equbStartDate = new DateTime($equb->start_date);
                         $interval = $equbStartDate->diff($currentDate);
-
                         if ($equbEndDate < $currentDate) {
                             $unpaidAmount = $remainingPayment;
                             $dueDays = $unpaidAmount / $equbAmount;
