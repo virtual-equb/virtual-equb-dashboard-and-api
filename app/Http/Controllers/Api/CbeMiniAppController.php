@@ -73,7 +73,7 @@ class CbeMiniAppController extends Controller
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
-                'Authorization' => $token
+                'Authorization' => 'Bearer' . $token
             ])->get('https://cbebirrpaymentgateway.cbe.com.et:8888/auth/user');
             
             if ($response->failed()) {
