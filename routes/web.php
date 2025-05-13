@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SubController;
 use App\Http\Controllers\BoleController;
@@ -43,7 +44,7 @@ Route::get('/unauthorized', function () {
 })->name('unauthorized');
 
 Route::resource('/permission', WebPermissionController::class);
-Route::get('/permission/{permissionId}/delete',[ WebPermissionController::class, 'destroy']);
+Route::get('/permission/{permissionId}/delete', [WebPermissionController::class, 'destroy']);
 Route::resource('/roles', WebRoleController::class);
 Route::get('/roles/{roleId}/delete', [WebRoleController::class, 'destroy']);
 Route::get('/roles/{roleId}/assign-permission', [WebRoleController::class, 'assignPermission']);
@@ -114,7 +115,7 @@ Route::middleware([
         Route::put('/activeEqubTypeStatus/{id}', [EqubTypeController::class, 'activeStatus'])->name('activeEqubTypeStatus');
         Route::delete('/delete/{id}', [EqubTypeController::class, 'destroy'])->name('deleteEqubType');
         Route::put('/updateStatus/{id}', [EqubTypeController::class, 'updateStatus'])->name('updateStatus');
-        Route::put('/updatePendingStatus/{id}/{status}', [EqubTypeController::class, 'updatePendingStatus'])->name('updatePendingStatus'); 
+        Route::put('/updatePendingStatus/{id}/{status}', [EqubTypeController::class, 'updatePendingStatus'])->name('updatePendingStatus');
         Route::get('/member/{id}', [EqubController::class, 'memberByEqubType'])->name('memberByEqubType');
     });
 
@@ -173,10 +174,10 @@ Route::middleware([
         Route::get('/show-all-paid-payment', [PaymentController::class, 'paidPayment'])->name('showAllPaidPayments');
         Route::get('/show-pending-payment/{offsetVal}/{pageNumberVal}', [PaymentController::class, 'indexPendingPaginate'])->name('showPendingPayments');
         Route::get('/show-paid-payment/{offsetVal}/{pageNumberVal}', [PaymentController::class, 'indexPaidPaginate'])->name('showPaidPayments');
-        
+
         Route::get('/search-pending-payment/{searchInput}/{offset}/{pageNumber?}', [PaymentController::class, 'searchPendingPayment'])->name('searchPendingMember');
         Route::get('/search-paid-payment/{searchInput}/{offset}/{pageNumber?}', [PaymentController::class, 'searchPaidPayment'])->name('searchPaidMember');
-        
+
         Route::get('/clearPendingSearchEntry', [PaymentController::class, 'clearPendingSearchEntry'])->name('clearPendingSearchEntry');
         Route::get('/register', [PaymentController::class, 'create'])->name('creatPayment');
         Route::post('/register', [PaymentController::class, 'store'])->name('registerPayment');
@@ -254,7 +255,7 @@ Route::middleware([
         Route::get('/paginateMembers/{dateFrom}/{dateTo}/{offsetVal}/{pageNumberVal}', [ReportController::class, 'paginateMembers']);
         Route::get('/memberFilterByEqubType', [ReportController::class, 'memberFilterByEqubType'])->name('memberFilterByEqubType');
         Route::get('/membersByEqubType/{dateFrom}/{dateTo}/{equbType}', [ReportController::class, 'membersByEqubType'])->name('membersByEqubType');
-        Route::get('/paginateMembersByEqubType/{dateFrom}/{dateTo}/{equbType}/{offsetVal}/{pageNumberVal}', [ReportController::class, 'paginateMembersByEqubType']);       
+        Route::get('/paginateMembersByEqubType/{dateFrom}/{dateTo}/{equbType}/{offsetVal}/{pageNumberVal}', [ReportController::class, 'paginateMembersByEqubType']);
         Route::get('/equbTypeFilter', [ReportController::class, 'equbTypeFilter'])->name('equbTypeFilter');
         Route::get('/equbTypes/{dateFrom}/{dateTo}', [ReportController::class, 'equbTypes'])->name('equbTypes');
         Route::get('/paymentFilter', [ReportController::class, 'paymentFilter'])->name('paymentFilter');
@@ -301,7 +302,7 @@ Route::middleware([
 
         Route::get('/unPaidFilter', [ReportController::class, 'unPaidFilter'])->name('unPaidFilter');
         Route::get('/filterByMethod', [ReportController::class, 'filterByMethod'])->name('filterByMethod');
-        
+
         Route::get('/unPaids/{dateFrom}/{dateTo}/{equbType}', [ReportController::class, 'unPaids'])->name('unPaids');
         Route::get('/loadMoreUnPaids/{dateFrom}/{dateTo}/{offsetVal}/{pageNumberVal}/{equbType}', [ReportController::class, 'loadMoreUnPaids']);
 
@@ -321,7 +322,7 @@ Route::middleware([
     });
 
     // Cities routes
-    Route::prefix('cities')->group(function () {        
+    Route::prefix('cities')->group(function () {
         Route::get('/', [CityController::class, 'index'])->name('cities.index');
         Route::get('/create', [CityController::class, 'create'])->name('admin.city.addCity');
         Route::post('/', [CityController::class, 'store'])->name('cities.store');
@@ -344,41 +345,40 @@ Route::middleware([
 
     // main equb routes
     Route::prefix('main-equbs')->group(function () {
-          Route::get('/', [MainEqubController::class, 'index'])->name('mainEqubs.index');
-          Route::get('/types', [MainEqubController::class, 'getTypes'])->name('mainEqubs.types');
-          Route::get('{id}', [MainEqubController::class, 'show'])->name('mainEqubs.show');
-          Route::put('{id}', [MainEqubController::class, 'update'])->name('mainEqubs.update');
-          Route::delete('{id}', [MainEqubController::class, 'destroy'])->name('mainEqubs.destroy');
+        Route::get('/', [MainEqubController::class, 'index'])->name('mainEqubs.index');
+        Route::get('/types', [MainEqubController::class, 'getTypes'])->name('mainEqubs.types');
+        Route::get('{id}', [MainEqubController::class, 'show'])->name('mainEqubs.show');
+        Route::put('{id}', [MainEqubController::class, 'update'])->name('mainEqubs.update');
+        Route::delete('{id}', [MainEqubController::class, 'destroy'])->name('mainEqubs.destroy');
     });
 
-    Route::middleware(['web','api','auth'])->group(function () {
+    Route::middleware(['web', 'api', 'auth'])->group(function () {
         // Route to create a new permission
         Route::get('/settings/permission/create', [RolesController::class, 'create_permission'])
             ->name('permissions.create'); // Add permission check
-    
+
         // Route to view all permissions
         Route::get('/settings/permission', [RolesController::class, 'index'])
             ->name('permissions.index'); // Add permission check
-    
+
         // Route to delete a role
         Route::delete('/roles/destroy/{id}', [RolesController::class, 'destroy'])
             ->name('roles.destroy'); // Example permission check
-    
+
         // Route to create a new role
         Route::get('/roles/create', [RolesController::class, 'create'])
             ->name('roles.create'); // Add permission check
-    
+
         // Route to store a new role
         Route::post('/roles/store', [RolesController::class, 'store'])
             ->name('roles.store');
-    
+
         // Route to edit a specific role
         Route::get('/roles/edit/{id}', [RolesController::class, 'edit'])
             ->name('roles.edit');
-    
+
         // Route to update a specific role
         Route::put('/roles/update/{id}', [RolesController::class, 'update'])
             ->name('roles.update');
     });
-   
 });
