@@ -836,6 +836,7 @@ class ReportController extends Controller
             $userData = Auth::user();
             // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
                 $data['title'] = "Virtual Equb - Lotterys Report";
+                // dd($data);
                 return view('admin/report/unpaidLotteryReport/lotterys', $data);
             // } else {
             //     return view('auth/login');
@@ -870,7 +871,7 @@ class ReportController extends Controller
             $msg = "Unknown Error Occurred, Please try again!";
             $type = 'error';
             Session::flash($type, $msg);
-            return back();
+            return back(); /// eht you say though
         }
     }
     public function updateToPaidLotterys()

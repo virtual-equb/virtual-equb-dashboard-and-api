@@ -13,6 +13,7 @@
             <th>Lottery Date</th>
             <th>Till Lottery</th>
             <th>Till End</th>
+            <th>Due Payment</th>
             <th>Status</th>
             <th style="width: 50px">Action</th>
         </tr>
@@ -22,23 +23,24 @@
             <tr id="tre{{ $equb['id'] }}">
                 <?php
                 $totalPpayment = App\Models\Payment::where('equb_id', $equb['id'])->where('status', 'paid')->sum('amount');
+                $lastPayment = App\Models\Payment::where('equb_id', $equb['id'])->orderBy('created_at', 'desc')->first();
                 $totalEqubAmount = App\Models\Equb::where('id', $equb['id'])->value('total_amount');
                 $remainingPayment = max(0, $totalEqubAmount - $totalPpayment);
-
+                
                 $lotteryDates = App\Models\Equb::where('id', $equb['id'])->value('lottery_date');
                 $equbType = App\Models\EqubType::find($equb->equb_type_id);
                 $endDate = App\Models\Equb::where('id', $equb['id'])->value('end_date');
-
+                
                 $lotteryDates = explode(',', $lotteryDates);
                 // $lotteryDate = $lotteryDates[0];
                 $lotteryDate = !empty($lotteryDates) ? max($lotteryDates) : null;
                 
-                $date  = date('Y-m-d');
+                $date = date('Y-m-d');
                 $currentDate = new DateTime($date);
                 $lotteryDateObj = $lotteryDate ? new DateTime($lotteryDate) : null;
                 $endDateObj = $endDate ? new DateTime($endDate) : null;
                 $typeDateObj = new DateTime($equbType->lottery_date);
-
+                
                 // Till Lottery Calculation
                 if ($lotteryDateObj && $lotteryDateObj > $currentDate) {
                     $lotteryInterval = $lotteryDateObj->diff($currentDate)->days;
@@ -55,11 +57,9 @@
                 } else {
                     $endDateInterval = 'Passed';
                 }
-
+                
                 // Final Lottery Interval
-                $finalLotteryInterval = ($equbType->type == 'Automatic') 
-                ? $typeDateObj->diff($currentDate)->days . ' Days'
-                : ($lotteryDate ? $lotteryInterval : 'Unassigned');
+                $finalLotteryInterval = $equbType->type == 'Automatic' ? $typeDateObj->diff($currentDate)->days . ' Days' : ($lotteryDate ? $lotteryInterval : 'Unassigned');
                 ?>
                 <td class="details-control_payment" id="{{ $equb['id'] }}"></td>
                 <td>{{ $key + 1 }}</td>
@@ -82,15 +82,73 @@
                 <td>
                     @if ($equb->lottery_date)
                         @foreach (explode(',', $equb->lottery_date) as $lottery_date)
-                            {{ date('M-j-Y', strtotime($lottery_date))}}
+                            {{ date('M-j-Y', strtotime($lottery_date)) }}
                         @endforeach
-                    @else 
+                    @else
                         Unassigned
                     @endif
                 </td>
-                <td> {{ $finalLotteryInterval != 'Passed' ? ($finalLotteryInterval != 'Unassigned' ? $finalLotteryInterval . ' Days' : 'Unassigned') : 'Passed' }}
+                <td>
+                    @if ($remainingPayment == 0)
+                        Paid
+                    @else
+                        {{ $finalLotteryInterval != 'Passed' ? ($finalLotteryInterval != 'Unassigned' ? $finalLotteryInterval . ' Days' : 'Unassigned') : 'Passed' }}
+                    @endif
                 </td>
-                <td> {{ $endDateInterval != 'Passed' ? $endDateInterval . ' Days' : 'Passed' }}</td>
+                <td>
+                    @if ($remainingPayment == 0)
+                        Paid
+                    @else
+                        {{ $endDateInterval != 'Passed' ? $endDateInterval . ' Days' : 'Passed' }}
+                    @endif
+                </td>
+                <td>
+                    @php
+                        $rote = $equb->equbType->rote;
+                        $equbAmount = $equb->amount;
+                        $equbStartDate = new DateTime($equb->start_date);
+                        $interval = $equbStartDate->diff($currentDate);
+
+                        if ($rote == 'Daily') {
+                            $amountToPay = $interval->days * $equbAmount;
+                            $unpaidAmount = max(0, $amountToPay - $totalPpayment);
+                            $dueDays = $unpaidAmount / $equbAmount;
+                        } elseif ($rote == 'Weekly') {
+                            $interval = ceil($interval->days / 7);
+                            $amountToPay = $interval * $equbAmount;
+                            $unpaidAmount = max(0, $amountToPay - $totalPpayment);
+                            $dueDays = $unpaidAmount / $equbAmount;
+                        } elseif ($rote == 'Monthly') {
+                            $interval = $interval->m + $interval->y * 12;
+                            $amountToPay = $interval * $equbAmount;
+                            $unpaidAmount = max(0, $amountToPay - $totalPpayment);
+
+                            $dueDays = $unpaidAmount / $equbAmount;
+                        }
+                    @endphp
+
+                    @if ($equb->status != 'Deactive')
+                        @if ($remainingPayment != 0)
+                            <div>
+                                @if ($rote == 'Daily')
+                                    {{ $dueDays . ' Days' }}
+                                @elseif($rote == 'Weekly')
+                                    {{ $dueDays . ' Weeks' }}
+                                @elseif($rote == 'Monthly')
+                                    {{ $dueDays . ' Months' }}
+                                @endif
+                                <br>
+                                <strong>Amt Due: {{ number_format($unpaidAmount, 2) }}</strong>
+                            </div>
+                        @else
+                            0
+                        @endif
+                    @else
+                        -
+                    @endif
+
+
+                </td>
                 <td> {{ $equb->status }}</td>
                 <?php
                 $equbTakers = $equb->equb_takers;
@@ -121,72 +179,71 @@
                 }
                 
                 ?>
-                @if (Auth::user()->role != 'operation_manager' && Auth::user()->role != 'assistant' && Auth::user()->role != 'legal_affair_officer')
+                @if (Auth::user()->role != 'operation_manager' &&
+                        Auth::user()->role != 'assistant' &&
+                        Auth::user()->role != 'legal_affair_officer')
                     <td>
                         <div class='dropdown'>
-                            @if (Auth::user()->role != 'marketing_manager') 
-                                <button class='btn btn-secondary btn-sm btn-flat dropdown-toggle' type='button' data-toggle='dropdown'>
+                            @if (Auth::user()->role != 'marketing_manager')
+                                <button class='btn btn-secondary btn-sm btn-flat dropdown-toggle' type='button'
+                                    data-toggle='dropdown'>
                                     Menu <span class='caret'></span>
                                 </button>
                             @else
                                 <span>N/A</span>
                             @endif
-                            <ul class='dropdown-menu p-4'>
+                            <ul class='p-4 dropdown-menu'>
                                 {{-- @if (Auth::user()->role != 'finance') --}}
-                                    <li>
-                                        <a href="javascript:void(0);"
-                                            class="text-secondary btn btn-flat {{ $member->status == 'Deactive' ? 'disabled' : ($equb->status != 'Active' ? 'disabled' : ($sum >= $expectedTotal ? 'disabled' : '')) }}"
-                                            id="paymentButton"
-                                            onclick="openPaymentModal({{ $equb }})"><i
-                                                class="fas fa-plus-circle"></i> Payment</a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);"
-                                            class="text-secondary btn btn-flat {{ $member->status == 'Deactive' ? 'disabled' : ($equb->status != 'Active' ? 'disabled' : '') }}"
-                                            id="lotteryPaymentButton"
-                                            onclick="openLotteryModal({{ $equb }})"><i
-                                                class="fas fa-plus-circle"></i> Lottery</a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);"
-                                            class="text-secondary btn btn-flat {{ $member->status == 'Deactive' ? 'disabled' : ($equb->status != 'Active' ? 'disabled' : ($remainingAmount == 0 && $sum == $expectedTotal ? 'disabled' : '')) }}"
-                                            onclick="openEqubEditModal({{ $equb }})"
-                                            style="margin-right:10px;"id="paymentEdit"><span class="fa fa-edit">
-                                            </span>
-                                            Edit</a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);"
-                                            class="text-secondary btn btn-flat {{ $member->status == 'Deactive' ? 'disabled' : ($equb->status != 'Active' ? 'disabled' : ($remainingAmount == 0 && $sum == $expectedTotal ? 'disabled' : '')) }}"
-                                            onclick="openEqubDeleteModal({{ $equb }})"
-                                            id="paymentDelete"><i class="fas fa-trash-alt"></i> Delete</a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);" class="text-secondary btn btn-flat"
-                                            onclick="equbStatusChange({{ $equb }})"
-                                            style="margin-right:10px;" id="statuss" name="statuss"><i
-                                                class="fab fa-shopware"></i>
-                                            <?php if ($equb->status == 'Active') {
-                                                echo 'Deactivate';
-                                            } else {
-                                                echo 'Activate';
-                                            }
-                                            ?>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);" class="text-secondary btn btn-flat"
-                                            onclick="equbDrawCheckChange({{ $equb }})"
-                                            style="margin-right:10px;" id="drawCheck" name="drawCheck"><i
-                                                class="fab fa-shopware"></i>
-                                            <?php if ($equb->check_for_draw) {
-                                                echo 'Deactivate For Draw';
-                                            } else {
-                                                echo 'Activate For Draw';
-                                            }
-                                            ?>
-                                        </a>
-                                    </li>
+                                <li>
+                                    <a href="javascript:void(0);"
+                                        class="text-secondary btn btn-flat {{ $member->status == 'Deactive' ? 'disabled' : ($equb->status != 'Active' ? 'disabled' : ($sum >= $expectedTotal ? 'disabled' : '')) }}"
+                                        id="paymentButton" onclick="openPaymentModal({{ $equb }})"><i
+                                            class="fas fa-plus-circle"></i> Payment</a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0);"
+                                        class="text-secondary btn btn-flat {{ $member->status == 'Deactive' ? 'disabled' : ($equb->status != 'Active' ? 'disabled' : '') }}"
+                                        id="lotteryPaymentButton" onclick="openLotteryModal({{ $equb }})"><i
+                                            class="fas fa-plus-circle"></i> Lottery</a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0);"
+                                        class="text-secondary btn btn-flat {{ $member->status == 'Deactive' ? 'disabled' : ($equb->status != 'Active' ? 'disabled' : ($remainingAmount == 0 && $sum == $expectedTotal ? 'disabled' : '')) }}"
+                                        onclick="openEqubEditModal({{ $equb }})"
+                                        style="margin-right:10px;"id="paymentEdit"><span class="fa fa-edit">
+                                        </span>
+                                        Edit</a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0);"
+                                        class="text-secondary btn btn-flat {{ $member->status == 'Deactive' ? 'disabled' : ($equb->status != 'Active' ? 'disabled' : ($remainingAmount == 0 && $sum == $expectedTotal ? 'disabled' : '')) }}"
+                                        onclick="openEqubDeleteModal({{ $equb }})" id="paymentDelete"><i
+                                            class="fas fa-trash-alt"></i> Delete</a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0);" class="text-secondary btn btn-flat"
+                                        onclick="equbStatusChange({{ $equb }})" style="margin-right:10px;"
+                                        id="statuss" name="statuss"><i class="fab fa-shopware"></i>
+                                        <?php if ($equb->status == 'Active') {
+                                            echo 'Deactivate';
+                                        } else {
+                                            echo 'Activate';
+                                        }
+                                        ?>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0);" class="text-secondary btn btn-flat"
+                                        onclick="equbDrawCheckChange({{ $equb }})" style="margin-right:10px;"
+                                        id="drawCheck" name="drawCheck"><i class="fab fa-shopware"></i>
+                                        <?php if ($equb->check_for_draw) {
+                                            echo 'Deactivate For Draw';
+                                        } else {
+                                            echo 'Activate For Draw';
+                                        }
+                                        ?>
+                                    </a>
+                                </li>
                                 {{-- @endif --}}
                             </ul>
                         </div>
@@ -275,7 +332,7 @@
         });
         $('#addUnpaidButton').attr('action', "{{ url('member/add-unpaid') }}" + '/' + item.id);
     }
-    
+
     $(function() {
         if ($.fn.DataTable.isDataTable('#equb-list-table')) {
             $('#equb-list-table').DataTable().destroy();
