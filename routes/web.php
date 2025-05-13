@@ -55,7 +55,7 @@ Route::post('/cbe-payment-data', [CbeMiniAppController::class, 'cbeDatas'])->nam
 Route::get('/cbe-payment', [CbeMiniAppController::class, 'cbeDatas'])->name('cbe.payment');
 Route::get('/validate-token', [CbeMiniAppController::class, 'validateToken']);
 Route::post('/process-payment', [CbeMiniAppController::class, 'processPayment'])->name('cbe.initialize');
-// Route::post('/callback', [CbeMiniAppController::class, 'paymentCallback'])->name('cbe.callback');
+Route::get('/cbebirr-login', [CbeMiniAppController::class, 'miniAppLogin'])->name('cbe.login');
 
 Route::get('/register', function () {
     return view('auth/login');
@@ -74,6 +74,7 @@ Route::get('/terms', function () {
     return view('terms');
 });
 Route::get('/terms-and-conditions', [TermsAndConditionsController::class, 'index'])->name('terms.show');
+
 Route::middleware([
     'auth',
     config('jetstream.auth_session'),
