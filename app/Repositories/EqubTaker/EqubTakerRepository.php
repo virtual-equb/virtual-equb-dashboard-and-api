@@ -32,6 +32,11 @@ class EqubTakerRepository implements IEqubTakerRepository
         return $this->model->where('remaining_amount', '==', 0)
             ->pluck('member_id');
     }
+    public function getPaidMemberId()
+    {
+
+        return $this->model->pluck('member_id');
+    }
     public function getMemberIdById($id)
     {
 

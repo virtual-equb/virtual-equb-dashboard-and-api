@@ -284,6 +284,10 @@ Route::middleware([
         Route::post('/lotteries/update-to-paid', [ReportController::class, 'updateToPaidLotterys'])->name('lotteries.updateToPaid');
         Route::get('/unPaidLotterys', [ReportController::class, 'unPaidLotterys'])->name('unPaidLotterys');
         Route::get('/paginateUnPaidLotterys/{offsetVal}/{pageNumberVal}', [ReportController::class, 'paginateUnPaidLotterys']);
+        
+        Route::get('/paidLotteryFilter', [ReportController::class, 'paidLotteryFilter'])->name('paidLotteryFilter');
+        Route::get('/paidLotterys', [ReportController::class, 'paidLotterys'])->name('paidLotterys');
+        Route::get('/paginatePaidLotterys/{offsetVal}/{pageNumberVal}', [ReportController::class, 'paginatePaidLotterys']);
 
         Route::get('/unPaidLotteryByDateFilter', [ReportController::class, 'unPaidLotteryByDateFilter'])->name('unPaidLotteryFilter');
         Route::get('/unPaidLotterysByDate/{lotterDyate}/{equbType}', [ReportController::class, 'unPaidLotterysByDate'])->name('unPaidLotterys');

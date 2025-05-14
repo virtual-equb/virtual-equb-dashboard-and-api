@@ -16,6 +16,8 @@ interface IEqubTakerRepository
 
     public function getMemberId();
 
+    public function getPaidMemberId();
+
     public function getMemberIdById($id);
 
     public function getEkubTaker($equbId, $memberId);

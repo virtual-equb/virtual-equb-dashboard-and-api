@@ -1,10 +1,10 @@
-<nav class="main-header navbar navbar-expand-lg navbar-dark navbar-dark">
+<nav class="main-header navbar navbar-expand-lg navbar-dark">
     <ul class="navbar-nav">
         <li class="nav-item">
             <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
     </ul>
-    <ul class="navbar-nav ml-auto">
+    <ul class="ml-auto navbar-nav">
         {{-- @if (optional(Auth::user()->roles)->contains('name', 'admin') ||
              optional(Auth::user()->roles)->contains('name', 'general_manager') ||
              optional(Auth::user()->roles)->contains('name', 'operation_manager') ||
@@ -28,8 +28,8 @@
                     <div class="dropdown-divider"></div>
                     @foreach ($members as $member)
                     <a href="{{ route('showPendingMembers') }}" class="dropdown-item">
-                        <i class="fas fa-envelope mr-2"></i> {{ $member->full_name }} has joined
-                        <span class="float-right text-muted text-sm">{{ Carbon\Carbon::parse($member->created_at)->diffForHumans() }}</span>
+                        <i class="mr-2 fas fa-envelope"></i> {{ $member->full_name }} has joined
+                        <span class="float-right text-sm text-muted">{{ Carbon\Carbon::parse($member->created_at)->diffForHumans() }}</span>
                     </a>
                     @endforeach
                     <div class="dropdown-divider"></div>
@@ -64,11 +64,11 @@
                             <i class="fas fa-chart-bar"></i> Equb Report
                         </a>
                     @endcan
-                    @can('view paid_lottories_report ')
-                        <a class="nav-link dropdown-item" href="{{ url('reports/lotteryFilter') }}">
+                    {{-- @can('view paid_lottories_report ') --}}
+                        <a class="nav-link dropdown-item" href="{{ route('paidLotteryFilter') }}">
                             <i class="fas fa-chart-bar"></i> Paid Lotteries Report
                         </a>
-                    @endcan
+                    {{-- @endcan --}}
                     @can('view unpaid_lottories_report')
                         <a class="nav-link dropdown-item" href="{{ url('reports/unPaidLotteryFilter') }}">
                             <i class="fas fa-chart-bar"></i> UnPaid Lotteries Report
@@ -130,8 +130,8 @@
                     // Loop through the data and build the notification items
                     for (var i = 0; i < data.length; i++) {
                         dropdownContent += '<a href="{{ route('showMember') }}" class="dropdown-item">';
-                        dropdownContent += '<i class="fas fa-envelope mr-2"></i> ' + data[i].full_name + ' has joined';
-                        dropdownContent += '<span class="float-right text-muted text-sm">' + formatDate(data[i].created_at) + '</span>';
+                        dropdownContent += '<i class="mr-2 fas fa-envelope"></i> ' + data[i].full_name + ' has joined';
+                        dropdownContent += '<span class="float-right text-sm text-muted">' + formatDate(data[i].created_at) + '</span>';
                         dropdownContent += '</a>';
                     }
                     // Add more notification items if needed
