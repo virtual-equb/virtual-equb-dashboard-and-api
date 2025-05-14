@@ -220,16 +220,16 @@ class AuthController extends Controller
 
         try {
             $request->validate([
-                'phone_number' => 'required',
+                'phone' => 'required',
             ]);
 
-            $userExists = User::where('phone_number',  $request->input('phone_number'))->first();
+            $userExists = User::where('phone_number',  $request->input('phone'))->first();
 
             if (!$userExists) {
                 return response()->json([
                     'code' => 200,
                     'message' => 'User not found!',
-                    'phone_number' =>  $request->input('phone_number'),
+                    'phone_number' =>  $request->input('phone'),
                 ], 200);
             }
 

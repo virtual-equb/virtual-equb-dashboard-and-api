@@ -68,12 +68,10 @@ class CbeMiniAppController extends Controller
                 return 'The token is missing or improperly formatted. Please verify and try again.';
             }
 
-            $token = substr($authHeader, 7);
-
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
-                'Authorization' => $token
+                'Authorization' => $authHeader
             ])->get('https://cbebirrpaymentgateway.cbe.com.et:8888/auth/user');
             
             if ($response->failed()) {
