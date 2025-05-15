@@ -12,7 +12,7 @@
                 <th>No</th>
                 <th>Member</th>
                 <th>Equb Type</th>
-                <th>Amount</th>
+                <th>Paid Amount</th>
                 <th>Total Amount</th>
                 <th>Start Date</th>
                 <th>End Date</th>
@@ -21,12 +21,13 @@
             </tr>
         </thead>
         <tbody>
+            
             @foreach ($lotterys as $key => $item)
                 <tr id="trm{{ $item['id'] }}">
                     <td>{{ $offset + $key + 1 }}</td>
                     <td> {{ $item->member->full_name }}</td>
                     <td> {{ $item->equbType->name }}</td>
-                    <td> {{ number_format($item->amount) }}</td>
+                    <td> {{ number_format($item->equbTakers[1]->amount ?? $item->equbTakers[0]->amount) }}</td>
                     <td> {{ number_format($item->total_amount) }}</td>
                     <td>
                         <?php
