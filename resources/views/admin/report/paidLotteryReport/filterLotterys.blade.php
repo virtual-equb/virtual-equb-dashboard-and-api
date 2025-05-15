@@ -12,8 +12,11 @@
                 <th>No</th>
                 <th>Member</th>
                 <th>Equb Type</th>
+                <th>Payment Type</th>
                 <th>Paid Amount</th>
+                <th>Remaining Amount</th>
                 <th>Total Amount</th>
+                <th>Paid Date</th>
                 <th>Start Date</th>
                 <th>End Date</th>
                 <th>Lottery Date</th>
@@ -21,38 +24,48 @@
             </tr>
         </thead>
         <tbody>
-            
+            @php $rowNumber = $offset + 1; @endphp
             @foreach ($lotterys as $key => $item)
-                <tr id="trm{{ $item['id'] }}">
-                    <td>{{ $offset + $key + 1 }}</td>
-                    <td> {{ $item->member->full_name }}</td>
-                    <td> {{ $item->equbType->name }}</td>
-                    <td> {{ number_format($item->equbTakers[1]->amount ?? $item->equbTakers[0]->amount) }}</td>
-                    <td> {{ number_format($item->total_amount) }}</td>
-                    <td>
-                        <?php
-                        $toCreatedAt = new DateTime($item['start_date']);
-                        $createdDate = $toCreatedAt->format('M-j-Y');
-                        echo $createdDate; ?>
-                    </td>
-                    <td>
-                        <?php
-                        $toCreatedAt = new DateTime($item['end_date']);
-                        $createdDate = $toCreatedAt->format('M-j-Y');
-                        echo $createdDate; ?>
-                    </td>
-                    <td>
-                        <?php
-                        foreach (explode(',', $item->lottery_date) as $lottery_date) {
-                            $toCreatedAt = new DateTime($lottery_date);
+            @foreach ($item->equbTakers as $taker)
+            <tr id="trm{{ $item['id'] }}">
+                <td>{{ $rowNumber++ }}</td>
+                        <td>{{ $item->member->full_name }}</td>
+                        <td>{{ $item->equbType->name }}</td>
+                        <td>{{ $taker->payment_type }}</td>
+                        <td>{{ number_format($taker->amount) }}</td>
+                        <td>{{ $taker->remaining_amount }}</td>
+                        <td>{{ number_format($item->total_amount) }}</td>
+                        <td>
+                            <?php
+                            $toCreatedAt = new DateTime($item['start_date']);
                             $createdDate = $toCreatedAt->format('M-j-Y');
-                            echo $createdDate;
-                            echo '<br>';
-                        }
-                        ?>
-                    </td>
-                    <td> {{ $item->status }}</td>
-                </tr>
+                            echo $createdDate; ?>
+                        </td>
+                        <td>
+                            <?php
+                            $toPaidDate = new DateTime($taker->paid_date);
+                            $paidDate = $toPaidDate->format('M-j-Y');
+                            echo $paidDate; ?>
+                        </td>
+                        <td>
+                            <?php
+                            $toCreatedAt = new DateTime($item['end_date']);
+                            $createdDate = $toCreatedAt->format('M-j-Y');
+                            echo $createdDate; ?>
+                        </td>
+                        <td>
+                            <?php
+                            foreach (explode(',', $item->lottery_date) as $lottery_date) {
+                                $toCreatedAt = new DateTime($lottery_date);
+                                $createdDate = $toCreatedAt->format('M-j-Y');
+                                echo $createdDate;
+                                echo '<br>';
+                            }
+                            ?>
+                        </td>
+                        <td> {{ $item->status }}</td>
+                    </tr>
+                @endforeach
             @endforeach
         </tbody>
     </table>
@@ -145,9 +158,9 @@
                     searchPlaceholder: "Search",
                 },
                 @can('export reports_data')
-                "buttons": ["excel", "pdf", "print", "colvis"],
-                @else 
-                "buttons": []
+                    "buttons": ["excel", "pdf", "print", "colvis"],
+                @else
+                    "buttons": []
                 @endcan
             }).buttons().container().appendTo('#lottery-table_wrapper .col-md-6:eq(0)');
         });

@@ -189,16 +189,16 @@ class EqubRepository implements IEqubRepository
     public function getPaidLottery($member_id, $offset)
     {
         return $this->model
-            ->where('status', 'Active')
-            ->whereBetween('lottery_date', [Carbon::now()->subDays(180), Carbon::now()])
-            ->whereHas('equbTakers', function ($q) {
-                $q->where('payment_type', '!=', '')
-                    ->whereNotIn('status', ['pending', 'void']);
-            })
-            ->offset($offset)
-            ->limit($this->limit)
-            ->with('member', 'equbType', 'equbTakers')
-            ->get();
+        ->where('status', 'Active')
+        ->whereBetween('lottery_date', [Carbon::now()->subDays(180), Carbon::now()])
+        ->whereHas('equbTakers', function ($q) {
+                    $q->where('payment_type', '!=', '')
+                        ->whereNotIn('status', ['pending', 'void']);
+                })
+        ->offset($offset)
+        ->limit($this->limit)
+        ->with(['member', 'equbType', 'equbTakers'])
+        ->get();
     }
     public function updateUnPaidLotteryToPaid($member_id, $offset)
     {
