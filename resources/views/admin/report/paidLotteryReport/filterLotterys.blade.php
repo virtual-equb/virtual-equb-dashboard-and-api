@@ -33,7 +33,7 @@
                         <td>{{ $item->equbType->name }}</td>
                         <td>{{ $taker->payment_type }}</td>
                         <td>{{ number_format($taker->amount) }}</td>
-                        <td>{{ $taker->remaining_amount }}</td>
+                        <td>{{number_format( $taker->remaining_amount) }}</td>
                         <td>{{ number_format($item->total_amount) }}</td>
                         <td>
                             <?php

@@ -198,6 +198,11 @@ class EqubRepository implements IEqubRepository
         ->offset($offset)
         ->limit($this->limit)
         ->with(['member', 'equbType', 'equbTakers'])
+        ->withMax(['equbTakers' => function ($q) {
+            $q->where('payment_type', '!=', '')
+              ->whereNotIn('status', ['pending', 'void']);
+        }], 'paid_date')
+        ->orderByDesc('equb_takers_max_paid_date')
         ->get();
     }
     public function updateUnPaidLotteryToPaid($member_id, $offset)

@@ -111,8 +111,8 @@
                             <div class="col-12">
                                 <div class="card ">
                                     <div class="card-header">
-                                        <div class="d-flex flex-wrap justify-content-between align-items-center w-100">
-                                            <ul class="nav nav-pills mb-2 mb-md-0" id="custom-tabs-two-tab" role="tablist">
+                                        <div class="flex-wrap d-flex justify-content-between align-items-center w-100">
+                                            <ul class="mb-2 nav nav-pills mb-md-0" id="custom-tabs-two-tab" role="tablist">
                                                 <li class="nav-item nav-blue memberTab">
                                                     <a class="nav-link active" id="custom-tabs-two-member-tab"
                                                         data-toggle="pill" href="#custom-tabs-two-member" role="tab"
@@ -128,12 +128,12 @@
                                                     </a>
                                                 </li>
                                             </ul>
-                                            <div class="d-flex flex-wrap">
+                                            <div class="flex-wrap d-flex">
                                                 @can('view member')
-                                                    <button type="button" class="btn btn-primary mr-2 mb-2 mb-md-0" id="lotteryDatec" data-toggle="modal" data-target="#lotteryDateCheckModal">
+                                                    <button type="button" class="mb-2 mr-2 btn btn-primary mb-md-0" id="lotteryDatec" data-toggle="modal" data-target="#lotteryDateCheckModal">
                                                         <i class="fa fa-check-square"></i> Check Lottery Date
                                                     </button>
-                                                    <button type="button" class="btn btn-primary mb-2 mb-md-0" id="register" data-toggle="modal" data-target="#myModal">
+                                                    <button type="button" class="mb-2 btn btn-primary mb-md-0" id="register" data-toggle="modal" data-target="#myModal">
                                                         <span class="fa fa-plus-circle"></span> Add member
                                                     </button>
                                                 @endcan
@@ -148,7 +148,7 @@
                                                 @include('admin/lottery.addLottery')
                                                 @include('admin/equb.addEqub')
                                                 @include('admin/member.addMember')
-                                                <div class="row mb-3">
+                                                <div class="mb-3 row">
                                                     <div class="col-12">
                                                         @include('components.filter', ['equbTypes' => $equbTypes])
                                                     </div>
