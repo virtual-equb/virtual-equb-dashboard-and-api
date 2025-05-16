@@ -848,6 +848,76 @@ class ReportController extends Controller
             return back();
         }
     }
+    public function paidLotteryFilter()
+    {
+        try {
+            $userData = Auth::user();
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
+                $data['title'] = "Virtual Equb - Lotterys Report";
+                // dd($data);
+                return view('admin/report/paidLotteryReport/lotterys', $data);
+            // } else {
+            //     return view('auth/login');
+            // }
+        } catch (Exception $ex) {
+            $msg = "Unknown Error Occurred, Please try again!";
+            $type = 'error';
+            Session::flash($type, $msg);
+            return back();
+        }
+    }
+    public function paginatePaidLotterys($offsetVal, $pageNumberVal)
+    {
+        try {
+            $data['offset'] = $offsetVal;
+            $offset = $offsetVal;
+            $data['limit'] = 50;
+            $data['pageNumber'] = $pageNumberVal;
+            $userData = Auth::user();
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
+                $data['title'] = "Virtual Equb - Paid Lotterys Report";
+                $member_id = $this->equbTakerRepository->getPaidMemberId();
+                $member_id = json_encode($member_id);
+                $member_id = str_replace('"', "", $member_id);
+                $data['totalLotterys'] = $this->equbRepository->getPaidLotteryCount($member_id);
+                $data['lotterys'] = $this->equbRepository->getPaidLottery($member_id, $offset);
+                return view('admin/report/paidLotteryReport/filterLotterys', $data);
+            // } else {
+            //     return view('auth/login');
+            // }
+        } catch (Exception $ex) {
+            $msg = "Unknown Error Occurred, Please try again!";
+            $type = 'error';
+            Session::flash($type, $msg);
+            return back();
+        }
+    }
+    public function paidLotterys()
+    {
+        try {
+            $data['offset'] = 0;
+            $offset = 0;
+            $data['limit'] = 50;
+            $data['pageNumber'] = 1;
+            $userData = Auth::user();
+            // if ($userData && ($userData['role'] == "admin" || $userData['role'] == "general_manager" || $userData['role'] == "operation_manager" || $userData['role'] == "assistant" || $userData['role'] == "finance")) {
+                $data['title'] = "Virtual Equb - UnPaid Lotterys Report";
+                $member_id = $this->equbTakerRepository->getPaidMemberId();
+                $member_id = json_encode($member_id);
+                $member_id = str_replace('"', "", $member_id);
+                $data['totalLotterys'] = $this->equbRepository->getPaidLotteryCount($member_id);
+                $data['lotterys'] = $this->equbRepository->getPaidLottery($member_id, $offset);
+                return view('admin/report/paidLotteryReport/filterLotterys', $data);
+            // } else {
+            //     return view('auth/login');
+            // }
+        } catch (Exception $ex) {
+            $msg = "Unknown Error Occurred, Please try again!";
+            $type = 'error';
+            Session::flash($type, $msg);
+            return back(); /// eht you say though
+        }
+    }
     public function unPaidLotterys()
     {
         try {
@@ -1003,4 +1073,6 @@ class ReportController extends Controller
             return back();
         }
     }
+
+    
 }

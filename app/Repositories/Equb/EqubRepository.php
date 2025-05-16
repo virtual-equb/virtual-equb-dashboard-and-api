@@ -45,7 +45,7 @@ class EqubRepository implements IEqubRepository
 
         $paidAmount = Payment::whereBetween('created_at', [$startOfWeek, $endOfWeek])->sum('amount');
         $expectedAmount = Equb::whereBetween('start_date', [$startOfWeek, $endOfWeek])
-                ->sum('amount');
+            ->sum('amount');
 
         $unpaidAmount = $expectedAmount - $paidAmount;
 
@@ -62,8 +62,8 @@ class EqubRepository implements IEqubRepository
 
         $paidAmount = Payment::whereMonth('created_at', $currentMonth)->sum('amount');
         $expectedAmount = Equb::whereMonth('start_date', '<=', $currentMonth)
-                ->whereMonth('end_date', '>=', $currentMonth)
-                ->sum('amount');
+            ->whereMonth('end_date', '>=', $currentMonth)
+            ->sum('amount');
 
         $unpaidAmount = $expectedAmount - $paidAmount;
 
@@ -80,8 +80,8 @@ class EqubRepository implements IEqubRepository
 
         $paidAmount = Payment::whereYear('created_at', $currentYear)->sum('amount');
         $expectedAmount = Equb::whereYear('start_date', '<=', $currentYear)
-                ->whereYear('end_date', '>=', $currentYear)
-                ->sum('amount');
+            ->whereYear('end_date', '>=', $currentYear)
+            ->sum('amount');
 
         $unpaidAmount = $expectedAmount - $paidAmount;
 
@@ -107,10 +107,23 @@ class EqubRepository implements IEqubRepository
         return $this->model->where('id', $id)
             ->pluck('member_id');
     }
+    public function getPaidLotteryCount($member_id)
+    {
+        return $this->model
+            ->where('status', 'Active')
+            ->whereBetween('lottery_date', [Carbon::now()->subDays(180), Carbon::now()])
+            ->whereHas('equbTakers', function ($q) {
+                $q->where('payment_type', '!=', '')
+                    ->whereNotIn('status', ['pending', 'void']);
+            })
+            // ->whereRaw('NOT FIND_IN_SET(member_id,"'.$member_id.'")')
+            // ->where('lottery_date','<=',Carbon::now())
+            ->count();
+    }
     public function getUnPaidLotteryCount($member_id)
     {
         return $this->model->where('status', 'Active')
-            ->whereHas('equbTakers', fn ($q) =>  $q->where('status', "!=", "paid")->orWhere('status', "!=", "void"))
+            ->whereHas('equbTakers', fn($q) =>  $q->where('status', "!=", "paid")->orWhere('status', "!=", "void"))
             ->whereBetween('lottery_date', [Carbon::now()->subDays(180), Carbon::now()])
             // ->whereRaw('NOT FIND_IN_SET(member_id,"'.$member_id.'")')
             // ->where('lottery_date','<=',Carbon::now())
@@ -126,15 +139,15 @@ class EqubRepository implements IEqubRepository
         //     ->count();
         if ($equbType != 'all') {
             return $this->model->where('status', 'Active')
-                ->whereHas('equbType', fn ($q) =>  $q->where('id', "=", $equbType))
-                ->whereHas('equbTakers', fn ($q) =>  $q->where('status', "!=", "paid")->orWhere('status', "!=", "void"))
+                ->whereHas('equbType', fn($q) =>  $q->where('id', "=", $equbType))
+                ->whereHas('equbTakers', fn($q) =>  $q->where('status', "!=", "paid")->orWhere('status', "!=", "void"))
                 ->whereBetween('lottery_date', [Carbon::now()->subDays(180), Carbon::now()])
                 // ->whereRaw('NOT FIND_IN_SET(member_id,"'.$member_id.'")')
                 // ->where('lottery_date','<=',Carbon::now())
                 ->count();
         } else {
             return $this->model->where('status', 'Active')
-                ->whereHas('equbTakers', fn ($q) =>  $q->where('status', "!=", "paid")->orWhere('status', "!=", "void"))
+                ->whereHas('equbTakers', fn($q) =>  $q->where('status', "!=", "paid")->orWhere('status', "!=", "void"))
                 ->whereBetween('lottery_date', [Carbon::now()->subDays(180), Carbon::now()])
                 // ->whereRaw('NOT FIND_IN_SET(member_id,"'.$member_id.'")')
                 // ->where('lottery_date','<=',Carbon::now())
@@ -152,13 +165,13 @@ class EqubRepository implements IEqubRepository
         //     ->count();
         if ($equbType != 'all') {
             return $this->model->where('status', 'Active')
-                ->whereHas('equbType', fn ($q) =>  $q->where('id', "=", $equbType))
-                ->whereHas('equbTakers', fn ($q) =>  $q->where('status', "!=", "paid")->orWhere('status', "!=", "void"))
+                ->whereHas('equbType', fn($q) =>  $q->where('id', "=", $equbType))
+                ->whereHas('equbTakers', fn($q) =>  $q->where('status', "!=", "paid")->orWhere('status', "!=", "void"))
                 ->whereRaw("FIND_IN_SET(?, lottery_date) > 0", [$lotteryDate])
                 ->count();
         } else {
             return $this->model->where('status', 'Active')
-                ->whereHas('equbTakers', fn ($q) =>  $q->where('status', "!=", "paid")->orWhere('status', "!=", "void"))
+                ->whereHas('equbTakers', fn($q) =>  $q->where('status', "!=", "paid")->orWhere('status', "!=", "void"))
                 ->whereRaw("FIND_IN_SET(?, lottery_date) > 0", [$lotteryDate])
                 ->count();
         }
@@ -167,12 +180,30 @@ class EqubRepository implements IEqubRepository
     {
         return $this->model->where('status', 'Active')
             ->whereBetween('lottery_date', [Carbon::now()->subDays(180), Carbon::now()])
-            ->whereHas('equbTakers', fn ($q) =>  $q->where('status', "!=", "paid")->Where('status', "!=", "void"))
+            ->whereHas('equbTakers', fn($q) =>  $q->where('status', "!=", "paid")->Where('status', "!=", "void"))
             ->offset($offset)
             ->limit($this->limit)
             ->with('member', 'equbType', 'equbTakers')
             ->get();
-            
+    }
+    public function getPaidLottery($member_id, $offset)
+    {
+        return $this->model
+        ->where('status', 'Active')
+        ->whereBetween('lottery_date', [Carbon::now()->subDays(180), Carbon::now()])
+        ->whereHas('equbTakers', function ($q) {
+                    $q->where('payment_type', '!=', '')
+                        ->whereNotIn('status', ['pending', 'void']);
+                })
+        ->offset($offset)
+        ->limit($this->limit)
+        ->with(['member', 'equbType', 'equbTakers'])
+        ->withMax(['equbTakers' => function ($q) {
+            $q->where('payment_type', '!=', '')
+              ->whereNotIn('status', ['pending', 'void']);
+        }], 'paid_date')
+        ->orderByDesc('equb_takers_max_paid_date')
+        ->get();
     }
     public function updateUnPaidLotteryToPaid($member_id, $offset)
     {
@@ -198,8 +229,8 @@ class EqubRepository implements IEqubRepository
         if ($equbType != 'all') {
             return $this->model->where('status', 'Active')
                 ->whereBetween('lottery_date', [Carbon::now()->subDays(180), Carbon::now()])
-                ->whereHas('equbType', fn ($q) =>  $q->where('id', "=", $equbType))
-                ->whereHas('equbTakers', fn ($q) =>  $q->where('status', "!=", "paid")->Where('status', "!=", "void"))
+                ->whereHas('equbType', fn($q) =>  $q->where('id', "=", $equbType))
+                ->whereHas('equbTakers', fn($q) =>  $q->where('status', "!=", "paid")->Where('status', "!=", "void"))
                 ->offset($offset)
                 ->limit($this->limit)
                 ->with('member', 'equbType', 'equbTakers')
@@ -207,7 +238,7 @@ class EqubRepository implements IEqubRepository
         } else {
             return $this->model->where('status', 'Active')
                 ->whereBetween('lottery_date', [Carbon::now()->subDays(180), Carbon::now()])
-                ->whereHas('equbTakers', fn ($q) =>  $q->where('status', "!=", "paid")->Where('status', "!=", "void"))
+                ->whereHas('equbTakers', fn($q) =>  $q->where('status', "!=", "paid")->Where('status', "!=", "void"))
                 ->offset($offset)
                 ->limit($this->limit)
                 ->with('member', 'equbType', 'equbTakers')
@@ -270,7 +301,7 @@ class EqubRepository implements IEqubRepository
                 ->count();
         }
     }
-    
+
     public function getReservedLotteryDates($dateFrom, $dateTo, $memberId, $offset, $equbType)
     {
         $query = $this->model->where('status', 'Active')
@@ -282,7 +313,7 @@ class EqubRepository implements IEqubRepository
             ->limit($this->limit)
             ->with('member', 'equbType');
 
-            return $query->get();
+        return $query->get();
     }
 
     public function getDailyPaid($equb_id)
@@ -347,10 +378,10 @@ class EqubRepository implements IEqubRepository
     public function getByPaymentMethod($dateFrom, $dateTo, $equbType, $offset)
     {
         // Start building the query
-    //$query = Payment::query();
+        //$query = Payment::query();
 
-    // Execute the query and return all results
-    //return $query->get(); 
+        // Execute the query and return all results
+        //return $query->get(); 
         // Execute the query and return results
         if ($equbType != 'all') {
             return $this->model
@@ -371,8 +402,7 @@ class EqubRepository implements IEqubRepository
                 ->offset($offset)
                 ->limit($this->limit)
                 ->get();
-        } 
-     
+        }
     }
     public function getUnPaidByDate($dateFrom, $dateTo, $equbId, $offset, $equbType)
     {
@@ -575,7 +605,7 @@ class EqubRepository implements IEqubRepository
     {
         // return $this->model->where('status', 'Active')->whereRaw('FIND_IN_SET("' . Carbon::today()->format('Y-m-d') . '",lottery_date)')->with('member')->get();
         $today = Carbon::today()->format('Y-m-d');
-        
+
         return $this->model
             ->where('status', 'Active')
             ->whereRaw('FIND_IN_SET(?, lottery_date)', [$today])
@@ -624,13 +654,13 @@ class EqubRepository implements IEqubRepository
             // })
             ->sum('amount');
 
-            // return  DB::table('equbs')
-            // ->join('equb_types', 'equbs.equb_type_id', '=', 'equb_types.id')
-            // ->where('equbs.status', 'Active')
-            // ->whereDate('equbs.start_date', '<=', Carbon::today())
-            // ->whereDate('equbs.end_date', '>=', Carbon::today())
-            // // ->where('equb_types.rote', 'Daily')
-            // ->sum('equbs.amount');
+        // return  DB::table('equbs')
+        // ->join('equb_types', 'equbs.equb_type_id', '=', 'equb_types.id')
+        // ->where('equbs.status', 'Active')
+        // ->whereDate('equbs.start_date', '<=', Carbon::today())
+        // ->whereDate('equbs.end_date', '>=', Carbon::today())
+        // // ->where('equb_types.rote', 'Daily')
+        // ->sum('equbs.amount');
     }
     public function getAutomaticExpectedTotal()
     {
@@ -886,15 +916,14 @@ class EqubRepository implements IEqubRepository
     public function filterEqubByPaymentMethod($dateFrom, $dateTo, $offset, $equbType)
     {
         $query = Payment::query(); // Start building the query
-    
+
         if ($equbType != 'all') {
             $query->where('payment_type', $equbType);
-        }else{
-    
-       $query->where('payment_type', $equbType);
-    
-            }
-    
+        } else {
+
+            $query->where('payment_type', $equbType);
+        }
+
         return $query->get(); // Execute the query and return results
     }
     public function countFilterEqubEndDates($dateFrom, $dateTo, $equbType)

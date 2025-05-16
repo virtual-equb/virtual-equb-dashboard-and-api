@@ -40,6 +40,8 @@ class Equb extends Model
     }
     public function equbTakers()
     {
-        return $this->hasMany(EqubTaker::class);
+        return $this->hasMany(EqubTaker::class)
+        ->where('payment_type', '!=', '')
+        ->whereNotIn('status', ['pending', 'void']);
     }
 }
