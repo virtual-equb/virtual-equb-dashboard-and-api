@@ -192,18 +192,25 @@ class EqubRepository implements IEqubRepository
         ->where('status', 'Active')
         ->whereBetween('lottery_date', [Carbon::now()->subDays(180), Carbon::now()])
         ->whereHas('equbTakers', function ($q) {
-                    $q->where('payment_type', '!=', '')
-                        ->whereNotIn('status', ['pending', 'void']);
-                })
+            $q->where('payment_type', '!=', '')
+              ->whereNotIn('status', ['pending', 'void']);
+        })
         ->offset($offset)
         ->limit($this->limit)
-        ->with(['member', 'equbType', 'equbTakers'])
-        ->withMax(['equbTakers' => function ($q) {
+        ->with([
+            'member',
+            'equbType',
+            'equbTakers' => function ($q) {
+                $q->where('payment_type', '!=', '')
+                  ->whereNotIn('status', ['pending', 'void']);
+            }
+        ])
+        ->withMax(['equbTakers as equb_takers_max_paid_date' => function ($q) {
             $q->where('payment_type', '!=', '')
               ->whereNotIn('status', ['pending', 'void']);
         }], 'paid_date')
         ->orderByDesc('equb_takers_max_paid_date')
-        ->get();
+        ->get();    
     }
     public function updateUnPaidLotteryToPaid($member_id, $offset)
     {

@@ -25,6 +25,7 @@
         </thead>
         <tbody>
             @php $rowNumber = $offset + 1; @endphp
+            @if (!empty($lotterys) && count($lotterys) > 0)
             @foreach ($lotterys as $key => $item)
             @foreach ($item->equbTakers as $taker)
             <tr id="trm{{ $item['id'] }}">
@@ -67,6 +68,7 @@
                     </tr>
                 @endforeach
             @endforeach
+            @endif
         </tbody>
     </table>
     <div class="justify-content-end">
